@@ -26,7 +26,7 @@ a2fed766e67c9681e0d9b86768f08286  httpd-2.4.4.tar.gz
 eff9d741b0999a9bbab96862dd2a2a3d  apr-1.4.8.tar.gz
 eb682cfb8642babba427a4fb391b15e8  apr-util-1.5.2.tar.gz
 01eae37253a6b6c71b9f6d6be718584b  mysql-5.5.32.tar.gz
-5ff56a4fbb0b0c4e075c6f43ba9d007e  mysql-5.6.12.tar.gz
+aff97b406da871f020af84b7085cbdbb  mysql-5.6.12.tar.gz
 a430a48b8939fe1f8915ee38681b0afa  php-5.3.26.tar.gz
 3940a5295872964495f9c56596272d68  php-5.4.16.tar.gz
 150586c3af37fbdfa504cf142c447e57  ZendOptimizer-3.3.9-linux-glibc23-i386.tar.gz

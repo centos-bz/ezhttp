@@ -319,12 +319,15 @@ elif [ $version == "5.6" ];then
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
+	echo -e "[client]\nsocket = /var/lib/mysql/mysql.sock" >> ${mysql_location}/etc/my.cnf
 	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --user=mysql
 
 fi
 
 chown -R mysql ${mysql_location} ${mysql_data_location}
-
+cd /usr/bin/
+ln -s $mysql_location/bin/mysql
+ln -s $mysql_location/bin/mysqldump
 }
 
 #安装PHP

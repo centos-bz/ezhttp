@@ -505,6 +505,25 @@ else
 fi
 }
 
+#发行版判断
+ReleaseCheck(){
+	local release=$1
+	cat /proc/version | grep -q  -i "$release"  && return 0 || return 1
+	cat /proc/version | grep -q  -i "$release"  && return 0 || return 1
+}
+
+#判断centos版本
+CentOSVerCheck(){
+	local code=$1
+	local version="`VersionGet`"
+	local main_ver=${version%.*}
+	if [ $main_ver == $code ];then
+		return 0
+	else
+		return 1
+	fi		
+}
+
 #安装php依赖
 install_php_depends(){
 	#安装依赖
@@ -518,6 +537,16 @@ install_php_depends(){
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
+		#解决centos 6 libmcrypt不在在的问题
+		if CentOSVerCheck 6;then
+			if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.x86_64.rpm
+				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.x86_64.rpm
+			else
+				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.i686.rpm
+				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.i686.rpm
+			fi	
+		fi			
 	else
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
@@ -531,7 +560,8 @@ install_php_depends(){
 		check_installed "install_libpng" "${depends_prefix}/${libpng_filename}"
 		check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
 		check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
-	fi		
+	fi
+
 }
 
 #在/usr/lib创建库文件的链接

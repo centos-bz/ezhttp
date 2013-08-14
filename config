@@ -1,0 +1,59 @@
+#此文件配置用于选择快速安装选项时使用
+
+#################### nginx设置 ###################
+
+#选择安装nginx的版本,可选版本列表请运行脚本install.sh查看，不安装则填写do_not_install
+nginx="nginx-1.4.1"
+
+#设置nginx的安装路径
+nginx_location="/usr/local/nginx"
+
+#################### apache设置 ####################
+#选择安装nginx的版本,可选版本列表请运行脚本install.sh查看,不安装则填写do_not_install
+apache="do_not_install"
+
+#设置nginx的安装路径
+apache_location="/usr/local/apache"
+
+
+#################### mysql设置 ####################
+
+#选择安装mysql的版本,可选版本列表请运行脚本install.sh查看,不安装则填写do_not_install
+#注意:当选择不安装mysql，且不需要php支持mysql时，请置空mysql_location，如mysql_location=""，否则将会导致php安装失败.
+#当选择不安装mysql，而需要php支持mysql时，请正确设置mysql_location的参数，即mysql所在目录.
+mysql="mysql-5.5.32"
+
+#设置mysql的安装路径
+mysql_location="/usr/local/mysql"
+
+#设置mysql data的目录
+mysql_data_location="/usr/local/mysql/data"
+
+#设置mysql root用户密码
+mysql_root_pass="root"
+
+#################### php设置 ####################
+
+#选择安装php的版本，可选版本列表请运行脚本install.sh查看,不安装则填写do_not_install
+php="php-5.3.26"
+
+#选择php运行模式,可选版本列表请运行脚本install.sh查看
+php_mode="with_fastcgi"
+
+#设置php安装的路径
+php_location="/usr/local/php"
+
+#选择需要安装的php模块，可选版本列表请运行脚本install.sh查看,不安装则填写do_not_install
+#注意,ZendOptimizer和ZendGuardLoader需要根据php的版本选择，如php-5.2.17只能选择ZendOptimizer,其它的选择ZendGuardLoader.
+#选择多个模块安装时，这样设置php_modules_install="ZendGuardLoader eaccelerator  ImageMagick"
+php_modules_install="do_not_install"
+
+#################### 其它软件设置 ####################
+
+#选择要安装的软件，可选版本列表请运行脚本install.sh查看，选择多个软件安装，这样设置other_soft_install="Memcached PureFTPd phpMyAdmin"
+other_soft_install="do_not_install"
+
+#Memcached安装路径
+memcached_location=/usr/local/memcached
+#PureFTPd安装路径
+pureftpd_location=/usr/local/pureftpd

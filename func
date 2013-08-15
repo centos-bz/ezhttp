@@ -81,7 +81,7 @@ local url1=$1
 local url2=$2
 local filename=$3
 if [ -s "${cur_dir}/soft/${filename}" ];then
-	check_md5 "$filename"
+	#check_md5 "$filename"
 	echo "${filename} is existed."
 else
 	[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
@@ -123,7 +123,7 @@ sleep 1
 #开始下载
 wget -c --tries=3 ${url} -O $filename
 [ $? != 0 ] && echo "fail to download $filename,exited." && exit 1
-check_md5 "$filename"
+#check_md5 "$filename"
 }
 
 #获取百度网盘下载地址

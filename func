@@ -512,6 +512,11 @@ ReleaseCheck(){
 	cat /proc/version | grep -q  -i "$release"  && return 0 || return 1
 }
 
+#获取版本号
+VersionGet(){
+	grep -oE  "[0-9.]+" /etc/issue
+}
+
 #判断centos版本
 CentOSVerCheck(){
 	local code=$1

@@ -10,7 +10,7 @@ if [ $? != 0 ];then
 	distro=`cat /etc/issue`
 	architecture=`uname -m`
 	cat >>/root/ezhttp_errors.log<<EOF
-	lnmp errors:
+	ezhttp errors:
 	distributions:$distro
 	architecture:$architecture
 	Nginx: ${nginx}

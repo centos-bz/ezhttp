@@ -64,8 +64,8 @@ echo "nginx_location=$nginx_location" >> /tmp/ezhttp_info_do_not_del
 
 #配置nginx
 config_nginx(){
-groupadd www
-useradd -s /bin/false www
+groupadd www	
+useradd -s /bin/false -g www www	
 mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
 cp -f $cur_dir/conf/*.conf ${nginx_location}/conf/
 cp -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
@@ -155,6 +155,8 @@ export LD_LIBRARY_PATH
 
 #配置apache
 config_apache(){
+groupadd www	
+useradd -s /bin/false -g www www	
 local version=$1
 cp -f ${apache_location}/conf/httpd.conf ${apache_location}/conf/httpd.conf_bak
 grep -E -q "^\s*#\s*Include conf/extra/httpd-vhosts.conf" ${apache_location}/conf/httpd.conf  && sed -i 's#^\s*\#\s*Include conf/extra/httpd-vhosts.conf#Include conf/extra/httpd-vhosts.conf#' ${apache_location}/conf/httpd.conf || sed -i '$aInclude conf/extra/httpd-vhosts.conf' ${apache_location}/conf/httpd.conf
@@ -179,8 +181,8 @@ php_admin_value open_basedir ${apache_location}/htdocs:/tmp:/proc
 EOF
 
 #设置运行用户为www
-sed -i 's/^User.*/User www/i' ${apache_location}/conf/extra/httpd-vhosts.conf
-sed -i 's/^Group.*/Group www/i' ${apache_location}/conf/extra/httpd-vhosts.conf
+sed -i 's/^User.*/User www/i' ${apache_location}/conf/httpd.conf
+sed -i 's/^Group.*/Group www/i' ${apache_location}/conf/httpd.conf
 
 if [ $version == "2.4" ];then
 	sed -i '/NameVirtualHost/d' ${apache_location}/conf/extra/httpd-vhosts.conf
@@ -452,7 +454,7 @@ echo "php_location=$php_location" >> /tmp/ezhttp_info_do_not_del
 #配置php
 config_php(){
 groupadd www	
-useradd -s /bin/false www
+useradd -s /bin/false -g www www
 
 if [ "$php" == "${php5_2_filename}" ];then
 	mkdir -p ${php_location}/logs/

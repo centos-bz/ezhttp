@@ -325,7 +325,7 @@ elif [ $version == "5.6" ];then
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	echo -e "[client]\nsocket = /var/lib/mysql/mysql.sock" >> ${mysql_location}/etc/my.cnf
+	echo -e "\n[client]\nsocket = /var/lib/mysql/mysql.sock" >> ${mysql_location}/etc/my.cnf
 	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --user=mysql
 
 fi
@@ -438,6 +438,7 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	error_detect "make install"	
 	
 	#配置php
+	mkdir -p ${php_location}/etc
 	cp php.ini-production $php_location/etc/php.ini	
 	cp $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 fi

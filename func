@@ -538,7 +538,7 @@ install_php_depends(){
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
 	elif [ "`check_sys_version`" == "centos" ];then
-		yum -y install m4 autoconf libxml2-devel openssl  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel mhash-devel libmcrypt-devel
+		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel mhash-devel libmcrypt-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"

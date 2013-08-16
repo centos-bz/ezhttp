@@ -464,7 +464,7 @@ elif [ "$php" == "${php5_4_filename}" ]; then
 fi
 
 #add php support for apache
-[ $php_mode == "with_apache" ] && ! grep -i "Addtype application/x-httpd-php .php" ${apache_location}/conf/httpd.conf && sed -i 's#AddType application/x-gzip .gz .tgz#AddType application/x-gzip .gz .tgz\nAddtype application/x-httpd-php .php#' ${apache_location}/conf/httpd.conf
+[ $php_mode == "with_apache" ] && ! grep -i "Addtype application/x-httpd-php .php" ${apache_location}/conf/httpd.conf && sed -i 's#AddType application/x-gzip .gz .tgz#AddType application/x-gzip .gz .tgz\nAddtype application/x-httpd-php .php#i' ${apache_location}/conf/httpd.conf
 	
 }
 #安装php模块

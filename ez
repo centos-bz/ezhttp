@@ -48,7 +48,7 @@ done
 #设置默认网站目录
 default_root="/home/${server_names%% *}"
 #输入网站目录
-read -p "input website root(default:$default_root): " website_root
+read -p "input website root(default:$default_root/web): " website_root
 website_root=${website_root:=$default_root}
 #是否添加重写规则
 while true; do
@@ -220,7 +220,7 @@ done
 #设置默认网站目录
 default_root="/home/${server_names%% *}"
 #输入网站目录
-read -p "input website root(ie./home/www.centos.bz): " website_root
+read -p "input website root(default:$default_root/web): " website_root
 website_root=${website_root:=$default_root}
 #开始写入配置文件
 cat >> ${apache_location}/conf/extra/httpd-vhosts.conf << EOF

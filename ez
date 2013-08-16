@@ -45,8 +45,11 @@ while true; do
 		break 2
 	done	
 done
+#设置默认网站目录
+default_root="/home/${server_names%% *}"
 #输入网站目录
-read -p "input website root(ie./home/www.centos.bz): " website_root
+read -p "input website root(default:$default_root): " website_root
+website_root=${website_root:=$default_root}
 #是否添加重写规则
 while true; do
 	read -p "add nginx rewrite rule? [Y/n]: " add_rule
@@ -105,6 +108,7 @@ s#\(.*\)}#\1$vhost_nginx_code}#
 echo "congratulations.vhost ${server_names%% *} had created."
 #创建目录
 mkdir -p ${website_root}/logs ${website_root}/web
+chown -R www ${website_root}/web
 #重载配置
 echo "reloading the nginx config file..."
 if ${nginx_location}/sbin/nginx -t;then
@@ -213,8 +217,11 @@ while true; do
 		break 2
 	done	
 done
+#设置默认网站目录
+default_root="/home/${server_names%% *}"
 #输入网站目录
-read -p "input website root(ie./home/www.centos.bz): " website_root	
+read -p "input website root(ie./home/www.centos.bz): " website_root
+website_root=${website_root:=$default_root}
 #开始写入配置文件
 cat >> ${apache_location}/conf/extra/httpd-vhosts.conf << EOF
 <VirtualHost *:80>
@@ -236,6 +243,7 @@ EOF
 echo "congratulations.vhost ${server_names%% *} had created."
 #创建目录
 mkdir -p ${website_root}/logs ${website_root}/web
+chown -R www ${website_root}/web
 #重载配置
 echo "reloading the apache config file..."
 if ${apache_location}/bin/apachectl -t;then
@@ -330,17 +338,7 @@ ftp_user(){
 
 ftp_user_add(){
 	read -p "input ftp user name: " ftp_username
-	while true;do
-		read -s -p "input ftp password: " ftp_pass
-		echo
-		read -s -p "input ftp password again: " ftp_pass2
-		echo
-		if [[ "$ftp_pass" == "$ftp_pass2" ]];then
-			break
-		else
-			echo "Sorry, passwords do not match"
-		fi
-	done
+	read  -p "input ftp password: " ftp_pass
 	read -p "input ftp user $ftp_username Home Directory: " ftp_home
 	useradd -d $ftp_home -c pure-ftpd -s /sbin/nologin $ftp_username
 	echo $ftp_username:$ftp_pass | chpasswd

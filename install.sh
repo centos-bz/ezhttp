@@ -64,7 +64,8 @@ echo "nginx_location=$nginx_location" >> /tmp/ezhttp_info_do_not_del
 
 #配置nginx
 config_nginx(){
-useradd -s /bin/false nginx
+groupadd www
+useradd -s /bin/false www
 mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
 cp -f $cur_dir/conf/*.conf ${nginx_location}/conf/
 cp -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
@@ -159,6 +160,7 @@ cp -f ${apache_location}/conf/httpd.conf ${apache_location}/conf/httpd.conf_bak
 grep -E -q "^\s*#\s*Include conf/extra/httpd-vhosts.conf" ${apache_location}/conf/httpd.conf  && sed -i 's#^\s*\#\s*Include conf/extra/httpd-vhosts.conf#Include conf/extra/httpd-vhosts.conf#' ${apache_location}/conf/httpd.conf || sed -i '$aInclude conf/extra/httpd-vhosts.conf' ${apache_location}/conf/httpd.conf
 mv ${apache_location}/conf/extra/httpd-vhosts.conf ${apache_location}/conf/extra/httpd-vhosts.conf_bak
 
+#写入默认虚拟主机配置
 cat > ${apache_location}/conf/extra/httpd-vhosts.conf << EOF
 NameVirtualHost *:80
 <VirtualHost *:80>
@@ -175,6 +177,10 @@ php_admin_value open_basedir ${apache_location}/htdocs:/tmp:/proc
 </Directory>
 </VirtualHost>
 EOF
+
+#设置运行用户为www
+sed -i 's/^User.*/User www/i' ${apache_location}/conf/extra/httpd-vhosts.conf
+sed -i 's/^Group.*/Group www/i' ${apache_location}/conf/extra/httpd-vhosts.conf
 
 if [ $version == "2.4" ];then
 	sed -i '/NameVirtualHost/d' ${apache_location}/conf/extra/httpd-vhosts.conf
@@ -444,20 +450,21 @@ echo "php_location=$php_location" >> /tmp/ezhttp_info_do_not_del
 
 #配置php
 config_php(){
-useradd -s /bin/false nginx
+groupadd www	
+useradd -s /bin/false www
 
 if [ "$php" == "${php5_2_filename}" ];then
 	mkdir -p ${php_location}/logs/
 	\cp -f $cur_dir/conf/init.d.php-fpm5.2 /etc/init.d/php-fpm
 	sed -i "s#^php_location=.*#php_location=$php_location#" /etc/init.d/php-fpm
 	chmod +x /etc/init.d/php-fpm
-	sed -i  's#.*<value name="user">.*#<value name="user">nginx</value>#' ${php_location}/etc/php-fpm.conf
+	sed -i  's#.*<value name="user">.*#<value name="user">www</value>#' ${php_location}/etc/php-fpm.conf
 
 elif [ "$php" == "${php5_3_filename}" ]; then
 	\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 	chmod +x /etc/init.d/php-fpm
-	sed -i 's/^user =.*/user = nginx/' ${php_location}/etc/php-fpm.conf
-	sed -i 's/^group =.*/group = nginx/' ${php_location}/etc/php-fpm.conf
+	sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
+	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
 
 elif [ "$php" == "${php5_4_filename}" ]; then
 	\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm

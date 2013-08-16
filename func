@@ -1,251 +1,599 @@
-########################软件包的百度网盘及官方下载地址设置#######################
+#监控编译安装中是否有错误，有错误就停止安装,并把错误写入到文件/root/ezhttp_errors.log
+error_detect(){
+local command=$1
+local cur_soft=`pwd | awk -F'/' '{print $NF}'`
+set -o pipefail
+${command}  2>&1 | tee /root/ezhttp_errors.log 
+if [ $? != 0 ];then
+	clear
+	tail /root/ezhttp_errors.log
+	distro=`cat /etc/issue`
+	architecture=`uname -m`
+	cat >>/root/ezhttp_errors.log<<EOF
+	ezhttp errors:
+	distributions:$distro
+	architecture:$architecture
+	Nginx: ${nginx}
+	MySQL Server: $mysql
+	PHP Version: $php
+	Other Software: ${other_soft_install[@]}
+	issue:failed to install $cur_soft
+EOF
+	echo "#########################################################"
+	echo "failed to install $cur_soft."    
+	echo "please visit website http://www.centos.bz/ezhttp/"
+	echo "and submit /root/ezhttp_errors.log ask for help."
+	echo "#########################################################"
+	exit 1
+fi
+}
 
-###################主要安装包设置###################
+#保证是在根用户下运行
+rootness(){
+# Make sure only root can run our script
+if [[ $EUID -ne 0 ]]; then
+	echo "This script must be run as root" 1>&2
+	exit 1
+fi
+}
 
-#nginx设置
-nginx_filename="nginx-1.4.1"
-nginx_baidupan_link="http://pan.baidu.com/share/link?shareid=1776431413&uk=2838537799&third=15"
-nginx_official_link="http://nginx.org/download/nginx-1.4.1.tar.gz"
+#禁止selinux，因为在selinux下会出现很多意想不到的问题
+disable_selinux(){
+if [ -s /etc/selinux/config ] && grep 'SELINUX=enforcing' /etc/selinux/config; then
+	sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+	setenforce 0
+fi
+}
 
-#tengine设置
-tengine_filename="tengine-1.4.6"
-tengine_baidupan_link="http://pan.baidu.com/share/link?shareid=1264028243&uk=2838537799&third=15"
-tengine_official_link="http://tengine.taobao.org/download/tengine-1.4.6.tar.gz"
+#大写转换成小写
+upcase_to_lowcase(){
+words=$1
+echo $words | tr [A-Z] [a-z]
+}
 
-#openresty设置
-openresty_filename="ngx_openresty-1.2.8.3"
-openresty_baidupan_link="http://pan.baidu.com/share/link?shareid=153402789&uk=2838537799&third=15"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.2.8.3.tar.gz"
+#多核并行编译
+function parallel_make(){
+cpunum=`cat /proc/cpuinfo |grep 'processor'|wc -l`
+if [ $cpunum == 1 ];then
+	make
+else	
+	make -j$cpunum
+fi	
+}
 
-#apache设置
-apache2_2_filename="httpd-2.2.25"
-apache2_2_baidupan_link="http://pan.baidu.com/share/link?shareid=1344824441&uk=2838537799&third=15"
-apache2_2_official_link="http://download.nextag.com/apache/httpd/httpd-2.2.25.tar.gz"
+#判断路径输入是否合法
+filter_location(){
+local location=$1
+if ! echo $location | grep -q "^/";then
+	while true
+	do
+		read -p "input error,please input location again." location
+		echo $location | grep -q "^/" && echo $location && break
+	done
+else
+	echo $location
+fi
+}
 
-apache2_4_filename="httpd-2.4.4"
-apache2_4_baidupan_link="http://pan.baidu.com/share/link?shareid=1350563058&uk=2838537799&third=15"
-apache2_4_official_link="http://download.nextag.com/apache/httpd/httpd-2.4.4.tar.gz"
-
-#mysql_server设置
-mysql5_1_filename="mysql-5.1.71"
-mysql5_1_baidupan_link="http://pan.baidu.com/share/link?shareid=1179957852&uk=2838537799&third=15"
-mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.71.tar.gz"
-
-mysql5_5_filename="mysql-5.5.32"
-mysql5_5_baidupan_link="http://pan.baidu.com/share/link?shareid=1858218787&uk=2838537799&third=15"
-mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.32.tar.gz"
-
-mysql5_6_filename="mysql-5.6.12"
-mysql5_6_baidupan_link="http://pan.baidu.com/share/link?shareid=3946008296&uk=2838537799&third=15"
-mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.12.tar.gz"
-
-#php设置
-php5_2_filename="php-5.2.17"
-php5_2_baidupan_link="http://pan.baidu.com/share/link?shareid=1414675226&uk=2838537799&third=15"
-php5_2_official_link="http://www.php.net/get/php-5.2.17.tar.gz/from/us1.php.net/mirror"
-
-php5_3_filename="php-5.3.26"
-php5_3_baidupan_link="http://pan.baidu.com/share/link?shareid=295153590&uk=2838537799&third=15"
-php5_3_official_link="http://www.php.net/get/php-5.3.26.tar.gz/from/us1.php.net/mirror"
-
-php5_4_filename="php-5.4.16"
-php5_4_baidupan_link="http://pan.baidu.com/share/link?shareid=438533262&uk=2838537799&third=15"
-php5_4_official_link="http://us1.php.net/distributions/php-5.4.16.tar.gz"
-
-#ZendOptimizer设置
-ZendOptimizer_filename="ZendOptimizer-3.3.9"
-
-ZendOptimizer32_filename="ZendOptimizer-3.3.9-linux-glibc23-i386"
-ZendOptimizer32_baidupan_link="http://pan.baidu.com/share/link?shareid=125471033&uk=2838537799&third=15"
-ZendOptimizer32_official_link="http://downloads.zend.com/optimizer/3.3.9/ZendOptimizer-3.3.9-linux-glibc23-i386.tar.gz"
-
-ZendOptimizer64_filename="ZendOptimizer-3.3.9-linux-glibc23-x86_64"
-ZendOptimizer64_baidupan_link="http://pan.baidu.com/share/link?shareid=84199663&uk=2838537799&third=15"
-ZendOptimizer64_official_link="http://downloads.zend.com/optimizer/3.3.9/ZendOptimizer-3.3.9-linux-glibc23-x86_64.tar.gz"
-
-#eaccelerator设置
-eaccelerator_filename="eaccelerator-0.9.6.1"
-eaccelerator_baidupan_link="http://pan.baidu.com/share/link?shareid=1316409636&uk=2838537799&third=15"
-eaccelerator_official_link="http://cloud.github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1.tar.bz2"
-
-#php-memcache设置
-php_memcache_filename="memcache-3.0.8"
-php_memcache_baidupan_link="http://pan.baidu.com/share/link?shareid=1752960571&uk=2838537799&third=15"
-php_memcache_official_link="http://pecl.php.net/get/memcache-3.0.8.tgz"
-
-#ImageMagick设置
-ImageMagick_filename="ImageMagick-6.8.6-5"
-ImageMagick_baidupan_link="http://pan.baidu.com/share/link?shareid=401070873&uk=2838537799&third=15"
-ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.6-5.tar.gz"
-
-#pkgconfig设置
-pkgconfig_filename="pkgconfig-0.18"
-pkgconfig_baidupan_link="http://pan.baidu.com/share/link?shareid=2837134067&uk=2838537799&third=15"
-pkgconfig_official_link="http://pkgconfig.freedesktop.org/releases/pkgconfig-0.18.tar.gz"
-
-php_imagemagick_filename="imagick-3.0.1"
-php_imagemagick_baidupan_link="http://pan.baidu.com/share/link?shareid=837045566&uk=2838537799&third=15"
-php_imagemagick_official_link="http://pecl.php.net/get/imagick-3.0.1.tgz"
-
-
-#ionCube设置
-ionCube_filename="ioncube_loaders"
-
-ionCube32_filename="ioncube_loaders_lin_x86"
-ionCube32_baidupan_link="http://pan.baidu.com/share/link?shareid=989013381&uk=2838537799&third=15"
-ionCube32_official_link="http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz"
-
-ionCube64_filename="ioncube_loaders_lin_x86-64"
-ionCube64_baidupan_link="http://pan.baidu.com/share/link?shareid=1007373690&uk=2838537799&third=15"
-ionCube64_official_link="http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz"
-
-#ZendGuardLoader设置
-ZendGuardLoader_filename="ZendGuardLoader"
-
-ZendGuardLoader53_32_filename="ZendGuardLoader-php-5.3-linux-glibc23-i386"
-ZendGuardLoader53_32_baidupan_link="http://pan.baidu.com/share/link?shareid=3534841060&uk=2838537799&third=15"
-ZendGuardLoader53_32_official_link="http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz"
-
-ZendGuardLoader54_32_filename="ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386"
-ZendGuardLoader54_32_baidupan_link="http://pan.baidu.com/share/link?shareid=3542830789&uk=2838537799&third=15"
-ZendGuardLoader54_32_official_link="http://downloads.zend.com/guard/6.0.0/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386.tar.gz"
-
-ZendGuardLoader53_64_filename="ZendGuardLoader-php-5.3-linux-glibc23-x86_64"
-ZendGuardLoader53_64_baidupan_link="http://pan.baidu.com/share/link?shareid=3501254529&uk=2838537799&third=15"
-ZendGuardLoader53_64_official_link="http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz"
-
-ZendGuardLoader54_64_filename="ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64"
-ZendGuardLoader54_64_baidupan_link="http://pan.baidu.com/share/link?shareid=3522610476&uk=2838537799&third=15"
-ZendGuardLoader54_64_official_link="http://downloads.zend.com/guard/6.0.0/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz"
-
-#memcached设置
-memcached_filename="memcached-1.4.15"
-memcached_baidupan_link="http://pan.baidu.com/share/link?shareid=1899827576&uk=2838537799&third=15"
-memcached_official_link="http://memcached.googlecode.com/files/memcached-1.4.15.tar.gz"
-
-#phpMyAdmin设置
-phpMyAdmin_filename="phpMyAdmin-4.0.4-all-languages"
-phpMyAdmin_baidupan_link="http://pan.baidu.com/share/link?shareid=3887308416&uk=2838537799&third=15"
-phpMyAdmin_official_link="http://jaist.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4/phpMyAdmin-4.0.4-all-languages.tar.gz"
-
-#PureFTPd设置
-PureFTPd_filename="pure-ftpd-1.0.36"
-PureFTPd_baidupan_link="http://pan.baidu.com/share/link?shareid=3925080092&uk=2838537799&third=15"
-PureFTPd_official_link="http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz"
-
-######################依赖包设置######################
-
-#cmake设置
-cmake_filename="cmake-2.8.11.1"
-cmake_baidupan_link="http://pan.baidu.com/share/link?shareid=657163749&uk=2838537799&third=15"
-cmake_official_link="http://www.cmake.org/files/v2.8/cmake-2.8.11.1.tar.gz"
-
-#ncurses设置(保持5.8版本)
-ncurses_filename="ncurses-5.8"
-ncurses_baidupan_link="http://pan.baidu.com/share/link?shareid=2877332491&uk=2838537799&third=15"
-ncurses_official_link="http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.8.tar.gz"
-
-#ncurses设置(保持5.5版本,用于mysql5.1的安装)
-ncurses_filename2="ncurses-5.5"
-ncurses_baidupan_link2="http://pan.baidu.com/share/link?shareid=3804500048&uk=2838537799&third=15"
-ncurses_official_link2="http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.5.tar.gz"
-
-#bison设置
-bison_filename="bison-2.7"
-bison_baidupan_link="http://pan.baidu.com/share/link?shareid=3771081101&uk=2838537799&third=15"
-bison_official_link="http://ftp.gnu.org/gnu/bison/bison-2.7.tar.gz"
-
-#patch设置
-patch_filename="patch-2.7"
-patch_baidupan_link="http://pan.baidu.com/share/link?shareid=3744533452&uk=2838537799&third=15"
-patch_official_link="http://ftp.gnu.org/gnu/patch/patch-2.7.tar.gz"
-
-#autoconf设置(保持2.59版本)
-autoconf_filename="autoconf-2.59"
-autoconf_baidupan_link="http://pan.baidu.com/share/link?shareid=1461459821&uk=2838537799&third=15"
-autoconf_official_link="http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.gz"
-
-#libxml2设置(保持2-2.8.0版本)
-libxml2_filename="libxml2-2.8.0"
-libxml2_baidupan_link="http://pan.baidu.com/share/link?shareid=3268003354&uk=2838537799&third=15"
-libxml2_official_link="ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz"
-
-#openssl设置
-openssl_filename="openssl-1.0.1e"
-openssl_baidupan_link="http://pan.baidu.com/share/link?shareid=765812287&uk=2838537799&third=15"
-openssl_official_link="http://www.openssl.org/source/openssl-1.0.1e.tar.gz"
-
-#zlib设置
-zlib_filename="zlib-1.2.8"
-zlib_baidupan_link="http://pan.baidu.com/share/link?shareid=841256997&uk=2838537799&third=15"
-zlib_official_link="http://zlib.net/zlib-1.2.8.tar.gz"
-
-#libcurl设置
-libcurl_filename="curl-7.30.0"
-libcurl_baidupan_link="http://pan.baidu.com/share/link?shareid=1842864386&uk=2838537799&third=15"
-libcurl_official_link="http://curl.haxx.se/download/curl-7.30.0.tar.gz"
-
-#pcre设置
-pcre_filename="pcre-8.33"
-pcre_baidupan_link="http://pan.baidu.com/share/link?shareid=739414637&uk=2838537799&third=15"
-pcre_official_link="http://jaist.dl.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz"
-
-#libtool设置
-libtool_filename="libtool-2.4"
-libtool_baidupan_link="http://pan.baidu.com/share/link?shareid=2957325732&uk=2838537799&third=15"
-libtool_official_link="http://mirrors.kernel.org/gnu/libtool/libtool-2.4.tar.gz"
-
-#libjpeg设置
-libjpeg_filename="jpeg-6b"
-libjpeg_baidupan_link="http://pan.baidu.com/share/link?shareid=1956522322&uk=2838537799&third=15"
-libjpeg_official_link="http://hivelocity.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz"
-
-#libpng设置
-libpng_filename="libpng-1.4.12"
-libpng_baidupan_link="http://pan.baidu.com/share/link?shareid=2028199673&uk=2838537799&third=15"
-libpng_official_link="http://superb-dca3.dl.sourceforge.net/project/libpng/libpng14/1.4.12/libpng-1.4.12.tar.gz"
-
-#mhash设置
-mhash_filename="mhash-0.9.9.9"
-mhash_baidupan_link="http://pan.baidu.com/share/link?shareid=2619814820&uk=2838537799&third=15"
-mhash_official_link="http://hivelocity.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz"
-
-#libmcrypt设置
-libmcrypt_filename="libmcrypt-2.5.8"
-libmcrypt_baidupan_link="http://pan.baidu.com/share/link?shareid=2604609470&uk=2838537799&third=15"
-libmcrypt_official_link="http://hivelocity.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz"
-
-#m4设置
-m4_filename="m4-1.4.16"
-m4_baidupan_link="http://pan.baidu.com/share/link?shareid=1609776756&uk=2838537799&third=15"
-m4_official_link="http://ftp.gnu.org/gnu/m4/m4-1.4.16.tar.gz"
-
-#libevent设置
-libevent_filename="libevent-2.0.21-stable"
-libevent_baidupan_link="http://pan.baidu.com/share/link?shareid=1929410696&uk=2838537799&third=15"
-libevent_official_link="http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz"
-
-#apr设置
-apr_filename="apr-1.4.8"
-apr_baidupan_link="http://pan.baidu.com/share/link?shareid=1875122299&uk=2838537799&third=15"
-apr_official_link="http://apache.fayea.com/apache-mirror/apr/apr-1.4.8.tar.gz"
-
-#apr-util设置
-apr_util_filename="apr-util-1.5.2"
-apr_util_baidupan_link="http://pan.baidu.com/share/link?shareid=1871396065&uk=2838537799&third=15"
-apr_util_official_link="http://apache.fayea.com/apache-mirror/apr/apr-util-1.5.2.tar.gz"
+#下载软件
+download_file(){
+local url1=$1
+local url2=$2
+local filename=$3
+if [ -s "${cur_dir}/soft/${filename}" ];then
+	#check_md5 "$filename"
+	echo "${filename} is existed."
+else
+	[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
+	cd ${cur_dir}/soft
+	choose_url_download "$url1" "$url2" "$filename"
+fi
+}
 
 
-########################其它设置########################
+#选择最优下载url
+choose_url_download()
+{
+local url1=$1
+local url2=$2
+local filename=$3
+echo "try to parse baidu network disk download url..."
+local url1=`get_baidupan_url $url1`
+echo "baidu download url is $url1"
+if [ "$url1" == "" ];then
+	echo "failed to parse baidu network disk,use url $url2 to download.."
+	url=$url2
+else
+	echo "testing Baidu network disk url download speed..."
+	speed1=`curl -m 5 -L -s -w '%{speed_download}' "$url1" -o /dev/null`
+	echo "Baidu network disk url download speed is $speed1"
+	echo "testing Official url download speed..."
+	speed2=`curl -m 5 -L -s -w '%{speed_download}' "$url2" -o /dev/null`
+	echo "Official url download speed is $speed2"
+	speed1=${speed1%%.*}
+	speed2=${speed2%%.*}
+	if [ $speed1 -gt $speed2 ];then
+		url=$url1
+	else
+		url=$url2
+	fi
+	echo "use the url $url to download $filename.."
+fi
+sleep 1
+#开始下载
+wget -c --tries=3 ${url} -O $filename
+[ $? != 0 ] && echo "fail to download $filename,exited." && exit 1
+#check_md5 "$filename"
+}
 
-#各软件菜单设置
-nginx_arr=(${nginx_filename} ${tengine_filename} ${openresty_filename} do_not_install)
-apache_arr=(${apache2_2_filename} ${apache2_4_filename} do_not_install)
-mysql_arr=(${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 do_not_install)
-php_arr=(${php5_2_filename} ${php5_3_filename} ${php5_4_filename} do_not_install)
-php_mode_arr=(with_apache  with_fastcgi)
-php_modules_arr=(${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} do_not_install)
-other_soft_arr=(${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} do_not_install)
+#获取百度网盘下载地址
+get_baidupan_url(){
+local url=$1
+baidu_url="`wget -q  -O - "${url}" | sed -n 's#.*\(http:\\\\\\\\/\\\\\\\\/d\.pcs\.baidu\.com[^"]*\)".*#\1#;s#\\\\\\\\##g;s/\\\\//p' | sed -n '1p'`"
+echo $baidu_url
+}
 
-#依赖包安装路径
-depends_prefix=/opt/ezhttp
+#检查软件md5
+check_md5(){
+local filename=$1
+cd ${cur_dir}/soft
+grep "$filename" ${cur_dir}/conf/md5.txt | sed 's/\r//g' | md5sum -c -
+[ $? != 0 ] && echo "$filename md5 check failed,may be the file is modified or incompleted,please redownload it, exited." && exit 1
+}
+
+#判断命令是否存在
+check_command_exist(){
+local command=$1
+if ! which $command > /dev/null;then
+	echo "$command not found,please install it."
+	exit 1
+fi
+}
+
+#安装编译工具
+install_tool(){ 
+cat /proc/version | grep -q -E -i "ubuntu|debian"  && apt-get -y update && apt-get -y install gcc g++ make wget perl curl
+cat /proc/version | grep -q -E -i "centos|read hat|redhat"  && yum -y install gcc gcc-c++ make wget perl  curl
+
+check_command_exist "gcc"
+check_command_exist "g++"
+check_command_exist "make"
+check_command_exist "wget"
+check_command_exist "perl"
+}
+
+#判断系统版本
+check_sys_version(){
+cat /proc/version | grep -q -E -i "ubuntu|debian"  && echo "debian"
+cat /proc/version | grep -q -E -i "centos|read hat|redhat"  && echo "centos"
+}
+
+#支持包管理工具安装依赖的系统
+package_support(){
+cat /proc/version | grep -q -E -i "ubuntu|debian"  && echo 1
+cat /proc/version | grep -q -E -i "centos|read hat|redhat"  && echo 1
+}
+
+#安装cmake
+install_cmake(){
+download_file "${cmake_baidupan_link}" "${cmake_official_link}" "${cmake_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${cmake_filename}.tar.gz
+cd ${cmake_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${cmake_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${cmake_filename}"
+}
+
+#安装ncurses
+install_ncurses(){
+if [ "$mysql" == "${mysql5_1_filename}" ];then
+	download_file "${ncurses_baidupan_link2}" "${ncurses_official_link2}" "${ncurses_filename2}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${ncurses_filename2}.tar.gz
+	cd ${ncurses_filename2}
+	make clean
+	error_detect "./configure --prefix=${depends_prefix}/${ncurses_filename2} --with-shared"
+	error_detect "parallel_make"
+	error_detect "make install"
+	add_to_env "${depends_prefix}/${ncurses_filename2}"
+else
+	download_file "${ncurses_baidupan_link}" "${ncurses_official_link}" "${ncurses_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${ncurses_filename}.tar.gz
+	cd ${ncurses_filename}
+	make clean
+	error_detect "./configure --prefix=${depends_prefix}/${ncurses_filename} --with-shared"
+	error_detect "parallel_make"
+	error_detect "make install"
+	add_to_env "${depends_prefix}/${ncurses_filename}"	
+fi	
+}
+
+#安装bison
+install_bison(){
+download_file "${bison_baidupan_link}" "${bison_official_link}" "${bison_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${bison_filename}.tar.gz
+cd ${bison_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${bison_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${bison_filename}"
+}
+
+#安装patch
+install_patch(){
+download_file "${patch_baidupan_link}" "${patch_official_link}" "${patch_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${patch_filename}.tar.gz
+cd ${patch_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${patch_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${patch_filename}"
+}
+
+#安装autoconf
+install_autoconf(){
+download_file "${autoconf_baidupan_link}" "${autoconf_official_link}" "${autoconf_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${autoconf_filename}.tar.gz
+cd ${autoconf_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${autoconf_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${autoconf_filename}"
+}
+
+#安装libxml2
+install_libxml2(){
+download_file "${libxml2_baidupan_link}" "${libxml2_official_link}" "${libxml2_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libxml2_filename}.tar.gz
+cd ${libxml2_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${libxml2_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${libxml2_filename}"
+}
+
+#安装openssl
+install_openssl(){
+download_file "${openssl_baidupan_link}" "${openssl_official_link}" "${openssl_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${openssl_filename}.tar.gz
+cd ${openssl_filename}
+make clean
+error_detect "./config --prefix=${depends_prefix}/${openssl_filename} shared threads"
+#并行编译可能会出错
+error_detect "make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${openssl_filename}"
+}
+
+#安装zlib
+install_zlib(){
+download_file "${zlib_baidupan_link}" "${zlib_official_link}" "${zlib_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${zlib_filename}.tar.gz
+cd ${zlib_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${zlib_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${zlib_filename}"
+}
+
+#安装libcurl
+install_curl(){
+download_file "${libcurl_baidupan_link}" "${libcurl_official_link}" "${libcurl_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libcurl_filename}.tar.gz
+cd ${libcurl_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${libcurl_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${libcurl_filename}"
+}
+
+#安装pcre
+install_pcre(){
+download_file "${pcre_baidupan_link}" "${pcre_official_link}" "${pcre_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${pcre_filename}.tar.gz
+cd ${pcre_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${pcre_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${pcre_filename}"
+}
+
+
+#安装libtool
+install_libtool(){
+download_file "${libtool_baidupan_link}" "${libtool_official_link}" "${libtool_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libtool_filename}.tar.gz
+cd ${libtool_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${libtool_filename} --enable-ltdl-install"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${libtool_filename}"
+}
+
+#安装libjpeg
+install_libjpeg(){
+download_file "${libjpeg_baidupan_link}" "${libjpeg_official_link}" "${libjpeg_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libjpeg_filename}.tar.gz
+cd ${libjpeg_filename}
+make clean
+\cp ${depends_prefix}/${libtool_filename}/share/libtool/config/config.sub ./
+\cp ${depends_prefix}/${libtool_filename}/share/libtool/config/config.guess ./
+error_detect "./configure --prefix=${depends_prefix}/${libjpeg_filename} --enable-shared --enable-static"
+mkdir -p ${depends_prefix}/${libjpeg_filename}/include/ ${depends_prefix}/${libjpeg_filename}/lib/ ${depends_prefix}/${libjpeg_filename}/bin/ ${depends_prefix}/${libjpeg_filename}/man/man1/
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${libjpeg_filename}"
+}
+
+#安装libpng
+install_libpng(){
+download_file "${libpng_baidupan_link}" "${libpng_official_link}" "${libpng_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libpng_filename}.tar.gz
+cd ${libpng_filename}
+make clean
+export LDFLAGS="-L${depends_prefix}/${zlib_filename}/lib"
+export CPPFLAGS="-I${depends_prefix}/${zlib_filename}/include"
+error_detect "./configure --prefix=${depends_prefix}/${libpng_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+unset LDFLAGS CPPFLAGS
+add_to_env "${depends_prefix}/${libpng_filename}"
+}
+
+
+#安装mhash
+install_mhash(){
+download_file "${mhash_baidupan_link}" "${mhash_official_link}" "${mhash_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${mhash_filename}.tar.gz
+cd ${mhash_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${mhash_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${mhash_filename}"
+}
+
+#安装libmcrypt
+install_libmcrypt(){
+download_file "${libmcrypt_baidupan_link}" "${libmcrypt_official_link}" "${libmcrypt_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libmcrypt_filename}.tar.gz
+cd ${libmcrypt_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${libmcrypt_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${libmcrypt_filename}"
+}
+
+#安装m4
+install_m4(){
+download_file "${m4_baidupan_link}" "${m4_official_link}" "${m4_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${m4_filename}.tar.gz
+cd ${m4_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${m4_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${m4_filename}"
+}
+
+#安装ImageMagick
+install_ImageMagick(){
+download_file "${ImageMagick_baidupan_link}" "${ImageMagick_official_link}" "${ImageMagick_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${ImageMagick_filename}.tar.gz
+cd ${ImageMagick_filename}
+error_detect "./configure --prefix=${depends_prefix}/${ImageMagick_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+#修复php-ImageMagick找不到MagickWand.h的问题
+cd ${depends_prefix}/${ImageMagick_filename}/include
+ln -s ImageMagick-6 ImageMagick
+add_to_env "${depends_prefix}/${ImageMagick_filename}"
+}
+
+#安装pkgconfig
+install_pkgconfig(){
+download_file "${pkgconfig_baidupan_link}" "${pkgconfig_official_link}" "${pkgconfig_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${pkgconfig_filename}.tar.gz
+cd ${pkgconfig_filename}
+error_detect "./configure --prefix=${depends_prefix}/${pkgconfig_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${pkgconfig_filename}"
+}
+
+#添加必要的环境变量
+add_to_env(){
+local location=$1
+cd ${location} && [ ! -d lib ] && [ -d lib64 ] && ln -s lib64 lib
+[ -d "${location}/lib" ] && export LD_LIBRARY_PATH=${location}/lib:$LD_LIBRARY_PATH
+[ -d "${location}/bin" ] &&	export PATH=${location}/bin:$PATH
+}
+
+#测试元素是否在数组里
+if_in_array(){
+local element=$1
+local array=$2
+for i in $array
+do
+	if [ "$i" == "$element" ];then
+		return 0
+	fi
+done
+return 1
+}
+
+#判断php版本
+check_php_version(){
+local location=$1
+$location/bin/php -v | grep -q -i -E "php[ ]+5\.2" && echo "5.2"
+$location/bin/php -v | grep -q -i -E "php[ ]+5\.3" && echo "5.3"
+$location/bin/php -v | grep -q -i -E "php[ ]+5\.4" && echo "5.4"
+}
+
+
+#安装libevent
+install_libevent(){
+download_file "${libevent_baidupan_link}" "${libevent_official_link}" "${libevent_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libevent_filename}.tar.gz
+cd ${libevent_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${libevent_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${libevent_filename}"
+}
+
+#检测是否安装，存在就不安装了
+check_installed(){
+local command=$1
+local location=$2
+if [ -d "$location" ];then
+	echo "$location found,skip the installation."
+	add_to_env "$location"
+else
+	${command}
+fi
+}
+
+#检测是否安装,带确认对话
+check_installed_ask(){
+local command=$1
+local location=$2
+if [ -d "$location" ];then
+	while true
+	do
+		read -p "directory $location found,may be the software had installed,remove it and reinstall it? [y/N]" cover
+		cover="`upcase_to_lowcase $cover`"
+		case $cover in
+		y) rm -rf $location && ${command} ; break;;
+		n) echo "do not reinstall this software." ; break;;
+		*) echo "input error." 
+		esac
+	done
+else
+	${command}
+fi
+}
+
+#发行版判断
+ReleaseCheck(){
+	local release=$1
+	cat /proc/version | grep -q  -i "$release"  && return 0 || return 1
+	cat /proc/version | grep -q  -i "$release"  && return 0 || return 1
+}
+
+#获取版本号
+VersionGet(){
+	grep -oE  "[0-9.]+" /etc/issue
+}
+
+#判断centos版本
+CentOSVerCheck(){
+	local code=$1
+	local version="`VersionGet`"
+	local main_ver=${version%.*}
+	if [ $main_ver == $code ];then
+		return 0
+	else
+		return 1
+	fi		
+}
+
+#安装php依赖
+install_php_depends(){
+	#安装依赖
+	if [ "`check_sys_version`" == "debian" ];then
+		apt-get -y install m4 autoconf libcurl4-gnutls-dev  autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libmhash-dev libmcrypt-dev libssl-dev
+		create_lib_link "libjpeg.so"
+		create_lib_link "libpng.so"
+		create_lib_link "libltdl.so"
+	elif [ "`check_sys_version`" == "centos" ];then
+		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel mhash-devel libmcrypt-devel
+		create_lib_link "libjpeg.so"
+		create_lib_link "libpng.so"
+		create_lib_link "libltdl.so"
+		#解决centos 6 libmcrypt不在在的问题
+		if CentOSVerCheck 6;then
+			if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.x86_64.rpm
+				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.x86_64.rpm
+			else
+				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.i686.rpm
+				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.i686.rpm
+			fi	
+		fi			
+	else
+		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
+		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
+		check_installed "install_libxml2" "${depends_prefix}/${libxml2_filename}"
+		check_installed "install_openssl" "${depends_prefix}/${openssl_filename}"
+		check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
+		check_installed "install_curl" "${depends_prefix}/${libcurl_filename}"
+		check_installed "install_pcre" "${depends_prefix}/${pcre_filename}"
+		check_installed "install_libtool" "${depends_prefix}/${libtool_filename}"
+		check_installed "install_libjpeg" "${depends_prefix}/${libjpeg_filename}"
+		check_installed "install_libpng" "${depends_prefix}/${libpng_filename}"
+		check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
+		check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
+	fi
+
+}
+
+#在/usr/lib创建库文件的链接
+create_lib_link(){
+	updatedb
+	local lib=$1
+	local libpath="`locate $lib | sed -n 1p`"
+	[ $libpath != "" ] && [ ! -s "/usr/lib/$lib" ]&& ln -s $libpath /usr/lib/$lib
+}
+
+#显示菜单
+display_menu(){
+local soft=$1
+local prompt="which ${soft} you'd install: "
+eval arr=(\${${soft}_arr[@]})
+while true
+do
+	echo -e "#################### ${soft} setting ####################\n\n"
+	for ((i=1;i<=${#arr[@]};i++ )); do echo -e "$i) ${arr[$i-1]}"; done
+	echo
+	read -p "${prompt}" $soft
+	if [ "${arr[$soft-1]}" == ""  ];then
+		prompt="input errors,please input a number: "
+	else
+		eval $soft=${arr[$soft-1]}
+		eval echo "your selection: \$$soft"             
+		break
+	fi
+done
+}

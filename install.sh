@@ -222,7 +222,7 @@ if [ "$mysql" == "${mysql5_1_filename}" ];then
 	else
 		other_option="--with-named-curses-libs=${depends_prefix}/${ncurses_filename2}/lib/libncurses.a"
 	fi	
-	error_detect "./configure --prefix=${mysql_location} --sysconfdir=${mysql_location}/etc --with-charset=utf8 --with-collation=utf8_general_ci --with-extra-charsets=complex --with-plugins=max --with-mysqld-ldflags=-all-static --enable-assembler $other_option"
+	error_detect "./configure --prefix=${mysql_location} --sysconfdir=${mysql_location}/etc --with-unix-socket-path=/tmp/mysql.sock --with-charset=utf8 --with-collation=utf8_general_ci --with-extra-charsets=complex --with-plugins=max --with-mysqld-ldflags=-all-static --enable-assembler $other_option"
 	error_detect "parallel_make"
 	error_detect "make install"
 	config_mysql 5.1
@@ -251,7 +251,7 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 	else
 		other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 	fi		
-	error_detect "cmake -DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+	error_detect "cmake -DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 	#为只编译client作处理
 	if [ "$mysql" == "libmysqlclient18" ];then
 		error_detect "make mysqlclient libmysql"
@@ -288,7 +288,7 @@ elif [ "$mysql" == "${mysql5_6_filename}" ];then
 	else
 		other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 	fi	
-	error_detect "cmake -DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+	error_detect "cmake -DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 	error_detect "parallel_make"
 	error_detect "make install"
 	config_mysql 5.6
@@ -327,7 +327,6 @@ elif [ $version == "5.6" ];then
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	echo -e "\n[client]\nsocket = /var/lib/mysql/mysql.sock" >> ${mysql_location}/etc/my.cnf
 	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --user=mysql
 
 fi

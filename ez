@@ -327,10 +327,10 @@ fi
 ftp_user(){
 	local action=$1
 	case $action in
-		add ) ftp_user_add;break;;
-		list ) ftp_user_list;break;;
-		del ) ftp_user_del;break;;
-		mod ) ftp_user_mod;break;;
+		add ) ftp_user_add;;
+		list ) ftp_user_list;;
+		del ) ftp_user_del;;
+		mod ) ftp_user_mod;;
 		*) echo "action $action not found";exit 1;;
 	esac	
 

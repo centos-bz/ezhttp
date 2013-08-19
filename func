@@ -129,7 +129,7 @@ wget -c --tries=3 ${url} -O $filename
 #获取百度网盘下载地址
 get_baidupan_url(){
 local url=$1
-baidu_url="`wget -q  -O - "${url}" | sed -n 's#.*\(http:\\\\\\\\/\\\\\\\\/d\.pcs\.baidu\.com[^"]*\)".*#\1#;s#\\\\\\\\##g;s/\\\\//p' | sed -n '1p'`"
+baidu_url="`wget --tries=2 -q  -O - "${url}" | sed -n 's#.*\(http:\\\\\\\\/\\\\\\\\/d\.pcs\.baidu\.com[^"]*\)".*#\1#;s#\\\\\\\\##g;s/\\\\//p' | sed -n '1p'`"
 echo $baidu_url
 }
 

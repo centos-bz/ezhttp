@@ -24,7 +24,9 @@ done
 uninstall(){
 	if [ ! -s "/tmp/ezhttp_info_do_not_del" ];then
 		echo "/tmp/ezhttp_info_do_not_del not found,uninstall failed."
+		exit 1
 	fi
+	. /tmp/ezhttp_info_do_not_del
 	[ $depends_prefix != "" ] && echo "removing depends components.." && rm -rf "$depends_prefix" && echo "Sucess" | echo "failed."
 	[ $nginx_location != "" ] && echo "uninstalling nginx" && rm -rf "$nginx_location"  && echo "Sucess" | echo "failed."
 	[ $apache_location != "" ] && echo "uninstalling apache" && rm -rf "$apache_location"  && echo "Sucess" | echo "failed."

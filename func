@@ -90,6 +90,14 @@ else
 fi
 }
 
+#判断64位系统
+is_64bit(){
+	if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+		return 0
+	else
+		return 1
+	fi		
+}
 
 #选择最优下载url
 choose_url_download()
@@ -537,11 +545,13 @@ install_php_depends(){
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
+		create_lib_link "libmcrypt.so"
 	elif [ "`check_sys_version`" == "centos" ];then
 		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel mhash-devel libmcrypt-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
+		create_lib_link "libmcrypt.so"
 		#解决centos 6 libmcrypt不在在的问题
 		if CentOSVerCheck 6;then
 			if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
@@ -571,10 +581,11 @@ install_php_depends(){
 
 #在/usr/lib创建库文件的链接
 create_lib_link(){
-	updatedb
 	local lib=$1
-	local libpath="`locate $lib | sed -n 1p`"
-	[ $libpath != "" ] && [ ! -s "/usr/lib/$lib" ]&& ln -s $libpath /usr/lib/$lib
+	if is_64bit;then
+		[ ! -s "/usr/lib64/$lib" ] && [ -s "/usr/lib/$lib" ] && ln -s /usr/lib/${lib}  /usr/lib64/${lib} 
+		[ ! -s "/usr/lib/$lib" ] && [ -s "/usr/lib64/$lib" ] && ln -s /usr/lib64/${lib} /usr/lib/${lib} 
+	fi
 }
 
 #显示菜单

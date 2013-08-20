@@ -345,6 +345,15 @@ install_php_depends
 #判断是否需要支持php mysql，否则取消php的--with-mysql编译参数
 [ "$mysql" == "do_not_install" ] && [ "$mysql_location" == "" ] && unset with_mysql || with_mysql="--with-mysql=$mysql_location --with-mysqli=$mysql_location/bin/mysql_config --with-pdo-mysql=$mysql_location/bin/mysql_config"
 
+#判断是64系统就加上--with-libdir=lib64  
+is_64bit && lib64="--with-libdir=lib64" || lib64=""
+
+#解决64位php可能无法找到mysql lib库
+if [ "$with_mysql" != "" ];then
+	is_64bit && [ ! -d "${mysql_location}/lib64" ] && cd ${mysql_location} && ln -s lib lib64
+fi	
+
+
 if [ "$php" == "${php5_2_filename}" ];then
 	#安装依赖
 	if [ "`check_sys_version`" == "debian" ];then
@@ -376,7 +385,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	else
 		other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
-	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear"
+	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64"
 	if grep -q -i "Ubuntu 12.04" /etc/issue;then
 		#解决SSL_PROTOCOL_SSLV2’ undeclared问题
 		cd ext/openssl/
@@ -408,7 +417,7 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear $lib64"
 	error_detect "parallel_make"
 	error_detect "make install"	
 	
@@ -434,14 +443,14 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear $lib64"
 	error_detect "parallel_make"
 	error_detect "make install"	
 	
 	#配置php
 	mkdir -p ${php_location}/etc
 	cp php.ini-production $php_location/etc/php.ini	
-	cp $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
+	[ "$php_mode" == "with_fastcgi" ] && cp $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 fi
 #记录php安装位置
 echo "php_location=$php_location" >> /tmp/ezhttp_info_do_not_del
@@ -491,7 +500,7 @@ install_ZendOptimizer()
 {
 local php_prefix=$1	
 #如果是64位系统
-if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+if is_64bit ; then
 	download_file "${ZendOptimizer64_baidupan_link}" "${ZendOptimizer64_official_link}" "${ZendOptimizer64_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ZendOptimizer64_filename}.tar.gz
@@ -611,7 +620,7 @@ error_detect "make install"
 #安装ionCube
 install_ionCube(){
 local php_prefix=$1
-if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+if is_64bit ; then
 	download_file "${ionCube64_baidupan_link}" "${ionCube64_official_link}" "${ionCube64_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube64_filename}.tar.gz
@@ -633,7 +642,7 @@ fi
 install_ZendGuardLoader(){
 local php_prefix=$1
 php_version=`check_php_version "$php_prefix"`
-if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+if is_64bit ; then
 	if [ "$php_version" == "5.3" ];then
 		download_file "${ZendGuardLoader53_64_baidupan_link}" "${ZendGuardLoader53_64_official_link}" "${ZendGuardLoader53_64_filename}.tar.gz"
 		cd $cur_dir/soft/

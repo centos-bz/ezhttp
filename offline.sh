@@ -205,9 +205,9 @@ fi
 
 #开始打包
 cd $cur_dir
-if [[ -s soft.tar.gz ]];then
-	echo "file soft.tar.gz had already exsit,please rename or remove."
+if [[ -s ezhttp_offline.tar.gz ]];then
+	echo "file ezhttp_offline.tar.gz had already exsit,please rename or remove."
 	exit 1 
 else	
-	tar czvf soft.tar.gz soft && echo "offline package has sucessfully made."
+	tar czvf ezhttp_offline.tar.gz * && echo "offline package has sucessfully made."
 fi	 

@@ -947,8 +947,10 @@ if [ "$other_soft_install" != "do_not_install" ];then
 	fi	
 
 	if if_in_array "${phpMyAdmin_filename}" "$other_soft_install";then
-		read -p "input $phpMyAdmin_filename location(default:$nginx_location/html/phpmyadmin): " phpmyadmin_location
-		phpmyadmin_location=${phpmyadmin_location:=$nginx_location/html/phpmyadmin}
+		[ "php_mode" == "with_apache" ] && default_location="$apache_location/htdocs/phpmyadmin"
+		[ "php_mode" == "with_fastcgi" ] && default_location="$nginx_location/html/phpmyadmin"
+		read -p "input $phpMyAdmin_filename location(default:$default_location): " phpmyadmin_location
+		phpmyadmin_location=${phpmyadmin_location:=$default_location}
 		echo "phpmyadmin location: $phpmyadmin_location"
 	fi	
 fi

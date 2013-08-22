@@ -746,16 +746,8 @@ echo "pureftpd_location=$pureftpd_location" >> /tmp/ezhttp_info_do_not_del
 #提示是否使用上一次的设置
 if_use_previous_setting(){
 if [ -s "/root/previous_setting.sh" ];then
-	while true
-	do
-		read -p "previous settings found,would you like using the  previous settings from the file /root/previous_setting.sh? [y/N]? " previous
-		previous="`upcase_to_lowcase $previous`"
-		case $previous in
-		y) . /root/previous_setting.sh ; break;;
-		n) advanced_setting ; break;;
-		*) echo "input error";;
-		esac
-	done
+	#是否使用上次设置安装
+	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting.sh" ". /root/previous_setting.sh" "advanced_setting"
 else
 	advanced_setting
 fi
@@ -886,16 +878,7 @@ if [ "$php" != "do_not_install" ];then
 	
 	#当选择不安装mysql server时，询问是否让php支持mysql
 	if [ "$mysql" == "do_not_install" ];then
-		while true
-		do
-			read -p "you do_not_install mysql server,but whether make php support mysql? [y/N]" support_mysql
-			support_mysql="`upcase_to_lowcase $support_mysql`"
-			case $support_mysql in
-			y) read -p "set mysql server location: " mysql_location ; break;;
-			n) unset mysql_location ; echo "do not make php support mysql." ; break;;
-			*) echo "input error." 
-			esac
-		done
+		yes_or_no "you do_not_install mysql server,but whether make php support mysql" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'"
 	fi
 fi
 
@@ -1026,16 +1009,8 @@ if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && echo "phpmyadmin_l
 echo
 echo "##############################################################"
 echo
-while true
-do
-	read -p "Are you ready to configure your Linux? [y/N]: " ready
-	ready="`upcase_to_lowcase $ready`"
-	case $ready in
-	n) clear ; pre_setting ; break;;
-	y) echo "start to configure linux..." ; break;;
-	*) echo "input error."
-	esac
-done
+#最终确认是否安装
+yes_or_no "Are you ready to configure your Linux" "echo 'start to configure linux...'" "clear ; pre_setting"
 }
 
 #完成后的一些配置

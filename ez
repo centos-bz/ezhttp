@@ -8,20 +8,20 @@ export PATH
 #   website: http://www.centos.bz/ezhttp/
 #===============================================================================
 
-if [ $# != 2 ];then
-	echo "Usage: lx program_name action"
-	exit 1
-fi
-
-#使read能支持回格删除
-stty erase "^H"
-
-#引入各软件安装路径
-. /tmp/ezhttp_info_do_not_del
-
-#接收脚本传参
-proname=$1
-action=$2
+yes_or_no(){
+local prompt=$1
+local yaction=$2
+local naction=$3
+while true; do
+	read -p "${prompt}?[Y/n]: " yn
+	yn=`upcase_to_lowcase $yn`
+	case $yn in
+		y ) eval "$yaction";break;;
+		n ) eval "$naction";break;;
+		* ) echo "input error,please only input y or n."
+	esac
+done
+}
 
 nginx_vhost(){
 local action=$1
@@ -31,6 +31,10 @@ case $action in
 	del ) nginx_vhost_del;;
 	*) echo "action $action not found";exit 1;;
 esac
+}
+
+php_support(){
+	php_support_code="location ~ \\\.php$ {\n		fastcgi_pass   127.0.0.1:9000;\n		fastcgi_index  index.php;\n		fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;\n		include        fastcgi_params;\n	}"
 }
 
 nginx_vhost_add(){
@@ -51,27 +55,10 @@ default_root="/home/${server_names%% *}"
 read -p "input website root(default:$default_root/web): " website_root
 website_root=${website_root:=$default_root}
 #是否添加重写规则
-while true; do
-	read -p "add nginx rewrite rule? [Y/n]: " add_rule
-	add_rule=${add_rule:0:1}
-	add_rule=`upcase_to_lowcase $add_rule`
-	case "$add_rule" in
-		y )	select_rewrite_rule;break;;
-		n )	rewrite_rule="";break;;
-		*) echo "input error,please only input y or n." ;;
-	esac
-done
+yes_or_no "add nginx rewrite rule" "select_rewrite_rule" "rewrite_rule="""
+
 #是否支持php
-while true; do
-	read -p "enable php support? [Y/n]: " php_support
-	php_support=${php_support:0:1}
-	php_support=`upcase_to_lowcase $php_support`
-	case "$php_support" in
-		y )	php_support_code="location ~ \\\.php$ {\n		fastcgi_pass   127.0.0.1:9000;\n		fastcgi_index  index.php;\n		fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;\n		include        fastcgi_params;\n	}";break	;;
-		n )	php_support_code="";break;;
-		* ) echo "input error,please only input y or n." ;;
-	esac
-done
+yes_or_no "enable php support" "php_support" "php_support_code=''"
 
 vhost_nginx_code="
 server {
@@ -298,31 +285,98 @@ else
 fi
 }
 
-# mysqld_user(){
-# 	local action=$1
-# 	case $action in
-# 		add ) mysqld_user_add;break;;
-# 		list ) mysqld_user_list;break;;
-# 		del ) mysqld_user_del;break;;
-# 		*) echo "action $action not found";exit 1
-# 	esac	
+#判断root密码是否正确
+check_root_passwd(){
+	while true
+	do
+		read -p "please input your mysql root password: " root_password
+		echo "show databases" | mysql -uroot -p${root_password} > /tmp/mysql_err 2>&1
+		if [ $? != 0 ];then
+			grep -q "1045" /tmp/mysql_err && echo "your root password is not correct"
+		else
+			break
+		fi	
+	done	
+}
 
-# }
+mysql_manger(){
+	local action=$1
+	case $action in
+		add ) mysql_add;;
+		mod ) mysql_user_mod;;
+		del ) mysql_del;;
+		reset ) mysql_reset;;
+		*) echo "action $action not found";exit 1
+	esac	
 
-# mysqld_user_add(){
-# 	pass
+}
 
-# }
+mysql_add_db(){
+	read -p "please input the database name: " dbname
+	echo "create database ${dbname};" | mysql -uroot -p${root_password} > /dev/null 2>&1 && echo "successfully create database ${dbname}" || echo "create database ${dbname} failed."
+}
 
-# mysqld_user_list(){
-# 	pass
+mysql_add_user(){
+	read -p "please input the user name: " user
+	read -p "please input the user password: " passwd
+    read -p "input the database you'll grant privileges on to this user,input \"*\" means grant all databases.(default:all databases.): " grantdb
+    grantdb=${grantdb:=*}
+    read -p "input the client you'll allow access to this user,input \"%\" means allow all client.(default:localhost 127.0.0.1): " grantclient
+    grantclient=${grantclient:="localhost 127.0.0.1"}
+    for client in $grantclient; do
+    	echo "GRANT ALL PRIVILEGES ON ${grantdb}.* TO '${user}'@'$client' IDENTIFIED BY '$passwd'" | mysql -uroot -p${root_password} > /dev/null 2>&1
+	done
+	echo  "flush privileges;" | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo "successfully add user ${user}"
+}
 
-# }
+mysql_add(){
+	check_root_passwd
+	#是否添加数据库
+	yes_or_no "add a database" "mysql_add_db"
+	#是否添加用户
+	yes_or_no "add a user" "mysql_add_user"
+}
 
-# mysqld_user_del(){
+mysql_del_db(){
+	read -p "please input the database name: " $db
+	echo "drop database $db;" | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo "successfully delete database $db."
+}
 
-# 	pass
-# }
+mysql_del_user(){
+	read -p "please input the user name: " user
+	echo "use mysql;delete from user where User='$user' " | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo "successfully delete user $user."
+}
+
+mysql_user_mod(){
+	check_root_passwd
+	read -p "please input the user: " user
+	read -p "please input a new password: " passwd
+	echo "use mysql;update user set password=PASSWORD("$passwd") where User='$user';flush privileges;" | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo "successfully modify user $user password."
+}
+
+mysql_del(){
+	check_root_passwd
+	yes_or_no "delete a database" "mysql_del_db"
+	yes_or_no "delete a user" "mysql_del_user"
+}
+
+mysql_reset(){
+	read -p "please input a new password for root user: " password
+	/etc/init.d/mysqld stop 2>&1 >/dev/null
+	if [ "$mysql_location" == "" ];then
+		read -p "mysql location not found,input mysql location(ie./usr/local/mysql): " mysql_location
+	fi	
+	${mysql_location}/bin/mysqld_safe  --defaults-file=${mysql_location}/etc/my.cnf --skip-grant-tables 2>&1 >/dev/null &
+	echo "wait for 8 seconds..."
+	sleep 8 && mysql -u root -e "use mysql;update user set password=PASSWORD(\"${password}\") where User='root';flush privileges;" 
+	/etc/init.d/mysqld restart 2>&1 >/dev/null
+	echo  "show databases;" | mysql -uroot -p${password}  > /dev/null 2>&1 && echo "successfully reset your mysql root password" || echo "Sorry,failed to reset your root password."
+
+}
 
 ftp_user(){
 	local action=$1
@@ -415,11 +469,25 @@ done
 rewrite_rule=${rewrite_rules[$rule-1]}
 }
 
+if [ $# != 2 ];then
+	echo "Usage: lx program_name action"
+	exit 1
+fi
 
+#使read能支持回格删除
+stty erase "^H"
+
+#引入各软件安装路径
+. /tmp/ezhttp_info_do_not_del
+
+#接收脚本传参
+proname=$1
+action=$2
 
 case $proname in
 	nginx ) nginx_vhost $action;;
 	apache ) apache_vhost $action;;
 	ftp ) ftp_user $action;;
+    mysql ) mysql_manger $action;;
 	*)  echo "program_name $proname not found.";exit 1;;
 esac

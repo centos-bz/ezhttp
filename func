@@ -158,6 +158,22 @@ if ! which $command > /dev/null;then
 fi
 }
 
+#yes or no询问
+yes_or_no(){
+local prompt=$1
+local yaction=$2
+local naction=$3
+while true; do
+	read -p "${prompt}?[Y/n]: " yn
+	yn=`upcase_to_lowcase $yn`
+	case $yn in
+		y ) eval "$yaction";break;;
+		n ) eval "$naction";break;;
+		* ) echo "input error,please only input y or n."
+	esac
+done
+}
+
 #安装编译工具
 install_tool(){ 
 cat /proc/version | grep -q -E -i "ubuntu|debian"  && apt-get -y update && apt-get -y install gcc g++ make wget perl curl
@@ -498,26 +514,11 @@ check_installed_ask(){
 local command=$1
 local location=$2
 if [ -d "$location" ];then
-	while true
-	do
-		read -p "directory $location found,may be the software had installed,remove it and reinstall it? [y/N]" cover
-		cover="`upcase_to_lowcase $cover`"
-		case $cover in
-		y) rm -rf $location && ${command} ; break;;
-		n) echo "do not reinstall this software." ; break;;
-		*) echo "input error." 
-		esac
-	done
+	#发现路径存在，是否删除安装
+	yes_or_no "directory $location found,may be the software had installed,remove it and reinstall it" "rm -rf $location && ${command}" "echo 'do not reinstall this software.' "
 else
 	${command}
 fi
-}
-
-#发行版判断
-ReleaseCheck(){
-	local release=$1
-	cat /proc/version | grep -q  -i "$release"  && return 0 || return 1
-	cat /proc/version | grep -q  -i "$release"  && return 0 || return 1
 }
 
 #获取版本号

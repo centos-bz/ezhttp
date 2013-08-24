@@ -745,18 +745,52 @@ echo "pureftpd_location=$pureftpd_location" >> /tmp/ezhttp_info_do_not_del
 
 #提示是否使用上一次的设置
 if_use_previous_setting(){
-if [ -s "/root/previous_setting.sh" ];then
+if [ -s "/root/previous_setting" ];then
 	#是否使用上次设置安装
-	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting.sh" ". /root/previous_setting.sh" "advanced_setting"
+	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting" ". /root/previous_setting" "advanced_setting"
 else
 	advanced_setting
 fi
-}
 
+}
 #高级设置
 advanced_setting(){
+custom_info=""	
 #nginx安装设置
 display_menu nginx
+#自定义版本支持
+if [ "$nginx" == "custom_version" ];then
+	while true
+	do
+		read -p "input version.(ie.nginx-1.4.1 tengine-1.4.6 ngx_openresty-1.2.8.3): " version
+		#判断版本号是否有效
+		if echo "$version" | grep -q -E '^nginx-[0-9]+\.[0-9]+\.[0-9]+$';then
+			nginx_filename=$version
+			nginx=$version
+			nginx_official_link="http://nginx.org/download/${nginx}.tar.gz"
+			nginx_baidupan_link=""
+			custom_info="$custom_info\nnginx_filename=$version\nnginx_official_link=$nginx_official_link\nnginx_baidupan_link=''\n"
+			break
+		elif echo "$version" | grep -q -E '^tengine-[0-9]+\.[0-9]+\.[0-9]+$';then
+			tengine_filename=$version
+			nginx=$version
+			tengine_official_link="http://tengine.taobao.org/download/${nginx}.tar.gz"
+			tengine_baidupan_link=""
+			custom_info="$custom_info\ntengine_filename=$version\ntengine_official_link=$tengine_official_link\ntengine_baidupan_link=''\n"
+			break
+		elif echo "$version" | grep -q -E '^ngx_openresty-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$';then
+			openresty_filename=$version
+			nginx=$version
+			openresty_official_link="http://openresty.org/download/${nginx}.tar.gz"
+			openresty_baidupan_link=""
+			custom_info="$custom_info\nopenresty_filename=$version\nopenresty_official_link=$openresty_official_link\nopenresty_baidupan_link=''\n"
+			break
+		else
+			echo "version invalid,please reinput."
+		fi
+	done
+fi	
+
 if [ "$nginx" != "do_not_install" ];then
 	#设置默认路径
 	[ "$nginx" == "${openresty_filename}" ] && nginx_default=/usr/local/openresty || nginx_default=/usr/local/nginx
@@ -771,6 +805,32 @@ fi
 
 #apache安装设置
 display_menu apache
+#自定义版本支持
+if [ "$apache" == "custom_version" ];then
+	while true
+	do
+		read -p "input version.(ie.httpd-2.2.25 httpd-2.4.4): " version
+		#判断版本号是否有效
+		if echo "$version" | grep -q -E '^httpd-2\.2\.[0-9]+$';then
+			apache2_2_filename=$version
+			apache=$version
+			read -p "please input $apache download url(must be tar.gz file format): "  apache2_2_official_link
+			apache2_2_baidupan_link=""
+			custom_info="$custom_info\napache2_2_filename=$version\napache2_2_official_link=$apache2_2_official_link\napache2_2_baidupan_link=''\n"
+			break
+		elif echo "$version" | grep -q -E '^httpd-2\.4\.[0-9]+$';then
+			apache2_4_filename=$version
+			apache=$version
+			read -p "please input $nginx download url(must be tar.gz file format): " apache2_4_official_link
+			apache2_4_baidupan_link=""
+			custom_info="$custom_info\napache2_4_filename=$version\napache2_4_official_link=$apache2_4_official_link\napache2_4_baidupan_link=''\n"
+			break
+		else
+			echo "version invalid,please reinput."
+		fi
+	done	
+fi	
+
 if [ "$apache" != "do_not_install" ];then
 	#apache安装路径
 	read -p "$apache install location(default:/usr/local/apache,leave blank for default): " apache_location
@@ -781,6 +841,39 @@ fi
 
 #mysql安装设置
 display_menu mysql
+#自定义版本支持
+if [ "$mysql" == "custom_version" ];then
+	while true
+	do
+		read -p "input version.(ie.mysql-5.1.71 mysql-5.5.32 mysql-5.6.12): " version
+		#判断版本号是否有效
+		if echo "$version" | grep -q -E '^mysql-5\.1\.[0-9]+$';then
+			mysql5_1_filename=$version
+			mysql=$version
+			mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
+			mysql5_1_baidupan_link=""
+			custom_info="$custom_info\nmysql5_1_filename=$version\nmysql5_1_official_link=$mysql5_1_official_link\nmysql5_1_baidupan_link=''\n"
+			break
+		elif echo "$version" | grep -q -E '^mysql-5\.5\.[0-9]+$';then
+			mysql5_5_filename=$version
+			mysql=$version
+			mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
+			mysql5_5_baidupan_link=""
+			custom_info="$custom_info\nmysql5_5_filename=$version\nmysql5_5_official_link=$mysql5_5_official_link\nmysql5_5_baidupan_link=''\n"
+			break
+		elif echo "$version" | grep -q -E '^mysql-5\.6\.[0-9]+$';then
+			mysql5_6_filename=$version
+			mysql=$version
+			mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
+			mysql5_6_baidupan_link=""
+			custom_info="$custom_info\nmysql5_6_filename=$version\nmysql5_6_official_link=$mysql5_6_official_link\nmysql5_6_baidupan_link=''\n"
+			break			
+		else
+			echo "version invalid,please reinput."
+		fi
+	done	
+fi	
+
 if [ "$mysql" != "do_not_install" ];then
 	#mysql安装路径
 	read -p "$mysql install location(default:/usr/local/mysql,leave blank for default): " mysql_location
@@ -802,6 +895,39 @@ if [ "$mysql" != "do_not_install" ];then
 fi
 #php安装设置
 display_menu php
+#自定义版本支持
+if [ "$php" == "custom_version" ];then
+	while true
+	do
+		read -p "input version.(ie.php-5.2.17 php-5.3.26 php-5.4.16): " version
+		#判断版本号是否有效
+		if echo "$version" | grep -q -E '^php-5\.2\.[0-9]+$';then
+			php5_2_filename=$version
+			php=$version
+			read -p "please input $php download url(must be tar.gz file format): "  php5_2_official_link
+			php5_2_baidupan_link=""
+			custom_info="$custom_info\nphp5_2_filename=$version\nphp5_2_official_link=$php5_2_official_link\nphp5_2_baidupan_link''\n"
+			break
+		elif echo "$version" | grep -q -E '^php-5\.3\.[0-9]+$';then
+			php5_3_filename=$version
+			php=$version
+			read -p "please input $php download url(must be tar.gz file format): " php5_3_official_link
+			php5_3_baidupan_link=""
+			custom_info="$custom_info\nphp5_3_filename=$version\nphp5_3_official_link=$php5_3_official_link\nphp5_3_baidupan_link''\n"
+			break
+		elif echo "$version" | grep -q -E '^php-5\.4\.[0-9]+$';then
+			php5_4_filename=$version
+			php=$version
+			read -p "please input $php download url(must be tar.gz file format): " php5_4_official_link
+			php5_4_baidupan_link=""
+			custom_info="$custom_info\nphp5_4_filename=$version\nphp5_4_official_link=$php5_4_official_link\nphp5_4_baidupan_link''\n"
+			break			
+		else
+			echo "version invalid,please reinput."
+		fi
+	done	
+fi	
+
 if [ "$php" != "do_not_install" ];then
 	#选择php运行模式
 	while true
@@ -939,7 +1065,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 fi
 
 #写入设置到临时文件，以备下次重新安装使用
-cat >/root/previous_setting.sh <<EOF
+cat >/root/previous_setting <<EOF
 nginx="$nginx"
 nginx_location="$nginx_location"
 apache="$apache"
@@ -958,6 +1084,8 @@ pureftpd_location="${pureftpd_location}"
 phpmyadmin_location="${phpmyadmin_location}"
 
 EOF
+#自定义版本时增加变量
+echo -e "$custom_info" >> /root/previous_setting
 
 }
 

@@ -2,6 +2,7 @@
 error_detect(){
 local command=$1
 local cur_soft=`pwd | awk -F'/' '{print $NF}'`
+${command}
 if [ $? != 0 ];then
 	clear
 	tail /root/ezhttp_errors.log

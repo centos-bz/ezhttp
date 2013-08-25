@@ -821,7 +821,7 @@ if [ "$apache" == "custom_version" ];then
 		elif echo "$version" | grep -q -E '^httpd-2\.4\.[0-9]+$';then
 			apache2_4_filename=$version
 			apache=$version
-			read -p "please input $nginx download url(must be tar.gz file format): " apache2_4_official_link
+			read -p "please input $apache download url(must be tar.gz file format): " apache2_4_official_link
 			apache2_4_baidupan_link=""
 			custom_info="$custom_info\napache2_4_filename=$version\napache2_4_official_link=$apache2_4_official_link\napache2_4_baidupan_link=''\n"
 			break

@@ -186,6 +186,7 @@ sed -i 's/^Group.*/Group www/i' ${apache_location}/conf/httpd.conf
 
 if [ $version == "2.4" ];then
 	sed -i '/NameVirtualHost/d' ${apache_location}/conf/extra/httpd-vhosts.conf
+	sed -i 's/Allow from All/Require all granted/' ${apache_location}/conf/extra/httpd-vhosts.conf
 fi
 
 cp -f $cur_dir/conf/init.d.httpd /etc/init.d/httpd
@@ -1164,6 +1165,7 @@ netstat -ntlp
 echo "depends_prefix=$depends_prefix" >> /tmp/ezhttp_info_do_not_del
 \cp $cur_dir/ez /usr/bin/ez
 chmod +x /usr/bin/ez
+[ "$apache" == "${apache2_4_filename}" ] && sed -i 's/Allow from All/Require all granted/' /usr/bin/ez
 }
 
 #配置linux

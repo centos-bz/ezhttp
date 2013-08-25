@@ -480,6 +480,8 @@ elif [ "$php" == "${php5_3_filename}" ]; then
 elif [ "$php" == "${php5_4_filename}" ]; then
 	\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 	chmod +x /etc/init.d/php-fpm
+	sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
+	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf	
 
 fi
 

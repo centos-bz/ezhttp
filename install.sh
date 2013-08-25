@@ -850,7 +850,7 @@ if [ "$mysql" == "custom_version" ];then
 		if echo "$version" | grep -q -E '^mysql-5\.1\.[0-9]+$';then
 			mysql5_1_filename=$version
 			mysql=$version
-			mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
+			mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/${mysql}.tar.gz"
 			mysql5_1_baidupan_link=""
 			custom_info="$custom_info\nmysql5_1_filename=$version\nmysql5_1_official_link=$mysql5_1_official_link\nmysql5_1_baidupan_link=''\n"
 			break
@@ -864,7 +864,7 @@ if [ "$mysql" == "custom_version" ];then
 		elif echo "$version" | grep -q -E '^mysql-5\.6\.[0-9]+$';then
 			mysql5_6_filename=$version
 			mysql=$version
-			mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
+			mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/${mysql}.tar.gz"
 			mysql5_6_baidupan_link=""
 			custom_info="$custom_info\nmysql5_6_filename=$version\nmysql5_6_official_link=$mysql5_6_official_link\nmysql5_6_baidupan_link=''\n"
 			break			
@@ -1166,6 +1166,26 @@ chmod +x /usr/bin/ez
 
 #配置linux
 deploy_linux(){
+cur_dir=`pwd`
+
+#初始化
+if [ -f $cur_dir/init ];then
+	. $cur_dir/init
+else
+	echo "init file not found.shell script can't be executed."
+	exit 1
+fi
+#载入常用函数
+if [ -f $cur_dir/func ];then
+	. $cur_dir/func
+else
+	echo "func file not found.shell script can't be executed."
+	exit 1
+fi
+#创建记录安装路径信息文件
+touch /tmp/ezhttp_info_do_not_del
+#不允许删除，只允许追加
+chattr +a /tmp/ezhttp_info_do_not_del	
 clear
 echo "#############################################################################"
 echo
@@ -1189,24 +1209,7 @@ install_tool
 post_done
 }
 
-cur_dir=`pwd`
-
-#初始化
-if [ -f $cur_dir/init ];then
-	. $cur_dir/init
-else
-	echo "init file not found.shell script can't be executed."
-	exit 1
+#为了可以调用此文件的函数
+if [ "${0##*/}" == "install.sh" ];then
+	deploy_linux
 fi
-#载入常用函数
-if [ -f $cur_dir/func ];then
-	. $cur_dir/func
-else
-	echo "func file not found.shell script can't be executed."
-	exit 1
-fi
-#创建记录安装路径信息文件
-touch /tmp/ezhttp_info_do_not_del
-#不允许删除，只允许追加
-chattr +a /tmp/ezhttp_info_do_not_del
-deploy_linux

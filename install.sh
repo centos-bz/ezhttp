@@ -1213,5 +1213,6 @@ post_done
 
 #为了可以调用此文件的函数
 if [ "${0##*/}" == "install.sh" ];then
+	rm -f /root/ezhttp_errors.log
 	deploy_linux 2>&1 | tee -a /root/ezhttp_errors.log
 fi

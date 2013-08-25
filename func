@@ -188,7 +188,7 @@ check_command_exist "perl"
 #判断系统版本
 check_sys_version(){
 cat /proc/version | grep -q -E -i "ubuntu|debian"  && echo "debian"
-cat /proc/version | grep -q -E -i "centos|read hat|redhat"  && echo "centos"
+cat /proc/version | grep -q -E -i "centos|red hat|redhat"  && echo "centos"
 }
 
 #支持包管理工具安装依赖的系统

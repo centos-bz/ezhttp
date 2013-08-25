@@ -2,8 +2,6 @@
 error_detect(){
 local command=$1
 local cur_soft=`pwd | awk -F'/' '{print $NF}'`
-set -o pipefail
-${command}  2>&1 | tee /root/ezhttp_errors.log 
 if [ $? != 0 ];then
 	clear
 	tail /root/ezhttp_errors.log

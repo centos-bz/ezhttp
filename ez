@@ -264,14 +264,14 @@ s/\(.\{50\}\).*\n\(.*\)/\1    \2/
 
 apache_vhost_del(){
 read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
-sed -i '
+sed -i "
 /<VirtualHost.*/{
 :loop
 N
 /<\/VirtualHost>/! b loop
 /ServerAlias.*$domain.*/d
 }
-' ${apache_location}/conf/extra/httpd-vhosts.conf
+" ${apache_location}/conf/extra/httpd-vhosts.conf
 echo "complete deleted the server_name ${domain} of vhost."
 #重载配置
 echo "reloading the apache config file..."

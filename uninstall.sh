@@ -49,19 +49,19 @@ uninstall(){
 		echo "uninstalling php"
 		/etc/init.d/php-fpm stop
 		rm -rf "$php_location"  && echo "Sucess"
-	if 
+	fi
 		
 	if [ "$memcached_location" != "" ];then
 		echo "uninstalling memcached"
 		/etc/init.d/memcached stop
 		rm -rf "$memcached_location"  && echo "Sucess"
-	if 	
+	fi
 		
 	if [ "$pureftpd_location" != "" ]
 		echo "uninstalling pureftpd"
 		/etc/init.d/pureftpd stop
 		rm -rf "$pureftpd_location"  && echo "Sucess"
-	if 	
+	fi
 	chattr -a /tmp/ezhttp_info_do_not_del && rm -f /tmp/ezhttp_info_do_not_del
 }
 

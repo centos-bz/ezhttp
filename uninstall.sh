@@ -57,7 +57,7 @@ uninstall(){
 		rm -rf "$memcached_location"  && echo "Sucess"
 	fi
 		
-	if [ "$pureftpd_location" != "" ]
+	if [ "$pureftpd_location" != "" ];then
 		echo "uninstalling pureftpd"
 		/etc/init.d/pureftpd stop
 		rm -rf "$pureftpd_location"  && echo "Sucess"

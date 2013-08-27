@@ -7,11 +7,13 @@ if [ $? != 0 ];then
 	clear
 	tail /root/ezhttp_errors.log
 	distro=`cat /etc/issue`
+	version=`cat /proc/version`
 	architecture=`uname -m`
 	cat >>/root/ezhttp_errors.log<<EOF
 	ezhttp errors:
 	distributions:$distro
 	architecture:$architecture
+	version:$version
 	Nginx: ${nginx}
 	Apache: ${apache}
 	MySQL Server: $mysql

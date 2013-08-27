@@ -160,6 +160,12 @@ patch_filename="patch-2.7"
 patch_baidupan_link="http://pan.baidu.com/share/link?shareid=3744533452&uk=2838537799&third=15"
 patch_official_link="http://ftp.gnu.org/gnu/patch/patch-2.7.tar.gz"
 
+#libiconv设置
+libiconv_filename="libiconv-1.14"
+libiconv_baidupan_link="http://pan.baidu.com/share/link?shareid=4240487074&uk=2838537799&third=15"
+libiconv_official_link="http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz"
+
+
 #autoconf设置(保持2.59版本)
 autoconf_filename="autoconf-2.59"
 autoconf_baidupan_link="http://pan.baidu.com/share/link?shareid=1461459821&uk=2838537799&third=15"

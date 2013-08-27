@@ -4,8 +4,6 @@ local command=$1
 local cur_soft=`pwd | awk -F'/' '{print $NF}'`
 ${command}
 if [ $? != 0 ];then
-	clear
-	tail /root/ezhttp_errors.log
 	distro=`cat /etc/issue`
 	version=`cat /proc/version`
 	architecture=`uname -m`
@@ -62,6 +60,25 @@ if [ $cpunum == 1 ];then
 else
 	[ "$para" == "" ] && make -j$cpunum || 	make -j$cpunum "$para"
 fi	
+}
+
+#开机启动
+boot_start(){
+if [ "`check_sys_version`" == "debian" ];then
+	update-rc.d -f $1 defaults
+elif [ "`check_sys_version`" == "centos" ];then
+	chkconfig --add $1
+	chkconfig $1 on
+fi
+}
+
+#关闭开机启动
+boot_stop(){
+if [ "`check_sys_version`" == "debian" ];then
+	update-rc.d -f $1 remove
+elif [ "`check_sys_version`" == "centos" ];then
+	chkconfig $1 off
+fi
 }
 
 #判断路径输入是否合法
@@ -288,6 +305,19 @@ error_detect "./configure --prefix=${depends_prefix}/${patch_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${patch_filename}"
+}
+
+#安装libiconv
+install_libiconv(){
+download_file "${libiconv_baidupan_link}" "${libiconv_official_link}" "${libiconv_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${libiconv_filename}.tar.gz
+cd ${libiconv_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${libiconv_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${libiconv_filename}"	
 }
 
 #安装autoconf
@@ -605,6 +635,8 @@ install_php_depends(){
 		check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
 		check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 	fi
+	#安装libiconv
+	check_installed "install_libiconv" "${depends_prefix}/${libiconv_filename}"
 
 }
 

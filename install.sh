@@ -74,6 +74,7 @@ chmod +x /etc/init.d/nginx
 cp $cur_dir/conf/index.html $nginx_location/html/
 cp $cur_dir/conf/tz.php $nginx_location/html/
 cp $cur_dir/conf/p.php $nginx_location/html/
+boot_start nginx
 }
 
 #安装apache
@@ -197,6 +198,8 @@ chmod +x /etc/init.d/httpd
 cp $cur_dir/conf/index.html $apache_location/htdocs/
 cp $cur_dir/conf/tz.php $apache_location/htdocs/
 cp $cur_dir/conf/p.php $apache_location/htdocs/
+
+boot_start httpd
 }
 
 #安装mysql server
@@ -336,6 +339,7 @@ chown -R mysql ${mysql_location} ${mysql_data_location}
 cd /usr/bin/
 ln -s $mysql_location/bin/mysql
 ln -s $mysql_location/bin/mysqldump
+boot_start mysqld
 }
 
 #安装PHP
@@ -386,14 +390,14 @@ if [ "$php" == "${php5_2_filename}" ];then
 	else
 		other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
-	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64"
+	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64 --with-iconv-dir={depends_prefix}/${libiconv_filename}"
 	if grep -q -i "Ubuntu 12.04" /etc/issue;then
 		#解决SSL_PROTOCOL_SSLV2’ undeclared问题
 		cd ext/openssl/
 		patch -p3 < $cur_dir/conf/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
 		cd ../../
 	fi	
-	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+	error_detect "parallel_make"
 	error_detect "make install"
 	
 	#配置php
@@ -418,8 +422,8 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear $lib64"
-	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear $lib64 --with-iconv-dir={depends_prefix}/${libiconv_filename}"
+	error_detect "parallel_make"
 	error_detect "make install"	
 	
 	#配置php
@@ -444,8 +448,8 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear $lib64"
-	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear $lib64 --with-iconv-dir={depends_prefix}/${libiconv_filename}"
+	error_detect "parallel_make"
 	error_detect "make install"	
 	
 	#配置php
@@ -485,6 +489,7 @@ elif [ "$php" == "${php5_4_filename}" ]; then
 	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf	
 
 fi
+boot_start php-fpm
 
 }
 #安装php模块
@@ -715,6 +720,7 @@ chmod +x /etc/init.d/memcached
 sed -i "s#^memcached_location=.*#memcached_location=$memcached_location#" /etc/init.d/memcached
 mkdir -p /var/lock/subsys/
 echo "memcached_location=$memcached_location" >> /tmp/ezhttp_info_do_not_del
+boot_start memcached
 }
 
 #安装phpMyAdmin
@@ -744,6 +750,7 @@ chmod +x /etc/init.d/pureftpd
 sed -i "s#^pureftpd_location=.*#pureftpd_location=$pureftpd_location#" /etc/init.d/pureftpd
 chmod +x /usr/local/pureftpd/bin/pure-config.pl
 echo "pureftpd_location=$pureftpd_location" >> /tmp/ezhttp_info_do_not_del
+boot_start pureftpd
 }
 
 #提示是否使用上一次的设置
@@ -1216,5 +1223,5 @@ post_done
 #为了可以调用此文件的函数
 if [ "${0##*/}" == "install.sh" ];then
 	rm -f /root/ezhttp_errors.log
-	deploy_linux 2>&1 | tee -a /root/ezhttp_errors.log
+	deploy_linux 2>&1 | tee -a /root/ezhttp_errors.log 
 fi

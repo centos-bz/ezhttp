@@ -52,13 +52,13 @@ echo $words | tr [A-Z] [a-z]
 }
 
 #多核并行编译
-function parallel_make(){
+parallel_make(){
 local para=$1	
 cpunum=`cat /proc/cpuinfo |grep 'processor'|wc -l`
 if [ $cpunum == 1 ];then
-	make $para
+	make "$para"
 else	
-	make -j$cpunum $para
+	make -j$cpunum "$para"
 fi	
 }
 

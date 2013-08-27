@@ -179,8 +179,18 @@ done
 
 #安装编译工具
 install_tool(){ 
-cat /proc/version | grep -q -E -i "ubuntu|debian"  && apt-get -y update && apt-get -y install gcc g++ make wget perl curl
-cat /proc/version | grep -q -E -i "centos|read hat|redhat"  && yum -y install gcc gcc-c++ make wget perl  curl
+if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
+	apt-get -y update
+	apt-get -y install gcc g++ make wget perl curl
+elif cat /etc/issue | grep -q -E -i "centos|read hat|redhat";then
+	yum -y install gcc gcc-c++ make wget perl  curl	
+elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
+	apt-get -y update
+	apt-get -y install gcc g++ make wget perl curl
+elif cat /proc/version | grep -q -E -i "centos|read hat|redhat";then
+	yum -y install gcc gcc-c++ make wget perl  curl
+
+fi		
 
 check_command_exist "gcc"
 check_command_exist "g++"
@@ -191,14 +201,29 @@ check_command_exist "perl"
 
 #判断系统版本
 check_sys_version(){
-cat /proc/version | grep -q -E -i "ubuntu|debian"  && echo "debian"
-cat /proc/version | grep -q -E -i "centos|red hat|redhat"  && echo "centos"
+if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
+	echo "debian"
+elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
+	echo "centos"	
+elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
+	echo "debian"
+elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
+	echo "centos"
+fi	
 }
 
 #支持包管理工具安装依赖的系统
 package_support(){
-cat /proc/version | grep -q -E -i "ubuntu|debian"  && echo 1
-cat /proc/version | grep -q -E -i "centos|red hat|redhat"  && echo 1
+if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
+	echo "1"
+elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
+	echo "1"
+elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
+	echo "1"
+elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
+	echo "1"
+
+fi	
 }
 
 #安装cmake

@@ -53,11 +53,12 @@ echo $words | tr [A-Z] [a-z]
 
 #多核并行编译
 function parallel_make(){
+local para=$1	
 cpunum=`cat /proc/cpuinfo |grep 'processor'|wc -l`
 if [ $cpunum == 1 ];then
-	make
+	make $para
 else	
-	make -j$cpunum
+	make -j$cpunum $para
 fi	
 }
 
@@ -582,11 +583,24 @@ install_php_depends(){
 
 #在/usr/lib创建库文件的链接
 create_lib_link(){
-	local lib=$1
-	if is_64bit;then
-		[ ! -s "/usr/lib64/$lib" ] && [ -s "/usr/lib/$lib" ] && ln -s /usr/lib/${lib}  /usr/lib64/${lib} 
-		[ ! -s "/usr/lib/$lib" ] && [ -s "/usr/lib64/$lib" ] && ln -s /usr/lib64/${lib} /usr/lib/${lib} 
-	fi
+        local lib=$1
+        if [ ! -s "/usr/lib64/$lib" ] && [ ! -s "/usr/lib/$lib" ];then
+                libdir=$(find /usr -name "$lib" | awk 'NR==1{print}')
+                if [ "$libdir" != "" ];then
+                        if is_64bit;then
+				mkdir /usr/lib64
+                                ln -s $libdir /usr/lib64/$lib
+                                ln -s $libdir /usr/lib/$lib
+                        else
+                                ln -s $libdir /usr/lib/$lib
+                        fi
+                fi
+        fi
+        if is_64bit;then
+		mkdir /usr/lib64
+                [ ! -s "/usr/lib64/$lib" ] && [ -s "/usr/lib/$lib" ] && ln -s /usr/lib/${lib}  /usr/lib64/${lib}
+                [ ! -s "/usr/lib/$lib" ] && [ -s "/usr/lib64/$lib" ] && ln -s /usr/lib64/${lib} /usr/lib/${lib}
+        fi
 }
 
 #显示菜单

@@ -390,7 +390,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	else
 		other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
-	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64 --with-iconv-dir={depends_prefix}/${libiconv_filename}"
+	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64 --with-iconv-dir=${depends_prefix}/${libiconv_filename}"
 	if grep -q -i "Ubuntu 12.04" /etc/issue;then
 		#解决SSL_PROTOCOL_SSLV2’ undeclared问题
 		cd ext/openssl/
@@ -422,7 +422,7 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear $lib64 --with-iconv-dir={depends_prefix}/${libiconv_filename}"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear $lib64 --with-iconv-dir=${depends_prefix}/${libiconv_filename}"
 	error_detect "parallel_make"
 	error_detect "make install"	
 	
@@ -448,7 +448,7 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear $lib64 --with-iconv-dir={depends_prefix}/${libiconv_filename}"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear $lib64 --with-iconv-dir=${depends_prefix}/${libiconv_filename}"
 	error_detect "parallel_make"
 	error_detect "make install"	
 	

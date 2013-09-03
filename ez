@@ -396,6 +396,7 @@ ftp_user_add(){
 	read -p "input ftp user $ftp_username Home Directory: " ftp_home
 	useradd -d $ftp_home -c pure-ftpd -s /sbin/nologin $ftp_username
 	echo $ftp_username:$ftp_pass | chpasswd
+	chown -R "$ftp_username" "$ftp_home"
 	echo "successfully add ftp user $ftp_username."
 }
 

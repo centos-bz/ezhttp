@@ -611,14 +611,18 @@ install_php_depends(){
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
 		create_lib_link "libmcrypt.so"
-		#解决centos 6 libmcrypt不在在的问题
+		#解决centos 6 libmcrypt和libmhash不在在的问题
 		if CentOSVerCheck 6;then
 			if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
 				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.x86_64.rpm
 				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.x86_64.rpm
+				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.x86_64.rpm
+				rpm -i $cur_dir/conf/mhash-devel-0.9.9.9-3.el6.x86_64.rpm
 			else
 				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.i686.rpm
 				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.i686.rpm
+				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.i686.rpm
+				rpm -i $cur_dir/conf/mhash-devel-0.9.9.9-3.el6.i686.rpm
 			fi	
 		fi			
 	else

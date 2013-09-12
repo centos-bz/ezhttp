@@ -311,27 +311,30 @@ config_mysql(){
 local version=$1
 useradd -s /bin/false mysql
 mkdir -p ${mysql_location}/etc/
+#防止mysql使用错误的my.cnf文件
+mv /etc/my.cnf /etc/my.cnf_bak
+mv /etc/mysql/my.cnf /etc/mysql/my.cnf_bak
 
 if [ $version == "5.1" ];then
 	cp -f ${mysql_location}/share/mysql/mysql.server /etc/init.d/mysqld	
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.1 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --user=mysql
+	${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 elif [ $version == "5.5" ];then
 	cp -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.5 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --user=mysql
+	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 elif [ $version == "5.6" ];then
 	cp -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --user=mysql
+	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 fi
 

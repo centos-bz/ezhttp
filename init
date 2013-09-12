@@ -3,54 +3,54 @@
 ###################主要安装包设置###################
 
 #nginx设置
-nginx_filename="nginx-1.4.1"
-nginx_baidupan_link="http://pan.baidu.com/share/link?shareid=1776431413&uk=2838537799&third=15"
-nginx_official_link="http://nginx.org/download/nginx-1.4.1.tar.gz"
+nginx_filename="nginx-1.4.2"
+nginx_baidupan_link="http://pan.baidu.com/share/link?shareid=1297759081&uk=2838537799&third=15"
+nginx_official_link="http://nginx.org/download/nginx-1.4.2.tar.gz"
 
 #tengine设置
-tengine_filename="tengine-1.4.6"
-tengine_baidupan_link="http://pan.baidu.com/share/link?shareid=1264028243&uk=2838537799&third=15"
-tengine_official_link="http://tengine.taobao.org/download/tengine-1.4.6.tar.gz"
+tengine_filename="tengine-1.5.1"
+tengine_baidupan_link="http://pan.baidu.com/share/link?shareid=1306661944&uk=2838537799&third=15"
+tengine_official_link="http://tengine.taobao.org/download/tengine-1.5.1.tar.gz"
 
 #openresty设置
-openresty_filename="ngx_openresty-1.2.8.3"
-openresty_baidupan_link="http://pan.baidu.com/share/link?shareid=153402789&uk=2838537799&third=15"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.2.8.3.tar.gz"
+openresty_filename="ngx_openresty-1.2.8.6"
+openresty_baidupan_link="http://pan.baidu.com/share/link?shareid=1314275872&uk=2838537799&third=15"
+openresty_official_link="http://openresty.org/download/ngx_openresty-1.2.8.6.tar.gz"
 
 #apache设置
 apache2_2_filename="httpd-2.2.25"
 apache2_2_baidupan_link="http://pan.baidu.com/share/link?shareid=1344824441&uk=2838537799&third=15"
 apache2_2_official_link="http://download.nextag.com/apache/httpd/httpd-2.2.25.tar.gz"
 
-apache2_4_filename="httpd-2.4.4"
-apache2_4_baidupan_link="http://pan.baidu.com/share/link?shareid=1350563058&uk=2838537799&third=15"
-apache2_4_official_link="http://download.nextag.com/apache/httpd/httpd-2.4.4.tar.gz"
+apache2_4_filename="httpd-2.4.6"
+apache2_4_baidupan_link="http://pan.baidu.com/share/link?shareid=1323900566&uk=2838537799&third=15"
+apache2_4_official_link="http://download.nextag.com/apache/httpd/httpd-2.4.6.tar.gz"
 
 #mysql_server设置
 mysql5_1_filename="mysql-5.1.71"
 mysql5_1_baidupan_link="http://pan.baidu.com/share/link?shareid=1179957852&uk=2838537799&third=15"
 mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.71.tar.gz"
 
-mysql5_5_filename="mysql-5.5.32"
-mysql5_5_baidupan_link="http://pan.baidu.com/share/link?shareid=1858218787&uk=2838537799&third=15"
-mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.32.tar.gz"
+mysql5_5_filename="mysql-5.5.33"
+mysql5_5_baidupan_link="http://pan.baidu.com/share/link?shareid=1338545939&uk=2838537799&third=15"
+mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.33.tar.gz"
 
-mysql5_6_filename="mysql-5.6.12"
-mysql5_6_baidupan_link="http://pan.baidu.com/share/link?shareid=3946008296&uk=2838537799&third=15"
-mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.12.tar.gz"
+mysql5_6_filename="mysql-5.6.13"
+mysql5_6_baidupan_link="http://pan.baidu.com/share/link?shareid=1341326365&uk=2838537799&third=15"
+mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.13.tar.gz"
 
 #php设置
 php5_2_filename="php-5.2.17"
 php5_2_baidupan_link="http://pan.baidu.com/share/link?shareid=1414675226&uk=2838537799&third=15"
 php5_2_official_link="http://www.php.net/get/php-5.2.17.tar.gz/from/us1.php.net/mirror"
 
-php5_3_filename="php-5.3.26"
-php5_3_baidupan_link="http://pan.baidu.com/share/link?shareid=295153590&uk=2838537799&third=15"
-php5_3_official_link="http://www.php.net/get/php-5.3.26.tar.gz/from/us1.php.net/mirror"
+php5_3_filename="php-5.3.27"
+php5_3_baidupan_link="http://pan.baidu.com/share/link?shareid=1363116296&uk=2838537799&third=15"
+php5_3_official_link="http://www.php.net/get/php-5.3.27.tar.gz/from/us1.php.net/mirror"
 
-php5_4_filename="php-5.4.16"
-php5_4_baidupan_link="http://pan.baidu.com/share/link?shareid=438533262&uk=2838537799&third=15"
-php5_4_official_link="http://us1.php.net/distributions/php-5.4.16.tar.gz"
+php5_4_filename="php-5.4.19"
+php5_4_baidupan_link="http://pan.baidu.com/share/link?shareid=1364763802&uk=2838537799&third=15"
+php5_4_official_link="http://us1.php.net/distributions/php-5.4.19.tar.gz"
 
 #ZendOptimizer设置
 ZendOptimizer_filename="ZendOptimizer-3.3.9"
@@ -124,9 +124,9 @@ memcached_baidupan_link="http://pan.baidu.com/share/link?shareid=1899827576&uk=2
 memcached_official_link="http://memcached.googlecode.com/files/memcached-1.4.15.tar.gz"
 
 #phpMyAdmin设置
-phpMyAdmin_filename="phpMyAdmin-4.0.4-all-languages"
-phpMyAdmin_baidupan_link="http://pan.baidu.com/share/link?shareid=3887308416&uk=2838537799&third=15"
-phpMyAdmin_official_link="http://jaist.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4/phpMyAdmin-4.0.4-all-languages.tar.gz"
+phpMyAdmin_filename="phpMyAdmin-4.0.6-all-languages"
+phpMyAdmin_baidupan_link="http://pan.baidu.com/share/link?shareid=1410179712&uk=2838537799&third=15"
+phpMyAdmin_official_link="http://hivelocity.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.6/phpMyAdmin-4.0.6-all-languages.tar.gz"
 
 #PureFTPd设置
 PureFTPd_filename="pure-ftpd-1.0.36"

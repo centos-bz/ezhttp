@@ -15,6 +15,14 @@ words=$1
 echo $words | tr [A-Z] [a-z]
 }
 
+#关闭开机启动
+boot_stop(){
+if [ "`check_sys_version`" == "debian" ];then
+	update-rc.d -f $1 remove
+elif [ "`check_sys_version`" == "centos" ];then
+	chkconfig $1 off
+fi
+}
 
 uninstall(){
 	if [ ! -s "/tmp/ezhttp_info_do_not_del" ];then

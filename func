@@ -314,10 +314,16 @@ cd $cur_dir/soft/
 tar xzvf ${libiconv_filename}.tar.gz
 cd ${libiconv_filename}
 make clean
-error_detect "./configure --prefix=${depends_prefix}/${libiconv_filename}"
-error_detect "parallel_make"
-error_detect "make install"
-add_to_env "${depends_prefix}/${libiconv_filename}"	
+./configure --prefix=/usr
+#修复ubuntu 13.04 错误:‘gets’未声明(不在函数内)
+if grep -q -i "Ubuntu 13.04" /etc/issue;then
+		parallel_make
+		sed -i 's/_GL_WARN_ON_USE (gets.*/\/\/&/' srclib/stdio.h
+		parallel_make
+else
+	parallel_make
+fi
+	make install
 }
 
 #安装autoconf
@@ -640,7 +646,7 @@ install_php_depends(){
 		check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 	fi
 	#安装libiconv
-	check_installed "install_libiconv" "${depends_prefix}/${libiconv_filename}"
+	install_libiconv
 
 }
 

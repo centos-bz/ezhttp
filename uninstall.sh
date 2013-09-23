@@ -12,7 +12,7 @@ cur_dir=`pwd`
 #大写转换成小写
 upcase_to_lowcase(){
 words=$1
-echo $words | tr [A-Z] [a-z]
+echo $words | tr '[A-Z]' '[a-z]'
 }
 
 #关闭开机启动

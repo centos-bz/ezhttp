@@ -48,7 +48,7 @@ fi
 #大写转换成小写
 upcase_to_lowcase(){
 words=$1
-echo $words | tr [A-Z] [a-z]
+echo $words | tr '[A-Z]' '[a-z]'
 }
 
 #多核并行编译

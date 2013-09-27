@@ -317,6 +317,7 @@ mv /etc/mysql/my.cnf /etc/mysql/my.cnf_bak
 
 if [ $version == "5.1" ];then
 	cp -f ${mysql_location}/share/mysql/mysql.server /etc/init.d/mysqld	
+	chmod +x /etc/init.d/mysqld
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.1 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
@@ -324,6 +325,7 @@ if [ $version == "5.1" ];then
 
 elif [ $version == "5.5" ];then
 	cp -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
+	chmod +x /etc/init.d/mysqld
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.5 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
@@ -331,6 +333,7 @@ elif [ $version == "5.5" ];then
 
 elif [ $version == "5.6" ];then
 	cp -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
+	chmod +x /etc/init.d/mysqld
 	#配置my.cnf
 	cp -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf

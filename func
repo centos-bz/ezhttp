@@ -465,6 +465,19 @@ error_detect "make install"
 add_to_env "${depends_prefix}/${mhash_filename}"
 }
 
+#安装freetype
+install_freetype(){
+download_file "${freetype_baidupan_link}" "${freetype_official_link}" "${freetype_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${freetype_filename}.tar.gz
+cd ${freetype_filename}
+make clean
+error_detect "./configure --prefix=${depends_prefix}/${freetype_filename}"
+error_detect "parallel_make"
+error_detect "make install"
+add_to_env "${depends_prefix}/${freetype_filename}"
+}
+
 #安装libmcrypt
 install_libmcrypt(){
 download_file "${libmcrypt_baidupan_link}" "${libmcrypt_official_link}" "${libmcrypt_filename}.tar.gz"
@@ -608,7 +621,7 @@ install_php_depends(){
 	install_libiconv	
 	#安装依赖
 	if [ "`check_sys_version`" == "debian" ];then
-		apt-get -y install m4 autoconf libcurl4-gnutls-dev  autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libmhash-dev libmcrypt-dev libssl-dev
+		apt-get -y install m4 autoconf libcurl4-gnutls-dev  autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -616,7 +629,7 @@ install_php_depends(){
 		create_lib_link "libiconv.so"
 		create_lib_link "libiconv.so.2"
 	elif [ "`check_sys_version`" == "centos" ];then
-		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel mhash-devel libmcrypt-devel
+		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -648,6 +661,7 @@ install_php_depends(){
 		check_installed "install_libtool" "${depends_prefix}/${libtool_filename}"
 		check_installed "install_libjpeg" "${depends_prefix}/${libjpeg_filename}"
 		check_installed "install_libpng" "${depends_prefix}/${libpng_filename}"
+		check_installed "install_freetype" "${depends_prefix}/${freetype_filename}"
 		check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
 		check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 	fi

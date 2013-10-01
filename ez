@@ -34,7 +34,12 @@ esac
 }
 
 php_support(){
-	php_support_code="location ~ \\\.php$ {\n		fastcgi_pass   127.0.0.1:9000;\n		fastcgi_index  index.php;\n		fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;\n		include        fastcgi_params;\n	}"
+	php_support_code="location ~ \.php$ {
+			fastcgi_pass   unix:/tmp/php-cgi.sock;
+			fastcgi_index  index.php;
+			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+			include        fastcgi_params;
+	}"
 }
 
 nginx_vhost_add(){
@@ -60,7 +65,7 @@ yes_or_no "add nginx rewrite rule" "select_rewrite_rule" "rewrite_rule="""
 #是否支持php
 yes_or_no "enable php support" "php_support" "php_support_code=''"
 
-vhost_nginx_code="
+cat > ${nginx_location}/conf/vhost/${server_names%% *}.conf << EOF
 server {
 	server_name ${server_names};
 	listen 80;
@@ -68,29 +73,18 @@ server {
 	root ${website_root}/web;
 	${rewrite_rule}
 	${php_support_code}
-	location ~ .*\\\.(gif|jpg|jpeg|png|bmp|swf)$ {
+	location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
 			expires      30d;
 	}
 
-	location ~ .*\\\.(js|css)?$ {
+	location ~ .*\.(js|css)?$ {
 			expires      12h;
 	}
 
 	access_log  ${website_root}/logs/access.log access;
 	error_log  ${website_root}/logs/error.log error;
 }
-"
-#末尾加\号
-vhost_nginx_code=$(echo "$vhost_nginx_code" | sed 's/$/\\/g' )
-#开始写入配置
-sed -i -e "
-\$!{
-:loop
-N
-\$! b loop
-}
-s#\(.*\)}#\1$vhost_nginx_code}#
-" ${nginx_location}/conf/nginx.conf
+EOF
 
 echo "congratulations.vhost ${server_names%% *} had created."
 #创建目录
@@ -109,62 +103,13 @@ fi
 }
 
 nginx_vhost_list(){
-echo "server_name                                              root"
-echo "-------------------------------------------------------------"
-sed -n "
-/server\s*{/{
-H
-:loop
-n;H
-/}/{
-s/}//;x;H
-s/.*server_name\s*\([^;]*\);.*/\1/p
-x
-s/.*\n\s*root\s*\([^;]*\);.*/\1/p
-s/.*//g;x
-}
-/{/!b loop
-:loop1
-n;H
-/}/!b loop1
-b loop
-}
-" ${nginx_location}/conf/nginx.conf | sed "
-1 {
-x
-s/^$/          /
-s/^.*$/&&&&&&&/
-x
-}
-G;N
-s/\n//
-s/\(.\{50\}\).*\n\(.*\)/\1    \2/
-"
+sed -n -r -e 's/server_name\s+(.*);/\1/p' -e 's/root\s+(.*);/\1/p'  ${nginx_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
 }
 
 nginx_vhost_del(){
 read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
 if vhost_is_exist "$domain";then
-	sed -i -n "
-	/server\s*{/{
-	H
-	:loop
-	n;H
-	/}/{
-	s/}//;x
-	/.*server_name.*$domain.*/d
-	p;d
-	}
-	/{/!b loop
-	:loop1
-	n;H
-	/}/!b loop1
-	b loop
-	}
-	p
-	" ${nginx_location}/conf/nginx.conf
-	#删除空行
-	sed -i '/^\s*$/d' ${nginx_location}/conf/nginx.conf
+	rm -f ${nginx_location}/conf/vhost/$domain.conf
 	echo "complete deleted the server_name ${domain} of vhost."
 	echo "reloading the nginx config file..."
 	if ${nginx_location}/sbin/nginx -t;then
@@ -181,7 +126,6 @@ else
 fi	
 }
 
-
 apache_vhost(){
 	local action=$1
 	case $action in
@@ -197,7 +141,7 @@ apache_vhost_add(){
 while true; do
 	read -p "input server names(ie.www.centos.bz centos.bz): " server_names
 	for i in $server_names;do
-		if grep -E -i -q "ServerName\s*$i|ServerAlias.*$i" ${apache_location}/conf/extra/httpd-vhosts.conf;then
+		if apache_vhost_is_exist $i;then
 			echo "vhost $i is exist,please reinput server_names."
 			break
 		fi
@@ -210,7 +154,7 @@ default_root="/home/${server_names%% *}"
 read -p "input website root(default:$default_root/web): " website_root
 website_root=${website_root:=$default_root}
 #开始写入配置文件
-cat >> ${apache_location}/conf/extra/httpd-vhosts.conf << EOF
+cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
 <VirtualHost *:80>
 ServerName ${server_names%% *}
 ServerAlias ${server_names}
@@ -244,45 +188,28 @@ fi
 }
 
 apache_vhost_list(){
-echo "server_name                                              root"
-echo "-------------------------------------------------------------"
-sed -n "
-s/.*ServerAlias\s*\(.*\)/\1/ip
-s/.*DocumentRoot\s*\(.*\)/\1/ip
-" ${apache_location}/conf/extra/httpd-vhosts.conf | sed "
-1 {
-x
-s/^$/          /
-s/^.*$/&&&&&&&/
-x
-}
-G;N
-s/\n//
-s/\(.\{50\}\).*\n\(.*\)/\1    \2/
-"	
+sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  *.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
 }
 
 apache_vhost_del(){
 read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
-sed -i "
-/<VirtualHost.*/{
-:loop
-N
-/<\/VirtualHost>/! b loop
-/ServerAlias.*$domain.*/d
-}
-" ${apache_location}/conf/extra/httpd-vhosts.conf
-echo "complete deleted the server_name ${domain} of vhost."
-#重载配置
-echo "reloading the apache config file..."
-if ${apache_location}/bin/apachectl -t;then
-	/etc/init.d/httpd restart
-	echo "reload success."
-	exit 0
+if apache_vhost_is_exist "$domain";then
+	echo "vhost $domain not found"
+	exit 1
 else
- 	echo "reload failed.config file had an error,please fix it."
- 	exit 1
-fi
+	rm -f ${apache_location}/conf/vhost/$domain.conf	
+	echo "complete deleted the server_name ${domain} of vhost."
+	#重载配置
+	echo "reloading the apache config file..."
+	if ${apache_location}/bin/apachectl -t;then
+		/etc/init.d/httpd restart
+		echo "reload success."
+		exit 0
+	else
+	 	echo "reload failed.config file had an error,please fix it."
+	 	exit 1
+	fi
+fi	
 }
 
 #判断root密码是否正确
@@ -428,24 +355,23 @@ done
 #检查vhost是否存在
 vhost_is_exist(){
 local domain=$1
-sed -n "
-/server\s*{/{
-H
-:loop
-n;H
-/}/{
-s/}//;x
-/.*server_name.*$domain.*/Q 0
-d
+local conf_file="${nginx_location}/conf/vhost/$1.conf"
+if [ -f "$conf_file" ];then
+	return 0
+else
+	return 1
+fi	
 }
-/{/!b loop
-:loop1
-n;H
-/}/!b loop1
-b loop
-}
-$ Q 1
-" ${nginx_location}/conf/nginx.conf
+
+#检查apahcevhost是否存在
+apache_vhost_is_exist(){
+local domain=$1
+local conf_file="${apache_location}/conf/vhost/$1.conf"
+if [ -f "$conf_file" ];then
+	return 0
+else
+	return 1
+fi	
 }
 
 #大写转换成小写
@@ -456,7 +382,7 @@ echo $words | tr '[A-Z]' '[a-z]'
 
 #nginx重写规则选择
 select_rewrite_rule(){
-local rewrite_rules=("include DEDECMS.conf;" "include Discuz_7.conf;" "include Discuz_X.conf;" "include ecshop.conf;" "include phpcms.conf;"  "include PHPWind.conf;"  "include shopex.conf;"  "include Typecho.conf;"  "include wordpress.conf;"  )
+local rewrite_rules=("include rewrite/DEDECMS.conf;" "include rewrite/Discuz_7.conf;" "include rewrite/Discuz_X.conf;" "include rewrite/ecshop.conf;" "include rewrite/phpcms.conf;"  "include rewrite/PHPWind.conf;"  "include rewrite/shopex.conf;"  "include rewrite/Typecho.conf;"  "include rewrite/wordpress.conf;"  )
 echo "available nginx rewrite rules:"
 echo -e "1、DEDECMS\n2、Discuz_7\n3、Discuz_X\n4、ECshop\n5、PHPCMS\n6、PHPWind\n7、Shopex\n8、Typecho\n9、WordPress"
 while true; do

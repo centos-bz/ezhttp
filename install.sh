@@ -65,9 +65,11 @@ echo "nginx_location=$nginx_location" >> /tmp/ezhttp_info_do_not_del
 #配置nginx
 config_nginx(){
 groupadd www	
-useradd -s /bin/false -g www www	
+useradd -s /bin/false -g www www
+mkdir -p ${nginx_location}/conf/vhost
 mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
-cp -f $cur_dir/conf/*.conf ${nginx_location}/conf/
+cp -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
+cp -a $cur_dir/conf/rewrite ${nginx_location}/conf/
 cp -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
 sed -i "s#^nginx_location=.*#nginx_location=$nginx_location#" /etc/init.d/nginx
 chmod +x /etc/init.d/nginx
@@ -179,6 +181,7 @@ Allow from All
 php_admin_value open_basedir ${apache_location}/htdocs:/tmp:/proc
 </Directory>
 </VirtualHost>
+Include ${apache_location}/conf/vhost/*.conf
 EOF
 
 #设置运行用户为www
@@ -392,9 +395,9 @@ if [ "$php" == "${php5_2_filename}" ];then
 	patch -p1 < ${php5_2_filename}-max-input-vars.patch
 	error_detect "./buildconf --force"
 	if [ "`package_support`" == 1 ];then
-		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-mcrypt --with-mhash "
+		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash "
 	else
-		other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
+		other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
 	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64"
 	if grep -q -i "Ubuntu 12.04" /etc/issue;then
@@ -424,9 +427,9 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	cd ${php5_3_filename}
 	make clean
 	if [ "`package_support`" == 1 ];then
-		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-mcrypt --with-mhash"
+		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash"
 	else
-		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
+		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
 	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear $lib64"
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -450,9 +453,9 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	cd ${php5_4_filename}
 	make clean
 	if [ "`package_support`" == 1 ];then
-		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-mcrypt --with-mhash"
+		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash"
 	else
-		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
+		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
 	fi		
 	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear $lib64"
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -481,18 +484,21 @@ if [ "$php" == "${php5_2_filename}" ];then
 	sed -i "s#^php_location=.*#php_location=$php_location#" /etc/init.d/php-fpm
 	chmod +x /etc/init.d/php-fpm
 	sed -i  's#.*<value name="user">.*#<value name="user">www</value>#' ${php_location}/etc/php-fpm.conf
+	sed -i 's#127.0.0.1:9000#/tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
 elif [ "$php" == "${php5_3_filename}" ]; then
 	\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 	chmod +x /etc/init.d/php-fpm
 	sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
 	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
+	sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
 elif [ "$php" == "${php5_4_filename}" ]; then
 	\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 	chmod +x /etc/init.d/php-fpm
 	sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
-	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf	
+	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
+	sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
 fi
 boot_start php-fpm
@@ -503,6 +509,7 @@ install_php_modules(){
 local php_prefix=$1
 if_in_array "${ZendOptimizer_filename}" "$php_modules_install" && install_ZendOptimizer "$php_prefix"
 if_in_array "${eaccelerator_filename}" "$php_modules_install" && install_eaccelerator "$php_prefix"
+if_in_array "${xcache_filename}" "$php_modules_install" && install_xcache "$php_prefix"
 if_in_array "${php_imagemagick_filename}" "$php_modules_install" && install_php_imagesmagick "$php_prefix"
 if_in_array "${php_memcache_filename}" "$php_modules_install" && install_php_memcache "$php_prefix"
 if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && install_ZendGuardLoader "$php_prefix"
@@ -567,6 +574,23 @@ EXTENSION_DIR=`awk -F"= " '/^EXTENSION_DIR/{print $2}' Makefile`
 #配置缓存目录
 mkdir -p /var/cache/eaccelerator
 chmod 0777 /var/cache/eaccelerator
+}
+
+#安装xcache
+install_xcache(){
+local php_prefix=$1
+download_file "${xcache_baidupan_link}" "${xcache_official_link}" "${xcache_filename}.tar.gz"
+cd $cur_dir/soft/
+rm -rf ${xcache_filename}
+tar xzvf ${xcache_filename}.tar.gz
+cd ${xcache_filename}
+error_detect "${php_prefix}/bin/phpize"
+error_detect "../${xcache_filename}/configure --enable-xcache --enable-xcache-constant --with-php-config=${php_prefix}/bin/php-config"
+error_detect "make"
+error_detect "make install"
+EXTENSION_DIR=`awk -F"= " '/^EXTENSION_DIR/{print $2}' Makefile`
+#配置php.ini
+! grep -q "\[xcache\]" ${php_prefix}/etc/php.ini && sed -i '$a\[xcache]\nextension=xcache.so\n' ${php_prefix}/etc/php.ini 
 }
 
 #安装php-memcache
@@ -848,6 +872,8 @@ if [ "$apache" == "custom_version" ];then
 fi	
 
 if [ "$apache" != "do_not_install" ];then
+	#设置php运行模式为with_apache
+	php_mode="with_apache"
 	#apache安装路径
 	read -p "$apache install location(default:/usr/local/apache,leave blank for default): " apache_location
 	apache_location=${apache_location:="/usr/local/apache"}
@@ -945,29 +971,37 @@ if [ "$php" == "custom_version" ];then
 fi	
 
 if [ "$php" != "do_not_install" ];then
-	#选择php运行模式
-	while true
-	do
-		for ((i=1;i<=${#php_mode_arr[@]};i++ )); do echo -e "$i) ${php_mode_arr[$i-1]}"; done
-		echo
-		read -p "choose php run mode: " mode
-		php_mode=${php_mode_arr[$mode-1]}
-		#输入有误时，从这里停止重新循环
-		[ "$php_mode" == "" ] && continue
-		echo "you choose $php_mode"
-		#判断当选择with_apache时，apache_location是否已经设置
-		if [ "$apache_location" == "" ] && [ "$php_mode" == "with_apache" ];then
-			read -p "apache location is not set,please set it: " apache_location
-			apache_location=`filter_location "$apache_location"`
-		fi	
+	if [ "$php_mode" == "" ];then
+		#选择php运行模式
+		while true
+		do
+			for ((i=1;i<=${#php_mode_arr[@]};i++ )); do echo -e "$i) ${php_mode_arr[$i-1]}"; done
+			echo
+			read -p "choose php run mode: " mode
+			php_mode=${php_mode_arr[$mode-1]}
+			#输入有误时，从这里停止,重新循环
+			[ "$php_mode" == "" ] && continue
+			echo "you choose $php_mode"
+			#判断当选择with_apache时，apache_location是否已经设置
+			if [ "$apache_location" == "" ] && [ "$php_mode" == "with_apache" ];then
+				read -p "apache location is not set,please set it: " apache_location
+				apache_location=`filter_location "$apache_location"`
+			fi	
+			#apache2.4与php5.2不兼容，需要判断一下
+			if [ "$php_mode" == "with_apache" ] && [ "$apache" == "${apache2_4_filename}" ] && [ "$php" == "${php5_2_filename}" ];then
+				echo "${apache2_4_filename} is not compatible with ${php5_2_filename},please reselect"
+				display_menu php
+			else
+				break
+			fi	
+		done
+	else
 		#apache2.4与php5.2不兼容，需要判断一下
 		if [ "$php_mode" == "with_apache" ] && [ "$apache" == "${apache2_4_filename}" ] && [ "$php" == "${php5_2_filename}" ];then
 			echo "${apache2_4_filename} is not compatible with ${php5_2_filename},please reselect"
 			display_menu php
-		else
-			break
 		fi	
-	done	
+	fi	
 	#php安装路径
 	read -p "$php install location(default:/usr/local/php,leave blank for default): " php_location
 	php_location=${php_location:=/usr/local/php}

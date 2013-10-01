@@ -27,17 +27,17 @@ apache2_4_baidupan_link="http://pan.baidu.com/share/link?shareid=1323900566&uk=2
 apache2_4_official_link="http://download.nextag.com/apache/httpd/httpd-2.4.6.tar.gz"
 
 #mysql_server设置
-mysql5_1_filename="mysql-5.1.71"
-mysql5_1_baidupan_link="http://pan.baidu.com/share/link?shareid=1179957852&uk=2838537799&third=15"
-mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.71.tar.gz"
+mysql5_1_filename="mysql-5.1.72"
+mysql5_1_baidupan_link="http://pan.baidu.com/s/1ceg0i"
+mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.72.tar.gz"
 
-mysql5_5_filename="mysql-5.5.33"
-mysql5_5_baidupan_link="http://pan.baidu.com/share/link?shareid=1338545939&uk=2838537799&third=15"
-mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.33.tar.gz"
+mysql5_5_filename="mysql-5.5.34"
+mysql5_5_baidupan_link="http://pan.baidu.com/s/17SkX3"
+mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.34.tar.gz"
 
-mysql5_6_filename="mysql-5.6.13"
-mysql5_6_baidupan_link="http://pan.baidu.com/share/link?shareid=1341326365&uk=2838537799&third=15"
-mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.13.tar.gz"
+mysql5_6_filename="mysql-5.6.14"
+mysql5_6_baidupan_link="http://pan.baidu.com/s/13O2cN"
+mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.14.tar.gz"
 
 #php设置
 php5_2_filename="php-5.2.17"
@@ -48,9 +48,9 @@ php5_3_filename="php-5.3.27"
 php5_3_baidupan_link="http://pan.baidu.com/share/link?shareid=1363116296&uk=2838537799&third=15"
 php5_3_official_link="http://www.php.net/get/php-5.3.27.tar.gz/from/us1.php.net/mirror"
 
-php5_4_filename="php-5.4.19"
-php5_4_baidupan_link="http://pan.baidu.com/share/link?shareid=1364763802&uk=2838537799&third=15"
-php5_4_official_link="http://us1.php.net/distributions/php-5.4.19.tar.gz"
+php5_4_filename="php-5.4.20"
+php5_4_baidupan_link="http://pan.baidu.com/s/15Qtnw"
+php5_4_official_link="http://us1.php.net/distributions/php-5.4.20.tar.gz"
 
 #ZendOptimizer设置
 ZendOptimizer_filename="ZendOptimizer-3.3.9"
@@ -67,6 +67,11 @@ ZendOptimizer64_official_link="http://downloads.zend.com/optimizer/3.3.9/ZendOpt
 eaccelerator_filename="eaccelerator-0.9.6.1"
 eaccelerator_baidupan_link="http://pan.baidu.com/share/link?shareid=1316409636&uk=2838537799&third=15"
 eaccelerator_official_link="http://cloud.github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1.tar.bz2"
+
+#xcache设置
+xcache_filename="xcache-3.0.3"
+xcache_baidupan_link="http://pan.baidu.com/s/1vGVfG"
+xcache_official_link="http://xcache.lighttpd.net/pub/Releases/3.0.3/xcache-3.0.3.tar.gz"
 
 #php-memcache设置
 php_memcache_filename="memcache-3.0.8"
@@ -206,6 +211,11 @@ libjpeg_filename="jpeg-6b"
 libjpeg_baidupan_link="http://pan.baidu.com/share/link?shareid=1956522322&uk=2838537799&third=15"
 libjpeg_official_link="http://hivelocity.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz"
 
+#freetype设置
+freetype_filename="freetype-2.5.0"
+freetype_baidupan_link="http://pan.baidu.com/s/1DXPPg"
+freetype_official_link="http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz"
+
 #libpng设置
 libpng_filename="libpng-1.4.12"
 libpng_baidupan_link="http://pan.baidu.com/share/link?shareid=2028199673&uk=2838537799&third=15"
@@ -253,7 +263,7 @@ apache_arr=(${apache2_2_filename} ${apache2_4_filename} custom_version do_not_in
 mysql_arr=(${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version do_not_install)
 php_arr=(${php5_2_filename} ${php5_3_filename} ${php5_4_filename} custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
-php_modules_arr=(${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} do_not_install)
+php_modules_arr=(${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} do_not_install)
 other_soft_arr=(${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} do_not_install)
 
 #依赖包安装路径

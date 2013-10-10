@@ -164,7 +164,7 @@ local version=$1
 cp -f ${apache_location}/conf/httpd.conf ${apache_location}/conf/httpd.conf_bak
 grep -E -q "^\s*#\s*Include conf/extra/httpd-vhosts.conf" ${apache_location}/conf/httpd.conf  && sed -i 's#^\s*\#\s*Include conf/extra/httpd-vhosts.conf#Include conf/extra/httpd-vhosts.conf#' ${apache_location}/conf/httpd.conf || sed -i '$aInclude conf/extra/httpd-vhosts.conf' ${apache_location}/conf/httpd.conf
 mv ${apache_location}/conf/extra/httpd-vhosts.conf ${apache_location}/conf/extra/httpd-vhosts.conf_bak
-
+mkdir -p ${apache_location}/conf/vhost/
 #写入默认虚拟主机配置
 cat > ${apache_location}/conf/extra/httpd-vhosts.conf << EOF
 NameVirtualHost *:80

@@ -1014,18 +1014,18 @@ if [ "$php" != "do_not_install" ];then
 	if [ "$php" == "${php5_2_filename}" ];then
 		#因为ZendGuardLoader不支持php5_2，所以从数组中删除
 		php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
-		for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
 	elif [ "$php" == "${php5_3_filename}" ];then
 		#因为ZendOptimizer不支持php5_3,所以从数组中删除
 		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
-		for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
 	elif [ "$php" == "${php5_4_filename}" ];then
 		#从数组中删除ZendOptimizer、eaccelerator、imagick
 		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 		php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
 		php_modules_arr=(${php_modules_arr[@]#${php_imagemagick_filename}})
-		for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
 	fi
+	#apache2.4 event模式不支持ZendGuardLoader
+	[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+	for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
 	echo
 	php_modules_prompt="please input a number: "
 	while true

@@ -181,7 +181,7 @@ Allow from All
 php_admin_value open_basedir ${apache_location}/htdocs:/tmp:/proc
 </Directory>
 </VirtualHost>
-Include ${apache_location}/conf/vhost/*.conf
+IncludeOptional ${apache_location}/conf/vhost/*.conf
 EOF
 
 #设置运行用户为www

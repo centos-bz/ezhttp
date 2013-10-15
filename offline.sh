@@ -121,6 +121,7 @@ fi
 
 #下载php
 if [ "$php" != "do_not_install" ];then
+	download_file "${freetype_baidupan_link}" "${freetype_official_link}" "${freetype_filename}.tar.gz"
 	download_file "${libiconv_baidupan_link}" "${libiconv_official_link}" "${libiconv_filename}.tar.gz"
 	download_file "${m4_baidupan_link}" "${m4_official_link}" "${m4_filename}.tar.gz"
 	download_file "${autoconf_baidupan_link}" "${autoconf_official_link}" "${autoconf_filename}.tar.gz"

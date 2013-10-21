@@ -181,7 +181,7 @@ Allow from All
 php_admin_value open_basedir ${apache_location}/htdocs:/tmp:/proc
 </Directory>
 </VirtualHost>
-IncludeOptional ${apache_location}/conf/vhost/*.conf
+Include ${apache_location}/conf/vhost/*.conf
 EOF
 
 #设置运行用户为www
@@ -191,6 +191,7 @@ sed -i 's/^Group.*/Group www/i' ${apache_location}/conf/httpd.conf
 if [ $version == "2.4" ];then
 	sed -i '/NameVirtualHost/d' ${apache_location}/conf/extra/httpd-vhosts.conf
 	sed -i 's/Allow from All/Require all granted/' ${apache_location}/conf/extra/httpd-vhosts.conf
+	sed -i 's/^Include/IncludeOptional/' ${apache_location}/conf/extra/httpd-vhosts.conf
 fi
 
 cp -f $cur_dir/conf/init.d.httpd /etc/init.d/httpd

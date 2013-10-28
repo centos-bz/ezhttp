@@ -314,7 +314,7 @@ add_to_env "${mysql_location}"
 config_mysql(){
 local version=$1
 useradd -s /bin/false mysql
-mkdir -p ${mysql_location}/etc/
+mkdir -p ${mysql_location}/etc/ ${mysql_data_location}
 #防止mysql使用错误的my.cnf文件
 mv /etc/my.cnf /etc/my.cnf_bak
 mv /etc/mysql/my.cnf /etc/mysql/my.cnf_bak

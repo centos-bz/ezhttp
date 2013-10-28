@@ -188,7 +188,7 @@ fi
 }
 
 apache_vhost_list(){
-sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  *.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
+sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  ${apache_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
 }
 
 apache_vhost_del(){

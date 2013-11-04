@@ -788,7 +788,7 @@ boot_start pureftpd
 if_use_previous_setting(){
 if [ -s "/root/previous_setting" ];then
 	#是否使用上次设置安装
-	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting" ". /root/previous_setting" "advanced_setting"
+	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting" ". /root/previous_setting" "rm -f /root/previous_setting;advanced_setting"
 else
 	advanced_setting
 fi

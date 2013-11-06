@@ -14,7 +14,7 @@ tengine_official_link="http://tengine.taobao.org/download/tengine-1.5.1.tar.gz"
 
 #openresty设置
 openresty_filename="ngx_openresty-1.4.3.1"
-openresty_baidupan_link="http://pan.baidu.com/share/link?shareid=1314275872&uk=2838537799&third=15"
+openresty_baidupan_link="http://pan.baidu.com/s/1d2X29"
 openresty_official_link="http://openresty.org/download/ngx_openresty-1.4.3.1.tar.gz"
 
 #apache设置

@@ -13,9 +13,9 @@ tengine_baidupan_link="http://pan.baidu.com/share/link?shareid=1306661944&uk=283
 tengine_official_link="http://tengine.taobao.org/download/tengine-1.5.1.tar.gz"
 
 #openresty设置
-openresty_filename="ngx_openresty-1.2.8.6"
+openresty_filename="ngx_openresty-1.4.3.1"
 openresty_baidupan_link="http://pan.baidu.com/share/link?shareid=1314275872&uk=2838537799&third=15"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.2.8.6.tar.gz"
+openresty_official_link="http://openresty.org/download/ngx_openresty-1.4.3.1.tar.gz"
 
 #apache设置
 apache2_2_filename="httpd-2.2.25"

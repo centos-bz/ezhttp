@@ -11,20 +11,20 @@ export PATH
 #安装nginx
 install_nginx(){
 #安装pcre
-download_file "${pcre_baidupan_link}" "${pcre_official_link}" "${pcre_filename}.tar.gz"
+download_file "${pcre_other_link}" "${pcre_official_link}" "${pcre_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${pcre_filename}.tar.gz
 #安装openssl
-download_file "${openssl_baidupan_link}" "${openssl_official_link}" "${openssl_filename}.tar.gz"
+download_file "${openssl_other_link}" "${openssl_official_link}" "${openssl_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${openssl_filename}.tar.gz
 #安装zlib
-download_file "${zlib_baidupan_link}" "${zlib_official_link}" "${zlib_filename}.tar.gz"
+download_file "${zlib_other_link}" "${zlib_official_link}" "${zlib_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${zlib_filename}.tar.gz
 
 if [ "$nginx" == "${nginx_filename}" ];then
-	download_file "${nginx_baidupan_link}" "${nginx_official_link}" "${nginx_filename}.tar.gz"
+	download_file "${nginx_other_link}" "${nginx_official_link}" "${nginx_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xvzf ${nginx_filename}.tar.gz
 	cd ${nginx_filename}
@@ -34,7 +34,7 @@ if [ "$nginx" == "${nginx_filename}" ];then
 	error_detect "make install"
 
 elif [ "$nginx" == "${tengine_filename}" ];then
-	download_file "${tengine_baidupan_link}" "${tengine_official_link}" "${tengine_filename}.tar.gz"
+	download_file "${tengine_other_link}" "${tengine_official_link}" "${tengine_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${tengine_filename}.tar.gz
 	cd ${tengine_filename}
@@ -44,7 +44,7 @@ elif [ "$nginx" == "${tengine_filename}" ];then
 	error_detect "make install"
 	
 elif [ "$nginx" == "${openresty_filename}" ];then
-	download_file "${openresty_baidupan_link}" "${openresty_official_link}" "${openresty_filename}.tar.gz"
+	download_file "${openresty_other_link}" "${openresty_official_link}" "${openresty_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${openresty_filename}.tar.gz
 	cd ${openresty_filename}
@@ -93,7 +93,7 @@ fi
 
 
 if [ "$apache" == "${apache2_2_filename}" ];then	
-	download_file "${apache2_2_baidupan_link}" "${apache2_2_official_link}" "${apache2_2_filename}.tar.gz"
+	download_file "${apache2_2_other_link}" "${apache2_2_official_link}" "${apache2_2_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apache2_2_filename}.tar.gz
 	cd ${apache2_2_filename}
@@ -125,14 +125,14 @@ elif [ "$apache" == "${apache2_4_filename}" ];then
 	fi		
 
 	#下载apr和apr-util
-	download_file "${apr_baidupan_link}" "${apr_official_link}" "${apr_filename}.tar.gz"
+	download_file "${apr_other_link}" "${apr_official_link}" "${apr_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apr_filename}.tar.gz
-	download_file "${apr_util_baidupan_link}" "${apr_util_official_link}" "${apr_util_filename}.tar.gz"
+	download_file "${apr_util_other_link}" "${apr_util_official_link}" "${apr_util_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apr_util_filename}.tar.gz
 
-	download_file "${apache2_4_baidupan_link}" "${apache2_4_official_link}" "${apache2_4_filename}.tar.gz"
+	download_file "${apache2_4_other_link}" "${apache2_4_official_link}" "${apache2_4_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apache2_4_filename}.tar.gz
 	cd ${apache2_4_filename}
@@ -219,7 +219,7 @@ if [ "$mysql" == "${mysql5_1_filename}" ];then
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 	fi	
 
-	download_file "${mysql5_1_baidupan_link}" "${mysql5_1_official_link}" "${mysql5_1_filename}.tar.gz"
+	download_file "${mysql5_1_other_link}" "${mysql5_1_official_link}" "${mysql5_1_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${mysql5_1_filename}.tar.gz
 	cd ${mysql5_1_filename}
@@ -248,7 +248,7 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 		check_installed "install_bison" "${depends_prefix}/${bison_filename}"
 	fi		
 
-	download_file "${mysql5_5_baidupan_link}" "${mysql5_5_official_link}" "${mysql5_5_filename}.tar.gz"
+	download_file "${mysql5_5_other_link}" "${mysql5_5_official_link}" "${mysql5_5_filename}.tar.gz"
 	cd $cur_dir/soft/
 	rm -rf ${mysql5_5_filename}
 	tar xzvf ${mysql5_5_filename}.tar.gz
@@ -285,7 +285,7 @@ elif [ "$mysql" == "${mysql5_6_filename}" ];then
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 		check_installed "install_bison" "${depends_prefix}/${bison_filename}"
 	fi		
-	download_file "${mysql5_6_baidupan_link}" "${mysql5_6_official_link}" "${mysql5_6_filename}.tar.gz"	
+	download_file "${mysql5_6_other_link}" "${mysql5_6_official_link}" "${mysql5_6_filename}.tar.gz"	
 	cd $cur_dir/soft/
 	rm -rf ${mysql5_6_filename}
 	tar xzvf  ${mysql5_6_filename}.tar.gz
@@ -384,7 +384,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	elif [ "$php_mode" == "with_fastcgi" ];then
 		php_run_php_mode="--enable-fastcgi --enable-fpm"
 	fi
-	download_file "${php5_2_baidupan_link}" "${php5_2_official_link}" "${php5_2_filename}.tar.gz"
+	download_file "${php5_2_other_link}" "${php5_2_official_link}" "${php5_2_filename}.tar.gz"
 	cd $cur_dir/soft/
 	rm -rf ${php5_2_filename}
 	tar xzvf ${php5_2_filename}.tar.gz
@@ -422,7 +422,7 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	elif [ "$php_mode" == "with_fastcgi" ];then
 		php_run_php_mode="--enable-fpm"
 	fi
-	download_file "${php5_3_baidupan_link}" "${php5_3_official_link}" "${php5_3_filename}.tar.gz"
+	download_file "${php5_3_other_link}" "${php5_3_official_link}" "${php5_3_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${php5_3_filename}.tar.gz
 	cd ${php5_3_filename}
@@ -448,7 +448,7 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	elif [ "$php_mode" == "with_fastcgi" ];then
 		php_run_php_mode="--enable-fpm"
 	fi
-	download_file "${php5_4_baidupan_link}" "${php5_4_official_link}" "${php5_4_filename}.tar.gz"
+	download_file "${php5_4_other_link}" "${php5_4_official_link}" "${php5_4_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${php5_4_filename}.tar.gz
 	cd ${php5_4_filename}
@@ -523,13 +523,13 @@ install_ZendOptimizer()
 local php_prefix=$1	
 #如果是64位系统
 if is_64bit ; then
-	download_file "${ZendOptimizer64_baidupan_link}" "${ZendOptimizer64_official_link}" "${ZendOptimizer64_filename}.tar.gz"
+	download_file "${ZendOptimizer64_other_link}" "${ZendOptimizer64_official_link}" "${ZendOptimizer64_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ZendOptimizer64_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ZendOptimizer
 	cp -a ${ZendOptimizer64_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
 else
-	download_file "${ZendOptimizer32_baidupan_link}" "${ZendOptimizer32_official_link}" "${ZendOptimizer32_filename}.tar.gz"
+	download_file "${ZendOptimizer32_other_link}" "${ZendOptimizer32_official_link}" "${ZendOptimizer32_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ZendOptimizer32_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ZendOptimizer
@@ -554,7 +554,7 @@ else
 fi		
 
 local php_prefix=$1
-download_file "${eaccelerator_baidupan_link}" "${eaccelerator_official_link}" "${eaccelerator_filename}.tar.bz2"
+download_file "${eaccelerator_other_link}" "${eaccelerator_official_link}" "${eaccelerator_filename}.tar.bz2"
 cd $cur_dir/soft/
 rm -rf ${eaccelerator_filename}
 tar xjfv ${eaccelerator_filename}.tar.bz2
@@ -580,7 +580,7 @@ chmod 0777 /var/cache/eaccelerator
 #安装xcache
 install_xcache(){
 local php_prefix=$1
-download_file "${xcache_baidupan_link}" "${xcache_official_link}" "${xcache_filename}.tar.gz"
+download_file "${xcache_other_link}" "${xcache_official_link}" "${xcache_filename}.tar.gz"
 cd $cur_dir/soft/
 rm -rf ${xcache_filename}
 tar xzvf ${xcache_filename}.tar.gz
@@ -608,7 +608,7 @@ else
 fi		
 
 local php_prefix=$1
-download_file "${php_memcache_baidupan_link}" "${php_memcache_official_link}" "${php_memcache_filename}.tgz"
+download_file "${php_memcache_other_link}" "${php_memcache_official_link}" "${php_memcache_filename}.tgz"
 cd $cur_dir/soft/
 rm -rf ${php_memcache_filename}
 tar xzvf ${php_memcache_filename}.tgz
@@ -643,7 +643,7 @@ fi
 
 export PKG_CONFIG_PATH=${depends_prefix}/${ImageMagick_filename}/lib/pkgconfig/
 local php_prefix=$1
-download_file "${php_imagemagick_baidupan_link}" "${php_imagemagick_official_link}" "${php_imagemagick_filename}.tgz"
+download_file "${php_imagemagick_other_link}" "${php_imagemagick_official_link}" "${php_imagemagick_filename}.tgz"
 cd $cur_dir/soft/
 rm -rf ${php_imagemagick_filename}
 tar xzvf ${php_imagemagick_filename}.tgz
@@ -660,14 +660,14 @@ error_detect "make install"
 install_ionCube(){
 local php_prefix=$1
 if is_64bit ; then
-	download_file "${ionCube64_baidupan_link}" "${ionCube64_official_link}" "${ionCube64_filename}.tar.gz"
+	download_file "${ionCube64_other_link}" "${ionCube64_official_link}" "${ionCube64_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube64_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
 	php_version=`check_php_version "$php_prefix"`
 	cp ioncube/ioncube_loader_lin_${php_version}.so ${depends_prefix}/ioncube/ioncube.so
 else
-	download_file "${ionCube32_baidupan_link}" "${ionCube32_official_link}" "${ionCube32_filename}.tar.gz"
+	download_file "${ionCube32_other_link}" "${ionCube32_official_link}" "${ionCube32_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube32_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
@@ -683,13 +683,13 @@ local php_prefix=$1
 php_version=`check_php_version "$php_prefix"`
 if is_64bit ; then
 	if [ "$php_version" == "5.3" ];then
-		download_file "${ZendGuardLoader53_64_baidupan_link}" "${ZendGuardLoader53_64_official_link}" "${ZendGuardLoader53_64_filename}.tar.gz"
+		download_file "${ZendGuardLoader53_64_other_link}" "${ZendGuardLoader53_64_official_link}" "${ZendGuardLoader53_64_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader53_64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
 		cp ${ZendGuardLoader53_64_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
 	elif [ "$php_version" == "5.4" ];then
-		download_file "${ZendGuardLoader54_64_baidupan_link}" "${ZendGuardLoader54_64_official_link}" "${ZendGuardLoader54_64_filename}.tar.gz"
+		download_file "${ZendGuardLoader54_64_other_link}" "${ZendGuardLoader54_64_official_link}" "${ZendGuardLoader54_64_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader54_64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
@@ -697,13 +697,13 @@ if is_64bit ; then
 	fi
 else
 	if [ "$php_version" == "5.3" ];then
-		download_file "${ZendGuardLoader53_32_baidupan_link}" "${ZendGuardLoader53_32_official_link}" "${ZendGuardLoader53_32_filename}.tar.gz"
+		download_file "${ZendGuardLoader53_32_other_link}" "${ZendGuardLoader53_32_official_link}" "${ZendGuardLoader53_32_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader53_32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
 		cp ${ZendGuardLoader53_32_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
 	elif [ "$php_version" == "5.4" ];then
-		download_file "${ZendGuardLoader54_32_baidupan_link}" "${ZendGuardLoader54_32_official_link}" "${ZendGuardLoader54_32_filename}.tar.gz"
+		download_file "${ZendGuardLoader54_32_other_link}" "${ZendGuardLoader54_32_official_link}" "${ZendGuardLoader54_32_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader54_32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
@@ -733,7 +733,7 @@ else
 	check_installed "install_libevent" "${depends_prefix}/${libevent_filename}"
 fi		
 
-download_file "${memcached_baidupan_link}" "${memcached_official_link}" "${memcached_filename}.tar.gz"
+download_file "${memcached_other_link}" "${memcached_official_link}" "${memcached_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${memcached_filename}.tar.gz
 cd ${memcached_filename}
@@ -756,7 +756,7 @@ boot_start memcached
 
 #安装phpMyAdmin
 install_phpmyadmin(){
-download_file "${phpMyAdmin_baidupan_link}" "${phpMyAdmin_official_link}" "${phpMyAdmin_filename}.tar.gz"
+download_file "${phpMyAdmin_other_link}" "${phpMyAdmin_official_link}" "${phpMyAdmin_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${phpMyAdmin_filename}.tar.gz
 [ ! -d $phpmyadmin_location ] && mv ${phpMyAdmin_filename} $phpmyadmin_location
@@ -766,7 +766,7 @@ sed -i '1aexit;' $phpmyadmin_location/version_check.php
 
 #安装PureFTPd
 install_PureFTPd(){
-download_file "${PureFTPd_baidupan_link}" "${PureFTPd_official_link}" "${PureFTPd_filename}.tar.gz"
+download_file "${PureFTPd_other_link}" "${PureFTPd_official_link}" "${PureFTPd_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${PureFTPd_filename}.tar.gz
 cd ${PureFTPd_filename}
@@ -809,22 +809,22 @@ if [ "$nginx" == "custom_version" ];then
 			nginx_filename=$version
 			nginx=$version
 			nginx_official_link="http://nginx.org/download/${nginx}.tar.gz"
-			nginx_baidupan_link=""
-			custom_info="$custom_info\nnginx_filename=$version\nnginx_official_link=$nginx_official_link\nnginx_baidupan_link=''\n"
+			nginx_other_link=""
+			custom_info="$custom_info\nnginx_filename=$version\nnginx_official_link=$nginx_official_link\nnginx_other_link=''\n"
 			break
 		elif echo "$version" | grep -q -E '^tengine-[0-9]+\.[0-9]+\.[0-9]+$';then
 			tengine_filename=$version
 			nginx=$version
 			tengine_official_link="http://tengine.taobao.org/download/${nginx}.tar.gz"
-			tengine_baidupan_link=""
-			custom_info="$custom_info\ntengine_filename=$version\ntengine_official_link=$tengine_official_link\ntengine_baidupan_link=''\n"
+			tengine_other_link=""
+			custom_info="$custom_info\ntengine_filename=$version\ntengine_official_link=$tengine_official_link\ntengine_other_link=''\n"
 			break
 		elif echo "$version" | grep -q -E '^ngx_openresty-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$';then
 			openresty_filename=$version
 			nginx=$version
 			openresty_official_link="http://openresty.org/download/${nginx}.tar.gz"
-			openresty_baidupan_link=""
-			custom_info="$custom_info\nopenresty_filename=$version\nopenresty_official_link=$openresty_official_link\nopenresty_baidupan_link=''\n"
+			openresty_other_link=""
+			custom_info="$custom_info\nopenresty_filename=$version\nopenresty_official_link=$openresty_official_link\nopenresty_other_link=''\n"
 			break
 		else
 			echo "version invalid,please reinput."
@@ -856,15 +856,15 @@ if [ "$apache" == "custom_version" ];then
 			apache2_2_filename=$version
 			apache=$version
 			read -p "please input $apache download url(must be tar.gz file format): "  apache2_2_official_link
-			apache2_2_baidupan_link=""
-			custom_info="$custom_info\napache2_2_filename=$version\napache2_2_official_link=$apache2_2_official_link\napache2_2_baidupan_link=''\n"
+			apache2_2_other_link=""
+			custom_info="$custom_info\napache2_2_filename=$version\napache2_2_official_link=$apache2_2_official_link\napache2_2_other_link=''\n"
 			break
 		elif echo "$version" | grep -q -E '^httpd-2\.4\.[0-9]+$';then
 			apache2_4_filename=$version
 			apache=$version
 			read -p "please input $apache download url(must be tar.gz file format): " apache2_4_official_link
-			apache2_4_baidupan_link=""
-			custom_info="$custom_info\napache2_4_filename=$version\napache2_4_official_link=$apache2_4_official_link\napache2_4_baidupan_link=''\n"
+			apache2_4_other_link=""
+			custom_info="$custom_info\napache2_4_filename=$version\napache2_4_official_link=$apache2_4_official_link\napache2_4_other_link=''\n"
 			break
 		else
 			echo "version invalid,please reinput."
@@ -894,22 +894,22 @@ if [ "$mysql" == "custom_version" ];then
 			mysql5_1_filename=$version
 			mysql=$version
 			mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/${mysql}.tar.gz"
-			mysql5_1_baidupan_link=""
-			custom_info="$custom_info\nmysql5_1_filename=$version\nmysql5_1_official_link=$mysql5_1_official_link\nmysql5_1_baidupan_link=''\n"
+			mysql5_1_other_link=""
+			custom_info="$custom_info\nmysql5_1_filename=$version\nmysql5_1_official_link=$mysql5_1_official_link\nmysql5_1_other_link=''\n"
 			break
 		elif echo "$version" | grep -q -E '^mysql-5\.5\.[0-9]+$';then
 			mysql5_5_filename=$version
 			mysql=$version
 			mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
-			mysql5_5_baidupan_link=""
-			custom_info="$custom_info\nmysql5_5_filename=$version\nmysql5_5_official_link=$mysql5_5_official_link\nmysql5_5_baidupan_link=''\n"
+			mysql5_5_other_link=""
+			custom_info="$custom_info\nmysql5_5_filename=$version\nmysql5_5_official_link=$mysql5_5_official_link\nmysql5_5_other_link=''\n"
 			break
 		elif echo "$version" | grep -q -E '^mysql-5\.6\.[0-9]+$';then
 			mysql5_6_filename=$version
 			mysql=$version
 			mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/${mysql}.tar.gz"
-			mysql5_6_baidupan_link=""
-			custom_info="$custom_info\nmysql5_6_filename=$version\nmysql5_6_official_link=$mysql5_6_official_link\nmysql5_6_baidupan_link=''\n"
+			mysql5_6_other_link=""
+			custom_info="$custom_info\nmysql5_6_filename=$version\nmysql5_6_official_link=$mysql5_6_official_link\nmysql5_6_other_link=''\n"
 			break			
 		else
 			echo "version invalid,please reinput."
@@ -948,22 +948,22 @@ if [ "$php" == "custom_version" ];then
 			php5_2_filename=$version
 			php=$version
 			read -p "please input $php download url(must be tar.gz file format): "  php5_2_official_link
-			php5_2_baidupan_link=""
-			custom_info="$custom_info\nphp5_2_filename=$version\nphp5_2_official_link=$php5_2_official_link\nphp5_2_baidupan_link=''\n"
+			php5_2_other_link=""
+			custom_info="$custom_info\nphp5_2_filename=$version\nphp5_2_official_link=$php5_2_official_link\nphp5_2_other_link=''\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.3\.[0-9]+$';then
 			php5_3_filename=$version
 			php=$version
 			read -p "please input $php download url(must be tar.gz file format): " php5_3_official_link
-			php5_3_baidupan_link=""
-			custom_info="$custom_info\nphp5_3_filename=$version\nphp5_3_official_link=$php5_3_official_link\nphp5_3_baidupan_link=''\n"
+			php5_3_other_link=""
+			custom_info="$custom_info\nphp5_3_filename=$version\nphp5_3_official_link=$php5_3_official_link\nphp5_3_other_link=''\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.4\.[0-9]+$';then
 			php5_4_filename=$version
 			php=$version
 			read -p "please input $php download url(must be tar.gz file format): " php5_4_official_link
-			php5_4_baidupan_link=""
-			custom_info="$custom_info\nphp5_4_filename=$version\nphp5_4_official_link=$php5_4_official_link\nphp5_4_baidupan_link=''\n"
+			php5_4_other_link=""
+			custom_info="$custom_info\nphp5_4_filename=$version\nphp5_4_official_link=$php5_4_official_link\nphp5_4_other_link=''\n"
 			break			
 		else
 			echo "version invalid,please reinput."

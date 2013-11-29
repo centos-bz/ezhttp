@@ -1209,7 +1209,7 @@ fi
 [ $php != "do_not_install" ] && [ $php_mode == "with_fastcgi" ] && /etc/init.d/php-fpm start
 if_in_array "${memcached_filename}" "$other_soft_install" && /etc/init.d/memcached start
 if_in_array "${PureFTPd_filename}" "$other_soft_install" && /etc/init.d/pureftpd start
-netstat -ntlp
+netstat -nxtlp
 echo "depends_prefix=$depends_prefix" >> /tmp/ezhttp_info_do_not_del
 \cp $cur_dir/ez /usr/bin/ez
 chmod +x /usr/bin/ez

@@ -371,7 +371,7 @@ cd $cur_dir/soft/
 tar xzvf ${libcurl_filename}.tar.gz
 cd ${libcurl_filename}
 make clean
-error_detect "./configure --prefix=${depends_prefix}/${libcurl_filename}"
+error_detect "./configure --prefix=${depends_prefix}/${libcurl_filename} --with-ssl=${depends_prefix}/${openssl_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${libcurl_filename}"

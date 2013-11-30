@@ -603,7 +603,10 @@ CentOSVerCheck(){
 #安装php依赖
 install_php_depends(){
 	#安装libiconv
-	install_libiconv	
+	if [ ! -f "/usr/lib/libiconv.so" ] && [ ! -f "/usr/lib64/libiconv.so" ];then
+		install_libiconv
+	fi
+	
 	#安装依赖
 	if [ "`check_sys_version`" == "debian" ];then
 		apt-get -y install m4 autoconf libcurl4-gnutls-dev  autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev

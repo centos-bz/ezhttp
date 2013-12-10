@@ -335,6 +335,7 @@ error_detect "./configure --prefix=${depends_prefix}/${libxml2_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${libxml2_filename}"
+create_lib64_dir "${depends_prefix}/${libxml2_filename}"
 }
 
 #安装openssl
@@ -349,6 +350,7 @@ error_detect "./config --prefix=${depends_prefix}/${openssl_filename} shared thr
 error_detect "make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${openssl_filename}"
+create_lib64_dir "${depends_prefix}/${openssl_filename}"
 }
 
 #安装zlib
@@ -362,6 +364,7 @@ error_detect "./configure --prefix=${depends_prefix}/${zlib_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${zlib_filename}"
+create_lib64_dir "${depends_prefix}/${zlib_filename}"
 }
 
 #安装libcurl
@@ -375,6 +378,7 @@ error_detect "./configure --prefix=${depends_prefix}/${libcurl_filename} --with-
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${libcurl_filename}"
+create_lib64_dir "${depends_prefix}/${libcurl_filename}"
 }
 
 #安装pcre
@@ -388,6 +392,7 @@ error_detect "./configure --prefix=${depends_prefix}/${pcre_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${pcre_filename}"
+create_lib64_dir "${depends_prefix}/${pcre_filename}"
 }
 
 
@@ -402,6 +407,7 @@ error_detect "./configure --prefix=${depends_prefix}/${libtool_filename} --enabl
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${libtool_filename}"
+create_lib64_dir "${depends_prefix}/${libtool_filename}"
 }
 
 #安装libjpeg
@@ -418,6 +424,7 @@ mkdir -p ${depends_prefix}/${libjpeg_filename}/include/ ${depends_prefix}/${libj
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${libjpeg_filename}"
+create_lib64_dir "${depends_prefix}/${libjpeg_filename}"
 }
 
 #安装libpng
@@ -434,6 +441,7 @@ error_detect "parallel_make"
 error_detect "make install"
 unset LDFLAGS CPPFLAGS
 add_to_env "${depends_prefix}/${libpng_filename}"
+create_lib64_dir "${depends_prefix}/${libpng_filename}"
 }
 
 
@@ -448,6 +456,7 @@ error_detect "./configure --prefix=${depends_prefix}/${mhash_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${mhash_filename}"
+create_lib64_dir "${depends_prefix}/${mhash_filename}"
 }
 
 #安装freetype
@@ -461,6 +470,7 @@ error_detect "./configure --prefix=${depends_prefix}/${freetype_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${freetype_filename}"
+create_lib64_dir "${depends_prefix}/${freetype_filename}"
 }
 
 #安装libmcrypt
@@ -474,6 +484,7 @@ error_detect "./configure --prefix=${depends_prefix}/${libmcrypt_filename}"
 error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${libmcrypt_filename}"
+create_lib64_dir "${depends_prefix}/${libmcrypt_filename}"
 }
 
 #安装m4
@@ -626,7 +637,7 @@ install_php_depends(){
 		create_lib_link "libiconv.so.2"
 		#解决centos 6 libmcrypt和libmhash不在在的问题
 		if CentOSVerCheck 6;then
-			if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+			if is_64bit; then
 				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.x86_64.rpm
 				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.x86_64.rpm
 				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.x86_64.rpm
@@ -676,6 +687,17 @@ create_lib_link(){
                 [ ! -s "/usr/lib64/$lib" ] && [ -s "/usr/lib/$lib" ] && ln -s /usr/lib/${lib}  /usr/lib64/${lib}
                 [ ! -s "/usr/lib/$lib" ] && [ -s "/usr/lib64/$lib" ] && ln -s /usr/lib64/${lib} /usr/lib/${lib}
         fi
+}
+
+#在64位时需要创建lib64目录
+create_lib64_dir(){
+	local dir=$1
+	if is_64bit;then
+		if [ -s "$dir/lib/" ] && [ ! -s  "$dir/lib64/" ];then
+			cd $dir
+			ln -s lib lib64
+		fi		
+	fi	
 }
 
 #显示菜单

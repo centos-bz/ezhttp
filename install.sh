@@ -789,7 +789,8 @@ cp -f configuration-file/pure-ftpd.conf $pureftpd_location/etc
 cp -f $cur_dir/conf/init.d.pureftpd /etc/init.d/pureftpd
 chmod +x /etc/init.d/pureftpd
 sed -i "s#^pureftpd_location=.*#pureftpd_location=$pureftpd_location#" /etc/init.d/pureftpd
-chmod +x /usr/local/pureftpd/bin/pure-config.pl
+sed -i "s#\${exec_prefix}#$pureftpd_location#" $pureftpd_location/bin/pure-config.pl
+chmod +x ${pureftpd_location}/bin/pure-config.pl
 echo "pureftpd_location=$pureftpd_location" >> /tmp/ezhttp_info_do_not_del
 boot_start pureftpd
 }

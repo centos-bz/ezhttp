@@ -188,6 +188,13 @@ EOF
 sed -i 's/^User.*/User www/i' ${apache_location}/conf/httpd.conf
 sed -i 's/^Group.*/Group www/i' ${apache_location}/conf/httpd.conf
 
+#开启几个模块
+sed -i -r 's/^#(.*mod_rewrite.so)/\1/' ${apache_location}/conf/httpd.conf
+sed -i -r 's/^#(.*mod_deflate.so)/\1/' ${apache_location}/conf/httpd.conf
+sed -i -r 's/^#(.*mod_expires.so)/\1/' ${apache_location}/conf/httpd.conf
+sed -i -r 's/^#(.*mod_ssl.so)/\1/' ${apache_location}/conf/httpd.conf
+
+#apache 2.4需要特别处理
 if [ $version == "2.4" ];then
 	sed -i '/NameVirtualHost/d' ${apache_location}/conf/extra/httpd-vhosts.conf
 	sed -i 's/Allow from All/Require all granted/' ${apache_location}/conf/extra/httpd-vhosts.conf

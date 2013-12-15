@@ -367,6 +367,9 @@ install_php_depends
 #判断是否需要支持php mysql，否则取消php的--with-mysql编译参数
 [ "$mysql" == "do_not_install" ] && [ "$mysql_location" == "" ] && unset with_mysql || with_mysql="--with-mysql=$mysql_location --with-mysqli=$mysql_location/bin/mysql_config --with-pdo-mysql=$mysql_location/bin/mysql_config"
 
+#设置php5.3 php5.4使用mysqlnd
+with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd"
+
 #判断是64系统就加上--with-libdir=lib64  
 is_64bit && lib64="--with-libdir=lib64" || lib64=""
 
@@ -439,7 +442,7 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysql} --without-pear $lib64"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysqlnd} --without-pear $lib64"
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
 	error_detect "make install"	
 	
@@ -465,7 +468,7 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	else
 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
 	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysql} --without-pear $lib64"
+	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysqlnd} --without-pear $lib64"
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
 	error_detect "make install"	
 	
@@ -1060,8 +1063,8 @@ if [ "$php" != "do_not_install" ];then
 	done
 	echo -e "your php modules selection ${php_modules_install}"
 	
-	#当选择不安装mysql server时，询问是否让php支持mysql
-	if [ "$mysql" == "do_not_install" ];then
+	#当选择不安装mysql server且php为5.2版本时，询问是否让php支持mysql
+	if [ "$mysql" == "do_not_install" ] && [ "$php" == "${php5_2_filename}" ];then
 		yes_or_no "you do_not_install mysql server,but whether make php support mysql" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'"
 	fi
 fi

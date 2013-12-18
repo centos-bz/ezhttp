@@ -373,12 +373,7 @@ with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqln
 #判断是64系统就加上--with-libdir=lib64  
 is_64bit && lib64="--with-libdir=lib64" || lib64=""
 
-#解决64位php可能无法找到mysql lib库
-if [ "$with_mysql" != "" ];then
-	is_64bit && [ ! -d "${mysql_location}/lib64" ] && cd ${mysql_location} && ln -s lib lib64
-fi	
-
-
+#开始安装php
 if [ "$php" == "${php5_2_filename}" ];then
 	#安装依赖
 	if [ "`check_sys_version`" == "debian" ];then
@@ -844,6 +839,8 @@ if [ "$nginx" == "custom_version" ];then
 fi	
 
 if [ "$nginx" != "do_not_install" ];then
+	#设置nginx安装时,php运行模式为fastcgi
+	php_mode="with_fastcgi"
 	#设置默认路径
 	[ "$nginx" == "${openresty_filename}" ] && nginx_default=/usr/local/openresty || nginx_default=/usr/local/nginx
 	#nginx安装路径
@@ -855,8 +852,13 @@ if [ "$nginx" != "do_not_install" ];then
 	[ "$nginx" == "${openresty_filename}" ] && echo "openresty location $nginx_location,nginx location ${nginx_location}/nginx" || echo "$nginx install location: $nginx_location"
 fi
 
-#apache安装设置
-display_menu apache
+#apache安装设置,nginx安装时,apache不安装
+if [ "$nginx" == "do_not_install" ];then
+	display_menu apache
+else
+	apache="do_not_install"
+fi	
+
 #自定义版本支持
 if [ "$apache" == "custom_version" ];then
 	while true

@@ -95,6 +95,29 @@ else
 fi
 }
 
+#检查压缩包完善性
+check_integrity(){
+	local filename=$1
+	local url1=$2
+	local url2=$3
+	local code=0
+	if echo $filename | grep -q -E "(tar\.gz|tgz)$";then
+		gzip -t ${cur_dir}/soft/$filename
+		local code=$?
+	elif echo $filename | grep -q -E "tar\.bz2$";then
+		bzip2 -t ${cur_dir}/soft/$filename
+		local code=$?
+	fi
+
+	if [ "$code" != 0 ];then
+		echo "the file $filename is incomplete.redownload now..."
+		rm -f ${cur_dir}/soft/${filename}
+		download_file "$url1" "$url2" "$filename"
+	else
+		echo "the file $filename is complete."
+	fi	
+}
+
 #下载软件
 download_file(){
 local url1=$1
@@ -102,7 +125,8 @@ local url2=$2
 local filename=$3
 if [ -s "${cur_dir}/soft/${filename}" ];then
 	#check_md5 "$filename"
-	echo "${filename} is existed."
+	echo "${filename} is existed.check the file integrity."
+	check_integrity "${filename}" "$url1" "$url2"
 else
 	[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
 	cd ${cur_dir}/soft

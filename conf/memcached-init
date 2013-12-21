@@ -32,6 +32,7 @@ start () {
     $memcached_location/bin/memcached -d -p $PORT -u $USER -m $CACHESIZE -c $MAXCONN -P /var/run/memcached.pid $OPTIONS
     RETVAL=$?
     echo
+	[ ! -d "/var/lock/subsys" ] && mkdir -p /var/lock/subsys/
     [ $RETVAL -eq 0 ] && touch /var/lock/subsys/memcached
 }
 stop () {

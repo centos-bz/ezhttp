@@ -193,7 +193,7 @@ sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  ${apac
 
 apache_vhost_del(){
 read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
-if apache_vhost_is_exist "$domain";then
+if ! apache_vhost_is_exist "$domain";then
 	echo "vhost $domain not found"
 	exit 1
 else

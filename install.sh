@@ -313,8 +313,10 @@ echo "mysql_location=$mysql_location" >> /tmp/ezhttp_info_do_not_del
 
 #解决64位系统php可能找不到mysqlclient的问题
 add_to_env "${mysql_location}"
-[ -d "${mysql_location}/lib" ] && [ -d "${mysql_location}/lib64" ] && cd ${mysql_location}/lib && ln -s ../lib64/mysql
-
+if [ -d "${mysql_location}/lib" ] && [ ! -d "${mysql_location}/lib64" ];then
+	cd ${mysql_location}
+	ln -s lib lib64
+fi
 }
 
 #配置mysql

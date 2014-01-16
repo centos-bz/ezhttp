@@ -1,0 +1,50 @@
+diff --git a/install.sh b/install.sh
+index 958b206..84acbce 100644
+--- a/install.sh
++++ b/install.sh
+@@ -375,6 +375,8 @@ with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqln
+ #判断是64系统就加上--with-libdir=lib64  
+ is_64bit && lib64="--with-libdir=lib64" || lib64=""
+ 
++with_modules+="--enable-pcntl --enable-sockets"
++
+ #开始安装php
+ if [ "$php" == "${php5_2_filename}" ];then
+ 	#安装依赖
+@@ -407,7 +409,7 @@ if [ "$php" == "${php5_2_filename}" ];then
+ 	else
+ 		other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
+ 	fi		
+-	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64"
++	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64 $with_modules"
+ 	if grep -q -i "Ubuntu 12.04" /etc/issue;then
+ 		#解决SSL_PROTOCOL_SSLV2’ undeclared问题
+ 		cd ext/openssl/
+@@ -439,7 +441,7 @@ elif [ "$php" == "${php5_3_filename}" ];then
+ 	else
+ 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
+ 	fi		
+-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo"
++	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo $with_modules"
+ 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+ 	error_detect "make install"	
+ 	
+@@ -465,7 +467,7 @@ elif [ "$php" == "${php5_4_filename}" ];then
+ 	else
+ 		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
+ 	fi		
+-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo"
++	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo $with_modules"
+ 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+ 	error_detect "make install"	
+ 	
+@@ -1011,6 +1013,9 @@ if [ "$php" != "do_not_install" ];then
+ 				break
+ 			fi	
+ 		done
++		echo
++		read -p "input your extra compile prarmeters: " param
++		with_modules=param
+ 	else
+ 		#apache2.4与php5.2不兼容，需要判断一下
+ 		if [ "$php_mode" == "with_apache" ] && [ "$apache" == "${apache2_4_filename}" ] && [ "$php" == "${php5_2_filename}" ];then

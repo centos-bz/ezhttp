@@ -55,6 +55,12 @@ echo $words | tr '[A-Z]' '[a-z]'
 parallel_make(){
 local para=$1
 cpunum=`cat /proc/cpuinfo |grep 'processor'|wc -l`
+
+#判断是否开启多核编译
+if [ $parallel_compile == 0 ];then
+	cpunum=1
+fi
+
 if [ $cpunum == 1 ];then
 	[ "$para" == "" ] && make || make "$para"
 else

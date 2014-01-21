@@ -268,3 +268,6 @@ other_soft_arr=(${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename
 
 #依赖包安装路径
 depends_prefix=/opt/ezhttp
+
+#是否开启多核并行编译,1为开启,0为关闭
+parallel_compile=1

@@ -155,12 +155,15 @@ choose_url_download()
 local url1=$1
 local url2=$2
 local filename=$3
-echo "testing other url download speed..."
-speed1=`curl -m 5 -L -s -w '%{speed_download}' "$url1" -o /dev/null`
-echo "other url download speed is $speed1"
-echo "testing Official url download speed..."
+#测试官方下载速度
+echo "testing Official mirror download speed..."
 speed2=`curl -m 5 -L -s -w '%{speed_download}' "$url2" -o /dev/null`
-echo "Official url download speed is $speed2"
+echo "Official mirror download speed is $speed2"
+
+#测试第三方下载速度
+echo "testing third party mirror download speed..."
+speed1=`curl -m 5 -L -s -w '%{speed_download}' "$url1" -o /dev/null`
+echo "third party mirror download speed is $speed1"
 speed1=${speed1%%.*}
 speed2=${speed2%%.*}
 if [ $speed1 -gt $speed2 ];then

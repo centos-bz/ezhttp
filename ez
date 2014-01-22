@@ -87,6 +87,7 @@ server {
 EOF
 
 echo "congratulations.vhost ${server_names%% *} had created."
+echo "website root is ${website_root}/web/."
 #创建目录
 mkdir -p ${website_root}/logs ${website_root}/web
 chown -R www ${website_root}/web
@@ -172,6 +173,7 @@ TransferLog  ${website_root}/logs/access.log
 </VirtualHost>
 EOF
 echo "congratulations.vhost ${server_names%% *} had created."
+echo "website root is ${website_root}/web/."
 #创建目录
 mkdir -p ${website_root}/logs ${website_root}/web
 chown -R www ${website_root}/web

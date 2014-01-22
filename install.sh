@@ -522,6 +522,8 @@ if_in_array "${php_imagemagick_filename}" "$php_modules_install" && install_php_
 if_in_array "${php_memcache_filename}" "$php_modules_install" && install_php_memcache "$php_prefix"
 if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && install_ZendGuardLoader "$php_prefix"
 if_in_array "${ionCube_filename}" "$php_modules_install" && install_ionCube "$php_prefix"
+if_in_array "${php_redis_filename}" "$php_modules_install" && install_php_redis "$php_prefix"
+if_in_array "${php_mongo_filename}" "$php_modules_install" && install_php_mongo "$php_prefix"
 }
 
 #安装ZendOptimizer
@@ -632,6 +634,36 @@ error_detect "make install"
 ! grep -q  "\[memcache\]" ${php_prefix}/etc/php.ini && sed -i '$a\[memcache]\nextension=memcache.so\n' ${php_prefix}/etc/php.ini 
 }
 
+#安装php redis模块
+install_php_redis(){
+local php_prefix=$1
+download_file "${php_redis_other_link}" "${php_redis_official_link}" "${php_redis_filename}.tgz"
+cd $cur_dir/soft/
+rm -rf ${php_redis_filename}
+tar xzvf ${php_redis_filename}.tgz
+cd ${php_redis_filename}
+error_detect "${php_prefix}/bin/phpize"
+error_detect "./configure --enable-redis --with-php-config=$php_prefix/bin/php-config"
+error_detect "parallel_make"
+error_detect "make install"
+! grep -q  "\[redis\]" ${php_prefix}/etc/php.ini && sed -i '$a\[redis]\nextension=redis.so\n' ${php_prefix}/etc/php.ini 
+}
+
+#安装php mongo模块
+install_php_mongo(){
+local php_prefix=$1
+download_file "${php_mongo_other_link}" "${php_mongo_official_link}" "${php_mongo_filename}.tar.gz"
+cd $cur_dir/soft/
+rm -rf ${php_mongo_filename}
+tar xzvf ${php_mongo_filename}.tar.gz
+cd ${php_mongo_filename}
+error_detect "${php_prefix}/bin/phpize"
+error_detect "./configure --enable-mongo --with-php-config=$php_prefix/bin/php-config"
+error_detect "parallel_make"
+error_detect "make install"
+! grep -q  "\[mongo\]" ${php_prefix}/etc/php.ini && sed -i '$a\[mongo]\nextension=mongo.so\n' ${php_prefix}/etc/php.ini 
+}
+
 
 #安装php ImageMagick
 install_php_imagesmagick(){
@@ -683,6 +715,7 @@ else
 fi
 ! grep -q  "\[ionCube Loader\]" ${php_prefix}/etc/php.ini && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" ${php_prefix}/etc/php.ini
 }
+
 
 #安装ZendGuardLoader
 install_ZendGuardLoader(){

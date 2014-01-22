@@ -83,6 +83,16 @@ ImageMagick_filename="ImageMagick-6.8.7-6"
 ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.7-6.tar.gz"
 ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.7-6.tar.gz"
 
+#php redis模块设置
+php_redis_filename="redis-2.2.4"
+php_redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-2.2.4.tgz"
+php_redis_official_link="http://pecl.php.net/get/redis-2.2.4.tgz"
+
+#php mongo模块设置
+php_mongo_filename="mongo-php-driver-1.4.5"
+php_mongo_other_link="http://cdn.yyupload.com/down/499809/software/mongo-php-driver-1.4.5.tar.gz"
+php_mongo_official_link="https://github.com/mongodb/mongo-php-driver/archive/1.4.5.tar.gz"
+
 #pkgconfig设置
 pkgconfig_filename="pkgconfig-0.18"
 pkgconfig_other_link="http://cdn.yyupload.com/down/499809/software/"
@@ -263,7 +273,7 @@ apache_arr=(${apache2_2_filename} ${apache2_4_filename} custom_version do_not_in
 mysql_arr=(${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version do_not_install)
 php_arr=(${php5_2_filename} ${php5_3_filename} ${php5_4_filename} custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
-php_modules_arr=(${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} do_not_install)
+php_modules_arr=(${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} do_not_install)
 other_soft_arr=(${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} do_not_install)
 
 #依赖包安装路径

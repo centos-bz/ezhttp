@@ -104,24 +104,11 @@ fi
 #检查压缩包完善性
 check_integrity(){
 	local filename=$1
-	local url1=$2
-	local url2=$3
-	local code=0
 	if echo $filename | grep -q -E "(tar\.gz|tgz)$";then
-		gzip -t ${cur_dir}/soft/$filename
-		local code=$?
+		return `gzip -t ${cur_dir}/soft/$filename`
 	elif echo $filename | grep -q -E "tar\.bz2$";then
-		bzip2 -t ${cur_dir}/soft/$filename
-		local code=$?
+		return `bzip2 -t ${cur_dir}/soft/$filename`
 	fi
-
-	if [ "$code" != 0 ];then
-		echo "the file $filename is incomplete.redownload now..."
-		rm -f ${cur_dir}/soft/${filename}
-		download_file "$url1" "$url2" "$filename"
-	else
-		echo "the file $filename is complete."
-	fi	
 }
 
 #下载软件
@@ -130,9 +117,16 @@ local url1=$1
 local url2=$2
 local filename=$3
 if [ -s "${cur_dir}/soft/${filename}" ];then
-	#check_md5 "$filename"
 	echo "${filename} is existed.check the file integrity."
-	check_integrity "${filename}" "$url1" "$url2"
+
+	if check_integrity "${filename}";then
+		echo "the file $filename is complete."
+	else
+		echo "the file $filename is incomplete.redownload now..."
+		rm -f ${cur_dir}/soft/${filename}
+		download_file "$url1" "$url2" "$filename"		
+	fi
+
 else
 	[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
 	cd ${cur_dir}/soft
@@ -168,15 +162,30 @@ speed1=${speed1%%.*}
 speed2=${speed2%%.*}
 if [ $speed1 -gt $speed2 ];then
 	url=$url1
+	backup_url=$url2
 else
 	url=$url2
+	backup_url=$url1
 fi
 echo "use the url $url to download $filename.."
 sleep 1
 #开始下载
-wget -c --tries=3 ${url} -O $filename
-[ $? != 0 ] && echo "fail to download $filename,exited." && exit 1
-#check_md5 "$filename"
+wget_file "${url}" "${filename}" 
+
+#测试下载文件完整性
+if ! check_integrity ${filename};then
+	wget_file "${backup_url}" "${filename}"
+fi
+}
+
+#wget下载
+wget_file(){
+	local url=$1
+	local filename=$2
+	if ! wget -c --tries=3 ${url} -O $filename;then
+		echo "fail to download $filename,exited."
+		exit 1
+	fi
 }
 
 #检查软件md5

@@ -172,17 +172,23 @@ sleep 1
 #开始下载
 wget_file "${url}" "${filename}" 
 
-#测试下载文件完整性
+#测试下载文件完整性,不完整则使用第二个下载地址
 if ! check_integrity ${filename};then
 	wget_file "${backup_url}" "${filename}"
+	#再次测试文件完整性
+	if ! check_integrity ${filename};then
+		echo "fail to download $filename,exited."
+		exit 1
+	fi	
 fi
+
 }
 
 #wget下载
 wget_file(){
 	local url=$1
 	local filename=$2
-	if ! wget -c --tries=3 ${url} -O $filename;then
+	if ! wget --tries=3 ${url} -O $filename;then
 		echo "fail to download $filename,exited."
 		exit 1
 	fi

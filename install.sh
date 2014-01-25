@@ -68,14 +68,14 @@ groupadd www
 useradd -s /bin/false -g www www
 mkdir -p ${nginx_location}/conf/vhost
 mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
-cp -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
-cp -a $cur_dir/conf/rewrite ${nginx_location}/conf/
-cp -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
+\cp  -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
+\cp  -a $cur_dir/conf/rewrite ${nginx_location}/conf/
+\cp  -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
 sed -i "s#^nginx_location=.*#nginx_location=$nginx_location#" /etc/init.d/nginx
 chmod +x /etc/init.d/nginx
-cp $cur_dir/conf/index.html $nginx_location/html/
-cp $cur_dir/conf/tz.php $nginx_location/html/
-cp $cur_dir/conf/p.php $nginx_location/html/
+\cp  $cur_dir/conf/index.html $nginx_location/html/
+\cp  $cur_dir/conf/tz.php $nginx_location/html/
+\cp  $cur_dir/conf/p.php $nginx_location/html/
 boot_start nginx
 }
 
@@ -136,8 +136,8 @@ elif [ "$apache" == "${apache2_4_filename}" ];then
 	cd $cur_dir/soft/
 	tar xzvf ${apache2_4_filename}.tar.gz
 	cd ${apache2_4_filename}
-	cp -a ${cur_dir}/soft/${apr_filename} srclib/apr
-	cp -a ${cur_dir}/soft/${apr_util_filename} srclib/apr-util
+	\cp  -a ${cur_dir}/soft/${apr_filename} srclib/apr
+	\cp  -a ${cur_dir}/soft/${apr_util_filename} srclib/apr-util
 	make clean
 	if [ "`package_support`" == 1 ];then
 		other_option=""
@@ -161,7 +161,7 @@ config_apache(){
 groupadd www	
 useradd -s /bin/false -g www www	
 local version=$1
-cp -f ${apache_location}/conf/httpd.conf ${apache_location}/conf/httpd.conf_bak
+\cp  -f ${apache_location}/conf/httpd.conf ${apache_location}/conf/httpd.conf_bak
 grep -E -q "^\s*#\s*Include conf/extra/httpd-vhosts.conf" ${apache_location}/conf/httpd.conf  && sed -i 's#^\s*\#\s*Include conf/extra/httpd-vhosts.conf#Include conf/extra/httpd-vhosts.conf#' ${apache_location}/conf/httpd.conf || sed -i '$aInclude conf/extra/httpd-vhosts.conf' ${apache_location}/conf/httpd.conf
 mv ${apache_location}/conf/extra/httpd-vhosts.conf ${apache_location}/conf/extra/httpd-vhosts.conf_bak
 mkdir -p ${apache_location}/conf/vhost/
@@ -201,14 +201,14 @@ if [ $version == "2.4" ];then
 	sed -i 's/^Include/IncludeOptional/' ${apache_location}/conf/extra/httpd-vhosts.conf
 fi
 
-cp -f $cur_dir/conf/init.d.httpd /etc/init.d/httpd
+\cp  -f $cur_dir/conf/init.d.httpd /etc/init.d/httpd
 sed -i "s#^apache_location=.*#apache_location=$apache_location#" /etc/init.d/httpd
 sed -i "s#^apache_location=.*#apache_location=$apache_location#" /etc/init.d/httpd
 chmod +x /etc/init.d/httpd
 
-cp $cur_dir/conf/index.html $apache_location/htdocs/
-cp $cur_dir/conf/tz.php $apache_location/htdocs/
-cp $cur_dir/conf/p.php $apache_location/htdocs/
+\cp  $cur_dir/conf/index.html $apache_location/htdocs/
+\cp  $cur_dir/conf/tz.php $apache_location/htdocs/
+\cp  $cur_dir/conf/p.php $apache_location/htdocs/
 
 boot_start httpd
 }
@@ -271,9 +271,9 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 	if [ "$mysql" == "libmysqlclient18" ];then
 		error_detect "make mysqlclient libmysql"
 		mkdir -p ${mysql_location}/lib ${mysql_location}/bin
-		cp -a libmysql/libmysqlclient* ${mysql_location}/lib
-		cp -a cp scripts/mysql_config ${mysql_location}/bin
-		cp -a include ${mysql_location}
+		\cp  -a libmysql/libmysqlclient* ${mysql_location}/lib
+		\cp  -a cp scripts/mysql_config ${mysql_location}/bin
+		\cp  -a include ${mysql_location}
 	else	
 		error_detect "parallel_make"
 		error_detect "make install"
@@ -329,26 +329,26 @@ mv /etc/my.cnf /etc/my.cnf_bak
 mv /etc/mysql/my.cnf /etc/mysql/my.cnf_bak
 
 if [ $version == "5.1" ];then
-	cp -f ${mysql_location}/share/mysql/mysql.server /etc/init.d/mysqld	
+	\cp  -f ${mysql_location}/share/mysql/mysql.server /etc/init.d/mysqld	
 	chmod +x /etc/init.d/mysqld
 	#配置my.cnf
-	cp -f $cur_dir/conf/my.cnf_5.1 ${mysql_location}/etc/my.cnf
+	\cp  -f $cur_dir/conf/my.cnf_5.1 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
 	${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 elif [ $version == "5.5" ];then
-	cp -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
+	\cp  -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
 	chmod +x /etc/init.d/mysqld
 	#配置my.cnf
-	cp -f $cur_dir/conf/my.cnf_5.5 ${mysql_location}/etc/my.cnf
+	\cp  -f $cur_dir/conf/my.cnf_5.5 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
 	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 elif [ $version == "5.6" ];then
-	cp -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
+	\cp  -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
 	chmod +x /etc/init.d/mysqld
 	#配置my.cnf
-	cp -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
+	\cp  -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
 	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
@@ -399,7 +399,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	gzip -cd $cur_dir/conf/${php5_2_filename}-fpm-0.5.14.diff.gz | patch -d ${php5_2_filename} -p1
 	cd ${php5_2_filename}
 	#hash漏洞补丁
-	cp $cur_dir/conf/${php5_2_filename}-max-input-vars.patch ./
+	\cp  $cur_dir/conf/${php5_2_filename}-max-input-vars.patch ./
 	patch -p1 < ${php5_2_filename}-max-input-vars.patch
 	error_detect "./buildconf --force"
 	if [ "`package_support`" == 1 ];then
@@ -419,7 +419,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	
 	#配置php
 	mkdir -p $php_location/etc/
-	cp php.ini-recommended $php_location/etc/php.ini
+	\cp  php.ini-recommended $php_location/etc/php.ini
 	sed -i "s#extension_dir.*#extension_dir = \"${php_location}/lib/php/extensions/no-debug-non-zts-20060613\"#"  $php_location/etc/php.ini
 	
 elif [ "$php" == "${php5_3_filename}" ];then
@@ -445,8 +445,8 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	
 	#配置php
 	mkdir -p ${php_location}/etc
-	cp php.ini-production $php_location/etc/php.ini
-	[ "$php_mode" == "with_fastcgi" ] && cp $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
+	\cp  php.ini-production $php_location/etc/php.ini
+	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 	
 elif [ "$php" == "${php5_4_filename}" ];then
 	#判断php运行模式
@@ -471,8 +471,8 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	
 	#配置php
 	mkdir -p ${php_location}/etc
-	cp php.ini-production $php_location/etc/php.ini	
-	[ "$php_mode" == "with_fastcgi" ] && cp $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
+	\cp  php.ini-production $php_location/etc/php.ini	
+	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 fi
 #记录php安装位置
 echo "php_location=$php_location" >> /tmp/ezhttp_info_do_not_del

@@ -231,14 +231,14 @@ done
 install_tool(){ 
 if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
 	apt-get -y update
-	apt-get -y install gcc g++ make wget perl curl
+	apt-get -y install gcc g++ make wget perl curl bzip2
 elif cat /etc/issue | grep -q -E -i "centos|read hat|redhat";then
-	yum -y install gcc gcc-c++ make wget perl  curl	
+	yum -y install gcc gcc-c++ make wget perl  curl	bzip2
 elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
 	apt-get -y update
-	apt-get -y install gcc g++ make wget perl curl
+	apt-get -y install gcc g++ make wget perl curl bzip2
 elif cat /proc/version | grep -q -E -i "centos|read hat|redhat";then
-	yum -y install gcc gcc-c++ make wget perl  curl
+	yum -y install gcc gcc-c++ make wget perl  curl bzip2
 
 fi		
 

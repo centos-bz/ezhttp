@@ -366,15 +366,6 @@ install_php(){
 #安装php依赖
 install_php_depends
 
-#判断是否需要支持php mysql，否则取消php的--with-mysql编译参数
-[ "$mysql" == "do_not_install" ] && [ "$mysql_location" == "" ] && unset with_mysql || with_mysql="--with-mysql=$mysql_location --with-mysqli=$mysql_location/bin/mysql_config --with-pdo-mysql=$mysql_location/bin/mysql_config"
-
-#设置php5.3 php5.4使用mysqlnd
-with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd"
-
-#判断是64系统就加上--with-libdir=lib64  
-is_64bit && lib64="--with-libdir=lib64" || lib64=""
-
 #开始安装php
 if [ "$php" == "${php5_2_filename}" ];then
 	#安装依赖
@@ -385,12 +376,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	else
 		check_installed "install_patch" "${depends_prefix}/${patch_filename}"
 	fi		
-	#判断php运行模式
-	if [ "$php_mode" == "with_apache" ];then
-		php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
-	elif [ "$php_mode" == "with_fastcgi" ];then
-		php_run_php_mode="--enable-fastcgi --enable-fpm"
-	fi
+
 	download_file "${php5_2_other_link}" "${php5_2_official_link}" "${php5_2_filename}.tar.gz"
 	cd $cur_dir/soft/
 	rm -rf ${php5_2_filename}
@@ -402,12 +388,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	\cp  $cur_dir/conf/${php5_2_filename}-max-input-vars.patch ./
 	patch -p1 < ${php5_2_filename}-max-input-vars.patch
 	error_detect "./buildconf --force"
-	if [ "`package_support`" == 1 ];then
-		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash "
-	else
-		other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
-	fi		
-	error_detect "./configure --prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64"
+	error_detect "./configure ${php_configure_args}"
 	if grep -q -i "Ubuntu 12.04" /etc/issue;then
 		#解决SSL_PROTOCOL_SSLV2’ undeclared问题
 		cd ext/openssl/
@@ -423,23 +404,12 @@ if [ "$php" == "${php5_2_filename}" ];then
 	sed -i "s#extension_dir.*#extension_dir = \"${php_location}/lib/php/extensions/no-debug-non-zts-20060613\"#"  $php_location/etc/php.ini
 	
 elif [ "$php" == "${php5_3_filename}" ];then
-	#判断php运行模式
-	if [ "$php_mode" == "with_apache" ];then
-		php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
-	elif [ "$php_mode" == "with_fastcgi" ];then
-		php_run_php_mode="--enable-fpm"
-	fi
 	download_file "${php5_3_other_link}" "${php5_3_official_link}" "${php5_3_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${php5_3_filename}.tar.gz
 	cd ${php5_3_filename}
 	make clean
-	if [ "`package_support`" == 1 ];then
-		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash"
-	else
-		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
-	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo"
+	error_detect "./configure ${php_configure_args}"
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
 	error_detect "make install"	
 	
@@ -449,23 +419,12 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 	
 elif [ "$php" == "${php5_4_filename}" ];then
-	#判断php运行模式
-	if [ "$php_mode" == "with_apache" ];then
-		php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
-	elif [ "$php_mode" == "with_fastcgi" ];then
-		php_run_php_mode="--enable-fpm"
-	fi
 	download_file "${php5_4_other_link}" "${php5_4_official_link}" "${php5_4_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${php5_4_filename}.tar.gz
 	cd ${php5_4_filename}
 	make clean
-	if [ "`package_support`" == 1 ];then
-		other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash"
-	else
-		other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
-	fi		
-	error_detect "./configure --prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo"
+	error_detect "./configure ${php_configure_args}"
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
 	error_detect "make install"	
 	
@@ -1105,6 +1064,76 @@ if [ "$php" != "do_not_install" ];then
 	if [ "$mysql" == "do_not_install" ] && [ "$php" == "${php5_2_filename}" ];then
 		yes_or_no "you do_not_install mysql server,but whether make php support mysql" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'"
 	fi
+
+	#获取编译参数
+
+	#判断是否需要支持php mysql，否则取消php的--with-mysql编译参数
+	[ "$mysql" == "do_not_install" ] && [ "$mysql_location" == "" ] && unset with_mysql || with_mysql="--with-mysql=$mysql_location --with-mysqli=$mysql_location/bin/mysql_config --with-pdo-mysql=$mysql_location/bin/mysql_config"
+
+	#设置php5.3 php5.4使用mysqlnd
+	with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd"
+
+	#判断是64系统就加上--with-libdir=lib64  
+	is_64bit && lib64="--with-libdir=lib64" || lib64=""	
+
+	if [ "$php" == "${php5_2_filename}" ];then
+
+		#判断php运行模式
+		if [ "$php_mode" == "with_apache" ];then
+			php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
+		elif [ "$php_mode" == "with_fastcgi" ];then
+			php_run_php_mode="--enable-fastcgi --enable-fpm"
+		fi
+		
+		#判断是否支持apt或者yum安装依赖
+		if [ "`package_support`" == 1 ];then
+			other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash "
+		else
+			other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config --with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
+		fi
+
+		#php编译参数
+		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip $other_option   ${with_mysql} --without-pear $lib64"
+
+	elif [ "$php" == "${php5_3_filename}" ];then
+
+		#判断php运行模式
+		if [ "$php_mode" == "with_apache" ];then
+			php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
+		elif [ "$php_mode" == "with_fastcgi" ];then
+			php_run_php_mode="--enable-fpm"
+		fi	
+
+		if [ "`package_support`" == 1 ];then
+			other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash"
+		else
+			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename}"
+		fi
+
+		php_configure_args="--prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option  ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo"
+
+	elif [ "$php" == "${php5_4_filename}" ];then
+
+		#判断php运行模式
+		if [ "$php_mode" == "with_apache" ];then
+			php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
+		elif [ "$php_mode" == "with_fastcgi" ];then
+			php_run_php_mode="--enable-fpm"
+		fi
+
+		if [ "`package_support`" == 1 ];then
+			other_option="--with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --with-mcrypt --with-mhash"
+		else
+			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} --with-openssl=${depends_prefix}/${openssl_filename} --with-zlib=${depends_prefix}/${zlib_filename} --with-zlib-dir=${depends_prefix}/${zlib_filename} --with-curl=${depends_prefix}/${libcurl_filename} --with-pcre-dir=${depends_prefix}/${pcre_filename} --with-openssl-dir=${depends_prefix}/${openssl_filename} --with-gd --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  --with-png-dir=${depends_prefix}/${libpng_filename} --with-freetype-dir=${depends_prefix}/${freetype_filename} --with-mcrypt=${depends_prefix}/${libmcrypt_filename} --with-mhash=${depends_prefix}/${mhash_filename} "
+		fi
+
+		php_configure_args="--prefix=$php_location --with-config-file-path=${php_location}/etc ${php_run_php_mode} --enable-bcmath --enable-ftp --enable-mbstring --enable-sockets --enable-zip  $other_option ${with_mysqlnd} --without-pear $lib64 --disable-fileinfo"
+	fi
+
+	#提示是否更改编译参数
+	echo -e "the $php configure parameter is:\n${php_configure_args}\n"
+	yes_or_no "Would you like to change it" "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+	[ "$yn" == "y" ] && echo "your new php configure parameter is : $php_configure_args"
 fi
 
 #安装其它软件
@@ -1177,6 +1206,7 @@ php="$php"
 php_location="$php_location"
 php_mode="$php_mode"
 php_modules_install="${php_modules_install}"
+php_configure_args='${php_configure_args}'
 other_soft_install="${other_soft_install}"
 memcached_location="${memcached_location}"
 pureftpd_location="${pureftpd_location}"
@@ -1229,6 +1259,7 @@ echo "mysql Server: $mysql"
 echo "PHP Version: $php"
 [ "$php" != "do_not_install" ] && echo "PHP Location: $php_location"
 [ "$php" != "do_not_install" ] && echo "PHP Modules: ${php_modules_install}"
+[ "$php" != "do_not_install" ] && echo "PHP Configure Parameter: ${php_configure_args}"
 echo "Other Software: ${other_soft_install}"
 if_in_array "${memcached_filename}" "$other_soft_install" && echo "memcached location: $memcached_location"
 if_in_array "${PureFTPd_filename}" "$other_soft_install" && echo "pureftpd location: $pureftpd_location"

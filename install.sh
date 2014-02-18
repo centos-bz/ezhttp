@@ -1326,9 +1326,9 @@ install_lamp_lnmp(){
 swap_settings(){
 	swapSize=$(awk '/SwapTotal/{print $2}' /proc/meminfo)
 	if [ "$swapSize" == 0 ];then
-		echo -e "1) 512M\n2) 1G\n3) 2G\n4) 4G\n5) 8G\n"
-		read -p "please select your swap size: " swapSelect
 		while true; do
+			echo -e "1) 512M\n2) 1G\n3) 2G\n4) 4G\n5) 8G\n"
+			read -p "please select your swap size: " swapSelect			
 			case $swapSelect in
 				1) swapSize=524288;break;;
 				2) swapSize=1048576;break;;

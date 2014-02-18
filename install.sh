@@ -483,6 +483,7 @@ if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && install_Zend
 if_in_array "${ionCube_filename}" "$php_modules_install" && install_ionCube "$php_prefix"
 if_in_array "${php_redis_filename}" "$php_modules_install" && install_php_redis "$php_prefix"
 if_in_array "${php_mongo_filename}" "$php_modules_install" && install_php_mongo "$php_prefix"
+if_in_array "${apc_filename}" "$php_modules_install" && install_php_apc "$php_prefix"
 }
 
 #安装ZendOptimizer
@@ -530,7 +531,7 @@ cd ${eaccelerator_filename}
 make clean
 error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --enable-shared --with-php-config=$php_prefix/bin/php-config"
-error_detect "parallel_make"
+error_detect "make"
 error_detect "make install"
 EXTENSION_DIR=`awk -F"= " '/^EXTENSION_DIR/{print $2}' Makefile`
 
@@ -588,7 +589,7 @@ else
 	other_option="--with-zlib-dir=${depends_prefix}/${zlib_filename}"
 fi
 error_detect "./configure --enable-memcache --with-php-config=$php_prefix/bin/php-config $other_option"
-error_detect "parallel_make"
+error_detect "make"
 error_detect "make install"
 ! grep -q  "\[memcache\]" ${php_prefix}/etc/php.ini && sed -i '$a\[memcache]\nextension=memcache.so\n' ${php_prefix}/etc/php.ini 
 }
@@ -603,7 +604,7 @@ tar xzvf ${php_redis_filename}.tgz
 cd ${php_redis_filename}
 error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --enable-redis --with-php-config=$php_prefix/bin/php-config"
-error_detect "parallel_make"
+error_detect "make"
 error_detect "make install"
 ! grep -q  "\[redis\]" ${php_prefix}/etc/php.ini && sed -i '$a\[redis]\nextension=redis.so\n' ${php_prefix}/etc/php.ini 
 }
@@ -618,11 +619,25 @@ tar xzvf ${php_mongo_filename}.tar.gz
 cd ${php_mongo_filename}
 error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --enable-mongo --with-php-config=$php_prefix/bin/php-config"
-error_detect "parallel_make"
+error_detect "make"
 error_detect "make install"
 ! grep -q  "\[mongo\]" ${php_prefix}/etc/php.ini && sed -i '$a\[mongo]\nextension=mongo.so\n' ${php_prefix}/etc/php.ini 
 }
 
+#安装apc模块
+install_php_apc(){
+local php_prefix=$1
+download_file "${apc_other_link}" "${apc_official_link}" "${apc_filename}.tgz"
+cd $cur_dir/soft/
+rm -rf ${apc_filename}
+tar xzvf ${apc_filename}.tgz
+cd ${apc_filename}
+error_detect "${php_prefix}/bin/phpize"
+error_detect "./configure --enable-apc --with-php-config=$php_prefix/bin/php-config"
+error_detect "make"
+error_detect "make install"
+! grep -q  "\[apc\]" ${php_prefix}/etc/php.ini && sed -i '$a\[apc]\nextension=apc.so\n' ${php_prefix}/etc/php.ini
+}
 
 #安装php ImageMagick
 install_php_imagesmagick(){
@@ -648,7 +663,7 @@ tar xzvf ${php_imagemagick_filename}.tgz
 cd ${php_imagemagick_filename}
 error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --with-php-config=$php_prefix/bin/php-config --with-imagick=${depends_prefix}/${ImageMagick_filename}"
-error_detect "parallel_make"
+error_detect "make"
 error_detect "make install"
 ! grep -q  "\[imagick\]" ${php_prefix}/etc/php.ini && sed -i '$a\[imagick]\nextension=imagick.so\n' ${php_prefix}/etc/php.ini 
 }
@@ -1131,7 +1146,7 @@ if [ "$php" != "do_not_install" ];then
 	fi
 
 	#提示是否更改编译参数
-	echo -e "the $php configure parameter is:\n${php_configure_args}\n"
+	echo -e "the $php configure parameter is:\n${php_configure_args}\n\n"
 	yes_or_no "Would you like to change it" "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
 	[ "$yn" == "y" ] && echo "your new php configure parameter is : $php_configure_args"
 fi
@@ -1248,11 +1263,11 @@ sleep 1
 clear
 echo "#################### your choice overview ####################"
 echo
-echo "nginx: ${nginx}"
+echo "Nginx: ${nginx}"
 [ "$nginx" != "do_not_install" ] && echo "nginx Location: $nginx_location"
-echo "apache: ${apache}"
+echo "Apache: ${apache}"
 [ "$apache" != "do_not_install" ] && echo "apache Location: $apache_location"
-echo "mysql Server: $mysql"
+echo "MySQL Server: $mysql"
 [ "$mysql" != "do_not_install" ] || [ "$mysql_location" != "" ] && echo "mysql Location: $mysql_location"
 [ "$mysql" != "do_not_install" ] || [ "$mysql_data_location" != "" ] &&  echo "mysql Data Location: $mysql_data_location"
 [ "$mysql" != "do_not_install" ] || [ "$mysql_root_pass" != "" ] && echo "mysql Root Password: $mysql_root_pass"

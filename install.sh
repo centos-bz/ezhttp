@@ -803,7 +803,7 @@ boot_start pureftpd
 if_use_previous_setting(){
 if [ -s "/root/previous_setting" ];then
 	#是否使用上次设置安装
-	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting" ". /root/previous_setting" "rm -f /root/previous_setting;advanced_setting"
+	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting [Y/n]: " ". /root/previous_setting" "rm -f /root/previous_setting;advanced_setting"
 else
 	advanced_setting
 fi
@@ -1077,7 +1077,7 @@ if [ "$php" != "do_not_install" ];then
 	
 	#当选择不安装mysql server且php为5.2版本时，询问是否让php支持mysql
 	if [ "$mysql" == "do_not_install" ] && [ "$php" == "${php5_2_filename}" ];then
-		yes_or_no "you do_not_install mysql server,but whether make php support mysql" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'"
+		yes_or_no "you do_not_install mysql server,but whether make php support mysql [Y/n]" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'"
 	fi
 
 	#获取编译参数
@@ -1147,7 +1147,7 @@ if [ "$php" != "do_not_install" ];then
 
 	#提示是否更改编译参数
 	echo -e "the $php configure parameter is:\n${php_configure_args}\n\n"
-	yes_or_no "Would you like to change it" "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+	yes_or_no "Would you like to change it" "read -p 'please input your new php configure parameter [N/y]: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
 	[ "$yn" == "y" ] && echo "your new php configure parameter is : $php_configure_args"
 fi
 
@@ -1250,40 +1250,15 @@ while true
 do
 	#使read能支持回格删除
 	stty erase "^H"
-	echo -e "1) Quick install,read settings from file config.\n2) Advanced setting.\n3) exit.\n"
-	read -p "please select: " quick
-	case $quick in
-	1) echo "you select quick install." ; load_config ; break;;
-	2) echo "you select advanced setting." ; if_use_previous_setting ; break;;
+	echo -e "1) LAMP or LNMP Pre-installation settings.\n2) setting system or software.\n3) exit.\n"
+	read -p "please select: " select
+	case $select in
+	1) echo "you select Pre-installation settings." ; if_use_previous_setting ; break;;
+	2) echo "you select tools." ; tools_setting ; break;;
 	3) echo "you select exit." ; exit 1;;
 	*) echo "input error.";;
 	esac
 done
-sleep 1
-clear
-echo "#################### your choice overview ####################"
-echo
-echo "Nginx: ${nginx}"
-[ "$nginx" != "do_not_install" ] && echo "nginx Location: $nginx_location"
-echo "Apache: ${apache}"
-[ "$apache" != "do_not_install" ] && echo "apache Location: $apache_location"
-echo "MySQL Server: $mysql"
-[ "$mysql" != "do_not_install" ] || [ "$mysql_location" != "" ] && echo "mysql Location: $mysql_location"
-[ "$mysql" != "do_not_install" ] || [ "$mysql_data_location" != "" ] &&  echo "mysql Data Location: $mysql_data_location"
-[ "$mysql" != "do_not_install" ] || [ "$mysql_root_pass" != "" ] && echo "mysql Root Password: $mysql_root_pass"
-echo "PHP Version: $php"
-[ "$php" != "do_not_install" ] && echo "PHP Location: $php_location"
-[ "$php" != "do_not_install" ] && echo "PHP Modules: ${php_modules_install}"
-[ "$php" != "do_not_install" ] && echo "PHP Configure Parameter: ${php_configure_args}"
-echo "Other Software: ${other_soft_install}"
-if_in_array "${memcached_filename}" "$other_soft_install" && echo "memcached location: $memcached_location"
-if_in_array "${PureFTPd_filename}" "$other_soft_install" && echo "pureftpd location: $pureftpd_location"
-if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && echo "phpmyadmin_location: $phpmyadmin_location"
-echo
-echo "##############################################################"
-echo
-#最终确认是否安装
-yes_or_no "Are you ready to configure your Linux" "echo 'start to configure linux...'" "clear ; pre_setting"
 }
 
 #完成后的一些配置
@@ -1308,6 +1283,94 @@ echo "depends_prefix=$depends_prefix" >> /tmp/ezhttp_info_do_not_del
 \cp $cur_dir/ez /usr/bin/ez
 chmod +x /usr/bin/ez
 [ "$apache" == "${apache2_4_filename}" ] && sed -i 's/Allow from All/Require all granted/' /usr/bin/ez
+}
+
+#安装lamp or lnmp
+install_lamp_lnmp(){
+	sleep 1
+	clear
+	echo "#################### your choice overview ####################"
+	echo
+	echo "Nginx: ${nginx}"
+	[ "$nginx" != "do_not_install" ] && echo "nginx Location: $nginx_location"
+	echo "Apache: ${apache}"
+	[ "$apache" != "do_not_install" ] && echo "apache Location: $apache_location"
+	echo "MySQL Server: $mysql"
+	[ "$mysql" != "do_not_install" ] || [ "$mysql_location" != "" ] && echo "mysql Location: $mysql_location"
+	[ "$mysql" != "do_not_install" ] || [ "$mysql_data_location" != "" ] &&  echo "mysql Data Location: $mysql_data_location"
+	[ "$mysql" != "do_not_install" ] || [ "$mysql_root_pass" != "" ] && echo "mysql Root Password: $mysql_root_pass"
+	echo "PHP Version: $php"
+	[ "$php" != "do_not_install" ] && echo "PHP Location: $php_location"
+	[ "$php" != "do_not_install" ] && echo "PHP Modules: ${php_modules_install}"
+	[ "$php" != "do_not_install" ] && echo "PHP Configure Parameter: ${php_configure_args}"
+	echo "Other Software: ${other_soft_install}"
+	if_in_array "${memcached_filename}" "$other_soft_install" && echo "memcached location: $memcached_location"
+	if_in_array "${PureFTPd_filename}" "$other_soft_install" && echo "pureftpd location: $pureftpd_location"
+	if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && echo "phpmyadmin_location: $phpmyadmin_location"
+	echo
+	echo "##############################################################"
+	echo
+	#最终确认是否安装
+	yes_or_no "Are you ready to configure your Linux [Y/n]: " "echo 'start to configure linux...'" "clear ; pre_setting"	
+	disable_selinux
+	install_tool
+	[ "$nginx" != "do_not_install" ] && check_installed_ask "install_nginx" "$nginx_location"
+	[ "$apache" != "do_not_install" ] && check_installed_ask "install_apache" "$apache_location"
+	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
+	[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
+	[ "$php_modules_install" != "do_not_install" ] && install_php_modules "$php_location"
+	[ "$other_soft_install" != "do_not_install" ] && install_other_soft
+	post_done	
+}
+
+swap_settings(){
+	swapSize=$(awk '/SwapTotal/{print $2}' /proc/meminfo)
+	if [ "$swapSize" == 0 ];then
+		echo -e "1) 512M\n2) 1G\n3) 2G\n4) 4G\n5) 8G\n"
+		read -p "please select your swap size: " swapSelect
+		while true; do
+			case $swapSelect in
+				1) swapSize=524288;break;;
+				2) swapSize=1048576;break;;
+				3) swapSize=2097152;break;;
+				4) swapSize=4194304;break;;
+				*) echo "input error,please reinput."
+			esac
+		done
+
+		swapLocationDefault="/swapfile"
+		read -p "please input the swap file location(default:${swapLocationDefault},leave blank for default.): " swapLocation
+		swapLocation=${swapLocation:=$swapLocationDefault}
+		swapLocation=`filter_location ${swapLocation}`
+
+		echo "start setting system swap..."
+		mkdir -p `dirname $swapLocation`
+		dd if=/dev/zero of=${swapLocation} bs=1024 count=${swapSize}
+		mkswap ${swapLocation}
+		swapon ${swapLocation}
+		! grep "${swapLocation} swap swap defaults 0 0" /etc/fstab && echo "${swapLocation} swap swap defaults 0 0" >> /etc/fstab
+
+		echo "swap settings complete."
+		free -m
+		exit
+
+	else
+		echo "Your system swap had been enabled,exit."
+		exit
+	fi	
+}
+
+#工具设置
+tools_setting(){
+	clear
+	display_menu tools
+	if [ "$tools" == "back-to-main-menu" ];then
+		clear
+		pre_setting
+	else
+		[ "$tools" == "System-swap-settings" ] && swap_settings
+	fi	
+
 }
 
 #配置linux
@@ -1338,21 +1401,20 @@ echo
 echo "You are welcome to use this script to deploy your linux,hope you like."
 echo "The script is written by Zhu Maohai."
 echo "If you have any question."
-echo "please visit http://www.centos.bz/ezhttp/ and submit your question.thank you."
+echo "please visit http://www.centos.bz/ezhttp/ and submit your issue.thank you."
 echo
 echo "############################################################################"
 echo
 rootness
 pre_setting
-disable_selinux
-install_tool
-[ "$nginx" != "do_not_install" ] && check_installed_ask "install_nginx" "$nginx_location"
-[ "$apache" != "do_not_install" ] && check_installed_ask "install_apache" "$apache_location"
-[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
-[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
-[ "$php_modules_install" != "do_not_install" ] && install_php_modules "$php_location"
-[ "$other_soft_install" != "do_not_install" ] && install_other_soft
-post_done
+if [ ${select} == 1 ];then
+	install_lamp_lnmp
+elif [ ${select} == 2 ];then
+	tools_setting
+else
+	echo "nothing to do."
+	exit
+fi	
 }
 
 #为了可以调用此文件的函数

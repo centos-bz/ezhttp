@@ -217,7 +217,7 @@ local prompt=$1
 local yaction=$2
 local naction=$3
 while true; do
-	read -p "${prompt}?[Y/n]: " yn
+	read -p "${prompt}" yn
 	yn=`upcase_to_lowcase $yn`
 	case $yn in
 		y ) eval "$yaction";break;;
@@ -636,7 +636,7 @@ local command=$1
 local location=$2
 if [ -d "$location" ];then
 	#发现路径存在，是否删除安装
-	yes_or_no "directory $location found,may be the software had installed,remove it and reinstall it" "rm -rf $location && ${command}" "echo 'do not reinstall this software.' "
+	yes_or_no "directory $location found,may be the software had installed,remove it and reinstall it [N/y]: " "rm -rf $location && ${command}" "echo 'do not reinstall this software.' "
 else
 	${command}
 fi
@@ -751,7 +751,7 @@ create_lib64_dir(){
 #显示菜单
 display_menu(){
 local soft=$1
-local prompt="which ${soft} you'd install: "
+local prompt="which ${soft} you'd select: "
 eval arr=(\${${soft}_arr[@]})
 while true
 do

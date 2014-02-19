@@ -75,7 +75,7 @@ xcache_official_link="http://xcache.lighttpd.net/pub/Releases/3.0.4/xcache-3.0.4
 
 #php-memcache设置
 php_memcache_filename="memcache-3.0.8"
-php_memcache_other_link="http://cdn.yyupload.com/down/499809/software/"
+php_memcache_other_link="http://cdn.yyupload.com/down/499809/software/memcache-3.0.8.tgz"
 php_memcache_official_link="http://pecl.php.net/get/memcache-3.0.8.tgz"
 
 #ImageMagick设置
@@ -95,7 +95,7 @@ php_mongo_official_link="https://github.com/mongodb/mongo-php-driver/archive/1.4
 
 #pkgconfig设置
 pkgconfig_filename="pkgconfig-0.18"
-pkgconfig_other_link="http://cdn.yyupload.com/down/499809/software/"
+pkgconfig_other_link="http://cdn.yyupload.com/down/499809/software/pkgconfig-0.18.tar.gz"
 pkgconfig_official_link="http://pkgconfig.freedesktop.org/releases/pkgconfig-0.18.tar.gz"
 
 php_imagemagick_filename="imagick-3.1.2"

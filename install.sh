@@ -1147,7 +1147,16 @@ if [ "$php" != "do_not_install" ];then
 
 	#提示是否更改编译参数
 	echo -e "the $php configure parameter is:\n${php_configure_args}\n\n"
-	yes_or_no "Would you like to change it" "read -p 'please input your new php configure parameter [N/y]: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+	yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+	#检查编译参数是否为空
+	while true; do
+		if [ "$php_configure_args" == "" ];then
+			echo "error.php configure parameter can not be empty,please reinput."
+			read -p 'please input your new php configure parameter: ' php_configure_args
+		else
+			break
+		fi	
+	done
 	[ "$yn" == "y" ] && echo "your new php configure parameter is : $php_configure_args"
 fi
 

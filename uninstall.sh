@@ -15,6 +15,19 @@ words=$1
 echo $words | tr '[A-Z]' '[a-z]'
 }
 
+#判断系统版本
+check_sys_version(){
+if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
+	echo "debian"
+elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
+	echo "centos"	
+elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
+	echo "debian"
+elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
+	echo "centos"
+fi	
+}
+
 #关闭开机启动
 boot_stop(){
 if [ "`check_sys_version`" == "debian" ];then

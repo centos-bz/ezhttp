@@ -23,6 +23,199 @@ while true; do
 done
 }
 
+vhost(){
+local action=$1
+case $action in
+	add ) vhost_add;;
+	list ) vhost_list;;
+	del ) vhost_del;;
+	*) echo "action $action not found";exit 1;;
+esac	
+}
+
+vhost_add(){
+if [ "$stack" == "lnmp" ];then
+	nginx_vhost_add
+elif [ "$stack" == "lamp" ];then
+	apache_vhost_add
+elif [ "$stack" == "lnamp" ];then
+	lnamp_vhost_add
+else
+	echo "stack variable not found,exit."
+	exit 1
+fi	
+}
+
+vhost_del(){
+if [ "$stack" == "lnmp" ];then
+	nginx_vhost_del
+elif [ "$stack" == "lamp" ];then
+	apache_vhost_del
+elif [ "$stack" == "lnamp" ];then
+	lnamp_vhost_del
+else
+	echo "stack variable not found,exit."
+	exit 1
+fi	
+}
+
+vhost_list(){
+if [ "$stack" == "lnmp" ];then
+	nginx_vhost_list
+elif [ "$stack" == "lamp" ];then
+	apache_vhost_list
+elif [ "$stack" == "lnamp" ];then
+	lnamp_vhost_list
+else
+	echo "stack variable not found,exit."
+	exit 1
+fi	
+}
+
+lnamp_vhost_list(){
+sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  ${apache_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
+}
+
+lnamp_vhost_del(){
+read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
+#删除nginx配置
+if vhost_is_exist "$domain";then
+	rm -f ${nginx_location}/conf/vhost/$domain.conf
+	echo "complete deleted the server_name ${domain} of vhost."
+	echo "reloading the nginx config file..."
+	if ${nginx_location}/sbin/nginx -t;then
+		${nginx_location}/sbin/nginx -s reload
+		echo "reload success."
+	else
+	 	echo "reload failed.config file had an error,please fix it."
+	 	exit 1
+	fi
+else
+	echo "vhost $domain not found,failed to delete."
+	exit 1
+fi
+
+#删除apache配置
+if ! apache_vhost_is_exist "$domain";then
+	echo "vhost $domain not found"
+	exit 1
+else
+	rm -f ${apache_location}/conf/vhost/$domain.conf	
+	echo "complete deleted the server_name ${domain} of vhost."
+	#重载配置
+	echo "reloading the apache config file..."
+	if ${apache_location}/bin/apachectl -t;then
+		/etc/init.d/httpd restart
+		echo "reload success."
+	else
+	 	echo "reload failed.config file had an error,please fix it."
+	 	exit 1
+	fi
+fi	
+}
+
+lnamp_vhost_add(){
+#输入域名
+while true; do
+	read -p "input server names(ie.www.centos.bz centos.bz): " server_names
+	for i in $server_names;do
+		if vhost_is_exist $i;then
+			echo "vhost $i is exist,please reinput server_names."
+			break
+		fi
+		break 2
+	done	
+done
+
+#设置默认网站目录
+default_root="/home/${server_names%% *}"
+#输入网站目录
+read -p "input website root(default:$default_root/web): " website_root
+website_root=${website_root:=$default_root}
+
+#创建目录
+mkdir -p ${website_root}/logs ${website_root}/web
+chown -R www ${website_root}/web
+
+#写入nginx配置
+cat > ${nginx_location}/conf/vhost/${server_names%% *}.conf << EOF
+server {
+	server_name ${server_names};
+	listen 80;
+	index index.php index.html index.htm;
+	root ${website_root}/web;
+
+    location / {
+        error_page 404 = @apache;
+    }        
+
+    location @apache {
+        internal;
+        proxy_pass http://127.0.0.1:88;
+        include proxy.conf;
+    }
+
+    location ~ .*\.(php|php5)?$ {
+            proxy_pass http://127.0.0.1:88;
+            include proxy.conf;
+    }	
+
+	location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
+			expires      30d;
+	}
+
+	location ~ .*\.(js|css)?$ {
+			expires      12h;
+	}
+
+	access_log  ${website_root}/logs/access_nginx.log access;
+	error_log  ${website_root}/logs/error_nginx.log error;
+}
+EOF
+
+#写入apache配置
+cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
+<VirtualHost *:88>
+ServerName ${server_names%% *}
+ServerAlias ${server_names}
+DocumentRoot ${website_root}/web
+DirectoryIndex index.php index.html index.htm
+<Directory ${website_root}/web>
+Options +Includes -Indexes
+AllowOverride All
+Order Deny,Allow
+Allow from All
+php_admin_value open_basedir ${website_root}/web:/tmp:/proc
+</Directory>
+ErrorLog  ${website_root}/logs/error_apache.log
+TransferLog  ${website_root}/logs/access_apache.log
+</VirtualHost>
+EOF
+
+#重载配置
+echo "reloading the apache config file..."
+if ${apache_location}/bin/apachectl -t;then
+	/etc/init.d/httpd restart
+	echo "reload success."
+else
+ 	echo "reload failed.config file had an error,please fix it."
+ 	exit 1
+fi
+
+echo "reloading the nginx config file..."
+if ${nginx_location}/sbin/nginx -t;then
+	${nginx_location}/sbin/nginx -s reload
+	echo "reload success."
+else
+ 	echo "reload failed.config file had an error,please fix it."
+ 	exit 1
+fi
+
+echo "congratulations.vhost ${server_names%% *} had created."
+echo "website root is ${website_root}/web/."
+
+}
+
 nginx_vhost(){
 local action=$1
 case $action in
@@ -118,7 +311,6 @@ echo "reloading the nginx config file..."
 if ${nginx_location}/sbin/nginx -t;then
 	${nginx_location}/sbin/nginx -s reload
 	echo "reload success."
-	exit 0
 else
  	echo "reload failed.config file had an error,please fix it."
  	exit 1
@@ -138,7 +330,6 @@ if vhost_is_exist "$domain";then
 	if ${nginx_location}/sbin/nginx -t;then
 		${nginx_location}/sbin/nginx -s reload
 		echo "reload success."
-		exit 0
 	else
 	 	echo "reload failed.config file had an error,please fix it."
 	 	exit 1
@@ -204,7 +395,6 @@ echo "reloading the apache config file..."
 if ${apache_location}/bin/apachectl -t;then
 	/etc/init.d/httpd restart
 	echo "reload success."
-	exit 0
 else
  	echo "reload failed.config file had an error,please fix it."
  	exit 1
@@ -228,7 +418,6 @@ else
 	if ${apache_location}/bin/apachectl -t;then
 		/etc/init.d/httpd restart
 		echo "reload success."
-		exit 0
 	else
 	 	echo "reload failed.config file had an error,please fix it."
 	 	exit 1
@@ -436,8 +625,9 @@ proname=$1
 action=$2
 
 case $proname in
-	nginx ) nginx_vhost $action;;
-	apache ) apache_vhost $action;;
+	vhost ) vhost $action;;
+	nginx ) echo "ez nginx $2 is not available,please use ez vhost $2";;
+	apache ) echo "ez apache $2 is not available,please use ez vhost $2";;
 	ftp ) ftp_user $action;;
     mysql ) mysql_manger $action;;
 	*)  echo "program_name $proname not found.";exit 1;;

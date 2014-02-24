@@ -1050,13 +1050,13 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 		error_detect "make mysqlclient libmysql"
 		mkdir -p ${mysql_location}/lib ${mysql_location}/bin
 		\cp  -a libmysql/libmysqlclient* ${mysql_location}/lib
-		\cp  -a cp scripts/mysql_config ${mysql_location}/bin
+		\cp  -a scripts/mysql_config ${mysql_location}/bin
 		\cp  -a include ${mysql_location}
 	else	
 		error_detect "parallel_make"
 		error_detect "make install"
+		config_mysql 5.5
 	fi
-	config_mysql 5.5
 	
 elif [ "$mysql" == "${mysql5_6_filename}" ];then
 	#安装依赖
@@ -1946,6 +1946,13 @@ if [ "$mysql" != "do_not_install" ];then
 			fi	
 		done
 		[ "$yn" == "y" ] && echo -e "\nyour new mysql configure parameter is : ${mysql_configure_args}\n"		
+	else
+		if package_support;then
+			other_option=""
+		else
+			other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
+		fi
+		mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"		
 	fi
 fi	
 }
@@ -2267,7 +2274,7 @@ echo "start programs..."
 [ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] &&  /etc/init.d/nginx start
 [ "$apache" != "do_not_install" ] && [ "$stack" != "lnmp" ] && /etc/init.d/httpd start
 
-if 	[ "$mysql" != "do_not_install" ];then
+if 	[ "$mysql" != "do_not_install" ] &&  [ "$mysql" != "libmysqlclient18" ];then
 	#配置mysql
 	/etc/init.d/mysqld start
 	${mysql_location}/bin/mysqladmin -u root password "$mysql_root_pass"

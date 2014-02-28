@@ -2390,7 +2390,7 @@ swap_settings(){
 php_mysql_socket_settings(){
 	while true; do
 		read -p "please input php.in location: " php_ini_location
-		if [ ! -f  ${php_ini_location} ];then
+		if [ ! -f  ${php_ini_location} ] || [ "$php_ini_location" == "" ];then
 			echo "${php_ini_location} not found,please reinput."
 		else
 			break
@@ -2399,7 +2399,7 @@ php_mysql_socket_settings(){
 
 	while true; do
 		read -p "please input mysql.sock location: " mysql_sock_location
-		if [ ! -S  ${mysql_sock_location} ];then
+		if [ ! -S  ${mysql_sock_location} ] || [ "$mysql_sock_location" == "" ];then
 			echo "${mysql_sock_location} not found or is not a socket file,please reinput."
 		else
 			break

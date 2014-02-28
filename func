@@ -936,16 +936,16 @@ mv ${apache_location}/conf/extra/httpd-vhosts.conf ${apache_location}/conf/extra
 mkdir -p ${apache_location}/conf/vhost/
 
 if [ "$stack" == "lnamp" ];then
-	sed -i 's/Listen\s*80/Listen 88/' ${apache_location}/conf/httpd.conf
-	port="88"
+	sed -i 's/Listen\s*80/Listen 127.0.0.1:88/' ${apache_location}/conf/httpd.conf
+	listen="127.0.0.1:88"
 else
-	port="80"
+	listen="*:80"
 fi
 
 #写入默认虚拟主机配置
 cat > ${apache_location}/conf/extra/httpd-vhosts.conf << EOF
-NameVirtualHost *:${port}
-<VirtualHost *:${port}>
+NameVirtualHost ${listen}
+<VirtualHost ${listen}>
 ServerName localhost
 ServerAlias localhost
 DocumentRoot /home/wwwroot/

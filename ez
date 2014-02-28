@@ -175,7 +175,7 @@ EOF
 
 #写入apache配置
 cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
-<VirtualHost *:88>
+<VirtualHost 127.0.0.1:88>
 ServerName ${server_names%% *}
 ServerAlias ${server_names}
 DocumentRoot ${website_root}/web

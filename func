@@ -2422,7 +2422,7 @@ tools_setting(){
 		pre_setting
 	else
 		[ "$tools" == "System-swap-settings" ] && swap_settings
-		[ "$tools" == "set-php-mysql-socket" ] && php_mysql_socket_settings
+		[ "$tools" == "Set-php-mysql-socket" ] && php_mysql_socket_settings
 	fi	
 
 }

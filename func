@@ -837,14 +837,15 @@ config_nginx(){
 groupadd www	
 useradd -s /bin/false -g www www
 mkdir -p ${nginx_location}/conf/vhost
+mkdir -p /home/wwwroot/
 \cp  -a $cur_dir/conf/rewrite ${nginx_location}/conf/
 rm -f /etc/init.d/nginx
 \cp  -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
 sed -i "s#^nginx_location=.*#nginx_location=$nginx_location#" /etc/init.d/nginx
 chmod +x /etc/init.d/nginx
-\cp  $cur_dir/conf/index.html $nginx_location/html/
-\cp  $cur_dir/conf/tz.php $nginx_location/html/
-\cp  $cur_dir/conf/p.php $nginx_location/html/
+\cp  $cur_dir/conf/index.html /home/wwwroot/
+\cp  $cur_dir/conf/tz.php /home/wwwroot/
+\cp  $cur_dir/conf/p.php /home/wwwroot/
 boot_start nginx
 mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
 
@@ -926,7 +927,8 @@ export LD_LIBRARY_PATH
 #配置apache
 config_apache(){
 groupadd www	
-useradd -s /bin/false -g www www	
+useradd -s /bin/false -g www www
+mkdir -p /home/wwwroot
 local version=$1
 \cp  -f ${apache_location}/conf/httpd.conf ${apache_location}/conf/httpd.conf_bak
 grep -E -q "^\s*#\s*Include conf/extra/httpd-vhosts.conf" ${apache_location}/conf/httpd.conf  && sed -i 's#^\s*\#\s*Include conf/extra/httpd-vhosts.conf#Include conf/extra/httpd-vhosts.conf#' ${apache_location}/conf/httpd.conf || sed -i '$aInclude conf/extra/httpd-vhosts.conf' ${apache_location}/conf/httpd.conf
@@ -936,10 +938,8 @@ mkdir -p ${apache_location}/conf/vhost/
 if [ "$stack" == "lnamp" ];then
 	sed -i 's/Listen\s*80/Listen 88/' ${apache_location}/conf/httpd.conf
 	port="88"
-	web_root="${nginx_location}/html"
 else
 	port="80"
-	web_root="${apache_location}/htdocs"
 fi
 
 #写入默认虚拟主机配置
@@ -948,14 +948,14 @@ NameVirtualHost *:${port}
 <VirtualHost *:${port}>
 ServerName localhost
 ServerAlias localhost
-DocumentRoot ${web_root}
+DocumentRoot /home/wwwroot/
 DirectoryIndex index.php index.html index.htm
-<Directory ${web_root}>
+<Directory /home/wwwroot/>
 Options +Includes -Indexes
 AllowOverride All
 Order Deny,Allow
 Allow from All
-php_admin_value open_basedir ${web_root}:/tmp:/proc
+php_admin_value open_basedir /home/wwwroot/:/tmp:/proc
 </Directory>
 </VirtualHost>
 Include ${apache_location}/conf/vhost/*.conf
@@ -984,9 +984,9 @@ sed -i "s#^apache_location=.*#apache_location=$apache_location#" /etc/init.d/htt
 sed -i "s#^apache_location=.*#apache_location=$apache_location#" /etc/init.d/httpd
 chmod +x /etc/init.d/httpd
 
-\cp  $cur_dir/conf/index.html $apache_location/htdocs/
-\cp  $cur_dir/conf/tz.php $apache_location/htdocs/
-\cp  $cur_dir/conf/p.php $apache_location/htdocs/
+\cp  $cur_dir/conf/index.html /home/wwwroot/
+\cp  $cur_dir/conf/tz.php /home/wwwroot/
+\cp  $cur_dir/conf/p.php /home/wwwroot/
 
 boot_start httpd
 }
@@ -2219,8 +2219,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 	fi	
 
 	if if_in_array "${phpMyAdmin_filename}" "$other_soft_install";then
-		[ "$php_mode" == "with_apache" ] && default_location="$apache_location/htdocs/phpmyadmin"
-		[ "$php_mode" == "with_fastcgi" ] && default_location="$nginx_location/html/phpmyadmin"
+		default_location="/home/wwwroot/phpmyadmin"
 		read -p "input $phpMyAdmin_filename location(default:$default_location): " phpmyadmin_location
 		phpmyadmin_location=${phpmyadmin_location:=$default_location}
 		echo "phpmyadmin location: $phpmyadmin_location"

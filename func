@@ -1219,38 +1219,48 @@ fi
 echo "php_location=$php_location" >> /tmp/ezhttp_info_do_not_del
 #add php support for apache
 [ $php_mode == "with_apache" ] && ! grep -i "Addtype application/x-httpd-php .php" ${apache_location}/conf/httpd.conf && sed -i 's#AddType application/x-gzip .gz .tgz#AddType application/x-gzip .gz .tgz\nAddtype application/x-httpd-php .php#i' ${apache_location}/conf/httpd.conf
-[ "$php_mode" == "with_fastcgi" ] && config_php
+
+#配置php
+config_php
 }
 
 #配置php
 config_php(){
-groupadd www	
-useradd -s /bin/false -g www www
-rm -f /etc/init.d/php-fpm
-if [ "$php" == "${php5_2_filename}" ];then
-	mkdir -p ${php_location}/logs/
-	\cp -f $cur_dir/conf/init.d.php-fpm5.2 /etc/init.d/php-fpm
-	sed -i "s#^php_location=.*#php_location=$php_location#" /etc/init.d/php-fpm
-	chmod +x /etc/init.d/php-fpm
-	sed -i  's#.*<value name="user">.*#<value name="user">www</value>#' ${php_location}/etc/php-fpm.conf
-	sed -i 's#127.0.0.1:9000#/tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
+if [ "$php_mode" == "with_fastcgi" ];then	
+	groupadd www	
+	useradd -s /bin/false -g www www
+	rm -f /etc/init.d/php-fpm
+	if [ "$php" == "${php5_2_filename}" ];then
+		mkdir -p ${php_location}/logs/
+		\cp -f $cur_dir/conf/init.d.php-fpm5.2 /etc/init.d/php-fpm
+		sed -i "s#^php_location=.*#php_location=$php_location#" /etc/init.d/php-fpm
+		chmod +x /etc/init.d/php-fpm
+		sed -i  's#.*<value name="user">.*#<value name="user">www</value>#' ${php_location}/etc/php-fpm.conf
+		sed -i 's#127.0.0.1:9000#/tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
-elif [ "$php" == "${php5_3_filename}" ]; then
-	\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
-	chmod +x /etc/init.d/php-fpm
-	sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
-	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
-	sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
+	elif [ "$php" == "${php5_3_filename}" ]; then
+		\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+		chmod +x /etc/init.d/php-fpm
+		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
+		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
+		sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
-elif [ "$php" == "${php5_4_filename}" ]; then
-	\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
-	chmod +x /etc/init.d/php-fpm
-	sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
-	sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
-	sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
+	elif [ "$php" == "${php5_4_filename}" ]; then
+		\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+		chmod +x /etc/init.d/php-fpm
+		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
+		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
+		sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
+	fi
+
+	boot_start php-fpm
 fi
-boot_start php-fpm
+
+#设置php连接mysql mysql.sock的路径
+sed -i "s#mysql.default_socket.*#mysql.default_socket = ${mysql_data_location}/mysql.sock#" $php_location/etc/php.ini
+sed -i "s#mysqli.default_socket.*#mysqli.default_socket = ${mysql_data_location}/mysql.sock#" $php_location/etc/php.ini
+sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = ${mysql_data_location}/mysql.sock#" $php_location/etc/php.ini
 
 }
 #安装php模块
@@ -2376,6 +2386,33 @@ swap_settings(){
 	fi	
 }
 
+#设置php mysql默认socket路径
+php_mysql_socket_settings(){
+	while true; do
+		read -p "please input php.in location: " php_ini_location
+		if [ ! -f  ${php_ini_location} ];then
+			echo "${php_ini_location} not found,please reinput."
+		else
+			break
+		fi
+	done
+
+	while true; do
+		read -p "please input mysql.sock location: " mysql_sock_location
+		if [ ! -S  ${mysql_sock_location} ];then
+			echo "${mysql_sock_location} not found or is not a socket file,please reinput."
+		else
+			break
+		fi		
+	done
+
+	sed -i "s#mysql.default_socket.*#mysql.default_socket = ${mysql_sock_location}#" ${php_ini_location}
+	sed -i "s#mysqli.default_socket.*#mysqli.default_socket = ${mysql_sock_location}#" ${php_ini_location}
+	sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = ${mysql_sock_location}#" ${php_ini_location}
+	echo "successfully set php mysql sock,you should restart the php to take it effect."
+	exit 
+}
+
 #工具设置
 tools_setting(){
 	clear
@@ -2385,6 +2422,7 @@ tools_setting(){
 		pre_setting
 	else
 		[ "$tools" == "System-swap-settings" ] && swap_settings
+		[ "$tools" == "set-php-mysql-socket" ] && php_mysql_socket_settings
 	fi	
 
 }

@@ -2389,7 +2389,7 @@ swap_settings(){
 #设置php mysql默认socket路径
 php_mysql_socket_settings(){
 	while true; do
-		read -p "please input php.in location: " php_ini_location
+		read -p "please input php.in location(ie./usr/local/php/etc/php.ini): " php_ini_location
 		if [ ! -f  ${php_ini_location} ] || [ "$php_ini_location" == "" ];then
 			echo "${php_ini_location} not found,please reinput."
 		else
@@ -2398,7 +2398,7 @@ php_mysql_socket_settings(){
 	done
 
 	while true; do
-		read -p "please input mysql.sock location: " mysql_sock_location
+		read -p "please input mysql.sock location(ie./usr/local/mysql/data/mysql.sock): " mysql_sock_location
 		if [ ! -S  ${mysql_sock_location} ] || [ "$mysql_sock_location" == "" ];then
 			echo "${mysql_sock_location} not found or is not a socket file,please reinput."
 		else

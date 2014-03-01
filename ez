@@ -146,7 +146,7 @@ server {
 	root ${website_root}/web;
 
     location / {
-        error_page 404 = @apache;
+    	try_files $uri $uri/index.html @apache;
     }        
 
     location @apache {

@@ -2060,7 +2060,9 @@ if [ "$php" != "do_not_install" ];then
 	[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
 	for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
 	echo
-	php_modules_prompt="please input a number: "
+	php_modules_prompt="please input numbers of the modules you want,devide by ',': "
+	OLD_IFS="$IFS"
+	IFS=","
 	while true
 	do
 		read -p "${php_modules_prompt}" php_modules
@@ -2083,6 +2085,7 @@ if [ "$php" != "do_not_install" ];then
 		done
 		[ "$wrong" == 0 ] && break
 	done
+	IFS="$OLD_IFS"
 	echo -e "your php modules selection ${php_modules_install}"
 	
 	#当选择不安装mysql server且php为5.2版本时，询问是否让php支持mysql

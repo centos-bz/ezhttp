@@ -283,7 +283,7 @@ php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_file
 other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename})
 
 #工具菜单设置
-tools_arr=(System-swap-settings Set-php-mysql-socket back-to-main-menu)
+tools_arr=(System-swap-settings back-to-main-menu)
 
 #依赖包安装路径
 depends_prefix=/opt/ezhttp

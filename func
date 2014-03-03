@@ -1113,7 +1113,7 @@ if [ $version == "5.1" ];then
 	#配置my.cnf
 	\cp  -f $cur_dir/conf/my.cnf_5.1 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	sed -r -i "s#socket\s*=.*#socket = ${mysql_data_location}/mysql.sock#" ${mysql_location}/etc/my.cnf
+	#sed -r -i "s#socket\s*=.*#socket = ${mysql_data_location}/mysql.sock#" ${mysql_location}/etc/my.cnf
 	${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 elif [ $version == "5.5" ];then
@@ -1122,7 +1122,7 @@ elif [ $version == "5.5" ];then
 	#配置my.cnf
 	\cp  -f $cur_dir/conf/my.cnf_5.5 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	sed -r -i "s#socket\s*=.*#socket = ${mysql_data_location}/mysql.sock#" ${mysql_location}/etc/my.cnf
+	#sed -r -i "s#socket\s*=.*#socket = ${mysql_data_location}/mysql.sock#" ${mysql_location}/etc/my.cnf
 	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 elif [ $version == "5.6" ];then
@@ -1131,7 +1131,7 @@ elif [ $version == "5.6" ];then
 	#配置my.cnf
 	\cp  -f $cur_dir/conf/my.cnf_5.6 ${mysql_location}/etc/my.cnf
 	sed -i "s:#datadir.*:datadir = ${mysql_data_location}:" ${mysql_location}/etc/my.cnf
-	sed -r -i "s#socket\s*=.*#socket = ${mysql_data_location}/mysql.sock#" ${mysql_location}/etc/my.cnf
+	#sed -r -i "s#socket\s*=.*#socket = ${mysql_data_location}/mysql.sock#" ${mysql_location}/etc/my.cnf
 	${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
 
 fi
@@ -1258,9 +1258,9 @@ if [ "$php_mode" == "with_fastcgi" ];then
 fi
 
 #设置php连接mysql mysql.sock的路径
-sed -i "s#mysql.default_socket.*#mysql.default_socket = ${mysql_data_location}/mysql.sock#" $php_location/etc/php.ini
-sed -i "s#mysqli.default_socket.*#mysqli.default_socket = ${mysql_data_location}/mysql.sock#" $php_location/etc/php.ini
-sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = ${mysql_data_location}/mysql.sock#" $php_location/etc/php.ini
+sed -i "s#mysql.default_socket.*#mysql.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
+sed -i "s#mysqli.default_socket.*#mysqli.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
+sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
 
 }
 #安装php模块
@@ -1926,21 +1926,21 @@ if [ "$mysql" != "do_not_install" ];then
 			else
 				other_option="--with-named-curses-libs=${depends_prefix}/${ncurses_filename2}/lib/libncurses.a"
 			fi			
-			mysql_configure_args="--prefix=${mysql_location} --sysconfdir=${mysql_location}/etc --with-unix-socket-path=${mysql_data_location}/mysql.sock --with-charset=utf8 --with-collation=utf8_general_ci --with-extra-charsets=complex --with-plugins=max --with-mysqld-ldflags=-all-static --enable-assembler $other_option"
+			mysql_configure_args="--prefix=${mysql_location} --sysconfdir=${mysql_location}/etc --with-unix-socket-path=/tmp/mysql.sock --with-charset=utf8 --with-collation=utf8_general_ci --with-extra-charsets=complex --with-plugins=max --with-mysqld-ldflags=-all-static --enable-assembler $other_option"
 		elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" ];then
 			if package_support;then
 				other_option=""
 			else
 				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 			fi
-			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 		elif [ "$mysql" == "${mysql5_6_filename}" ];then
 			if package_support;then
 				other_option=""
 			else
 				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 			fi
-			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 		fi
 
 		#提示是否更改编译参数
@@ -1962,7 +1962,7 @@ if [ "$mysql" != "do_not_install" ];then
 		else
 			other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 		fi
-		mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"		
+		mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"		
 	fi
 fi	
 }
@@ -2385,33 +2385,6 @@ swap_settings(){
 	fi	
 }
 
-#设置php mysql默认socket路径
-php_mysql_socket_settings(){
-	while true; do
-		read -p "please input php.in location(ie./usr/local/php/etc/php.ini): " php_ini_location
-		if [ ! -f  ${php_ini_location} ] || [ "$php_ini_location" == "" ];then
-			echo "${php_ini_location} not found,please reinput."
-		else
-			break
-		fi
-	done
-
-	while true; do
-		read -p "please input mysql.sock location(ie./usr/local/mysql/data/mysql.sock): " mysql_sock_location
-		if [ ! -S  ${mysql_sock_location} ] || [ "$mysql_sock_location" == "" ];then
-			echo "${mysql_sock_location} not found or is not a socket file,please reinput."
-		else
-			break
-		fi		
-	done
-
-	sed -i "s#mysql.default_socket.*#mysql.default_socket = ${mysql_sock_location}#" ${php_ini_location}
-	sed -i "s#mysqli.default_socket.*#mysqli.default_socket = ${mysql_sock_location}#" ${php_ini_location}
-	sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = ${mysql_sock_location}#" ${php_ini_location}
-	echo "successfully set php mysql sock,you should restart the php to take it effect."
-	exit 
-}
-
 #工具设置
 tools_setting(){
 	clear
@@ -2421,7 +2394,6 @@ tools_setting(){
 		pre_setting
 	else
 		[ "$tools" == "System-swap-settings" ] && swap_settings
-		[ "$tools" == "Set-php-mysql-socket" ] && php_mysql_socket_settings
 	fi	
 
 }

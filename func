@@ -2060,7 +2060,7 @@ if [ "$php" != "do_not_install" ];then
 	[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
 	for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
 	echo
-	php_modules_prompt="please input a number: "
+	php_modules_prompt="please input numbers(ie.1 2 3): "
 	while true
 	do
 		read -p "${php_modules_prompt}" php_modules
@@ -2069,7 +2069,7 @@ if [ "$php" != "do_not_install" ];then
 		for i in ${php_modules[@]}
 		do
 			if [ "${php_modules_arr[$i-1]}" == "" ];then
-				php_modules_prompt="input errors,please input number 1,2,3: ";
+				php_modules_prompt="input errors,please input numbers(ie.1 2 3): ";
 				wrong=1
 				break
 			elif [ "${php_modules_arr[$i-1]}" == "do_not_install" ];then
@@ -2177,7 +2177,7 @@ echo  "#################### Other software install ####################"
 echo
 for ((i=1;i<=${#other_soft_arr[@]};i++ )); do echo -e "$i) ${other_soft_arr[$i-1]}"; done
 echo
-other_prompt="please input a number: "
+other_prompt="please input numbers(ie. 1 2 3): "
 while true
 do
 	read -p "${other_prompt}" other_soft
@@ -2186,7 +2186,7 @@ do
 	for j in ${other_soft[@]}
 	do
 		if [ "${other_soft_arr[$j-1]}" == "" ];then
-			other_soft_prompt="input errors,please input number a number: ";
+			other_soft_prompt="input errors,please input numbers(ie. 1 2 3): ";
 			wrong=1
 			break
 		elif [ "${other_soft_arr[$j-1]}" == "do_not_install" ];then

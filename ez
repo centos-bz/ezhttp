@@ -130,12 +130,12 @@ done
 #设置默认网站目录
 default_root="/home/${server_names%% *}"
 #输入网站目录
-read -p "input website root(default:$default_root/web): " website_root
+read -p "input website root(default:$default_root): " website_root
 website_root=${website_root:=$default_root}
 
 #创建目录
-mkdir -p ${website_root}/logs ${website_root}/web
-chown -R www ${website_root}/web
+mkdir -p ${website_root}/ /home/wwwlog/${server_names%% *}
+chown -R www ${website_root}
 
 #写入nginx配置
 cat > ${nginx_location}/conf/vhost/${server_names%% *}.conf << EOF
@@ -143,7 +143,7 @@ server {
 	server_name ${server_names};
 	listen 80;
 	index index.php index.html index.htm;
-	root ${website_root}/web;
+	root ${website_root};
 
     location / {
     	try_files $uri $uri/index.html @apache;
@@ -168,8 +168,8 @@ server {
 			expires      12h;
 	}
 
-	access_log  ${website_root}/logs/access_nginx.log access;
-	error_log  ${website_root}/logs/error_nginx.log error;
+	access_log  /home/wwwlog/${server_names%% *}/access_nginx.log access;
+	error_log  /home/wwwlog/${server_names%% *}/error_nginx.log error;
 }
 EOF
 
@@ -178,17 +178,17 @@ cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
 <VirtualHost 127.0.0.1:88>
 ServerName ${server_names%% *}
 ServerAlias ${server_names}
-DocumentRoot ${website_root}/web
+DocumentRoot ${website_root}
 DirectoryIndex index.php index.html index.htm
-<Directory ${website_root}/web>
+<Directory ${website_root}>
 Options +Includes -Indexes
 AllowOverride All
 Order Deny,Allow
 Allow from All
-php_admin_value open_basedir ${website_root}/web:/tmp:/proc
+php_admin_value open_basedir ${website_root}:/tmp:/proc
 </Directory>
-ErrorLog  ${website_root}/logs/error_apache.log
-TransferLog  ${website_root}/logs/access_apache.log
+ErrorLog  /home/wwwlog/${server_names%% *}/error_apache.log
+TransferLog  /home/wwwlog/${server_names%% *}/access_apache.log
 </VirtualHost>
 EOF
 
@@ -212,7 +212,7 @@ else
 fi
 
 echo "congratulations.vhost ${server_names%% *} had created."
-echo "website root is ${website_root}/web/."
+echo "website root is ${website_root}/."
 
 }
 
@@ -272,7 +272,7 @@ done
 #设置默认网站目录
 default_root="/home/${server_names%% *}"
 #输入网站目录
-read -p "input website root(default:$default_root/web): " website_root
+read -p "input website root(default:$default_root): " website_root
 website_root=${website_root:=$default_root}
 #是否添加重写规则
 yes_or_no "add nginx rewrite rule" "select_rewrite_rule" "rewrite_rule=''"
@@ -285,7 +285,7 @@ server {
 	server_name ${server_names};
 	listen 80;
 	index index.php index.html index.htm;
-	root ${website_root}/web;
+	root ${website_root};
 	${rewrite_rule}
 	${php_support_code}
 	location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
@@ -296,16 +296,16 @@ server {
 			expires      12h;
 	}
 
-	access_log  ${website_root}/logs/access.log access;
-	error_log  ${website_root}/logs/error.log error;
+	access_log  /home/wwwlog/${server_names%% *}/access.log access;
+	error_log  /home/wwwlog/${server_names%% *}/error.log error;
 }
 EOF
 
 echo "congratulations.vhost ${server_names%% *} had created."
-echo "website root is ${website_root}/web/."
+echo "website root is ${website_root}/."
 #创建目录
-mkdir -p ${website_root}/logs ${website_root}/web
-chown -R www ${website_root}/web
+mkdir -p /home/wwwlog/${server_names%% *} ${website_root}
+chown -R www ${website_root}
 #重载配置
 echo "reloading the nginx config file..."
 if ${nginx_location}/sbin/nginx -t;then
@@ -365,31 +365,31 @@ done
 #设置默认网站目录
 default_root="/home/${server_names%% *}"
 #输入网站目录
-read -p "input website root(default:$default_root/web): " website_root
+read -p "input website root(default:$default_root): " website_root
 website_root=${website_root:=$default_root}
 #开始写入配置文件
 cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
 <VirtualHost *:80>
 ServerName ${server_names%% *}
 ServerAlias ${server_names}
-DocumentRoot ${website_root}/web
+DocumentRoot ${website_root}
 DirectoryIndex index.php index.html index.htm
-<Directory ${website_root}/web>
+<Directory ${website_root}>
 Options +Includes -Indexes
 AllowOverride All
 Order Deny,Allow
 Allow from All
-php_admin_value open_basedir ${website_root}/web:/tmp:/proc
+php_admin_value open_basedir ${website_root}:/tmp:/proc
 </Directory>
-ErrorLog  ${website_root}/logs/error.log
-TransferLog  ${website_root}/logs/access.log
+ErrorLog  /home/wwwlog/${server_names%% *}/error.log
+TransferLog  /home/wwwlog/${server_names%% *}/access.log
 </VirtualHost>
 EOF
 echo "congratulations.vhost ${server_names%% *} had created."
-echo "website root is ${website_root}/web/."
+echo "website root is ${website_root}/."
 #创建目录
-mkdir -p ${website_root}/logs ${website_root}/web
-chown -R www ${website_root}/web
+mkdir -p /home/wwwlog/${server_names%% *} ${website_root}
+chown -R www ${website_root}
 #重载配置
 echo "reloading the apache config file..."
 if ${apache_location}/bin/apachectl -t;then

@@ -2359,6 +2359,95 @@ last_confirm(){
 	echo
 	#最终确认是否安装
 	yes_or_no "Are you ready to configure your Linux [Y/n]: " "echo 'start to configure linux...'" "clear ; pre_setting"
+
+	#检测端口或socket是否被占用
+	echo "start to check if port is occupied..."
+	check_port_socket_exist
+}
+
+#检测端口或socket是否被占用
+check_port_socket_exist(){
+	if [[ $stack == "lnmp" ]];then
+		if [[ $nginx != "do_not_install" ]]; then
+			kill_pid "port" "80"
+		fi
+
+		if [[ $php != "do_not_install" ]]; then
+			kill_pid "socket" "/tmp/php-cgi.sock"
+		fi	
+
+		if [[ $mysql != "do_not_install" ]]; then
+			kill_pid "port" "3306"
+		fi		
+
+	elif [[ $stack == "lamp" ]]; then
+		if [[ $apache != "do_not_install" ]]; then
+			kill_pid "port" "80"
+		fi
+			
+		if [[ $mysql != "do_not_install" ]]; then
+			kill_pid "port" "3306"
+		fi		
+
+	elif [[ $stack == "lnamp" ]]; then
+		if [[ $nginx != "do_not_install" ]]; then
+			kill_pid "port" "80"
+		fi
+
+		if [[ $apache != "do_not_install" ]]; then
+			kill_pid "port" "88"
+		fi
+			
+		if [[ $mysql != "do_not_install" ]]; then
+			kill_pid "port" "3306"
+		fi		
+	fi				
+}
+
+#杀掉进程
+kill_pid(){
+	local processType=$1
+	local content=$2
+	
+	if [[ $processType == "port" ]]; then
+		local port=$content
+		if [[ `lsof -i:${port}` != "" ]]; then
+			processName=`lsof -i:${port} | awk 'NR==2{print $1}'`
+			pid=`lsof -i:${port} | awk 'NR==2{print $2}'`
+			yes_or_no "We found port $port is occupied by process $processName.would you like to kill this proess [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
+			if [[ $yn == "y" ]];then
+				echo "gonna be kill $processName process,please wait for 5 seconds..."
+				sleep 5
+				if [[ `lsof -p ${pid}` == "" ]]; then
+					echo "kill ${processName} successfully."
+				else
+					echo "kill ${processName} failed."
+				fi
+				sleep 2
+			fi			
+		fi
+
+	elif [[ $processType == "socket" ]]; then
+		local socket=$content
+		if [[ `lsof -U | grep "$socket"` != "" ]]; then
+			processName=`lsof -U | grep $socket | awk 'NR==1{print $1}'`
+			pid=`lsof -U | grep $socket | awk 'NR==1{print $2}'`
+			yes_or_no "We found socket $socket is occupied by process $processName.would you like to kill this proess [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
+			if [[ $yn == "y" ]];then
+				echo "gonna be kill $processName process,please wait for 5 seconds..."
+				sleep 5
+				if [[ `lsof -p ${pid}` == "" ]]; then
+					echo "kill ${processName} successfully."
+				else
+					echo "kill ${processName} failed."
+				fi
+				sleep 2
+			fi			
+		fi
+	else
+		echo "unknow processType."
+	fi
+
 }
 
 #swap设置

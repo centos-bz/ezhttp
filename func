@@ -234,14 +234,14 @@ done
 install_tool(){ 
 if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
 	apt-get -y update
-	apt-get -y install gcc g++ make wget perl curl bzip2 lsof
+	apt-get -y install gcc g++ make wget perl curl bzip2
 elif cat /etc/issue | grep -q -E -i "centos|read hat|redhat";then
-	yum -y install gcc gcc-c++ make wget perl  curl	bzip2 lsof
+	yum -y install gcc gcc-c++ make wget perl  curl	bzip2
 elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
 	apt-get -y update
-	apt-get -y install gcc g++ make wget perl curl bzip2 lsof
+	apt-get -y install gcc g++ make wget perl curl bzip2
 elif cat /proc/version | grep -q -E -i "centos|read hat|redhat";then
-	yum -y install gcc gcc-c++ make wget perl  curl bzip2 lsof
+	yum -y install gcc gcc-c++ make wget perl  curl bzip2
 
 fi		
 
@@ -1667,6 +1667,9 @@ install_lnmp(){
 	record_setting
 	#开始安装
 	disable_selinux
+	#安装工具
+	install_tool
+
 	[ "$nginx" != "do_not_install" ] && check_installed_ask "install_nginx" "$nginx_location"
 	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
 	[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
@@ -1693,6 +1696,9 @@ install_lamp(){
 	record_setting	
 	#开始安装
 	disable_selinux
+	#安装工具
+	install_tool
+
 	[ "$apache" != "do_not_install" ] && check_installed_ask "install_apache" "$apache_location"
 	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
 	[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
@@ -1721,6 +1727,9 @@ install_lnamp(){
 	record_setting	
 	#开始安装
 	disable_selinux
+	#安装工具
+	install_tool
+
 	[ "$nginx" != "do_not_install" ] && check_installed_ask "install_nginx" "$nginx_location"
 	[ "$apache" != "do_not_install" ] && check_installed_ask "install_apache" "$apache_location"
 	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
@@ -2357,9 +2366,6 @@ last_confirm(){
 	#最终确认是否安装
 	yes_or_no "Are you ready to configure your Linux [Y/n]: " "echo 'start to configure linux...'" "clear ; pre_setting"
 
-	#安装工具
-	install_tool
-
 	#检测端口或socket是否被占用
 	echo "start to check if port is occupied..."
 	check_port_socket_exist
@@ -2412,8 +2418,8 @@ kill_pid(){
 	if [[ $processType == "port" ]]; then
 		local port=$content
 		if [[ `lsof -i:${port}` != "" ]]; then
-			processName=`lsof -i:${port} | awk 'NR==2{print $1}'`
-			pid=`lsof -i:${port} | awk 'NR==2{print $2}'`
+			processName=`netstat -nlp | grep -E ":${port}\s+" | awk '{print $7}' | awk -F'/' '{print $2}' | awk -F'.' '{print $1}'`
+			pid=`netstat -nlp | grep -E ":${port}\s+" | awk '{print $7}' | awk -F'/' '{print $1}'`
 			yes_or_no "We found port $port is occupied by process $processName.would you like to kill this process [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
 			if [[ $yn == "y" ]];then
 				echo "gonna be kill $processName process,please wait for 5 seconds..."
@@ -2430,8 +2436,8 @@ kill_pid(){
 	elif [[ $processType == "socket" ]]; then
 		local socket=$content
 		if [[ `lsof -U | grep "$socket"` != "" ]]; then
-			processName=`lsof -U | grep $socket | awk 'NR==1{print $1}'`
-			pid=`lsof -U | grep $socket | awk 'NR==1{print $2}'`
+			processName=`netstat -nlp | grep ${socket} | awk '{print $9}' | awk -F'/' '{print $2}'`
+			pid=`netstat -nlp | grep $socket | awk '{print $9}' | awk -F'/' '{print $1}'`
 			yes_or_no "We found socket $socket is occupied by process $processName.would you like to kill this proess [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
 			if [[ $yn == "y" ]];then
 				echo "gonna be kill $processName process,please wait for 5 seconds..."

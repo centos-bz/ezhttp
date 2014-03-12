@@ -1667,7 +1667,6 @@ install_lnmp(){
 	record_setting
 	#开始安装
 	disable_selinux
-	install_tool
 	[ "$nginx" != "do_not_install" ] && check_installed_ask "install_nginx" "$nginx_location"
 	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
 	[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
@@ -2360,6 +2359,9 @@ last_confirm(){
 	#最终确认是否安装
 	yes_or_no "Are you ready to configure your Linux [Y/n]: " "echo 'start to configure linux...'" "clear ; pre_setting"
 
+	#安装工具
+	install_tool
+	
 	#检测端口或socket是否被占用
 	echo "start to check if port is occupied..."
 	check_port_socket_exist

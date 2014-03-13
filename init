@@ -79,9 +79,9 @@ php_memcache_other_link="http://cdn.yyupload.com/down/499809/software/memcache-3
 php_memcache_official_link="http://pecl.php.net/get/memcache-3.0.8.tgz"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.8.8-7"
-ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.8-7.tar.gz"
-ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.8-7.tar.gz"
+ImageMagick_filename="ImageMagick-6.8.8-8"
+ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.8-8.tar.gz"
+ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.8-8.tar.gz"
 
 #php redis模块设置
 php_redis_filename="redis-2.2.4"

@@ -2685,12 +2685,4 @@ echo "##########################################################################
 echo
 rootness
 pre_setting
-if [ ${select} == 1 ];then
-	if_use_previous_setting
-elif [ ${select} == 2 ];then
-	tools_setting
-else
-	echo "nothing to do."
-	exit
-fi	
 }

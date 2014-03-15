@@ -73,9 +73,9 @@ fi
 
 #开机启动
 boot_start(){
-if [ "`check_sys_version`" == "debian" ];then
+if check_package_manager apt;then
 	update-rc.d -f $1 defaults
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_package_manager yum;then
 	chkconfig --add $1
 	chkconfig $1 on
 fi
@@ -83,9 +83,9 @@ fi
 
 #关闭开机启动
 boot_stop(){
-if [ "`check_sys_version`" == "debian" ];then
+if check_package_manager apt;then
 	update-rc.d -f $1 remove
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_package_manager yum;then
 	chkconfig $1 off
 fi
 }
@@ -254,15 +254,53 @@ check_command_exist "perl"
 
 #判断系统版本
 check_sys_version(){
-if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
-	echo "debian"
-elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
-	echo "centos"	
-elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
-	echo "debian"
-elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
-	echo "centos"
-fi	
+	local system_input=$1
+	local system_check=''
+
+	if cat /etc/issue | grep -q -E -i "debian";then
+		system_check="debian"
+	elif cat /etc/issue | grep -q -E -i "ubuntu";then
+		system_check="ubuntu"
+	elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
+		system_check="centos"	
+	elif cat /proc/version | grep -q -E -i "debian";then
+		system_check="debian"
+	elif cat /proc/version | grep -q -E -i "ubuntu";then
+		system_check="ubuntu"
+	elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
+		system_check="centos"
+	else
+		system_check="unknow"
+	fi
+
+	if [ "$system_input" == "$system_check" ];then
+		return 0
+	else
+		return 1
+	fi		
+}
+
+#判断包管理工具
+check_package_manager(){
+	local manager=$1
+	local systemPackage=''
+	if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
+		systemPackage='apt'
+	elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
+		systemPackage='yum'
+	elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
+		systemPackage='apt'
+	elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
+		systemPackage='yum'
+	else
+		echo "unkonw"
+	fi
+
+	if [ "$manager" == "$systemPackage" ];then
+		return 0
+	else
+		return 1
+	fi	
 }
 
 #支持包管理工具安装依赖的系统
@@ -671,7 +709,7 @@ install_php_depends(){
 	fi
 	
 	#安装依赖
-	if [ "`check_sys_version`" == "debian" ];then
+	if check_package_manager apt;then
 		local packages=(m4 autoconf libcurl4-gnutls-dev  autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev)
 		for p in ${packages[@]}
 		do
@@ -683,7 +721,7 @@ install_php_depends(){
 		create_lib_link "libmcrypt.so"
 		create_lib_link "libiconv.so"
 		create_lib_link "libiconv.so.2"
-	elif [ "`check_sys_version`" == "centos" ];then
+	elif check_package_manager yum;then
 		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
@@ -860,9 +898,9 @@ fi
 #安装apache
 install_apache(){
 #安装依赖
-if [ "`check_sys_version`" == "debian" ];then
+if check_package_manager apt;then
 	apt-get -y install libssl-dev
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_package_manager yum;then
 	yum -y install zlib-devel openssl-devel
 else
 	check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
@@ -889,9 +927,9 @@ if [ "$apache" == "${apache2_2_filename}" ];then
 
 elif [ "$apache" == "${apache2_4_filename}" ];then
 	#安装依赖
-	if [ "`check_sys_version`" == "debian" ];then
+	if check_package_manager apt;then
 		apt-get -y install libpcre3-dev
-	elif [ "`check_sys_version`" == "centos" ];then
+	elif check_package_manager yum;then
 		yum install -y pcre-devel
 	else
 		check_installed "install_pcre" "${depends_prefix}/${pcre_filename}"
@@ -996,9 +1034,9 @@ install_mysqld(){
 if [ "$mysql" == "${mysql5_1_filename}" ];then
 
 	#安装依赖
-	if [ "`check_sys_version`" == "debian" ];then
+	if check_package_manager apt;then
 		apt-get -y install libncurses5-dev
-	elif [ "`check_sys_version`" == "centos" ];then
+	elif check_package_manager yum;then
 		yum -y install ncurses-devel
 	else
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
@@ -1022,9 +1060,9 @@ if [ "$mysql" == "${mysql5_1_filename}" ];then
 
 elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" ];then
 	#安装依赖
-	if [ "`check_sys_version`" == "debian" ];then
+	if check_package_manager apt;then
 		apt-get -y install libncurses5-dev cmake m4 bison
-	elif [ "`check_sys_version`" == "centos" ];then
+	elif check_package_manager yum;then
 		yum -y install ncurses-devel cmake m4 bison
 	else
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
@@ -1060,9 +1098,9 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 	
 elif [ "$mysql" == "${mysql5_6_filename}" ];then
 	#安装依赖
-	if [ "`check_sys_version`" == "debian" ];then
+	if check_package_manager apt;then
 		apt-get -y install libncurses5-dev cmake m4 bison
-	elif [ "`check_sys_version`" == "centos" ];then
+	elif check_package_manager yum;then
 		yum -y install ncurses-devel cmake m4 bison
 	else
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
@@ -1165,9 +1203,9 @@ install_php_depends
 #开始安装php
 if [ "$php" == "${php5_2_filename}" ];then
 	#安装依赖
-	if [ "`check_sys_version`" == "debian" ];then
+	if check_package_manager apt;then
 		apt-get -y install patch
-	elif [ "`check_sys_version`" == "centos" ];then
+	elif check_package_manager yum;then
 		yum install -y patch
 	else
 		check_installed "install_patch" "${depends_prefix}/${patch_filename}"
@@ -1319,9 +1357,9 @@ fi
 #安装eaccelerator
 install_eaccelerator(){
 #安装依赖
-if [ "`check_sys_version`" == "debian" ];then
+if check_package_manager apt;then
 	apt-get -y install m4 autoconf
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_package_manager yum;then
 	yum -y install m4 autoconf
 else
 	check_installed "install_m4" "${depends_prefix}/${m4_filename}"
@@ -1372,9 +1410,9 @@ EXTENSION_DIR=`awk -F"= " '/^EXTENSION_DIR/{print $2}' Makefile`
 #安装php-memcache
 install_php_memcache(){
 #安装依赖
-if [ "`check_sys_version`" == "debian" ];then
+if check_package_manager apt;then
 	apt-get -y install zlib1g-dev m4 autoconf
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_package_manager yum;then
 	yum install -y zlib-devel m4 autoconf
 else
 	check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
@@ -1449,9 +1487,9 @@ error_detect "make install"
 install_php_imagesmagick(){
 #安装依赖
 check_installed "install_ImageMagick" "${depends_prefix}/${ImageMagick_filename}"
-if [ "`check_sys_version`" == "debian" ];then
+if check_package_manager apt;then
 	apt-get -y install m4 autoconf pkg-config
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_package_manager yum;then
 	yum -y install pkgconfig m4 autoconf
 else
 	check_installed "install_pkgconfig" "${depends_prefix}/${pkgconfig_filename}"
@@ -1545,9 +1583,9 @@ if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && install_phpmyadmin
 #安装memcached
 install_Memcached(){
 #安装依赖
-if [ "`check_sys_version`" == "debian" ];then
+if check_package_manager apt;then
 	apt-get -y install libevent-dev
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_package_manager yum;then
 	yum -y install libevent-devel
 else
 	check_installed "install_libevent" "${depends_prefix}/${libevent_filename}"
@@ -2830,10 +2868,8 @@ create_rpm_package(){
 	#检测rpmbuild命令是否存在
 	check_command_exist "rpmbuild"
 
-	local packages_arr=(Nginx Apache PHP MySQL Memcached PureFTPd)
-
 	echo "available software can be created rpm below:"
-	for ((i=1;i<=${#packages_arr[@]};i++ )); do echo -e "$i) ${packages_arr[$i-1]}"; done
+	for ((i=1;i<=${#rpm_support_arr[@]};i++ )); do echo -e "$i) ${rpm_support_arr[$i-1]}"; done
 	echo
 	packages_prompt="please select which software you would like to create rpm(ie.1 2 3): "
 	while true
@@ -2843,12 +2879,12 @@ create_rpm_package(){
 		unset packages wrong
 		for i in ${rpmCreate[@]}
 		do
-			if [ "${packages_arr[$i-1]}" == "" ];then
+			if [ "${rpm_support_arr[$i-1]}" == "" ];then
 				packages_prompt="input errors,please input numbers(ie.1 2 3): ";
 				wrong=1
 				break
 			else	
-				packages="$packages ${packages_arr[$i-1]}"
+				packages="$packages ${rpm_support_arr[$i-1]}"
 				wrong=0
 			fi
 		done
@@ -2957,6 +2993,33 @@ create_rpm_package(){
 	exit
 }
 
+#percona xtrabackup工具安装
+percona_xtrabackup_install(){
+	if check_sys_version ubuntu || check_sys_version debian;then
+		apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+		local version=`awk -F''= '/DISTRIB_CODENAME/{print $2}' /etc/lsb-release`
+		if ! grep -q "http://repo.percona.com/apt" /etc/apt/sources.list;then
+			echo -e "deb http://repo.percona.com/apt $version main\ndeb-src http://repo.percona.com/apt $version main\n" >>  /etc/apt/sources.list
+		fi
+		
+		apt-get -y update
+		apt-get -y install percona-xtrabackup
+
+	elif check_sys_version centos;then
+		if is_64bit;then
+			rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
+		else
+			rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.i386.rpm
+		fi
+
+		yum -y install percona-xtrabackup
+	else
+		echo "sorry,the percona xtrabackup install tool do not support your system,please let me know and make it support."
+	fi
+
+	exit
+
+}
 #工具设置
 tools_setting(){
 	clear
@@ -2968,6 +3031,7 @@ tools_setting(){
 		[ "$tools" == "System-swap-settings" ] && swap_settings
 		[ "$tools" == "generate-mysql-my-cnf" ] && generate_my_cnf_tool
 		[ "$tools" == "Create-rpm-package" ] && create_rpm_package
+		[ "$tools" == "Percona-Xtrabackup-Install" ] && percona_xtrabackup_install
 	fi	
 
 }

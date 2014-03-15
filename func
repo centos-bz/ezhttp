@@ -835,7 +835,7 @@ echo "nginx_location=$nginx_location" >> /tmp/ezhttp_info_do_not_del
 #配置nginx
 config_nginx(){
 groupadd www	
-useradd -s /bin/false -g www www
+useradd -M -s /bin/false -g www www
 mkdir -p ${nginx_location}/conf/vhost
 mkdir -p /home/wwwroot/
 \cp  -a $cur_dir/conf/rewrite ${nginx_location}/conf/
@@ -927,7 +927,7 @@ export LD_LIBRARY_PATH
 #配置apache
 config_apache(){
 groupadd www	
-useradd -s /bin/false -g www www
+useradd  -M -s /bin/false -g www www
 mkdir -p /home/wwwroot
 local version=$1
 \cp  -f ${apache_location}/conf/httpd.conf ${apache_location}/conf/httpd.conf_bak
@@ -1100,7 +1100,7 @@ fi
 #配置mysql
 config_mysql(){
 local version=$1
-useradd -s /bin/false mysql
+useradd  -M -s /bin/false mysql
 mkdir -p ${mysql_location}/etc/ ${mysql_data_location}
 #防止mysql使用错误的my.cnf文件
 mv /etc/my.cnf /etc/my.cnf_bak
@@ -1242,7 +1242,7 @@ config_php
 config_php(){
 if [ "$php_mode" == "with_fastcgi" ];then	
 	groupadd www	
-	useradd -s /bin/false -g www www
+	useradd  -M -s /bin/false -g www www
 	rm -f /etc/init.d/php-fpm
 	if [ "$php" == "${php5_2_filename}" ];then
 		mkdir -p ${php_location}/logs/
@@ -2024,37 +2024,18 @@ if [ "$php" == "custom_version" ];then
 fi	
 
 if [ "$php" != "do_not_install" ];then
-	if [ "$php_mode" == "" ];then
-		#选择php运行模式
-		while true
-		do
-			for ((i=1;i<=${#php_mode_arr[@]};i++ )); do echo -e "$i) ${php_mode_arr[$i-1]}"; done
-			echo
-			read -p "choose php run mode: " mode
-			php_mode=${php_mode_arr[$mode-1]}
-			#输入有误时，从这里停止,重新循环
-			[ "$php_mode" == "" ] && continue
-			echo "you choose $php_mode"
-			#判断当选择with_apache时，apache_location是否已经设置
-			if [ "$apache_location" == "" ] && [ "$php_mode" == "with_apache" ];then
-				read -p "apache location is not set,please set it: " apache_location
-				apache_location=`filter_location "$apache_location"`
-			fi	
-			#apache2.4与php5.2不兼容，需要判断一下
-			if [ "$php_mode" == "with_apache" ] && [ "$apache" == "${apache2_4_filename}" ] && [ "$php" == "${php5_2_filename}" ];then
-				echo "${apache2_4_filename} is not compatible with ${php5_2_filename},please reselect"
-				display_menu php
-			else
-				break
-			fi	
-		done
-	else
-		#apache2.4与php5.2不兼容，需要判断一下
-		if [ "$php_mode" == "with_apache" ] && [ "$apache" == "${apache2_4_filename}" ] && [ "$php" == "${php5_2_filename}" ];then
-			echo "${apache2_4_filename} is not compatible with ${php5_2_filename},please reselect"
-			display_menu php
-		fi	
-	fi	
+	#判断当选择with_apache时，apache_location是否已经设置
+	if [ "$apache_location" == "" ] && [ "$php_mode" == "with_apache" ];then
+		read -p "apache location is not set,please set it: " apache_location
+		apache_location=`filter_location "$apache_location"`
+	fi
+
+	#apache2.4与php5.2不兼容，需要判断一下
+	if [ "$php_mode" == "with_apache" ] && [ "$apache" == "${apache2_4_filename}" ] && [ "$php" == "${php5_2_filename}" ];then
+		echo "${apache2_4_filename} is not compatible with ${php5_2_filename},please reselect"
+		display_menu php
+	fi
+
 	#php安装路径
 	read -p "$php install location(default:/usr/local/php,leave blank for default): " php_location
 	php_location=${php_location:=/usr/local/php}
@@ -2653,6 +2634,329 @@ generate_my_cnf_tool(){
 	exit
 }
 
+#生成spec文件
+make_rpm(){
+	local name=$1
+	local version=$2
+	local location=$3
+	local filesPackage=($4)
+	local postCmd=$5
+	local summary=$6
+	local description=$7
+	local preun=$8
+
+	local release=`uname -r | awk -F'.' '{print $4}'`
+	local arch=`uname -r | awk -F'.' '{print $5}'`
+
+	local rpmExportPath=$HOME/rpmbuild/BUILDROOT/${name}-${version}-${release}.${arch}/
+	mkdir -p $HOME/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+	mkdir -p $rpmExportPath
+
+	#复制文件
+	echo "copying files to rpm location..."
+	local filesList=''
+	for file in ${filesPackage[@]};do
+		cp --parents -a $file $rpmExportPath
+		filesList="$file\n$filesList"
+	done
+
+	filesList=$(echo -e $filesList)
+
+	cd $HOME/rpmbuild/SPECS
+
+	cat >${name}.spec << EOF
+Summary: ${summary}
+License: 2-clause BSD-like license
+Name: ${name}
+Version: $version
+Release: $release
+Distribution: Linux
+Packager: zhumaohai <admin@www.centos.bz>
+%description
+${description}
+%post
+${postCmd}
+%files
+$filesList
+%preun
+$preun
+EOF
+
+echo "creating ${name} rpm package,please wait for a while..."
+rpmbuild -bb ${name}.spec
+
+echo "${name} rpm create done.rpm is locate at $HOME/rpmbuild/RPMS/$arch/"
+echo 
+echo "you can excute below command to install rpm package: "
+if [[ $name == "apache" ]];then
+	echo "yum -x httpd -y install ${name}-${version}-${release}.${arch}.rpm"
+else
+	echo "yum -y install ${name}-${version}-${release}.${arch}.rpm"
+fi
+}
+
+#生成nginx rpm包
+create_nginx_rpm(){
+	local name="nginx"
+	local version=`${nginx_location}/sbin/nginx -v 2>&1 | awk -F'/' '{print $2}'`
+	local location="${nginx_location}"
+	local filesPackage="${nginx_location} /etc/init.d/nginx /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/nginx start"
+	postCmd=$(echo -e $postCmd)
+	local summary="nginx web server"
+	local description="nginx web server"
+	local preun="/etc/init.d/nginx stop"
+
+	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
+}
+
+#生成apache rpm包
+create_apache_rpm(){
+	local name="apache"
+	local version=`${apache_location}/bin/httpd -v | awk -F'[/ ]' 'NR==1{print $4}'`
+	local location="${apache_location}"
+	local filesPackage="${apache_location} /etc/init.d/httpd /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/httpd start"
+	postCmd=$(echo -e $postCmd)
+	local summary="apache web server"
+	local description="apache web server"
+	local preun="/etc/init.d/httpd stop"
+
+	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
+
+}
+
+#生成php rpm包
+create_php_rpm(){
+
+	local name="php"
+	local version=`${php_location}/bin/php -v | awk 'NR==1{print $2}'`
+	local location="${php_location}"
+	local filesPackage=''
+	local postCmd=''
+	local preun=''
+	if ${php_location}/bin/php -ini | grep -q "with-apxs";then
+		filesPackage="${php_location} /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	else
+		filesPackage="${php_location} /etc/init.d/php-fpm /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+		postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/php-fpm start"
+		preun="/etc/init.d/php-fpm stop"
+	fi
+
+	if is_64bit;then
+		filesPackage="$filesPackage /usr/lib64/libiconv.so.2* /usr/lib64/libmcrypt.so.4* /usr/lib/libiconv.so.2* /usr/lib/libmcrypt.so.4* "
+	else
+		filesPackage="$filesPackage /usr/lib/libiconv.so.2* /usr/lib/libmcrypt.so.4*"
+	fi	
+	postCmd=$(echo -e $postCmd)
+	local summary="php engine"
+	local description="php engine"
+
+	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
+
+}
+
+#生成mysql rpm包
+create_mysql_rpm(){
+	local name="mysql"
+	local version=`${mysql_location}/bin/mysql -V | awk '{print $5}' | tr -d ','`
+	local location="${mysql_location}"
+	local filesPackage=''
+	for file in `ls ${mysql_location} | grep -v -E "data|mysql-test|sql-bench"`;do
+		filesPackage="$filesPackage ${mysql_location}/$file"
+	done
+
+	filesPackage="$filesPackage /etc/init.d/mysqld /usr/bin/mysql /usr/bin/mysqldump /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	local mysql_data_location=`${mysql_location}/bin/mysqld --print-defaults  | sed -r -n 's#.*datadir=([^ ]+).*#\1#p'`
+
+	local postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\n/etc/init.d/mysqld start"
+	if echo $version | grep -q "^5\.1\.";then
+		postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\n/etc/init.d/mysqld start"
+	fi
+
+	postCmd=$(echo -e $postCmd)
+	local summary="mysql server"
+	local description="mysql server"
+	local preun="/etc/init.d/mysqld stop"
+
+	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
+
+}
+
+#生成memcached rpm包
+create_memcached_rpm(){
+	local name="memcached"
+	local version=`${memcached_location}/bin/memcached -h | awk 'NR==1{print $2}'`
+	local location="${memcached_location}"
+	local filesPackage="${memcached_location} /etc/init.d/memcached"
+	local postCmd="/etc/init.d/memcached start"
+	local summary="memcached cache server"
+	local description="memcached cache server"
+	local preun="/etc/init.d/memcached stop"
+
+	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
+
+}
+
+#生成pureftpd rpm包
+create_pureftpd_rpm(){
+
+	local name="pureftpd"
+	local version=`${pureftpd_location}/sbin/pure-ftpd -h | awk 'NR==1{print $2}' | tr -d v`
+	local location="${pureftpd_location}"
+	local filesPackage="${pureftpd_location} /etc/init.d/pureftpd /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	local postCmd="/etc/init.d/pureftpd start"
+	local summary="pureftpd ftp server"
+	local description="pureftpd ftp server"
+	local preun="/etc/init.d/pureftpd stop"
+
+	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
+
+}
+
+
+#rpm生成工具
+create_rpm_package(){
+	if [ `check_sys_version` != "centos" ];then
+		echo "create rpm package tool is only support system centos/redhat."
+		exit
+	fi
+
+	#安装rpmbuild工具
+	echo "start install rpmbuild tool,please wait for a few seconds..."
+	echo
+	yum -y install rpm-build
+
+	#检测rpmbuild命令是否存在
+	check_command_exist "rpmbuild"
+
+	local packages_arr=(Nginx Apache PHP MySQL Memcached PureFTPd)
+
+	echo "available software can be created rpm below:"
+	for ((i=1;i<=${#packages_arr[@]};i++ )); do echo -e "$i) ${packages_arr[$i-1]}"; done
+	echo
+	packages_prompt="please select which software you would like to create rpm(ie.1 2 3): "
+	while true
+	do
+		read -p "${packages_prompt}" rpmCreate
+		rpmCreate=(${rpmCreate})
+		unset packages wrong
+		for i in ${rpmCreate[@]}
+		do
+			if [ "${packages_arr[$i-1]}" == "" ];then
+				packages_prompt="input errors,please input numbers(ie.1 2 3): ";
+				wrong=1
+				break
+			else	
+				packages="$packages ${packages_arr[$i-1]}"
+				wrong=0
+			fi
+		done
+		[ "$wrong" == 0 ] && break
+	done
+	echo -e "your packages selection ${packages}"
+
+	#输入nginx location
+	if if_in_array Nginx "$packages";then
+		while true; do
+			read -p "please input nginx location(default:/usr/local/nginx): " nginx_location
+			nginx_location=${nginx_location:=/usr/local/nginx}
+			nginx_location=`filter_location $nginx_location`
+			if [ ! -d "$nginx_location" ];then
+				echo "$nginx_location not found or is not a directory."
+			else
+				break
+			fi		
+		done
+		echo "nginx location: $nginx_location"
+	fi
+
+	#输入apache location
+	if if_in_array Apache "$packages";then
+		while true; do
+			read -p "please input apache location(default:/usr/local/apache): " apache_location
+			apache_location=${apache_location:=/usr/local/apache}
+			apache_location=`filter_location $apache_location`
+			if [ ! -d "$apache_location" ];then
+				echo "$apache_location not found or is not a directory."
+			else
+				break
+			fi		
+		done
+		echo "apache location: $apache_location"
+	fi
+
+	#输入php location
+	if if_in_array PHP "$packages";then
+		while true; do
+			read -p "please input php location(default:/usr/local/php): " php_location
+			php_location=${php_location:=/usr/local/php}
+			php_location=`filter_location $php_location`
+			if [ ! -d "$php_location" ];then
+				echo "$php_location not found or is not a directory."
+			else
+				break
+			fi		
+		done
+		echo "php location: $php_location"
+	fi
+
+	#输入mysql location
+	if if_in_array MySQL "$packages";then
+		while true; do
+			read -p "please input mysql location(default:/usr/local/mysql): " mysql_location
+			mysql_location=${mysql_location:=/usr/local/mysql}
+			mysql_location=`filter_location $mysql_location`
+			if [ ! -d "$mysql_location" ];then
+				echo "$mysql_location not found or is not a directory."
+			else
+				break
+			fi		
+		done
+		echo "mysql location: $mysql_location"
+	fi
+
+	#输入memcached location
+	if if_in_array Memcached "$packages";then
+		while true; do
+			read -p "please input memcached location(default:/usr/local/memcached): " memcached_location
+			memcached_location=${memcached_location:=/usr/local/memcached}
+			memcached_location=`filter_location $memcached_location`
+			if [ ! -d "$memcached_location" ];then
+				echo "$memcached_location not found or is not a directory."
+			else
+				break
+			fi		
+		done
+		echo "memcached location: $memcached_location"
+	fi
+
+	#输入pureftpd location
+	if if_in_array PureFTPd "$packages";then
+		while true; do
+			read -p "please input pureftpd location(default:/usr/local/pureftpd): " pureftpd_location
+			pureftpd_location=${pureftpd_location:=/usr/local/pureftpd}
+			pureftpd_location=`filter_location $pureftpd_location`
+			if [ ! -d "$pureftpd_location" ];then
+				echo "$pureftpd_location not found or is not a directory."
+			else
+				break
+			fi		
+		done
+		echo "pureftpd location: $pureftpd_location"
+	fi			
+
+
+	if_in_array Nginx "$packages" &&  create_nginx_rpm
+	if_in_array Apache "$packages" && create_apache_rpm
+	if_in_array PHP "$packages" && create_php_rpm
+	if_in_array MySQL "$packages" && create_mysql_rpm
+	if_in_array Memcached "$packages" && create_memcached_rpm
+	if_in_array PureFTPd "$packages" && create_pureftpd_rpm
+
+	exit
+}
+
 #工具设置
 tools_setting(){
 	clear
@@ -2663,6 +2967,7 @@ tools_setting(){
 	else
 		[ "$tools" == "System-swap-settings" ] && swap_settings
 		[ "$tools" == "generate-mysql-my-cnf" ] && generate_my_cnf_tool
+		[ "$tools" == "Create-rpm-package" ] && create_rpm_package
 	fi	
 
 }

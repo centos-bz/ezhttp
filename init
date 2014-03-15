@@ -1,4 +1,4 @@
-########################软件包的百度网盘及官方下载地址设置#######################
+########################软件包的网盘及官方下载地址设置#######################
 
 ###################主要安装包设置###################
 
@@ -273,7 +273,7 @@ apr_util_official_link="http://apache.cs.utah.edu//apr/apr-util-1.5.3.tar.gz"
 
 ########################其它设置########################
 
-#lamp lnmp软件菜单设置
+#nginx apache mysql php等软件菜单设置
 nginx_arr=(do_not_install ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version)
 apache_arr=(do_not_install ${apache2_2_filename} ${apache2_4_filename} custom_version)
 mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version)
@@ -283,7 +283,7 @@ php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_file
 other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename})
 
 #工具菜单设置
-tools_arr=(System-swap-settings generate-mysql-my-cnf back-to-main-menu)
+tools_arr=(System-swap-settings generate-mysql-my-cnf Create-rpm-package back-to-main-menu)
 
 #依赖包安装路径
 depends_prefix=/opt/ezhttp

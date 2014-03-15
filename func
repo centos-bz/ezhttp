@@ -2855,7 +2855,7 @@ create_pureftpd_rpm(){
 
 #rpm生成工具
 create_rpm_package(){
-	if [ `check_sys_version` != "centos" ];then
+	if ! check_sys_version centos;then
 		echo "create rpm package tool is only support system centos/redhat."
 		exit
 	fi

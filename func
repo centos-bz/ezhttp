@@ -2267,7 +2267,7 @@ while true
 do
 	#使read能支持回格删除
 	stty erase "^H"
-	echo -e "1) LAMP LNMP LANMP Pre-installation Settings.\n2) System or Software Settings.\n3) Exit.\n"
+	echo -e "1) LAMP LNMP LANMP Pre-installation Settings.\n2) Some Useful Tools.\n3) Exit.\n"
 	read -p "please select: " select
 	case $select in
 	1) echo "you select Pre-installation settings." ; if_use_previous_setting ; break;;

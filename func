@@ -3020,6 +3020,66 @@ percona_xtrabackup_install(){
 	exit
 
 }
+
+#更改ssh server端口
+change_sshd_port(){
+	local listenPort=`netstat -nlpt | awk -F'[: ]+' '/sshd/{if ($5 ~/[0-9]/) print $5}'`
+	local configPort=`grep -v "^#" /etc/ssh/sshd_config | sed -n -r 's/^Port\s+([0-9]+).*/\1/p'`
+	configPort=${configPort:=22}
+
+	echo "the ssh server is listenning at port $listenPort."
+	echo "the /etc/ssh/sshd_config is configured port $configPort."
+
+	local newPort=''
+	while true; do
+		read -p "please input your new ssh server port(range 0-65535,greater than 1024 is recommended.): " newPort
+		if echo $newPort | grep -q -E "[0-9]+";then
+			if [[ $newPort -lt 0 ]] || [[ $newPort -gt 65535 ]];then
+				echo "input error,must be a number(range 0-65535)."
+			else
+				break
+			fi	
+		else
+			echo "input error,must be a number(range 0-65535)."
+		fi	
+	done
+
+	#备份配置文件
+	echo "backup sshd_config to sshd_config_original..."
+	cp /etc/ssh/sshd_config /etc/ssh/sshd_config_original
+
+	#开始改端口
+	if grep -q -E "^Port\b" /etc/ssh/sshd_config;then
+		sed -i -r "s/^Port\s+.*/Port $newPort/" /etc/ssh/sshd_config
+	elif grep -q -E "#Port\b" /etc/ssh/sshd_config; then
+		sed -i -r "s/#Port\s+.*/Port $newPort/" /etc/ssh/sshd_config
+	else
+		echo "Port $newPort" >> /etc/ssh/sshd_config
+	fi
+	
+	#重启sshd
+	local restartCmd=''
+	if check_sys_version debian || check_sys_version ubuntu; then
+		restartCmd="/etc/init.d/ssh restart"
+	else
+		restartCmd="/etc/init.d/sshd restart"
+	fi
+	$restartCmd
+
+	#验证是否成功
+	local nowPort=`netstat -nlpt | awk -F'[: ]+' '/sshd/{if ($5 ~/[0-9]/) print $5}'`
+	if [[ "$nowPort" == "$newPort" ]]; then
+		echo "change ssh server port to $newPort successfully."
+	else
+		echo "fail to change ssh server port to $newPort."
+		echo "rescore the backup file /etc/ssh/sshd_config_original to /etc/ssh/sshd_config..."
+		\cp /etc/ssh/sshd_config_original /etc/ssh/sshd_config
+		$restartCmd
+	fi
+
+	exit
+}
+
 #工具设置
 tools_setting(){
 	clear
@@ -3032,6 +3092,7 @@ tools_setting(){
 		[ "$tools" == "generate-mysql-my-cnf" ] && generate_my_cnf_tool
 		[ "$tools" == "Create-rpm-package" ] && create_rpm_package
 		[ "$tools" == "Percona-Xtrabackup-Install" ] && percona_xtrabackup_install
+		[ "$tools" == "Change-sshd-Port" ] && change_sshd_port
 	fi	
 
 }

@@ -146,6 +146,7 @@ is_64bit(){
 	fi		
 }
 
+
 #选择最优下载url
 choose_url_download()
 {
@@ -197,12 +198,49 @@ wget_file(){
 	fi
 }
 
-#检查软件md5
-check_md5(){
-local filename=$1
-cd ${cur_dir}/soft
-grep "$filename" ${cur_dir}/conf/md5.txt | sed 's/\r//g' | md5sum -c -
-[ $? != 0 ] && echo "$filename md5 check failed,may be the file is modified or incompleted,please redownload it, exited." && exit 1
+#验证ip合法性
+verify_ip(){
+	local ip=$1
+	local i1=`echo $ip | awk -F'.' '{print $1}'`
+	local i2=`echo $ip | awk -F'.' '{print $2}'`
+	local i3=`echo $ip | awk -F'.' '{print $3}'`
+	local i4=`echo $ip | awk -F'.' '{print $4}'`
+
+	#检查第1位
+	if ! echo $i1 | grep -E -q "^[0-9]+$" || [[ $i1 -eq 127 ]]  || [[ $i1 -le 0  ]] || [[ $i1 -ge 255 ]];then
+		return 1
+	fi
+	
+	#检查第2位
+	if ! echo $i2 | grep -E -q "^[0-9]+$" || [[ $i2 -lt 0 ]] || [[ $i2 -gt 255 ]];then
+		return 1
+	fi
+
+	#检查第3位
+	if ! echo $i3 | grep -E -q "^[0-9]+$" || [[ $i3 -lt 0 ]] || [[ $i3 -gt 255 ]];then
+		return 1
+	fi
+
+	#检查第4位
+	if ! echo $i4 | grep -E -q "^[0-9]+$" || [[ $i4 -lt 0 ]] || [[ $i4 -gt 255 ]];then
+		return 1
+	fi		
+	
+	return 0
+}
+
+#验证端口合法性
+verify_port(){
+	local port=$1
+	if echo $port | grep -q -E "^[0-9]+$";then
+		if [[ "$port" -lt 0 ]] || [[ "$port" -gt 65535 ]];then
+			return 1
+		else
+			return 0
+		fi	
+	else
+		return 1
+	fi		
 }
 
 #判断命令是否存在
@@ -2476,7 +2514,7 @@ kill_pid(){
 }
 
 #swap设置
-swap_settings(){
+System_swap_settings(){
 	swapSize=$(awk '/SwapTotal/{print $2}' /proc/meminfo)
 	if [ "$swapSize" == 0 ];then
 		while true; do
@@ -2626,7 +2664,7 @@ EOF
 }
 
 #mysql配置文件生成工具
-generate_my_cnf_tool(){
+Generate_mysql_my_cnf(){
 	#输入内存
 	while true; do
 		echo -e "1) 256M\n2) 512M\n3) 1G\n4) 2G\n5) 4G\n6) 8G\n7) 16G\n8) 32G\n"
@@ -2780,20 +2818,11 @@ create_php_rpm(){
 		postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/php-fpm start"
 		preun="/etc/init.d/php-fpm stop"
 	fi
-	local libiconv64=''
-	local libiconv32=''
-	local libmcrypt64=''
-	local libmcrypt32=''
-
-	[ -s "/usr/lib64/libiconv.so.2" ] && libiconv64=/usr/lib64/libiconv.so.2*
-	[ -s "/usr/lib/libiconv.so.2" ] && libiconv32=/usr/lib/libiconv.so.2*
-	[ -s "/usr/lib64/libmcrypt.so.4" ] && libmcrypt64=/usr/lib64/libmcrypt.so.4*
-	[ -s "/usr/lib/libmcrypt.so.4" ] && libmcrypt32=/usr/lib/libmcrypt.so.4*
 
 	if is_64bit;then
-		filesPackage="$filesPackage ${libiconv32} ${libiconv64} ${libmcrypt32} ${libmcrypt64}"
+		filesPackage="$filesPackage /usr/lib64/libiconv.so.2* /usr/lib64/libmcrypt.so.4* /usr/lib/libiconv.so.2* /usr/lib/libmcrypt.so.4* "
 	else
-		filesPackage="$filesPackage ${libiconv32} ${libmcrypt32}"
+		filesPackage="$filesPackage /usr/lib/libiconv.so.2* /usr/lib/libmcrypt.so.4*"
 	fi	
 	postCmd=$(echo -e $postCmd)
 	local summary="php engine"
@@ -2863,7 +2892,7 @@ create_pureftpd_rpm(){
 
 
 #rpm生成工具
-create_rpm_package(){
+Create_rpm_package(){
 	if ! check_sys_version centos;then
 		echo "create rpm package tool is only support system centos/redhat."
 		exit
@@ -2991,7 +3020,7 @@ create_rpm_package(){
 		echo "pureftpd location: $pureftpd_location"
 	fi			
 
-
+	eval 
 	if_in_array Nginx "$packages" &&  create_nginx_rpm
 	if_in_array Apache "$packages" && create_apache_rpm
 	if_in_array PHP "$packages" && create_php_rpm
@@ -3003,7 +3032,7 @@ create_rpm_package(){
 }
 
 #percona xtrabackup工具安装
-percona_xtrabackup_install(){
+Percona_xtrabackup_install(){
 	if check_sys_version ubuntu || check_sys_version debian;then
 		apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
 		local version=`awk -F''= '/DISTRIB_CODENAME/{print $2}' /etc/lsb-release`
@@ -3031,7 +3060,7 @@ percona_xtrabackup_install(){
 }
 
 #更改ssh server端口
-change_sshd_port(){
+Change_sshd_port(){
 	local listenPort=`netstat -nlpt | awk -F'[: ]+' '/sshd/{if ($5 ~/[0-9]/) print $5}'`
 	local configPort=`grep -v "^#" /etc/ssh/sshd_config | sed -n -r 's/^Port\s+([0-9]+).*/\1/p'`
 	configPort=${configPort:=22}
@@ -3042,15 +3071,11 @@ change_sshd_port(){
 	local newPort=''
 	while true; do
 		read -p "please input your new ssh server port(range 0-65535,greater than 1024 is recommended.): " newPort
-		if echo $newPort | grep -q -E "[0-9]+";then
-			if [[ $newPort -lt 0 ]] || [[ $newPort -gt 65535 ]];then
-				echo "input error,must be a number(range 0-65535)."
-			else
-				break
-			fi	
+		if verify_port "$newPort";then
+			break
 		else
 			echo "input error,must be a number(range 0-65535)."
-		fi	
+		fi
 	done
 
 	#备份配置文件
@@ -3089,19 +3114,238 @@ change_sshd_port(){
 	exit
 }
 
+#清空iptables表
+clean_iptables_rule(){
+	iptables -P INPUT ACCEPT
+	iptables -P OUTPUT ACCEPT
+	iptables -X
+	iptables -F
+}
+
+#iptables首次设置
+iptables_init(){
+	yes_or_no "we'll clean all rules before configure iptables,are you sure?[Y/n]: " "clean_iptables_rule" "Iptables_settings"
+
+	echo "start to add a iptables rule..."
+	echo
+
+	#列出监听端口
+	echo "the server is listenning below address:"
+	echo 
+	netstat -nlpt | awk -F'[/ ]+' 'BEGIN{printf("%-20s %-20s\n%-20s %-20s\n","Program name","Listen Address","------------","--------------")} $1 ~ /^tcp$/{printf("%-20s %-20s\n",$8,$4)}'
+	echo
+	#端口选择
+	local ports=''
+	local ports_arr=''
+	while true; do
+		read -p "please input one or more ports allowed(ie.22 80 3306): " ports
+		ports_arr=($ports)
+		local step=false
+		for p in ${ports_arr[@]};do
+			if ! verify_port "$p";then
+				echo "your input is invalid."
+				step=false
+				break
+			fi
+			step=true
+		done
+		$step && break
+		echo "input can not be empty."
+	done
+
+	#检查端口是否包含ssh端口,否则自动加入,防止无法连接ssh
+	local sshPort=`netstat -nlpt | awk -F'[: ]+' '/sshd/{if ($5 ~/[0-9]/) print $5}'`
+	local sshNotInput=true
+	for p in ${ports_arr[@]};do
+		if [[ $p == "$sshPort" ]];then
+			sshNotInput=false
+		fi
+	done
+
+	$sshNotInput && ports="$ports $sshPort"
+
+	#开始设置防火墙
+	iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+	ports_arr=($ports)
+	for p in ${ports_arr[@]};do
+		iptables -A INPUT -p tcp -m tcp --dport $p -j ACCEPT
+	done
+
+	iptables -A INPUT -i lo -j ACCEPT
+	iptables -A INPUT -p icmp -m icmp --icmp-type 8
+	iptables -A INPUT -p icmp -m icmp --icmp-type 11
+	iptables -P INPUT DROP
+
+	if check_sys_version ubuntu || check_sys_version debian;then
+		iptables-save > /etc/iptables.rule
+	elif check_sys_version centos;then
+		/etc/init.d/iptables save
+	fi
+	
+	echo "configure iptables done."
+}
+
+#增加规则
+add_iptables_rule(){
+	#协议选择
+	while true; do
+		echo -e "1) tcp\n2) udp\n"
+		read -p "please specify the Protocol(default:tcp): " protocol
+		protocol=${protocol:=1}
+		case  $protocol in
+			1) protocol=tcp;break;;
+			2) protocol=udp;break;;
+			*) echo "input error,please input a number(ie.1 2 3)";;
+		esac
+	done
+
+	#来源ip选择
+	while true; do
+		read -p "please input the source ip address(ie. 8.8.8.8 192.168.0.0/24,leave blank for all.): " sourceIP
+		if [[ $sourceIP != "" ]];then
+			local ip=`echo $sourceIP | awk -F'/' '{print $1}'`
+			local mask=`echo $sourceIP | awk -F'/' '{print $2}'`
+			local step1=false
+			local step2=false
+			if [[ $mask != "" ]];then
+				if echo $mask | grep -q -E "^[0-9]+$" && [[ $mask -ge 0 ]] && [[ $mask -le 32 ]];then
+					step1=true
+				fi	
+			else
+				step1=true
+			fi	
+			
+			if verify_ip "$ip";then
+				step2=true
+			fi
+			
+			if $step1 && $step2;then
+				sourceIP="-s $sourceIP"
+				break
+			else
+				echo "the ip is invalid."
+			fi
+		else
+			break
+		fi		
+	done
+
+	#端口选择
+	local port=''
+	while true; do
+		read -p "please input one or more ports allowed(ie.3306): " port
+		if  verify_port "$port";then
+			break
+		else
+			echo "your input is invalid."
+		fi	
+	done
+
+	#动作选择
+	while true; do
+		echo -e "1) ACCEPT\n2) DROP\n"
+		read -p "select action(default:ACCEPT): " action
+		action=${action:=1}
+		case $action in
+			1) action=ACCEPT;break;;
+			2) action=DROP;break;;
+			*) echo "input error,please input a number(ie.1 2)."
+		esac
+	done
+
+	#开始添加记录
+	local cmd='-A'
+	if [[ "$action" == "ACCEPT" ]];then
+		cmd="-A"
+	elif [[ "$action" == "DROP" ]]; then
+		cmd="-I"
+	fi
+			
+	if iptables $cmd INPUT -p $protocol $sourceIP --dport $port -j $action;then
+		echo "add iptables rule successfully."
+	else
+		echo "add iptables rule failed."
+	fi	
+}
+
+#删除规则
+delete_iptables_rule(){
+	iptables -nL INPUT --line-number
+	echo
+	while true; do
+		read -p "please input the number according to the first column: " number
+		if echo "$number" | grep -q -E "^[0-9]+$";then
+			break
+		else
+			echo "input error,please input a number."
+		fi		
+	done
+
+	#开始删除规则
+	if iptables -D INPUT $number;then
+		echo "delete the iptables rule successfully."
+	else
+		echo "delete the iptables rule failed."
+	fi
+}
+
+#停止ipables
+stop_iptables(){
+	#保存规则
+	if check_sys_version ubuntu || check_sys_version debian;then
+		iptables-save > /etc/iptables.rule
+	elif check_sys_version centos;then
+		/etc/init.d/iptables save
+	fi
+
+	clean_iptables_rule
+}
+
+#恢复iptables
+rescore_iptables(){
+
+	if check_sys_version ubuntu || check_sys_version debian;then
+		if [ -s "/etc/iptables.rule" ];then
+			iptables-restore < /etc/iptables.rule
+			echo "rescore iptables done."
+		else
+			echo "/etc/iptables.rule not found,can not be rescore iptables."
+		fi	
+	elif check_sys_version centos;then
+		/etc/init.d/iptables restart
+		echo "rescore iptables done."
+	fi
+}
+
+#iptales设置
+Iptables_settings(){
+	check_command_exist "iptables"
+	local select=''
+	while true; do
+		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) stop iptables.\n5) rescore iptables\n" 
+		read -p "please input your select(ie 1 2 3): " select
+		case  $select in
+			1) iptables_init;break;;
+			2) add_iptables_rule;break;;
+			3) delete_iptables_rule;break;;
+			4) stop_iptables;break;;
+			5) rescore_iptables;break;;
+			*) echo "input error,please input a number.";;
+		esac
+	done
+
+	exit
+}
+
 #工具设置
 tools_setting(){
 	clear
 	display_menu tools
-	if [ "$tools" == "back-to-main-menu" ];then
+	if [ "$tools" == "Back_to_main_menu" ];then
 		clear
 		pre_setting
 	else
-		[ "$tools" == "System-swap-settings" ] && swap_settings
-		[ "$tools" == "generate-mysql-my-cnf" ] && generate_my_cnf_tool
-		[ "$tools" == "Create-rpm-package" ] && create_rpm_package
-		[ "$tools" == "Percona-Xtrabackup-Install" ] && percona_xtrabackup_install
-		[ "$tools" == "Change-sshd-Port" ] && change_sshd_port
+		eval $tools
 	fi	
 
 }

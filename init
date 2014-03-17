@@ -283,7 +283,7 @@ php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_file
 other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename})
 
 #工具菜单设置
-tools_arr=(System-swap-settings generate-mysql-my-cnf Create-rpm-package Percona-Xtrabackup-Install Change-sshd-Port back-to-main-menu)
+tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Back_to_main_menu)
 
 #支持rpm打包的软件
 rpm_support_arr=(Nginx Apache PHP MySQL Memcached PureFTPd)

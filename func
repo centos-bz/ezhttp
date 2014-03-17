@@ -2071,7 +2071,7 @@ if [ "$php" != "do_not_install" ];then
 	#apache2.4与php5.2不兼容，需要判断一下
 	if [ "$php_mode" == "with_apache" ] && [ "$apache" == "${apache2_4_filename}" ] && [ "$php" == "${php5_2_filename}" ];then
 		echo "${apache2_4_filename} is not compatible with ${php5_2_filename},please reselect"
-		display_menu php
+		php_preinstall_settings
 	fi
 
 	#php安装路径

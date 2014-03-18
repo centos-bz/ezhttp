@@ -3151,7 +3151,7 @@ iptables_init(){
 			step=true
 		done
 		$step && break
-		echo "input can not be empty."
+		[ "$ports" == "" ] && echo "input can not be empty."
 	done
 
 	#检查端口是否包含ssh端口,否则自动加入,防止无法连接ssh

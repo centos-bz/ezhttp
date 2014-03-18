@@ -3181,7 +3181,7 @@ iptables_init(){
 	elif check_sys_version centos;then
 		/etc/init.d/iptables save
 	fi
-	
+	list_iptables
 	echo "configure iptables done."
 }
 
@@ -3260,12 +3260,13 @@ add_iptables_rule(){
 	elif [[ "$action" == "DROP" ]]; then
 		cmd="-I"
 	fi
-			
+	
 	if iptables $cmd INPUT -p $protocol $sourceIP --dport $port -j $action;then
 		echo "add iptables rule successfully."
 	else
 		echo "add iptables rule failed."
-	fi	
+	fi
+	list_iptables
 }
 
 #删除规则
@@ -3287,6 +3288,7 @@ delete_iptables_rule(){
 	else
 		echo "delete the iptables rule failed."
 	fi
+	list_iptables
 }
 
 #停止ipables
@@ -3299,6 +3301,7 @@ stop_iptables(){
 	fi
 
 	clean_iptables_rule
+	list_iptables
 }
 
 #恢复iptables
@@ -3315,14 +3318,19 @@ rescore_iptables(){
 		/etc/init.d/iptables restart
 		echo "rescore iptables done."
 	fi
+	list_iptables
 }
 
+#列出iptables
+list_iptables(){
+	iptables -nL INPUT
+}
 #iptales设置
 Iptables_settings(){
 	check_command_exist "iptables"
 	local select=''
 	while true; do
-		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) stop iptables.\n5) rescore iptables\n" 
+		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) stop iptables.\n5) rescore iptables\n6) list iptables rules\n" 
 		read -p "please input your select(ie 1 2 3): " select
 		case  $select in
 			1) iptables_init;break;;
@@ -3330,6 +3338,7 @@ Iptables_settings(){
 			3) delete_iptables_rule;break;;
 			4) stop_iptables;break;;
 			5) rescore_iptables;break;;
+			6) list_iptables;break;;
 			*) echo "input error,please input a number.";;
 		esac
 	done

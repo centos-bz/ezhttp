@@ -3132,7 +3132,7 @@ iptables_init(){
 	#列出监听端口
 	echo "the server is listenning below address:"
 	echo 
-	netstat -nlpt | awk -F'[/ ]+' 'BEGIN{printf("%-20s %-20s\n%-20s %-20s\n","Program name","Listen Address","------------","--------------")} $1 ~ /^tcp$/{printf("%-20s %-20s\n",$8,$4)}'
+	netstat -nlpt | awk -F'[/ ]+' 'BEGIN{printf("%-20s %-20s\n%-20s %-20s\n","Program name","Listen Address","------------","--------------")} $1 ~ /tcp/{printf("%-20s %-20s\n",$8,$4)}'
 	echo
 	#端口选择
 	local ports=''

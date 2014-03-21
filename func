@@ -2216,6 +2216,7 @@ fi
 #php模块安装前设置
 php_modules_preinstall_settings(){
 	echo "#################### PHP modules install ####################"
+	phpDoNotInstall=false
 	#当php为do_not_install时
 	if [[ "$php" == "do_not_install" ]];then
 		#作个标记,下面要恢复php变量值为do_not_install

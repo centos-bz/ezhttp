@@ -243,6 +243,7 @@ verify_port(){
 	fi		
 }
 
+
 #判断命令是否存在
 check_command_exist(){
 local command=$1
@@ -676,12 +677,16 @@ done
 return 1
 }
 
-#判断php版本
-check_php_version(){
+#获取php版本
+get_php_version(){
 local location=$1
-$location/bin/php -v | grep -q -i -E "php[ ]+5\.2" && echo "5.2"
-$location/bin/php -v | grep -q -i -E "php[ ]+5\.3" && echo "5.3"
-$location/bin/php -v | grep -q -i -E "php[ ]+5\.4" && echo "5.4"
+local version=`$location/bin/php -v | grep -E -o "5\.[2-4]"`
+if [[ $version == "" ]];then
+	echo "sorry,can not figure out php version."
+	exit 1
+else
+	echo $version
+fi		
 }
 
 
@@ -1559,14 +1564,14 @@ if is_64bit ; then
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube64_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
-	php_version=`check_php_version "$php_prefix"`
+	php_version=`get_php_version "$php_prefix"`
 	cp ioncube/ioncube_loader_lin_${php_version}.so ${depends_prefix}/ioncube/ioncube.so
 else
 	download_file "${ionCube32_other_link}" "${ionCube32_official_link}" "${ionCube32_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube32_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
-	php_version=`check_php_version "$php_prefix"`
+	php_version=`get_php_version "$php_prefix"`
 	cp ioncube/ioncube_loader_lin_${php_version}.so ${depends_prefix}/ioncube/ioncube.so
 fi
 ! grep -q  "\[ionCube Loader\]" ${php_prefix}/etc/php.ini && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" ${php_prefix}/etc/php.ini
@@ -1576,7 +1581,7 @@ fi
 #安装ZendGuardLoader
 install_ZendGuardLoader(){
 local php_prefix=$1
-php_version=`check_php_version "$php_prefix"`
+php_version=`get_php_version "$php_prefix"`
 if is_64bit ; then
 	if [ "$php_version" == "5.3" ];then
 		download_file "${ZendGuardLoader53_64_other_link}" "${ZendGuardLoader53_64_official_link}" "${ZendGuardLoader53_64_filename}.tar.gz"
@@ -1734,6 +1739,7 @@ preinstall_lnmp(){
 	nginx_preinstall_settings
 	mysql_preinstall_settings	
 	php_preinstall_settings
+	php_modules_preinstall_settings
 	othersoft_preinstall_settings
 }
 
@@ -1763,6 +1769,7 @@ preinstall_lamp(){
 	apache_preinstall_settings
 	mysql_preinstall_settings	
 	php_preinstall_settings
+	php_modules_preinstall_settings
 	othersoft_preinstall_settings
 }
 
@@ -1794,6 +1801,7 @@ preinstall_lnamp(){
 	apache_preinstall_settings
 	mysql_preinstall_settings	
 	php_preinstall_settings
+	php_modules_preinstall_settings
 	othersoft_preinstall_settings
 }
 
@@ -2118,50 +2126,6 @@ if [ "$php" != "do_not_install" ];then
 	php_location=${php_location:=/usr/local/php}
 	php_location=`filter_location "$php_location"`
 	echo "$php install location: $php_location"
-	#安装php模块
-	echo "#################### PHP modules install ####################"
-	echo "$php version available modules:"
-	echo
-	if [ "$php" == "${php5_2_filename}" ];then
-		#因为ZendGuardLoader不支持php5_2，所以从数组中删除
-		php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
-	elif [ "$php" == "${php5_3_filename}" ];then
-		#因为ZendOptimizer不支持php5_3,所以从数组中删除
-		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
-	elif [ "$php" == "${php5_4_filename}" ];then
-		#从数组中删除ZendOptimizer、eaccelerator、imagick
-		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
-		php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
-		php_modules_arr=(${php_modules_arr[@]#${php_imagemagick_filename}})
-	fi
-	#apache2.4 event模式不支持ZendGuardLoader
-	[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
-	for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
-	echo
-	php_modules_prompt="please input numbers(ie.1 2 3): "
-	while true
-	do
-		read -p "${php_modules_prompt}" php_modules
-		php_modules=(${php_modules})
-		unset php_modules_install wrong
-		for i in ${php_modules[@]}
-		do
-			if [ "${php_modules_arr[$i-1]}" == "" ];then
-				php_modules_prompt="input errors,please input numbers(ie.1 2 3): ";
-				wrong=1
-				break
-			elif [ "${php_modules_arr[$i-1]}" == "do_not_install" ];then
-				unset php_modules_install
-				php_modules_install="do_not_install"
-				break 2
-			else	
-				php_modules_install="$php_modules_install ${php_modules_arr[$i-1]}"
-				wrong=0
-			fi
-		done
-		[ "$wrong" == 0 ] && break
-	done
-	echo -e "your php modules selection ${php_modules_install}"
 	
 	#当选择不安装mysql server且php为5.2版本时，询问是否让php支持mysql
 	if [ "$mysql" == "do_not_install" ] && [ "$php" == "${php5_2_filename}" ];then
@@ -2247,6 +2211,84 @@ if [ "$php" != "do_not_install" ];then
 	done
 	[ "$yn" == "y" ] && echo -e "\nyour new php configure parameter is : ${php_configure_args}\n"
 fi
+}
+
+#php模块安装前设置
+php_modules_preinstall_settings(){
+	echo "#################### PHP modules install ####################"
+	#当php为do_not_install时
+	if [[ "$php" == "do_not_install" ]];then
+		#作个标记,下面要恢复php变量值为do_not_install
+		phpDoNotInstall=true
+
+		echo "you select do not install php,we do not know the php information."
+		while true; do
+			read -p "please input the php location(default:/usr/local/php): " php_location
+			php_location=${php_location:=/usr/local/php}
+			php_location=`filter_location "$php_location"`
+			if [[ -s $php_location/bin/php ]];then
+				if [[ `get_php_version $php_location` == "5.2" ]];then
+					php=${php5_2_filename}
+				elif [[ `get_php_version $php_location` == "5.3" ]]; then
+					php=${php5_3_filename}
+				elif [[ `get_php_version $php_location` == "5.4" ]]; then
+					php=${php5_4_filename}
+				else
+					echo "sorry,unsupported php version."
+					exit 1
+				fi
+				break
+			else
+				echo "input error,$php_location/bin/php not found."
+			fi
+		done
+	fi
+
+
+	echo "$php version available modules:"
+	echo
+	if [ "$php" == "${php5_2_filename}" ];then
+		#因为ZendGuardLoader不支持php5_2，所以从数组中删除
+		php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+	elif [ "$php" == "${php5_3_filename}" ];then
+		#因为ZendOptimizer不支持php5_3,所以从数组中删除
+		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
+	elif [ "$php" == "${php5_4_filename}" ];then
+		#从数组中删除ZendOptimizer、eaccelerator、imagick
+		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
+		php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
+		php_modules_arr=(${php_modules_arr[@]#${php_imagemagick_filename}})
+	fi
+	#apache2.4 event模式不支持ZendGuardLoader
+	[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+	for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
+	echo
+	php_modules_prompt="please input numbers(ie.1 2 3): "
+	while true
+	do
+		read -p "${php_modules_prompt}" php_modules
+		php_modules=(${php_modules})
+		unset php_modules_install wrong
+		for i in ${php_modules[@]}
+		do
+			if [ "${php_modules_arr[$i-1]}" == "" ];then
+				php_modules_prompt="input errors,please input numbers(ie.1 2 3): ";
+				wrong=1
+				break
+			elif [ "${php_modules_arr[$i-1]}" == "do_not_install" ];then
+				unset php_modules_install
+				php_modules_install="do_not_install"
+				break 2
+			else	
+				php_modules_install="$php_modules_install ${php_modules_arr[$i-1]}"
+				wrong=0
+			fi
+		done
+		[ "$wrong" == 0 ] && break
+	done
+	echo -e "your php modules selection ${php_modules_install}"	
+	#恢复php变量为do_not_install
+	$phpDoNotInstall && php="do_not_install"
 }
 
 #安装其它软件前设置
@@ -2408,9 +2450,9 @@ last_confirm(){
 	[ "$mysql" != "do_not_install" ] && echo "MySQL Configure Parameter: ${mysql_configure_args}"
 	echo
 	echo "*****PHP Setting*****"
-	echo "PHP Version: $php"
+	echo "PHP: $php"
 	[ "$php" != "do_not_install" ] && echo "PHP Location: $php_location"
-	[ "$php" != "do_not_install" ] && echo "PHP Modules: ${php_modules_install}"
+	[ "$php_modules_install" != "do_not_install" ] && echo "PHP Modules: ${php_modules_install}"
 	[ "$php" != "do_not_install" ] && echo "PHP Configure Parameter: ${php_configure_args}"
 	echo
 	echo "*****Other Software Setting*****"

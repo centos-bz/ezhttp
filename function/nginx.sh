@@ -165,4 +165,7 @@ cat > /etc/logrotate.d/nginx << EOF
 }
 EOF
 
+#开放80端口
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
 }

@@ -148,5 +148,21 @@ if [ "$stack" == "lnamp" ];then
 	\cp -f $cur_dir/conf/proxy.conf ${nginx_location}/conf/
 else	
 	\cp  -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
-fi	
+fi
+
+#日志分割
+cat > /etc/logrotate.d/nginx << EOF
+/home/wwwlog/*/*.log {
+    daily
+    rotate 14
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
+    endscript
+}
+EOF
+
 }

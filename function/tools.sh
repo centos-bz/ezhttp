@@ -831,6 +831,75 @@ Iptables_settings(){
 	exit
 }
 
+#开启或关闭共享扩展
+Enable_disable_php_extension(){
+	#获取php路径
+	if [[ $php_location == "" ]];then
+		while true; do
+			read -p "please input the php location(default:/usr/local/php): " php_location
+			php_location=${php_location:=/usr/local/php}
+			php_location=`filter_location "$php_location"`
+			if [[ -s $php_location/bin/php ]];then
+				break
+			else
+				echo "input error,$php_location/bin/php not found."
+			fi
+		done
+	fi	
+
+	enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-z]/{printf $0" " }'`
+	extension_dir=`${php_location}/bin/php-config --extension-dir`
+	shared_extensions=`cd $extension_dir;ls *.so | awk -F'.' '{print $1}'`
+	shared_extensions_arr=($shared_extensions)
+	echo "extension          state"
+	echo "---------          -----"
+	for extension in ${shared_extensions_arr[@]};do 
+		if if_in_array $extension "$enabled_extensions";then
+			state="enabled"
+		else
+			state="disabled"
+		fi
+		printf "%-15s%9s\n" $extension $state	
+
+	done
+
+	#输入扩展
+	while true; do
+		echo
+		read -p "please input the extension you'd like to enable or disable(ie. curl): " extensionName
+		if [[ $extensionName == "" ]];then
+			echo "input can not be empty."
+		elif if_in_array $extensionName "$shared_extensions";then
+			break
+		else
+			echo "sorry,the extension $extensionName is not found."
+		fi	
+	done
+
+	#开始启用或关闭扩展
+	if if_in_array $extensionName "$enabled_extensions";then
+		#关闭扩展
+		sed -i "/extension=$extensionName.so/d" ${php_location}/etc/php.ini
+		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-z]/{printf $0" " }'`
+		if if_in_array $extensionName "$enabled_extensions";then
+			echo "disable extension $extensionName failed."
+		else
+			echo "disable extension $extensionName successfully."
+		fi		
+	else
+		#开启扩展
+		echo "extension=${extensionName}.so" >> ${php_location}/etc/php.ini
+		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-z]/{printf $0" " }'`
+		if if_in_array $extensionName "$enabled_extensions";then
+			echo "enable extension $extensionName successfully."
+		else
+			echo "enable extension $extensionName failed."
+		fi
+	fi	
+
+	yes_or_no "do you want to continue enable or disable php extensions[Y/n]: " "Enable_disable_php_extension" "echo 'restarting php to take modifies affect...';restart_php;exit"
+}
+
 #工具设置
 tools_setting(){
 	clear

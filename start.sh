@@ -17,12 +17,31 @@ else
 	echo "init file not found.shell script can't be executed."
 	exit 1
 fi
-#载入常用函数
-if [ -f $cur_dir/func ];then
-	. $cur_dir/func
-else
-	echo "func file not found.shell script can't be executed."
-	exit 1
-fi	
+
+#载入函数
+load_functions(){
+	local function=$1
+	if [[ -s $cur_dir/function/${function}.sh ]];then
+		. $cur_dir/function/${function}.sh
+	else
+		echo "$cur_dir/function/${function}.sh not found,shell can not be executed."
+		exit 1
+	fi	
+}
+
+#开始载入
+load_functions public
+load_functions apache
+load_functions depends
+load_functions mysql
+load_functions nginx
+load_functions other-soft
+load_functions php
+load_functions php-modules
+load_functions tools
+load_functions other
+
+
+#开始执行脚本
 rm -f /root/ezhttp_errors.log
 deploy_linux 2>&1 | tee -a /root/ezhttp_errors.log

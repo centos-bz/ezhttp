@@ -847,7 +847,7 @@ Enable_disable_php_extension(){
 		done
 	fi	
 
-	enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-z]/{printf $0" " }'`
+	enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 	extension_dir=`${php_location}/bin/php-config --extension-dir`
 	shared_extensions=`cd $extension_dir;ls *.so | awk -F'.' '{print $1}'`
 	shared_extensions_arr=($shared_extensions)
@@ -880,7 +880,7 @@ Enable_disable_php_extension(){
 	if if_in_array $extensionName "$enabled_extensions";then
 		#关闭扩展
 		sed -i "/extension=$extensionName.so/d" ${php_location}/etc/php.ini
-		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-z]/{printf $0" " }'`
+		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 		if if_in_array $extensionName "$enabled_extensions";then
 			echo "disable extension $extensionName failed."
 		else
@@ -889,7 +889,7 @@ Enable_disable_php_extension(){
 	else
 		#开启扩展
 		echo "extension=${extensionName}.so" >> ${php_location}/etc/php.ini
-		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-z]/{printf $0" " }'`
+		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 		if if_in_array $extensionName "$enabled_extensions";then
 			echo "enable extension $extensionName successfully."
 		else

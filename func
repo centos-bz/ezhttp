@@ -2221,75 +2221,80 @@ php_modules_preinstall_settings(){
 	if [[ "$php" == "do_not_install" ]];then
 		#作个标记,下面要恢复php变量值为do_not_install
 		phpDoNotInstall=true
-
-		echo "you select do not install php,we do not know the php information."
-		while true; do
-			read -p "please input the php location(default:/usr/local/php): " php_location
-			php_location=${php_location:=/usr/local/php}
-			php_location=`filter_location "$php_location"`
-			if [[ -s $php_location/bin/php ]];then
-				if [[ `get_php_version $php_location` == "5.2" ]];then
-					php=${php5_2_filename}
-				elif [[ `get_php_version $php_location` == "5.3" ]]; then
-					php=${php5_3_filename}
-				elif [[ `get_php_version $php_location` == "5.4" ]]; then
-					php=${php5_4_filename}
+		php_modules_install=''
+		yes_or_no "do you want to install php modules[Y/n]: " "echo 'you select install php modules.'" "echo 'you select do not install php modules'"
+		if [[ $yn == "y" ]];then
+			while true; do
+				read -p "please input the php location(default:/usr/local/php): " php_location
+				php_location=${php_location:=/usr/local/php}
+				php_location=`filter_location "$php_location"`
+				if [[ -s $php_location/bin/php ]];then
+					if [[ `get_php_version $php_location` == "5.2" ]];then
+						php=${php5_2_filename}
+					elif [[ `get_php_version $php_location` == "5.3" ]]; then
+						php=${php5_3_filename}
+					elif [[ `get_php_version $php_location` == "5.4" ]]; then
+						php=${php5_4_filename}
+					else
+						echo "sorry,unsupported php version."
+						exit 1
+					fi
+					break
 				else
-					echo "sorry,unsupported php version."
-					exit 1
+					echo "input error,$php_location/bin/php not found."
 				fi
-				break
-			else
-				echo "input error,$php_location/bin/php not found."
-			fi
-		done
+			done
+		else
+			php_modules_install="do_not_install"
+		fi	
 	fi
 
-
-	echo "$php version available modules:"
-	echo
-	if [ "$php" == "${php5_2_filename}" ];then
-		#因为ZendGuardLoader不支持php5_2，所以从数组中删除
-		php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
-	elif [ "$php" == "${php5_3_filename}" ];then
-		#因为ZendOptimizer不支持php5_3,所以从数组中删除
-		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
-	elif [ "$php" == "${php5_4_filename}" ];then
-		#从数组中删除ZendOptimizer、eaccelerator、imagick
-		php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
-		php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
-		php_modules_arr=(${php_modules_arr[@]#${php_imagemagick_filename}})
-	fi
-	#apache2.4 event模式不支持ZendGuardLoader
-	[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
-	for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
-	echo
-	php_modules_prompt="please input numbers(ie.1 2 3): "
-	while true
-	do
-		read -p "${php_modules_prompt}" php_modules
-		php_modules=(${php_modules})
-		unset php_modules_install wrong
-		for i in ${php_modules[@]}
+	if [[ $php_modules_install != "do_not_install" ]];then
+		echo "$php version available modules:"
+		echo
+		if [ "$php" == "${php5_2_filename}" ];then
+			#因为ZendGuardLoader不支持php5_2，所以从数组中删除
+			php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+		elif [ "$php" == "${php5_3_filename}" ];then
+			#因为ZendOptimizer不支持php5_3,所以从数组中删除
+			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
+		elif [ "$php" == "${php5_4_filename}" ];then
+			#从数组中删除ZendOptimizer、eaccelerator、imagick
+			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${php_imagemagick_filename}})
+		fi
+		#apache2.4 event模式不支持ZendGuardLoader
+		[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+		for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
+		echo
+		php_modules_prompt="please input numbers(ie.1 2 3): "
+		while true
 		do
-			if [ "${php_modules_arr[$i-1]}" == "" ];then
-				php_modules_prompt="input errors,please input numbers(ie.1 2 3): ";
-				wrong=1
-				break
-			elif [ "${php_modules_arr[$i-1]}" == "do_not_install" ];then
-				unset php_modules_install
-				php_modules_install="do_not_install"
-				break 2
-			else	
-				php_modules_install="$php_modules_install ${php_modules_arr[$i-1]}"
-				wrong=0
-			fi
+			read -p "${php_modules_prompt}" php_modules
+			php_modules=(${php_modules})
+			unset php_modules_install wrong
+			for i in ${php_modules[@]}
+			do
+				if [ "${php_modules_arr[$i-1]}" == "" ];then
+					php_modules_prompt="input errors,please input numbers(ie.1 2 3): ";
+					wrong=1
+					break
+				elif [ "${php_modules_arr[$i-1]}" == "do_not_install" ];then
+					unset php_modules_install
+					php_modules_install="do_not_install"
+					break 2
+				else	
+					php_modules_install="$php_modules_install ${php_modules_arr[$i-1]}"
+					wrong=0
+				fi
+			done
+			[ "$wrong" == 0 ] && break
 		done
-		[ "$wrong" == 0 ] && break
-	done
-	echo -e "your php modules selection ${php_modules_install}"	
-	#恢复php变量为do_not_install
-	$phpDoNotInstall && php="do_not_install"
+		echo -e "your php modules selection ${php_modules_install}"	
+		#恢复php变量为do_not_install
+		$phpDoNotInstall && php="do_not_install"
+	fi	
 }
 
 #安装其它软件前设置

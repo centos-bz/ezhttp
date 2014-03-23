@@ -879,7 +879,7 @@ Enable_disable_php_extension(){
 	#开始启用或关闭扩展
 	if if_in_array $extensionName "$enabled_extensions";then
 		#关闭扩展
-		sed -i "/extension=$extensionName.so/d" ${php_location}/etc/php.ini
+		sed -i "/extension=$extensionName.so/d" $(get_php_ini $php_location)
 		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 		if if_in_array $extensionName "$enabled_extensions";then
 			echo "disable extension $extensionName failed."
@@ -888,7 +888,7 @@ Enable_disable_php_extension(){
 		fi		
 	else
 		#开启扩展
-		echo "extension=${extensionName}.so" >> ${php_location}/etc/php.ini
+		echo "extension=${extensionName}.so" >> $(get_php_ini $php_location)
 		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 		if if_in_array $extensionName "$enabled_extensions";then
 			echo "enable extension $extensionName successfully."

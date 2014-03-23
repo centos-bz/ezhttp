@@ -583,3 +583,9 @@ restart_php(){
 		exit 1
 	fi	
 }
+
+#获取php.ini路径
+get_php_ini(){
+	local location=$1
+	${location}/bin/php --ini | awk '/Loaded Configuration File/{print $4}'
+}

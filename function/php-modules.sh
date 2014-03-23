@@ -118,7 +118,7 @@ else
 fi
 
 #配置php.ini
-! grep -q "\[zend_optimizer\]" ${php_prefix}/etc/php.ini  && sed -i "\$a\[zend_optimizer]\nzend_optimizer.optimization_level=15\nzend_extension=${depends_prefix}/ZendOptimizer/ZendOptimizer.so\n" ${php_prefix}/etc/php.ini 
+! grep -q "\[zend_optimizer\]" $(get_php_ini $php_prefix)  && sed -i "\$a\[zend_optimizer]\nzend_optimizer.optimization_level=15\nzend_extension=${depends_prefix}/ZendOptimizer/ZendOptimizer.so\n" $(get_php_ini $php_prefix) 
 }
 
 
@@ -148,10 +148,10 @@ error_detect "make install"
 EXTENSION_DIR=`awk -F"= " '/^EXTENSION_DIR/{print $2}' Makefile`
 
 #配置php.ini
-! grep -q "\[eaccelerator\]" ${php_prefix}/etc/php.ini && sed -i "/^\[zend_optimizer]\$/i\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"" ${php_prefix}/etc/php.ini
+! grep -q "\[eaccelerator\]" $(get_php_ini $php_prefix) && sed -i "/^\[zend_optimizer]\$/i\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"" $(get_php_ini $php_prefix)
 
 #判断是否已经加上，有可能会因为没有安装zend optimizer而配置失败
-! grep -q  "\[eaccelerator\]" ${php_prefix}/etc/php.ini && sed -i "\$a\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"\n" ${php_prefix}/etc/php.ini
+! grep -q  "\[eaccelerator\]" $(get_php_ini $php_prefix) && sed -i "\$a\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"\n" $(get_php_ini $php_prefix)
 
 #配置缓存目录
 mkdir -p /var/cache/eaccelerator
@@ -172,7 +172,7 @@ error_detect "make"
 error_detect "make install"
 EXTENSION_DIR=`awk -F"= " '/^EXTENSION_DIR/{print $2}' Makefile`
 #配置php.ini
-! grep -q "\[xcache\]" ${php_prefix}/etc/php.ini && sed -i '$a\[xcache]\nextension=xcache.so\n' ${php_prefix}/etc/php.ini 
+! grep -q "\[xcache\]" $(get_php_ini $php_prefix) && sed -i '$a\[xcache]\nextension=xcache.so\n' $(get_php_ini $php_prefix) 
 }
 
 #安装php-memcache
@@ -203,7 +203,7 @@ fi
 error_detect "./configure --enable-memcache --with-php-config=$php_prefix/bin/php-config $other_option"
 error_detect "make"
 error_detect "make install"
-! grep -q  "\[memcache\]" ${php_prefix}/etc/php.ini && sed -i '$a\[memcache]\nextension=memcache.so\n' ${php_prefix}/etc/php.ini 
+! grep -q  "\[memcache\]" $(get_php_ini $php_prefix) && sed -i '$a\[memcache]\nextension=memcache.so\n' $(get_php_ini $php_prefix) 
 }
 
 #安装php redis模块
@@ -218,7 +218,7 @@ error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --enable-redis --with-php-config=$php_prefix/bin/php-config"
 error_detect "make"
 error_detect "make install"
-! grep -q  "\[redis\]" ${php_prefix}/etc/php.ini && sed -i '$a\[redis]\nextension=redis.so\n' ${php_prefix}/etc/php.ini 
+! grep -q  "\[redis\]" $(get_php_ini $php_prefix) && sed -i '$a\[redis]\nextension=redis.so\n' $(get_php_ini $php_prefix) 
 }
 
 #安装php mongo模块
@@ -233,7 +233,7 @@ error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --enable-mongo --with-php-config=$php_prefix/bin/php-config"
 error_detect "make"
 error_detect "make install"
-! grep -q  "\[mongo\]" ${php_prefix}/etc/php.ini && sed -i '$a\[mongo]\nextension=mongo.so\n' ${php_prefix}/etc/php.ini 
+! grep -q  "\[mongo\]" $(get_php_ini $php_prefix) && sed -i '$a\[mongo]\nextension=mongo.so\n' $(get_php_ini $php_prefix) 
 }
 
 #安装apc模块
@@ -248,7 +248,7 @@ error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --enable-apc --with-php-config=$php_prefix/bin/php-config"
 error_detect "make"
 error_detect "make install"
-! grep -q  "\[apc\]" ${php_prefix}/etc/php.ini && sed -i '$a\[apc]\nextension=apc.so\n' ${php_prefix}/etc/php.ini
+! grep -q  "\[apc\]" $(get_php_ini $php_prefix) && sed -i '$a\[apc]\nextension=apc.so\n' $(get_php_ini $php_prefix)
 }
 
 #安装php ImageMagick
@@ -277,7 +277,7 @@ error_detect "${php_prefix}/bin/phpize"
 error_detect "./configure --with-php-config=$php_prefix/bin/php-config --with-imagick=${depends_prefix}/${ImageMagick_filename}"
 error_detect "make"
 error_detect "make install"
-! grep -q  "\[imagick\]" ${php_prefix}/etc/php.ini && sed -i '$a\[imagick]\nextension=imagick.so\n' ${php_prefix}/etc/php.ini 
+! grep -q  "\[imagick\]" $(get_php_ini $php_prefix) && sed -i '$a\[imagick]\nextension=imagick.so\n' $(get_php_ini $php_prefix) 
 }
 
 
@@ -299,7 +299,7 @@ else
 	php_version=`get_php_version "$php_prefix"`
 	cp ioncube/ioncube_loader_lin_${php_version}.so ${depends_prefix}/ioncube/ioncube.so
 fi
-! grep -q  "\[ionCube Loader\]" ${php_prefix}/etc/php.ini && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" ${php_prefix}/etc/php.ini
+! grep -q  "\[ionCube Loader\]" $(get_php_ini $php_prefix) && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" $(get_php_ini $php_prefix)
 }
 
 
@@ -337,6 +337,6 @@ else
 	fi
 fi
 
-! grep -q  "\[ZendGuardLoader\]" ${php_prefix}/etc/php.ini && sed -i "/End/a\[ZendGuardLoader\]\nzend_extension=\"/${depends_prefix}/ZendGuardLoader/ZendGuardLoader.so\"\n" ${php_prefix}/etc/php.ini
+! grep -q  "\[ZendGuardLoader\]" $(get_php_ini $php_prefix) && sed -i "/End/a\[ZendGuardLoader\]\nzend_extension=\"/${depends_prefix}/ZendGuardLoader/ZendGuardLoader.so\"\n" $(get_php_ini $php_prefix)
 
 }

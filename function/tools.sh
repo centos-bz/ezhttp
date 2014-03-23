@@ -834,21 +834,21 @@ Iptables_settings(){
 #开启或关闭共享扩展
 Enable_disable_php_extension(){
 	#获取php路径
-	if [[ $php_location == "" ]];then
+	if [[ $phpConfig == "" ]];then
 		while true; do
-			read -p "please input the php location(default:/usr/local/php): " php_location
-			php_location=${php_location:=/usr/local/php}
-			php_location=`filter_location "$php_location"`
-			if [[ -s $php_location/bin/php ]];then
+			read -p "please input the php config location(default:/usr/local/php/bin/php-config): " phpConfig
+			phpConfig=${phpConfig:=/usr/local/php/bin/php-config}
+			phpConfig=`filter_location "$phpConfig"`
+			if check_php_config "$phpConfig";then
 				break
 			else
-				echo "input error,$php_location/bin/php not found."
-			fi
+				echo "php config $phpConfig is invalid."
+			fi	
 		done
 	fi	
 
-	enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
-	extension_dir=`${php_location}/bin/php-config --extension-dir`
+	enabled_extensions=`$(get_php_bin "$phpConfig") -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
+	extension_dir=`get_php_extension_dir "$phpConfig"`
 	shared_extensions=`cd $extension_dir;ls *.so | awk -F'.' '{print $1}'`
 	shared_extensions_arr=($shared_extensions)
 	echo "extension          state"
@@ -879,8 +879,8 @@ Enable_disable_php_extension(){
 	#开始启用或关闭扩展
 	if if_in_array $extensionName "$enabled_extensions";then
 		#关闭扩展
-		sed -i "/extension=$extensionName.so/d" $(get_php_ini $php_location)
-		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
+		sed -i "/extension=$extensionName.so/d" $(get_php_ini "$phpConfig")
+		enabled_extensions=`$(get_php_bin "$phpConfig") -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 		if if_in_array $extensionName "$enabled_extensions";then
 			echo "disable extension $extensionName failed."
 		else
@@ -888,8 +888,8 @@ Enable_disable_php_extension(){
 		fi		
 	else
 		#开启扩展
-		echo "extension=${extensionName}.so" >> $(get_php_ini $php_location)
-		enabled_extensions=`${php_location}/bin/php -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
+		echo "extension=${extensionName}.so" >> $(get_php_ini "$phpConfig")
+		enabled_extensions=`$(get_php_bin "$phpConfig")  -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 		if if_in_array $extensionName "$enabled_extensions";then
 			echo "enable extension $extensionName successfully."
 		else

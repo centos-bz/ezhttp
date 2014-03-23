@@ -518,17 +518,6 @@ done
 return 1
 }
 
-#获取php版本
-get_php_version(){
-local location=$1
-local version=`$location/bin/php -v | grep -E -o "5\.[2-4]"`
-if [[ $version == "" ]];then
-	echo "sorry,can not figure out php version."
-	exit 1
-else
-	echo $version
-fi		
-}
 
 #检测是否安装，存在就不安装了
 check_installed(){
@@ -584,8 +573,40 @@ restart_php(){
 	fi	
 }
 
+#判断php-config是否正确
+check_php_config(){
+	local phpConfig=$1
+	if $phpConfig --vernum | grep -q -E "^50[0-9]{3}$";then
+		return 0
+	else
+		return 1
+	fi	
+}
+
 #获取php.ini路径
 get_php_ini(){
-	local location=$1
-	${location}/bin/php --ini | awk '/Loaded Configuration File/{print $4}'
+	local phpConfig=$1
+	check_php_config "$phpConfig" || ( echo "php config $phpConfig is invalid";exit 1) 
+	$($phpConfig --php-binary) --ini | awk '/Loaded Configuration File/{print $4}'
+}
+
+#获取php二进制路径
+get_php_bin(){
+	local phpConfig=$1
+	check_php_config "$phpConfig" || ( echo "php config $phpConfig is invalid";exit 1) 
+	$phpConfig --php-binary
+}
+
+#获取php扩展目录
+get_php_extension_dir(){
+	local phpConfig=$1
+	check_php_config "$phpConfig" || ( echo "php config $phpConfig is invalid";exit 1) 
+	$phpConfig --extension-dir
+}
+
+#获取php版本
+get_php_version(){
+	local phpConfig=$1
+	check_php_config "$phpConfig" || ( echo "php config $phpConfig is invalid";exit 1) 
+	$phpConfig --version | cut -d'.' -f1-2	
 }

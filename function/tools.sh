@@ -909,6 +909,34 @@ Enable_disable_php_extension(){
 	yes_or_no "do you want to continue enable or disable php extensions[Y/n]: " "Enable_disable_php_extension" "echo 'restarting php to take modifies affect...';restart_php;exit"
 }
 
+#设置时区及同步时间
+Set_timezone_and_sync_time(){
+	echo "current timezone is $(date +%z)"
+	echo "current time is $(date +%Y-%m-%d" "%H:%M:%S)"
+	echo
+	yes_or_no "would you like to change the timezone[Y/n]: " "echo 'you select change the timezone.'" "echo 'you select do not change the timezone.'"
+	if [[ $yn == "y" ]]; then
+		timezone=`tzselect`
+		echo "start to change the timezone to $timezone..."
+		cp /usr/share/zoneinfo/$timezone /etc/localtime
+	fi
+
+	echo "start to sync time and add sync command to cronjob..."
+	if check_sys_version ubuntu || check_sys_version debian;then
+		apt-get -y install ntpdate
+		check_command_exist ntpdate
+		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
+		/etc/init.d/cron restart
+	elif check_sys_version centos; then
+		yum -y install ntpdate
+		check_command_exist ntpdate
+		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root
+		/etc/init.d/crond restart
+	fi
+	echo "current timezone is $(date +%z)"
+	echo "current time is $(date +%Y-%m-%d" "%H:%M:%S)"	
+
+}
 
 #工具设置
 tools_setting(){

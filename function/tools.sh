@@ -303,11 +303,20 @@ create_php_rpm(){
 		postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/php-fpm start"
 		preun="/etc/init.d/php-fpm stop"
 	fi
+	local libiconv64=''
+	local libiconv32=''
+	local libmcrypt64=''
+	local libmcrypt32=''
+
+	[ -s "/usr/lib64/libiconv.so.2" ] && libiconv64=/usr/lib64/libiconv.so.2*
+	[ -s "/usr/lib/libiconv.so.2" ] && libiconv32=/usr/lib/libiconv.so.2*
+	[ -s "/usr/lib64/libmcrypt.so.4" ] && libmcrypt64=/usr/lib64/libmcrypt.so.4*
+	[ -s "/usr/lib/libmcrypt.so.4" ] && libmcrypt32=/usr/lib/libmcrypt.so.4*
 
 	if is_64bit;then
-		filesPackage="$filesPackage /usr/lib64/libiconv.so.2* /usr/lib64/libmcrypt.so.4* /usr/lib/libiconv.so.2* /usr/lib/libmcrypt.so.4* "
+		filesPackage="$filesPackage ${libiconv32} ${libiconv64} ${libmcrypt32} ${libmcrypt64}"
 	else
-		filesPackage="$filesPackage /usr/lib/libiconv.so.2* /usr/lib/libmcrypt.so.4*"
+		filesPackage="$filesPackage ${libiconv32} ${libmcrypt32}"
 	fi	
 	postCmd=$(echo -e $postCmd)
 	local summary="php engine"
@@ -899,6 +908,7 @@ Enable_disable_php_extension(){
 
 	yes_or_no "do you want to continue enable or disable php extensions[Y/n]: " "Enable_disable_php_extension" "echo 'restarting php to take modifies affect...';restart_php;exit"
 }
+
 
 #工具设置
 tools_setting(){

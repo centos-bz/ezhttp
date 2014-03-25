@@ -925,11 +925,13 @@ Set_timezone_and_sync_time(){
 	if check_sys_version ubuntu || check_sys_version debian;then
 		apt-get -y install ntpdate
 		check_command_exist ntpdate
+		/usr/sbin/ntpdate -u pool.ntp.org
 		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
 		/etc/init.d/cron restart
 	elif check_sys_version centos; then
 		yum -y install ntpdate
 		check_command_exist ntpdate
+		/usr/sbin/ntpdate -u pool.ntp.org
 		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root
 		/etc/init.d/crond restart
 	fi

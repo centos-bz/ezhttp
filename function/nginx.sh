@@ -147,7 +147,7 @@ if [ "$stack" == "lnamp" ];then
 	\cp  -f $cur_dir/conf/nginx-lnamp.conf ${nginx_location}/conf/nginx.conf
 	\cp -f $cur_dir/conf/proxy.conf ${nginx_location}/conf/
 	#日志分割
-	cat > /etc/logrotate.d/nginx << EOF
+	cat > /etc/logrotate.d/nginx <<EOF
 	/home/wwwlog/*/access_nginx.log /home/wwwlog/*/error_nginx.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
 	    daily
 	    rotate 14
@@ -159,12 +159,13 @@ if [ "$stack" == "lnamp" ];then
 	        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
 	    endscript
 	}
-EOF	
+EOF
+
 else	
 	\cp  -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
 
 	#日志分割
-	cat > /etc/logrotate.d/nginx << EOF
+	cat > /etc/logrotate.d/nginx <<EOF
 	/home/wwwlog/*/access.log /home/wwwlog/*/error.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
 	    daily
 	    rotate 14
@@ -176,7 +177,8 @@ else
 	        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
 	    endscript
 	}
-EOF	
+EOF
+
 fi
 
 #开放80端口

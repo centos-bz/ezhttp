@@ -152,7 +152,7 @@ if [ "$stack" == "lnamp" ];then
 	sed -i 's/Listen\s*80/Listen 127.0.0.1:88/' ${apache_location}/conf/httpd.conf
 	listen="127.0.0.1:88"
 	#日志分割
-	cat > /etc/logrotate.d/httpd << EOF
+	cat > /etc/logrotate.d/httpd <<EOF
 	/home/wwwlog/*/error_apache.log /home/wwwlog/*/access_apache.log ${apache_location}/logs/access_log ${apache_location}/logs/error_log {
 	    daily
 	    rotate 14
@@ -164,12 +164,13 @@ if [ "$stack" == "lnamp" ];then
 	        [ ! -f ${apache_location}/logs/httpd.pid ] || kill -USR1 \`cat ${apache_location}/logs/httpd.pid\`
 	    endscript
 	}
-EOF		
+EOF
+
 else
 	listen="*:80"
 
 	#日志分割
-	cat > /etc/logrotate.d/httpd << EOF
+	cat > /etc/logrotate.d/httpd <<EOF
 	/home/wwwlog/*/error.log /home/wwwlog/*/access.log ${apache_location}/logs/access_log ${apache_location}/logs/error_log {
 	    daily
 	    rotate 14
@@ -181,11 +182,12 @@ else
 	        [ ! -f ${apache_location}/logs/httpd.pid ] || kill -USR1 \`cat ${apache_location}/logs/httpd.pid\`
 	    endscript
 	}
-EOF		
+EOF
+
 fi
 
 #写入默认虚拟主机配置
-cat > ${apache_location}/conf/extra/httpd-vhosts.conf << EOF
+cat > ${apache_location}/conf/extra/httpd-vhosts.conf <<EOF
 NameVirtualHost ${listen}
 <VirtualHost ${listen}>
 ServerName localhost

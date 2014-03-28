@@ -18,13 +18,13 @@ openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty
 openresty_official_link="http://openresty.org/download/ngx_openresty-1.4.3.6.tar.gz"
 
 #apache设置
-apache2_2_filename="httpd-2.2.26"
-apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.26.tar.gz"
-apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.26.tar.gz"
+apache2_2_filename="httpd-2.2.27"
+apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.27.tar.gz"
+apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.27.tar.gz"
 
-apache2_4_filename="httpd-2.4.7"
-apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.7.tar.gz"
-apache2_4_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.4.7.tar.gz"
+apache2_4_filename="httpd-2.4.9"
+apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.9.tar.gz"
+apache2_4_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.4.9.tar.gz"
 
 #mysql_server设置
 mysql5_1_filename="mysql-5.1.72"
@@ -79,9 +79,9 @@ php_memcache_other_link="http://cdn.yyupload.com/down/499809/software/memcache-3
 php_memcache_official_link="http://pecl.php.net/get/memcache-3.0.8.tgz"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.8.8-8"
-ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.8-8.tar.gz"
-ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.8-8.tar.gz"
+ImageMagick_filename="ImageMagick-6.8.8-9"
+ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.8-9.tar.gz"
+ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.8-9.tar.gz"
 
 #php redis模块设置
 php_redis_filename="redis-2.2.4"

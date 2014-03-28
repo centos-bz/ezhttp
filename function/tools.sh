@@ -727,7 +727,7 @@ add_iptables_rule(){
 	#端口选择
 	local port=''
 	while true; do
-		read -p "please input one or more ports allowed(ie.3306): " port
+		read -p "please input one port(ie.3306): " port
 		if  verify_port "$port";then
 			break
 		else
@@ -825,7 +825,7 @@ Iptables_settings(){
 	local select=''
 	while true; do
 		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) backup rules and stop iptables.\n5) rescore iptables\n6) list iptables rules\n" 
-		read -p "please input your select(ie 1 2 3): " select
+		read -p "please input your select(ie 1): " select
 		case  $select in
 			1) iptables_init;break;;
 			2) add_iptables_rule;break;;

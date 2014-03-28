@@ -553,8 +553,8 @@ echo "successfully delete ftpuser $ftpuser"
 
 ftp_user_mod(){	
 read -p "(Please input the ftpuser you'll modify): " ftpuser
-echo "1、modify ftpuser $ftpuser password"
-echo "2、modify ftpuser $ftpuser home directory"
+echo "1. modify ftpuser $ftpuser password"
+echo "2. modify ftpuser $ftpuser home directory"
 while true; do
 	read -p "please input a number: " ftp_mod
 	case $ftp_mod in
@@ -597,7 +597,7 @@ echo $words | tr '[A-Z]' '[a-z]'
 select_rewrite_rule(){
 local rewrite_rules=("include rewrite/DEDECMS.conf;" "include rewrite/Discuz_7.conf;" "include rewrite/Discuz_X.conf;" "include rewrite/ecshop.conf;" "include rewrite/phpcms.conf;"  "include rewrite/PHPWind.conf;"  "include rewrite/shopex.conf;"  "include rewrite/Typecho.conf;"  "include rewrite/wordpress.conf;"  )
 echo "available nginx rewrite rules:"
-echo -e "1、DEDECMS\n2、Discuz_7\n3、Discuz_X\n4、ECshop\n5、PHPCMS\n6、PHPWind\n7、Shopex\n8、Typecho\n9、WordPress"
+echo -e "1. DEDECMS\n2. Discuz_7\n3. Discuz_X\n4. ECshop\n5. PHPCMS\n6. PHPWind\n7. Shopex\n8. Typecho\n9. WordPress"
 while true; do
 	read -p "please input a number: " rule
 	if ! echo $rule | sed -n "/^[1-9]$/q0;q1" -;then

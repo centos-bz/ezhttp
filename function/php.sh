@@ -360,11 +360,6 @@ if [ "$php_mode" == "with_fastcgi" ];then
 
 	fi
 
-	#默认开启一些扩展
-	echo "extension=curl.so" >> ${php_location}/etc/php.ini
-	echo "extension=gd.so" >> ${php_location}/etc/php.ini
-	echo "extension=mbstring.so" >> ${php_location}/etc/php.ini
-	echo "extension=pdo_mysql.so" >> ${php_location}/etc/php.ini
 	boot_start php-fpm
 fi
 
@@ -373,4 +368,10 @@ sed -i "s#mysql.default_socket.*#mysql.default_socket = /tmp/mysql.sock#" $php_l
 sed -i "s#mysqli.default_socket.*#mysqli.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
 sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
 
+#默认开启一些扩展
+echo "extension=curl.so" >> ${php_location}/etc/php.ini
+echo "extension=gd.so" >> ${php_location}/etc/php.ini
+echo "extension=mbstring.so" >> ${php_location}/etc/php.ini
+echo "extension=pdo_mysql.so" >> ${php_location}/etc/php.ini
+	
 }

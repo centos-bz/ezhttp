@@ -146,24 +146,38 @@ mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
 if [ "$stack" == "lnamp" ];then
 	\cp  -f $cur_dir/conf/nginx-lnamp.conf ${nginx_location}/conf/nginx.conf
 	\cp -f $cur_dir/conf/proxy.conf ${nginx_location}/conf/
+	#日志分割
+	cat > /etc/logrotate.d/nginx << EOF
+	/home/wwwlog/*/access_nginx.log /home/wwwlog/*/error_nginx.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
+	    daily
+	    rotate 14
+	    missingok
+	    notifempty
+	    compress
+	    sharedscripts
+	    postrotate
+	        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
+	    endscript
+	}
+EOF	
 else	
 	\cp  -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
-fi
 
-#日志分割
-cat > /etc/logrotate.d/nginx << EOF
-/home/wwwlog/*/*.log {
-    daily
-    rotate 14
-    missingok
-    notifempty
-    compress
-    sharedscripts
-    postrotate
-        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
-    endscript
-}
-EOF
+	#日志分割
+	cat > /etc/logrotate.d/nginx << EOF
+	/home/wwwlog/*/access.log /home/wwwlog/*/error.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
+	    daily
+	    rotate 14
+	    missingok
+	    notifempty
+	    compress
+	    sharedscripts
+	    postrotate
+	        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
+	    endscript
+	}
+EOF	
+fi
 
 #开放80端口
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT

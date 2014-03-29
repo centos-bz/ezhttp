@@ -33,8 +33,12 @@ check_port_socket_exist(){
 			
 		if [[ $mysql != "do_not_install" ]]; then
 			kill_pid "port" "3306"
-		fi		
-	fi				
+		fi	
+	fi	
+
+	if_in_array "${memcached_filename}" "$other_soft_install" && kill_pid "port" "11211"
+	if_in_array "${PureFTPd_filename}" "$other_soft_install" && kill_pid "port" "21"
+	if_in_array "${redis_filename}" "$other_soft_install" && kill_pid "port" "6379"		
 }
 
 #杀掉进程
@@ -46,7 +50,7 @@ kill_pid(){
 		local port=$content
 		if [[ `netstat -nlpt | awk '{print $4}' | grep ":${port}$"` != "" ]]; then
 			processName=`netstat -nlp | grep -E ":${port}\s+" | awk '{print $7}' | awk -F'/' '{print $2}' | awk -F'.' '{print $1}'`
-			pid=`netstat -nlp | grep -E ":${port}\s+" | awk '{print $7}' | awk -F'/' '{print $1}'`
+			pid=`netstat -nlp | grep -E ":${port}\s+" | awk '{print $7}' | awk -F'/' 'NR==1{print $1}'`
 			yes_or_no "We found port $port is occupied by process $processName.would you like to kill this process [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
 			if [[ $yn == "y" ]];then
 				echo "gonna be kill $processName process,please wait for 5 seconds..."

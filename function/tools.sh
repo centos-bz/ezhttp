@@ -666,8 +666,8 @@ iptables_init(){
 	done
 
 	iptables -A INPUT -i lo -j ACCEPT
-	iptables -A INPUT -p icmp -m icmp --icmp-type 8
-	iptables -A INPUT -p icmp -m icmp --icmp-type 11
+	iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+	iptables -A INPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
 	iptables -P INPUT DROP
 
 	if check_sys_version ubuntu || check_sys_version debian;then

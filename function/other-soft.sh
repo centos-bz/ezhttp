@@ -164,7 +164,7 @@ tar xzvf ${redis_filename}.tar.gz
 cd ${redis_filename}
 make clean
 error_detect "parallel_make"
-mkdir -p ${redis_location}/etc/ ${redis_location}/logs/ ${redis_location}/db/ /usr/local/redis/bin/
+mkdir -p ${redis_location}/etc/ ${redis_location}/logs/ ${redis_location}/db/ ${redis_location}/bin/
 \cp redis.conf ${redis_location}/etc/
 #更改配置文件
 sed -i 's/^daemonize.*/daemonize yes/' ${redis_location}/etc/redis.conf
@@ -176,7 +176,7 @@ sed -i "s#^dir.*#dir ${redis_location}/db/#" ${redis_location}/etc/redis.conf
 sed -i "s/^# maxmemory.*/maxmemory $redisMaxMemory/" ${redis_location}/etc/redis.conf
 sed -i 's/^appendonly.*/appendonly yes/' ${redis_location}/etc/redis.conf
 
-\cp src/redis-server src/redis-cli src/redis-benchmark src/redis-check-aof src/redis-check-dump /usr/local/redis/bin/
+\cp src/redis-server src/redis-cli src/redis-benchmark src/redis-check-aof src/redis-check-dump ${redis_location}/bin/
 
 \cp utils/redis_init_script /etc/init.d/redis 
 sed -i "s#^EXEC=.*#EXEC=${redis_location}/bin/redis-server#" /etc/init.d/redis 

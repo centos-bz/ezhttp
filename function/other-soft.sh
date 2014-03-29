@@ -31,34 +31,62 @@ echo -e "your other software selection ${other_soft_install}"
 
 #配置安装路径
 if [ "$other_soft_install" != "do_not_install" ];then
-	nginx_location=${nginx_location:=/usr/local/nginx}
 
+	#memcached安装路径
 	if if_in_array "${memcached_filename}" "$other_soft_install";then
 		read -p "input $memcached_filename location(default:/usr/local/memcached): " memcached_location
 		memcached_location=${memcached_location:=/usr/local/memcached}
 		echo "memcached location: $memcached_location"
 	fi	
 
+	#pureftpd安装路径
 	if if_in_array "${PureFTPd_filename}" "$other_soft_install";then
 		read -p "input $PureFTPd_filename location(default:/usr/local/pureftpd): " pureftpd_location
 		pureftpd_location=${pureftpd_location:=/usr/local/pureftpd}
 		echo "pureftpd location: $pureftpd_location"
 	fi	
 
+	#phpmyadmin安装路径
 	if if_in_array "${phpMyAdmin_filename}" "$other_soft_install";then
 		default_location="/home/wwwroot/phpmyadmin"
 		read -p "input $phpMyAdmin_filename location(default:$default_location): " phpmyadmin_location
 		phpmyadmin_location=${phpmyadmin_location:=$default_location}
 		echo "phpmyadmin location: $phpmyadmin_location"
+	fi
+
+	#设置redis安装路径及最大内存使用
+	if if_in_array "${redis_filename}" "$other_soft_install";then
+		default_location="/usr/local/redis"
+		read -p "input $redis_filename location(default:$default_location): " redis_location
+		redis_location=${redis_location:=$default_location}
+		echo "redis location: $redis_location"
+		while true; do
+			read -p "please input the max memory allowed for redis(ie.128M,512m,2G,4g): " redisMaxMemory
+			if echo "$redisMaxMemory" | grep -q -E "^[0-9]+[mMgG]$";then
+				break
+			else
+				echo "input errors,please input ie.128M,512m,2G,4g"
+			fi
+		done
+
+		#转换成Byte
+		if echo "$redisMaxMemory" | grep "[mM]$";then
+			redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
+			((redisMaxMemory=$redisMaxMemory*1024*1024))
+		elif echo "$redisMaxMemory" | grep "[gG]$"; then
+			redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
+			((redisMaxMemory=$redisMaxMemory*1024*1024*1024))
+		fi	
 	fi	
 fi
 }
 
 #安装其它软件
 install_other_soft(){
-if_in_array "${memcached_filename}" "$other_soft_install" && install_Memcached
-if_in_array "${PureFTPd_filename}" "$other_soft_install" && install_PureFTPd
-if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && install_phpmyadmin
+if_in_array "${memcached_filename}" "$other_soft_install" && check_installed_ask "install_Memcached" "${memcached_location}"
+if_in_array "${PureFTPd_filename}" "$other_soft_install" && check_installed_ask "install_PureFTPd" "${pureftpd_location}"
+if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && check_installed_ask "install_phpmyadmin" "${phpmyadmin_location}"
+if_in_array "${redis_filename}" "$other_soft_install" && check_installed_ask "install_redis" "${redis_location}"
 }
 
 #安装memcached
@@ -112,6 +140,7 @@ cd $cur_dir/soft/
 tar xzvf ${PureFTPd_filename}.tar.gz
 cd ${PureFTPd_filename}
 error_detect "./configure --prefix=$pureftpd_location"
+make clean
 error_detect "parallel_make"
 error_detect "make install"
 mkdir -p $pureftpd_location/etc
@@ -125,4 +154,34 @@ sed -i "s#\${exec_prefix}#$pureftpd_location#" $pureftpd_location/bin/pure-confi
 chmod +x ${pureftpd_location}/bin/pure-config.pl
 echo "pureftpd_location=$pureftpd_location" >> /tmp/ezhttp_info_do_not_del
 boot_start pureftpd
+}
+
+#安装redis
+install_redis(){
+download_file "${redis_other_link}" "${redis_official_link}" "${redis_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${redis_filename}.tar.gz
+cd ${redis_filename}
+make clean
+error_detect "parallel_make"
+mkdir -p ${redis_location}/etc/ ${redis_location}/logs/ ${redis_location}/db/ /usr/local/redis/bin/
+\cp redis.conf ${redis_location}/etc/
+#更改配置文件
+sed -i 's/^daemonize.*/daemonize yes/' ${redis_location}/etc/redis.conf
+sed -i "s#^pidfile.*#pidfile ${redis_location}/logs/redis.pid#" ${redis_location}/etc/redis.conf
+sed -i 's/^tcp-keepalive.*/tcp-keepalive 60/' ${redis_location}/etc/redis.conf
+sed -i "s#^logfile.*#logfile ${redis_location}/logs/redis.log#" ${redis_location}/etc/redis.conf
+sed -i 's/^stop-writes-on-bgsave-error.*/stop-writes-on-bgsave-error no/' ${redis_location}/etc/redis.conf
+sed -i "s#^dir.*#dir ${redis_location}/db/#" ${redis_location}/etc/redis.conf
+sed -i "s/^# maxmemory.*/maxmemory $redisMaxMemory/" ${redis_location}/etc/redis.conf
+sed -i 's/^appendonly.*/appendonly yes/' ${redis_location}/etc/redis.conf
+
+\cp src/redis-server src/redis-cli src/redis-benchmark src/redis-check-aof src/redis-check-dump /usr/local/redis/bin/
+
+\cp utils/redis_init_script /etc/init.d/redis 
+sed -i "s#^EXEC=.*#EXEC=${redis_location}/bin/redis-server#" /etc/init.d/redis 
+sed -i "s#^CLIEXEC=.*#CLIEXEC=${redis_location}/bin/redis-cli#" /etc/init.d/redis 
+sed -i "s#^PIDFILE=.*#PIDFILE=${redis_location}/logs/redis.pid#" /etc/init.d/redis 
+sed -i "s#^CONF=.*#CONF=${redis_location}/etc/redis.conf#" /etc/init.d/redis 
+chmod +x /etc/init.d/redis
 }

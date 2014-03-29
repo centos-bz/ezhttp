@@ -159,6 +159,8 @@ other_soft_install="${other_soft_install}"
 memcached_location="${memcached_location}"
 pureftpd_location="${pureftpd_location}"
 phpmyadmin_location="${phpmyadmin_location}"
+redis_location="${redis_location}"
+redisMaxMemory="${redisMaxMemory}"
 
 EOF
 #自定义版本时增加变量
@@ -201,6 +203,7 @@ fi
 [ "$php" != "do_not_install" ] && [ $php_mode == "with_fastcgi" ] && /etc/init.d/php-fpm start
 if_in_array "${memcached_filename}" "$other_soft_install" && /etc/init.d/memcached start
 if_in_array "${PureFTPd_filename}" "$other_soft_install" && /etc/init.d/pureftpd start
+if_in_array "${redis_filename}" "$other_soft_install" && /etc/init.d/redis start
 netstat -nxtlp
 echo "depends_prefix=$depends_prefix" >> /tmp/ezhttp_info_do_not_del
 \cp $cur_dir/ez /usr/bin/ez

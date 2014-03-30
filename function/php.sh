@@ -363,6 +363,9 @@ if [ "$php_mode" == "with_fastcgi" ];then
 	boot_start php-fpm
 fi
 
+#开启short_open_tag
+sed -i "s/^short_open_tag.*/short_open_tag = on/" $php_location/etc/php.ini
+
 #设置php连接mysql mysql.sock的路径
 sed -i "s#mysql.default_socket.*#mysql.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
 sed -i "s#mysqli.default_socket.*#mysqli.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini

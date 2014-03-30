@@ -373,5 +373,6 @@ echo "extension=curl.so" >> ${php_location}/etc/php.ini
 echo "extension=gd.so" >> ${php_location}/etc/php.ini
 echo "extension=mbstring.so" >> ${php_location}/etc/php.ini
 echo "extension=pdo_mysql.so" >> ${php_location}/etc/php.ini
-	
+echo "extension=mysqli.so" >> ${php_location}/etc/php.ini
+
 }

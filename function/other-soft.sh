@@ -162,8 +162,8 @@ download_file "${PureFTPd_other_link}" "${PureFTPd_official_link}" "${PureFTPd_f
 cd $cur_dir/soft/
 tar xzvf ${PureFTPd_filename}.tar.gz
 cd ${PureFTPd_filename}
-error_detect "./configure --prefix=$pureftpd_location"
 make clean
+error_detect "./configure --prefix=$pureftpd_location"
 error_detect "parallel_make"
 error_detect "make install"
 mkdir -p $pureftpd_location/etc

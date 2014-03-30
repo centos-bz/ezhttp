@@ -265,7 +265,7 @@ speed1=`curl -m 5 -L -s -w '%{speed_download}' "$url1" -o /dev/null`
 echo "third party mirror download speed is $speed1"
 speed1=${speed1%%.*}
 speed2=${speed2%%.*}
-if [ $speed1 -gt $speed2 ];then
+if [ $speed1 -ge $speed2 ];then
 	url=$url1
 	backup_url=$url2
 else

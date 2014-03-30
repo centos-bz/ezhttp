@@ -1,3 +1,5 @@
+#初始化函数
+define(){
 ########################软件包的网盘及官方下载地址设置#######################
 
 ###################主要安装包设置###################
@@ -102,6 +104,10 @@ php_imagemagick_filename="imagick-3.1.2"
 php_imagemagick_other_link="http://cdn.yyupload.com/down/499809/software/imagick-3.1.2.tgz"
 php_imagemagick_official_link="http://pecl.php.net/get/imagick-3.1.2.tgz"
 
+#APC设置
+apc_filename="APC-3.1.13"
+apc_other_link="http://cdn.yyupload.com/down/499809/software/APC-3.1.13.tgz"
+apc_official_link="http://pecl.php.net/get/APC-3.1.13.tgz"
 
 #ionCube设置
 ionCube_filename="ioncube_loaders"
@@ -143,13 +149,6 @@ redis_filename="redis-2.8.8"
 redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-2.8.8.tar.gz"
 redis_official_link="http://download.redis.io/releases/redis-2.8.8.tar.gz"
 
-
-#APC设置
-apc_filename="APC-3.1.13"
-apc_other_link="http://cdn.yyupload.com/down/499809/software/APC-3.1.13.tgz"
-apc_official_link="http://pecl.php.net/get/APC-3.1.13.tgz"
-
-
 #phpMyAdmin设置
 phpMyAdmin_filename="phpMyAdmin-4.0.9-all-languages"
 phpMyAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpMyAdmin-4.0.9-all-languages.tar.gz"
@@ -159,6 +158,59 @@ phpMyAdmin_official_link="http://hivelocity.dl.sourceforge.net/project/phpmyadmi
 PureFTPd_filename="pure-ftpd-1.0.36"
 PureFTPd_other_link="http://cdn.yyupload.com/down/499809/software/pure-ftpd-1.0.36.tar.gz"
 PureFTPd_official_link="http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz"
+
+#mongodb设置
+mongodb32_filename="mongodb-linux-i686-2.4.9"
+mongodb32_other_link="http://cdn.yyupload.com/down/499809/software/mongodb-linux-i686-2.4.9.tgz"
+mongodb32_official_link="http://fastdl.mongodb.org/linux/mongodb-linux-i686-2.4.9.tgz"
+
+mongodb64_filename="mongodb-linux-x86_64-2.4.9"
+mongodb64_other_link="http://cdn.yyupload.com/down/499809/software/mongodb-linux-x86_64-2.4.9.tgz"
+mongodb64_official_link="http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.4.9.tgz"
+
+mongodbLegacy64_filename="mongodb-linux-x86_64-legacy-2.4.8"
+mongodbLegacy64_other_link="http://cdn.yyupload.com/down/499809/software/mongodb-linux-x86_64-legacy-2.4.8.tgz"
+mongodbLegacy64_official_link="http://downloads.mongodb.org/linux/mongodb-linux-x86_64-legacy-2.4.8.tgz"
+
+#根据glibc和系统位数选择mongodb版本
+local v1=`ldd --version | awk 'NR==1{print $NF}' | awk -F'.' '{print $1}'`
+local v2=`ldd --version | awk 'NR==1{print $NF}' | awk -F'.' '{print $2}'`
+
+mongodb_filename=""
+mongodb_other_link=""
+mongodb_official_link=""
+
+if [[ $v1 -eq 2 ]]; then
+	if [[ $v2 -ge 5 ]];then
+		if is_64bit;then
+			mongodb_filename="$mongodb64_filename"
+			mongodb_other_link="$mongodb64_other_link"
+			mongodb_official_link="$mongodb64_official_link"
+		else
+			mongodb_filename="$mongodb32_filename"
+			mongodb_other_link="$mongodb32_other_link"
+			mongodb_official_link="$mongodb32_official_link"			
+		fi			
+	else
+		if is_64bit;then
+			mongodb_filename="$mongodbLegacy64_filename"
+			mongodb_other_link="$mongodbLegacy64_other_link"
+			mongodb_official_link="$mongodbLegacy64_official_link"
+		fi			
+	fi
+
+elif [[ $v1 -gt 2 ]]; then
+	if is_64bit;then
+		mongodb_filename="$mongodb-linux-x86_64-2.4.9"
+		mongodb_other_link="$mongodb64_other_link"
+		mongodb_official_link="$mongodb64_official_link"
+	else
+		mongodb_filename="$mongodb32_filename"
+		mongodb_other_link="$mongodb32_other_link"
+		mongodb_official_link="$mongodb32_official_link"			
+	fi	
+fi		
+
 
 ######################依赖包设置######################
 
@@ -286,7 +338,7 @@ mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_f
 php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} custom_version)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} ${apc_filename})
-other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename})
+other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename})
 
 #工具菜单设置
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Back_to_main_menu)
@@ -299,3 +351,5 @@ depends_prefix=/opt/ezhttp
 
 #是否开启多核并行编译,1为开启,0为关闭
 parallel_compile=1
+
+}

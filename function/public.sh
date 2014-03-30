@@ -1,46 +1,3 @@
-#检测端口或socket是否被占用
-check_port_socket_exist(){
-	if [[ $stack == "lnmp" ]];then
-		if [[ $nginx != "do_not_install" ]]; then
-			kill_pid "port" "80"
-		fi
-
-		if [[ $php != "do_not_install" ]]; then
-			kill_pid "socket" "/tmp/php-cgi.sock"
-		fi	
-
-		if [[ $mysql != "do_not_install" ]]; then
-			kill_pid "port" "3306"
-		fi		
-
-	elif [[ $stack == "lamp" ]]; then
-		if [[ $apache != "do_not_install" ]]; then
-			kill_pid "port" "80"
-		fi
-			
-		if [[ $mysql != "do_not_install" ]]; then
-			kill_pid "port" "3306"
-		fi		
-
-	elif [[ $stack == "lnamp" ]]; then
-		if [[ $nginx != "do_not_install" ]]; then
-			kill_pid "port" "80"
-		fi
-
-		if [[ $apache != "do_not_install" ]]; then
-			kill_pid "port" "88"
-		fi
-			
-		if [[ $mysql != "do_not_install" ]]; then
-			kill_pid "port" "3306"
-		fi	
-	fi	
-
-	if_in_array "${memcached_filename}" "$other_soft_install" && kill_pid "port" "11211"
-	if_in_array "${PureFTPd_filename}" "$other_soft_install" && kill_pid "port" "21"
-	if_in_array "${redis_filename}" "$other_soft_install" && kill_pid "port" "6379"		
-}
-
 #杀掉进程
 kill_pid(){
 	local processType=$1
@@ -49,9 +6,9 @@ kill_pid(){
 	if [[ $processType == "port" ]]; then
 		local port=$content
 		if [[ `netstat -nlpt | awk '{print $4}' | grep ":${port}$"` != "" ]]; then
-			processName=`netstat -nlp | grep -E ":${port}\s+" | awk '{print $7}' | awk -F'/' '{print $2}' | awk -F'.' '{print $1}'`
-			pid=`netstat -nlp | grep -E ":${port}\s+" | awk '{print $7}' | awk -F'/' 'NR==1{print $1}'`
-			yes_or_no "We found port $port is occupied by process $processName.would you like to kill this process [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
+			processName=`netstat -nlp | grep -E ":${port} +" | awk '{print $7}' | awk -F'/' '{print $2}' | awk -F'.' 'NR==1{print $1}'`
+			pid=`netstat -nlp | grep -E ":${port} +" | awk '{print $7}' | awk -F'/' 'NR==1{print $1}'`
+			yes_or_no "We found port $port is occupied by process $processName.would you like to kill this process [Y/n]: " "kill -9 $pid" "echo 'will not kill this process.'"
 			if [[ $yn == "y" ]];then
 				echo "gonna be kill $processName process,please wait for 5 seconds..."
 				sleep 5
@@ -69,7 +26,7 @@ kill_pid(){
 		if [[ `netstat -nlp | awk '$1 ~/unix/{print $10}' | grep "^$socket$"` != "" ]]; then
 			processName=`netstat -nlp | grep ${socket} | awk '{print $9}' | awk -F'/' '{print $2}'`
 			pid=`netstat -nlp | grep $socket | awk '{print $9}' | awk -F'/' '{print $1}'`
-			yes_or_no "We found socket $socket is occupied by process $processName.would you like to kill this proess [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
+			yes_or_no "We found socket $socket is occupied by process $processName.would you like to kill this proess [Y/n]: " "kill -9 $pid" "echo 'will not kill this process.'"
 			if [[ $yn == "y" ]];then
 				echo "gonna be kill $processName process,please wait for 5 seconds..."
 				sleep 5

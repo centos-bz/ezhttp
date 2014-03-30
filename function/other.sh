@@ -161,6 +161,8 @@ pureftpd_location="${pureftpd_location}"
 phpmyadmin_location="${phpmyadmin_location}"
 redis_location="${redis_location}"
 redisMaxMemory="${redisMaxMemory}"
+mongodb_location="${mongodb_location}"
+mongodb_data_location="${mongodb_data_location}"
 
 EOF
 #自定义版本时增加变量
@@ -204,6 +206,8 @@ fi
 if_in_array "${memcached_filename}" "$other_soft_install" && /etc/init.d/memcached start
 if_in_array "${PureFTPd_filename}" "$other_soft_install" && /etc/init.d/pureftpd start
 if_in_array "${redis_filename}" "$other_soft_install" && /etc/init.d/redis start
+if_in_array "${mongodb_filename}" "$other_soft_install" && /etc/init.d/mongod start
+sleep 5
 netstat -nxtlp
 echo "depends_prefix=$depends_prefix" >> /tmp/ezhttp_info_do_not_del
 \cp $cur_dir/ez /usr/bin/ez
@@ -261,6 +265,50 @@ last_confirm(){
 	check_port_socket_exist
 }
 
+#检测端口或socket是否被占用
+check_port_socket_exist(){
+	if [[ $stack == "lnmp" ]];then
+		if [[ $nginx != "do_not_install" ]]; then
+			kill_pid "port" "80"
+		fi
+
+		if [[ $php != "do_not_install" ]]; then
+			kill_pid "socket" "/tmp/php-cgi.sock"
+		fi	
+
+		if [[ $mysql != "do_not_install" ]]; then
+			kill_pid "port" "3306"
+		fi		
+
+	elif [[ $stack == "lamp" ]]; then
+		if [[ $apache != "do_not_install" ]]; then
+			kill_pid "port" "80"
+		fi
+			
+		if [[ $mysql != "do_not_install" ]]; then
+			kill_pid "port" "3306"
+		fi		
+
+	elif [[ $stack == "lnamp" ]]; then
+		if [[ $nginx != "do_not_install" ]]; then
+			kill_pid "port" "80"
+		fi
+
+		if [[ $apache != "do_not_install" ]]; then
+			kill_pid "port" "88"
+		fi
+			
+		if [[ $mysql != "do_not_install" ]]; then
+			kill_pid "port" "3306"
+		fi	
+	fi	
+
+	if_in_array "${memcached_filename}" "$other_soft_install" && kill_pid "port" "11211"
+	if_in_array "${PureFTPd_filename}" "$other_soft_install" && kill_pid "port" "21"
+	if_in_array "${redis_filename}" "$other_soft_install" && kill_pid "port" "6379"		
+	if_in_array "${mongodb_filename}" "$other_soft_install" && kill_pid "port" "27017"	
+}
+
 #配置linux
 deploy_linux(){
 #创建记录安装路径信息文件
@@ -278,5 +326,6 @@ echo
 echo "############################################################################"
 echo
 rootness
+define
 pre_setting
 }

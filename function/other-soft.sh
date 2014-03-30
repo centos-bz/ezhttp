@@ -36,6 +36,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 	if if_in_array "${memcached_filename}" "$other_soft_install";then
 		read -p "input $memcached_filename location(default:/usr/local/memcached): " memcached_location
 		memcached_location=${memcached_location:=/usr/local/memcached}
+		memcached_location=`filter_location "$memcached_location"`
 		echo "memcached location: $memcached_location"
 	fi	
 
@@ -43,6 +44,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 	if if_in_array "${PureFTPd_filename}" "$other_soft_install";then
 		read -p "input $PureFTPd_filename location(default:/usr/local/pureftpd): " pureftpd_location
 		pureftpd_location=${pureftpd_location:=/usr/local/pureftpd}
+		pureftpd_location=`filter_location "$pureftpd_location"`
 		echo "pureftpd location: $pureftpd_location"
 	fi	
 
@@ -51,6 +53,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		default_location="/home/wwwroot/phpmyadmin"
 		read -p "input $phpMyAdmin_filename location(default:$default_location): " phpmyadmin_location
 		phpmyadmin_location=${phpmyadmin_location:=$default_location}
+		phpmyadmin_location=`filter_location "$phpmyadmin_location"`
 		echo "phpmyadmin location: $phpmyadmin_location"
 	fi
 
@@ -59,6 +62,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		default_location="/usr/local/redis"
 		read -p "input $redis_filename location(default:$default_location): " redis_location
 		redis_location=${redis_location:=$default_location}
+		redis_location=`filter_location "$redis_location"`
 		echo "redis location: $redis_location"
 		while true; do
 			read -p "please input the max memory allowed for redis(ie.128M,512m,2G,4g): " redisMaxMemory
@@ -76,8 +80,24 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		elif echo "$redisMaxMemory" | grep "[gG]$"; then
 			redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
 			((redisMaxMemory=$redisMaxMemory*1024*1024*1024))
-		fi	
-	fi	
+		fi
+	fi
+
+	#mongodb安装路径及db路径
+	if if_in_array "${mongodb_filename}" "$other_soft_install";then
+		default_location="/usr/local/mongodb"
+		read -p "input $mongodb_filename location(default:$default_location): " mongodb_location
+		mongodb_location=${mongodb_location:=$default_location}
+		mongodb_location=`filter_location "$mongodb_location"`
+		echo "mongodb location: $mongodb_location"
+
+		default_data_location="$mongodb_location/data/"
+		read -p "input $mongodb_filename data location(default:$default_data_location): " mongodb_data_location
+		mongodb_data_location=${mongodb_data_location:=$default_location}
+		mongodb_data_location=`filter_location "$mongodb_data_location"`
+		echo "mongodb data location: $mongodb_data_location"		
+	fi
+
 fi
 }
 
@@ -87,10 +107,13 @@ if_in_array "${memcached_filename}" "$other_soft_install" && check_installed_ask
 if_in_array "${PureFTPd_filename}" "$other_soft_install" && check_installed_ask "install_PureFTPd" "${pureftpd_location}"
 if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && check_installed_ask "install_phpmyadmin" "${phpmyadmin_location}"
 if_in_array "${redis_filename}" "$other_soft_install" && check_installed_ask "install_redis" "${redis_location}"
+if_in_array "${mongodb_filename}" "$other_soft_install" && check_installed_ask "install_mongodb" "${mongodb_location}"
 }
 
 #安装memcached
 install_Memcached(){
+groupadd memcache
+useradd -M -s /bin/false -g memcache memcache
 #安装依赖
 if check_package_manager apt;then
 	apt-get -y install libevent-dev
@@ -158,6 +181,8 @@ boot_start pureftpd
 
 #安装redis
 install_redis(){
+groupadd redis	
+useradd -M -s /bin/false -g redis redis
 download_file "${redis_other_link}" "${redis_official_link}" "${redis_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${redis_filename}.tar.gz
@@ -183,10 +208,168 @@ sed -i "s#^EXEC=.*#EXEC=${redis_location}/bin/redis-server#" /etc/init.d/redis
 sed -i "s#^CLIEXEC=.*#CLIEXEC=${redis_location}/bin/redis-cli#" /etc/init.d/redis 
 sed -i "s#^PIDFILE=.*#PIDFILE=${redis_location}/logs/redis.pid#" /etc/init.d/redis 
 sed -i "s#^CONF=.*#CONF=${redis_location}/etc/redis.conf#" /etc/init.d/redis 
-chmod +x /etc/init.d/redis
 sed -i '2 a\# chkconfig:   - 85 15' /etc/init.d/redis
+sed -i 's#$EXEC $CONF#su -s /bin/bash -c "$EXEC $CONF" redis \&#' /etc/init.d/redis
+
+chown -R redis ${redis_location} 
+chmod +x /etc/init.d/redis
 boot_start redis
 
 ! grep "vm.overcommit_memory = 1"  /etc/sysctl.conf && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
 sysctl -p
+}
+
+#安装mongo
+install_mongodb(){
+groupadd mongod	
+useradd -M -s /bin/false -g mongod mongod
+download_file "${mongodb_other_link}" "${mongodb_official_link}" "${mongodb_filename}.tgz"
+cd $cur_dir/soft/
+tar xzvf ${mongodb_filename}.tgz
+mkdir -p  ${mongodb_location}/etc/ ${mongodb_location}/logs/ ${mongodb_data_location}
+cp -a $mongodb_filename/bin/ $mongodb_location
+
+cat > ${mongodb_location}/etc/mongod.conf <<EOF
+# mongod.conf
+
+#where to log
+logpath=${mongodb_location}/logs/mongod.log
+
+logappend=true
+
+# fork and run in background
+fork = true
+
+port = 27017
+
+# Set this value to designate a directory for the mongod instance to store its data
+dbpath=${mongodb_data_location}
+
+# Set to true to modify the storage pattern of the data directory to store each database’s files in a distinct folder. 
+# This option will create directories within the dbpath named for each database.
+directoryperdb=true
+
+# location of pidfile
+pidfilepath = ${mongodb_location}/logs/mongod.pid
+
+# Disables write-ahead journaling
+# nojournal = true
+journal = true
+
+# Modify this value to changes the level of database profiling
+# 0	Off. No profiling.
+# 1	On. Only includes slow operations.
+# 2	On. Includes all operations.
+profile = 0
+
+# Sets the threshold for mongod to consider a query "slow" for the database profiler
+slowms = 100
+
+
+
+# Turn on/off security.  Off is currently the default
+#noauth = true
+
+# Verbose logging output.
+#verbose = true
+
+# Inspect all client data for validity on receipt (useful for
+# developing drivers)
+objcheck = true
+
+# Enable db quota management
+#quota = true
+
+# Set oplogging level where n is
+#   0=off (default)
+#   1=W
+#   2=R
+#   3=both
+#   7=W+some reads
+diaglog = 0
+
+# Ignore query hints
+#nohints = true
+
+# Disable the HTTP interface (Defaults to localhost:27018).
+#nohttpinterface = true
+
+# Turns off server-side scripting.  This will result in greatly limited
+# functionality
+#noscripting = true
+
+# Turns off table scans.  Any query that would do a table scan fails.
+#notablescan = true
+
+# Disable data file preallocation.
+#noprealloc = true
+
+# Specify .ns file size for new databases.
+# nssize = <size>
+
+# Accout token for Mongo monitoring server.
+#mms-token = <token>
+
+# Server name for Mongo monitoring server.
+#mms-name = <server-name>
+
+# Ping interval for Mongo monitoring server.
+#mms-interval = <seconds>
+
+# Replication Options
+
+# in replicated mongo databases, specify here whether this is a slave or master
+#slave = true
+#source = master.example.com
+# Slave only: specify a single database to replicate
+#only = master.example.com
+# or
+#master = true
+#source = slave.example.com
+
+EOF
+
+cat > /etc/init.d/mongod <<EOF
+#!/bin/bash
+
+# mongod - Startup script for mongod
+
+# chkconfig: 35 85 15
+
+CONF=${mongodb_location}/etc/mongod.conf
+PID=${mongodb_location}/logs/mongod.pid
+do_start () {
+echo  "Starting mongo with-> /usr/bin/mongod –config \$CONF"
+su -s /bin/bash -c "${mongodb_location}/bin/mongod --config \$CONF" mongod &
+}
+
+do_stop () {
+echo "checking if mongo is running"
+if [ -z "\$PID" ];
+    then
+    echo "mongod isn't running, no need to stop"
+    exit
+fi
+echo "Stopping mongo with-> /bin/kill -2 \`cat \$PID\`"
+/bin/kill -2 \`cat \$PID\`
+
+}
+
+case "\$1" in
+  start)
+    do_start
+    ;;
+  stop)
+    do_stop
+    ;;
+  *)
+    echo "Usage: \$0 start|stop" >&2
+    exit 3
+    ;;
+esac
+
+EOF
+
+chown -R mongod ${mongodb_location}
+chown -R mongod ${mongodb_data_location}
 }

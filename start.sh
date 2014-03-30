@@ -10,14 +10,6 @@ export PATH
 
 cur_dir=`pwd`
 
-#初始化
-if [ -f $cur_dir/init ];then
-	. $cur_dir/init
-else
-	echo "init file not found.shell script can't be executed."
-	exit 1
-fi
-
 #载入函数
 load_functions(){
 	local function=$1
@@ -30,6 +22,7 @@ load_functions(){
 }
 
 #开始载入
+load_functions define
 load_functions public
 load_functions apache
 load_functions depends

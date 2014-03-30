@@ -163,7 +163,8 @@ redis_location="${redis_location}"
 redisMaxMemory="${redisMaxMemory}"
 mongodb_location="${mongodb_location}"
 mongodb_data_location="${mongodb_data_location}"
-
+phpRedisAdmin_location="${phpRedisAdmin_location}"
+memadmin_location=${memadmin_location}
 EOF
 #自定义版本时增加变量
 echo -e "$custom_info" >> /root/previous_setting
@@ -190,10 +191,12 @@ done
 
 #完成后的一些配置
 post_done(){
-echo "start programs..."	
+echo "start programs..."
+#启动nginx
 [ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] &&  /etc/init.d/nginx start
+#启动apache
 [ "$apache" != "do_not_install" ] && [ "$stack" != "lnmp" ] && /etc/init.d/httpd start
-
+#启动mysql
 if 	[ "$mysql" != "do_not_install" ] &&  [ "$mysql" != "libmysqlclient18" ];then
 	#配置mysql
 	/etc/init.d/mysqld start
@@ -202,11 +205,17 @@ if 	[ "$mysql" != "do_not_install" ] &&  [ "$mysql" != "libmysqlclient18" ];then
 	! grep -q "${mysql_location}/bin" /etc/profile && echo "PATH=${mysql_location}/bin:$PATH" >> /etc/profile
 	. /etc/profile
 fi
+#启动php
 [ "$php" != "do_not_install" ] && [ $php_mode == "with_fastcgi" ] && /etc/init.d/php-fpm start
+#启动各软件
 if_in_array "${memcached_filename}" "$other_soft_install" && /etc/init.d/memcached start
 if_in_array "${PureFTPd_filename}" "$other_soft_install" && /etc/init.d/pureftpd start
 if_in_array "${redis_filename}" "$other_soft_install" && /etc/init.d/redis start
 if_in_array "${mongodb_filename}" "$other_soft_install" && /etc/init.d/mongod start
+
+#安装模块时重启php
+( [ "$php" == "do_not_install" ] && [ "$stack" == "lnmp" ] && [ "$php_modules_install" != "do_not_install" ] ) && /etc/init.d/php-fpm restart || /etc/init.d/httpd restart
+
 sleep 5
 netstat -nxtlp
 echo "depends_prefix=$depends_prefix" >> /tmp/ezhttp_info_do_not_del
@@ -254,6 +263,10 @@ last_confirm(){
 	if_in_array "${memcached_filename}" "$other_soft_install" && echo "memcached location: $memcached_location"
 	if_in_array "${PureFTPd_filename}" "$other_soft_install" && echo "pureftpd location: $pureftpd_location"
 	if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && echo "phpmyadmin_location: $phpmyadmin_location"
+	if_in_array "${redis_filename}" "$other_soft_install" && echo "redis_location: $redis_location"
+	if_in_array "${mongodb_filename}" "$other_soft_install" && echo "mongodb_location: $mongodb_location"
+	if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && echo "phpRedisAdmin_location: ${phpRedisAdmin_location}"
+	if_in_array "${memadmin_filename}" "$other_soft_install" && echo "memadmin_location: ${memadmin_location}"
 	echo
 	echo "##############################################################"
 	echo

@@ -98,6 +98,24 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		echo "mongodb data location: $mongodb_data_location"		
 	fi
 
+	#phpRedisAdmin安装路径
+	if if_in_array "${phpRedisAdmin_filename}" "$other_soft_install";then
+		default_location="/home/wwwroot/redisadmin"
+		read -p "input $phpRedisAdmin_filename location(default:$default_location): " phpRedisAdmin_location
+		phpRedisAdmin_location=${phpRedisAdmin_location:=$default_location}
+		phpRedisAdmin_location=`filter_location "$phpRedisAdmin_location"`
+		echo "phpRedisAdmin location: $phpRedisAdmin_location"
+	fi
+
+	#memadmin安装路径
+	if if_in_array "${memadmin_filename}" "$other_soft_install";then
+		default_location="/home/wwwroot/memadmin"
+		read -p "input $memadmin_filename location(default:$default_location): " memadmin_location
+		memadmin_location=${memadmin_location:=$default_location}
+		memadmin_location=`filter_location "$memadmin_location"`
+		echo "memadmin location: $memadmin_location"
+	fi
+
 fi
 }
 
@@ -108,6 +126,8 @@ if_in_array "${PureFTPd_filename}" "$other_soft_install" && check_installed_ask 
 if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && check_installed_ask "install_phpmyadmin" "${phpmyadmin_location}"
 if_in_array "${redis_filename}" "$other_soft_install" && check_installed_ask "install_redis" "${redis_location}"
 if_in_array "${mongodb_filename}" "$other_soft_install" && check_installed_ask "install_mongodb" "${mongodb_location}"
+if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && check_installed_ask "install_redisadmin" "${phpRedisAdmin_location}"
+if_in_array "${memadmin_filename}" "$other_soft_install" && check_installed_ask "install_memadmin" "${memadmin_location}"
 }
 
 #安装memcached
@@ -372,4 +392,31 @@ EOF
 
 chown -R mongod ${mongodb_location}
 chown -R mongod ${mongodb_data_location}
+}
+
+
+#安装phpRedisAdmin
+install_redisadmin(){
+download_file "${phpRedisAdmin_other_link}" "${phpRedisAdmin_official_link}" "${phpRedisAdmin_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${phpRedisAdmin_filename}.tar.gz
+mkdir -p ${phpRedisAdmin_location}
+\cp -a ${phpRedisAdmin_filename}/* ${phpRedisAdmin_location}
+
+#Predis
+download_file "${Predis_other_link}" "${Predis_official_link}" "${Predis_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${Predis_filename}.tar.gz
+mkdir -p ${phpRedisAdmin_location}/vendor/
+\cp -a ${Predis_filename}/* ${phpRedisAdmin_location}/vendor/
+
+}
+
+#安装memadmin
+install_memadmin(){
+download_file "${memadmin_other_link}" "${memadmin_official_link}" "${memadmin_filename}.tar.gz"
+cd $cur_dir/soft/
+tar xzvf ${memadmin_filename}.tar.gz
+mkdir -p ${memadmin_location}
+\cp -a ${memadmin_filename}/* ${memadmin_location}
 }

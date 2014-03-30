@@ -154,6 +154,21 @@ phpMyAdmin_filename="phpMyAdmin-4.0.9-all-languages"
 phpMyAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpMyAdmin-4.0.9-all-languages.tar.gz"
 phpMyAdmin_official_link="http://hivelocity.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.9/phpMyAdmin-4.0.9-all-languages.tar.gz"
 
+#phpRedisAdmin设置
+phpRedisAdmin_filename="phpRedisAdmin-1.1.0"
+phpRedisAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpRedisAdmin-1.1.0.tar.gz"
+phpRedisAdmin_official_link="https://github.com/ErikDubbelboer/phpRedisAdmin/archive/v1.1.0.tar.gz"
+
+#Predis设置(phpRedisAdmin依赖)
+Predis_filename="predis-0.8.5"
+Predis_other_link="http://cdn.yyupload.com/down/499809/software/predis-0.8.5.tar.gz"
+Predis_official_link="https://github.com/nrk/predis/archive/v0.8.5.tar.gz"
+
+#memadmin设置
+memadmin_filename="memadmin-1.0.12"
+memadmin_other_link="http://cdn.yyupload.com/down/499809/software/memadmin-1.0.12.tar.gz"
+memadmin_official_link="https://github.com/junstor/memadmin/archive/v1.0.12.tar.gz"
+
 #PureFTPd设置
 PureFTPd_filename="pure-ftpd-1.0.36"
 PureFTPd_other_link="http://cdn.yyupload.com/down/499809/software/pure-ftpd-1.0.36.tar.gz"
@@ -338,7 +353,7 @@ mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_f
 php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} custom_version)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} ${apc_filename})
-other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename})
+other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename})
 
 #工具菜单设置
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Back_to_main_menu)

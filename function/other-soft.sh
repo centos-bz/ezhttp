@@ -116,6 +116,15 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		echo "memadmin location: $memadmin_location"
 	fi
 
+	#rockmongo安装路径
+	if if_in_array "${rockmongo_filename}" "$other_soft_install";then
+		default_location="/home/wwwroot/rockmongo"
+		read -p "input $rockmongo_filename location(default:$default_location): " rockmongo_location
+		rockmongo_location=${rockmongo_location:=$default_location}
+		rockmongo_location=`filter_location "$rockmongo_location"`
+		echo "rockmongo location: $rockmongo_location"
+	fi	
+
 fi
 }
 
@@ -128,6 +137,7 @@ if_in_array "${redis_filename}" "$other_soft_install" && check_installed_ask "in
 if_in_array "${mongodb_filename}" "$other_soft_install" && check_installed_ask "install_mongodb" "${mongodb_location}"
 if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && check_installed_ask "install_redisadmin" "${phpRedisAdmin_location}"
 if_in_array "${memadmin_filename}" "$other_soft_install" && check_installed_ask "install_memadmin" "${memadmin_location}"
+if_in_array "${rockmongo_filename}" "$other_soft_install" && check_installed_ask "install_rockmongo" "${rockmongo_location}"
 }
 
 #安装memcached
@@ -419,4 +429,15 @@ cd $cur_dir/soft/
 tar xzvf ${memadmin_filename}.tar.gz
 mkdir -p ${memadmin_location}
 \cp -a ${memadmin_filename}/* ${memadmin_location}
+}
+
+#安装rockmongo
+install_rockmongo(){
+download_file "${rockmongo_other_link}" "${rockmongo_official_link}" "${rockmongo_filename}.zip"
+cd $cur_dir/soft/
+rm -rf rockmongo-fix-auth
+unzip ${rockmongo_filename}.zip
+mkdir -p ${rockmongo_location}
+\cp -a rockmongo-fix-auth/* ${rockmongo_location}
+
 }

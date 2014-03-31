@@ -169,6 +169,11 @@ memadmin_filename="memadmin-1.0.12"
 memadmin_other_link="http://cdn.yyupload.com/down/499809/software/memadmin-1.0.12.tar.gz"
 memadmin_official_link="https://github.com/junstor/memadmin/archive/v1.0.12.tar.gz"
 
+#rockmongo设置
+rockmongo_filename="rockmongo-1.1.6-fix-auth"
+rockmongo_other_link="http://cdn.yyupload.com/down/499809/software/rockmongo-fix-auth.zip"
+rockmongo_official_link="https://github.com/centos-bz/rockmongo/archive/fix-auth.zip"
+
 #PureFTPd设置
 PureFTPd_filename="pure-ftpd-1.0.36"
 PureFTPd_other_link="http://cdn.yyupload.com/down/499809/software/pure-ftpd-1.0.36.tar.gz"
@@ -353,7 +358,7 @@ mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_f
 php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} custom_version)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} ${apc_filename})
-other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename})
+other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename})
 
 #工具菜单设置
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Back_to_main_menu)

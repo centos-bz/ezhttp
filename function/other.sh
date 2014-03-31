@@ -165,6 +165,7 @@ mongodb_location="${mongodb_location}"
 mongodb_data_location="${mongodb_data_location}"
 phpRedisAdmin_location="${phpRedisAdmin_location}"
 memadmin_location=${memadmin_location}
+rockmongo_location=${rockmongo_location}
 EOF
 #自定义版本时增加变量
 echo -e "$custom_info" >> /root/previous_setting
@@ -214,7 +215,13 @@ if_in_array "${redis_filename}" "$other_soft_install" && /etc/init.d/redis start
 if_in_array "${mongodb_filename}" "$other_soft_install" && /etc/init.d/mongod start
 
 #安装模块时重启php
-( [ "$php" == "do_not_install" ] && [ "$stack" == "lnmp" ] && [ "$php_modules_install" != "do_not_install" ] ) && /etc/init.d/php-fpm restart || /etc/init.d/httpd restart
+if [ "$php" == "do_not_install" ] && [ "$php_modules_install" != "do_not_install" ];then
+	if [ "$stack" == "lnmp" ];then
+		/etc/init.d/php-fpm restart
+	else
+		/etc/init.d/httpd restart
+	fi
+fi
 
 sleep 5
 netstat -nxtlp
@@ -267,6 +274,7 @@ last_confirm(){
 	if_in_array "${mongodb_filename}" "$other_soft_install" && echo "mongodb_location: $mongodb_location"
 	if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && echo "phpRedisAdmin_location: ${phpRedisAdmin_location}"
 	if_in_array "${memadmin_filename}" "$other_soft_install" && echo "memadmin_location: ${memadmin_location}"
+	if_in_array "${rockmongo_filename}" "$other_soft_install" && echo "rockmongo_location: ${rockmongo_location}"
 	echo
 	echo "##############################################################"
 	echo

@@ -108,7 +108,16 @@ elif [ "$apache" == "${apache2_4_filename}" ];then
 		yum install -y pcre-devel
 	else
 		check_installed "install_pcre" "${depends_prefix}/${pcre_filename}"
-	fi		
+	fi
+
+	#安装apache 2.4时,pcre不能低于6.7
+	if package_support;then
+		pcreVersion=`pcre-config --version | tr -d '.'`
+		if [[ $pcreVersion -lt 67 ]]; then
+			apache_configure_args="$apache_configure_args --with-pcre=${depends_prefix}/${pcre_filename}"
+			check_installed "install_pcre" "${depends_prefix}/${pcre_filename}"
+		fi
+	fi	
 
 	#下载apr和apr-util
 	download_file "${apr_other_link}" "${apr_official_link}" "${apr_filename}.tar.gz"

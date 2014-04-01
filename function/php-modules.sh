@@ -51,8 +51,7 @@ php_modules_preinstall_settings(){
 			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
 		fi
-		#apache2.4 event模式不支持ZendGuardLoader
-		[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+
 		for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
 		echo
 		php_modules_prompt="please input numbers(ie.1 2 3): "
@@ -81,6 +80,9 @@ php_modules_preinstall_settings(){
 		echo -e "your php modules selection ${php_modules_install}"	
 		#恢复php变量为do_not_install
 		$phpDoNotInstall && php="do_not_install"
+
+		#如果在apache 2.4选择ZendGuardLoader,自动加上--with-mpm=prefork
+		[ "$apache" == "$apache2_4_filename" ] && if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && apache_configure_args="$apache_configure_args --with-mpm=prefork"
 	fi	
 }
 
@@ -286,20 +288,27 @@ error_detect "make install"
 #安装ionCube
 install_ionCube(){
 local phpConfig=$1
+#判断php是否为线程安全
+if $(get_php_bin $phpConfig) -i | grep "Thread Safety" | grep "enabled";then
+	ts="_ts"
+elif $(get_php_bin $phpConfig) -i | grep "Thread Safety" | grep "disabled";then
+	ts=""
+fi
+
 if is_64bit ; then
 	download_file "${ionCube64_other_link}" "${ionCube64_official_link}" "${ionCube64_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube64_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
 	php_version=`get_php_version "$phpConfig"`
-	cp ioncube/ioncube_loader_lin_${php_version}_ts.so ${depends_prefix}/ioncube/ioncube.so
+	cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
 else
 	download_file "${ionCube32_other_link}" "${ionCube32_official_link}" "${ionCube32_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube32_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
 	php_version=`get_php_version "$phpConfig"`
-	cp ioncube/ioncube_loader_lin_${php_version}_ts.so ${depends_prefix}/ioncube/ioncube.so
+	cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
 fi
 ! grep -q  "\[ionCube Loader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" $(get_php_ini $phpConfig)
 }

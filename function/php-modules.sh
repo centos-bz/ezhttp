@@ -292,14 +292,14 @@ if is_64bit ; then
 	tar xzvf ${ionCube64_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
 	php_version=`get_php_version "$phpConfig"`
-	cp ioncube/ioncube_loader_lin_${php_version}.so ${depends_prefix}/ioncube/ioncube.so
+	cp ioncube/ioncube_loader_lin_${php_version}_ts.so ${depends_prefix}/ioncube/ioncube.so
 else
 	download_file "${ionCube32_other_link}" "${ionCube32_official_link}" "${ionCube32_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube32_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
 	php_version=`get_php_version "$phpConfig"`
-	cp ioncube/ioncube_loader_lin_${php_version}.so ${depends_prefix}/ioncube/ioncube.so
+	cp ioncube/ioncube_loader_lin_${php_version}_ts.so ${depends_prefix}/ioncube/ioncube.so
 fi
 ! grep -q  "\[ionCube Loader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" $(get_php_ini $phpConfig)
 }

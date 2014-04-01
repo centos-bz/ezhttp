@@ -47,10 +47,9 @@ php_modules_preinstall_settings(){
 			#因为ZendOptimizer不支持php5_3,所以从数组中删除
 			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 		elif [ "$php" == "${php5_4_filename}" ];then
-			#从数组中删除ZendOptimizer、eaccelerator、imagick
+			#从数组中删除ZendOptimizer、eaccelerator
 			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
-			php_modules_arr=(${php_modules_arr[@]#${php_imagemagick_filename}})
 		fi
 		#apache2.4 event模式不支持ZendGuardLoader
 		[ "$apache" == "$apache2_4_filename" ] && php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})

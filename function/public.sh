@@ -8,7 +8,7 @@ kill_pid(){
 		if [[ `netstat -nlpt | awk '{print $4}' | grep ":${port}$"` != "" ]]; then
 			processName=`netstat -nlp | grep -E ":${port} +" | awk '{print $7}' | awk -F'/' '{print $2}' | awk -F'.' 'NR==1{print $1}'`
 			pid=`netstat -nlp | grep -E ":${port} +" | awk '{print $7}' | awk -F'/' 'NR==1{print $1}'`
-			yes_or_no "We found port $port is occupied by process $processName.would you like to kill this process [Y/n]: " "kill -9 $pid" "echo 'will not kill this process.'"
+			yes_or_no "We found port $port is occupied by process $processName.would you like to kill this process [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
 			if [[ $yn == "y" ]];then
 				echo "gonna be kill $processName process,please wait for 5 seconds..."
 				sleep 5
@@ -26,7 +26,7 @@ kill_pid(){
 		if [[ `netstat -nlp | awk '$1 ~/unix/{print $10}' | grep "^$socket$"` != "" ]]; then
 			processName=`netstat -nlp | grep ${socket} | awk '{print $9}' | awk -F'/' '{print $2}'`
 			pid=`netstat -nlp | grep $socket | awk '{print $9}' | awk -F'/' '{print $1}'`
-			yes_or_no "We found socket $socket is occupied by process $processName.would you like to kill this proess [Y/n]: " "kill -9 $pid" "echo 'will not kill this process.'"
+			yes_or_no "We found socket $socket is occupied by process $processName.would you like to kill this proess [Y/n]: " "kill $pid" "echo 'will not kill this process.'"
 			if [[ $yn == "y" ]];then
 				echo "gonna be kill $processName process,please wait for 5 seconds..."
 				sleep 5

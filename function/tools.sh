@@ -555,7 +555,7 @@ Percona_xtrabackup_install(){
 
 #更改ssh server端口
 Change_sshd_port(){
-	local listenPort=`netstat -nlpt | awk -F'[: ]+' '/sshd/{if ($5 ~/[0-9]/) print $5}'`
+	local listenPort=`netstat -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
 	local configPort=`grep -v "^#" /etc/ssh/sshd_config | sed -n -r 's/^Port\s+([0-9]+).*/\1/p'`
 	configPort=${configPort:=22}
 
@@ -595,7 +595,7 @@ Change_sshd_port(){
 	$restartCmd
 
 	#验证是否成功
-	local nowPort=`netstat -nlpt | awk -F'[: ]+' '/sshd/{if ($5 ~/[0-9]/) print $5}'`
+	local nowPort=`netstat -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
 	if [[ "$nowPort" == "$newPort" ]]; then
 		echo "change ssh server port to $newPort successfully."
 	else
@@ -648,7 +648,7 @@ iptables_init(){
 	done
 
 	#检查端口是否包含ssh端口,否则自动加入,防止无法连接ssh
-	local sshPort=`netstat -nlpt | awk -F'[: ]+' '/sshd/{if ($5 ~/[0-9]/) print $5}'`
+	local sshPort=`netstat -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
 	local sshNotInput=true
 	for p in ${ports_arr[@]};do
 		if [[ $p == "$sshPort" ]];then

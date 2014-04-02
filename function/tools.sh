@@ -670,11 +670,7 @@ iptables_init(){
 	iptables -A INPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
 	iptables -P INPUT DROP
 
-	if check_sys_version ubuntu || check_sys_version debian;then
-		iptables-save > /etc/iptables.rule
-	elif check_sys_version centos;then
-		/etc/init.d/iptables save
-	fi
+	save_iptables
 	list_iptables
 	echo "configure iptables done."
 }
@@ -766,6 +762,7 @@ add_iptables_rule(){
 	else
 		echo "add iptables rule failed."
 	fi
+	save_iptables
 	list_iptables
 }
 
@@ -788,18 +785,23 @@ delete_iptables_rule(){
 	else
 		echo "delete the iptables rule failed."
 	fi
+	save_iptables
 	list_iptables
 }
 
-#停止ipables
-stop_iptables(){
+#保存iptables 
+save_iptables(){
 	#保存规则
 	if check_sys_version ubuntu || check_sys_version debian;then
 		iptables-save > /etc/iptables.rule
 	elif check_sys_version centos;then
 		/etc/init.d/iptables save
 	fi
+}
 
+#停止ipables
+stop_iptables(){
+	save_iptables
 	clean_iptables_rule
 	list_iptables
 }

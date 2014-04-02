@@ -679,13 +679,13 @@ iptables_init(){
 add_iptables_rule(){
 	#协议选择
 	while true; do
-		echo -e "1) all\n2) tcp\n3) udp\n"
-		read -p "please specify the Protocol(default:all): " protocol
+		echo -e "1) tcp\n2) udp\n3) all\n"
+		read -p "please specify the Protocol(default:tcp): " protocol
 		protocol=${protocol:=1}
 		case  $protocol in
-			1) protocol="";break;;
-			2) protocol="-p tcp";break;;
-			3) protocol="-p udp";break;;
+			1) protocol="-p tcp";break;;
+			2) protocol="-p udp";break;;
+			3) protocol="";break;;
 			*) echo "input error,please input a number(ie.1 2 3)";;
 		esac
 	done
@@ -723,19 +723,21 @@ add_iptables_rule(){
 
 	#端口选择
 	local port=''
-	while true; do
-		read -p "please input one port(ie.3306,leave blank for all): " port
-		if [[ $port != "" ]];then
-			if  verify_port "$port";then
-				port="--dport $port"
-				break
+	if [[ $protocol != "" ]];then
+		while true; do
+			read -p "please input one port(ie.3306,leave blank for all): " port
+			if [[ $port != "" ]];then
+				if  verify_port "$port";then
+					port="--dport $port"
+					break
+				else
+					echo "your input is invalid."
+				fi
 			else
-				echo "your input is invalid."
-			fi
-		else
-			break
-		fi	
-	done
+				break
+			fi	
+		done
+	fi	
 
 	#动作选择
 	while true; do

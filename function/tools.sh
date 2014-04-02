@@ -845,7 +845,7 @@ Iptables_settings(){
 		esac
 	done
 
-	exit
+	yes_or_no "do you want to continue setting iptables[Y/n]: " "Iptables_settings" "echo 'setting iptables done,exit.';exit"
 }
 
 #开启或关闭共享扩展

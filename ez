@@ -430,7 +430,7 @@ check_root_passwd(){
 	while true
 	do
 		read -p "please input your mysql root password: " root_password
-		echo "show databases" | mysql -uroot -p${root_password} > /tmp/mysql_err 2>&1
+		echo "show databases" | ${mysql_location}/bin/mysql -uroot -p${root_password} > /tmp/mysql_err 2>&1
 		if [ $? != 0 ];then
 			grep -q "1045" /tmp/mysql_err && echo "your root password is not correct"
 		else
@@ -453,7 +453,7 @@ mysql_manger(){
 
 mysql_add_db(){
 	read -p "please input the database name: " dbname
-	echo "create database ${dbname};" | mysql -uroot -p${root_password} > /dev/null 2>&1 && echo "successfully create database ${dbname}" || echo "create database ${dbname} failed."
+	echo "create database ${dbname};" | ${mysql_location}/bin/mysql -uroot -p${root_password} > /dev/null 2>&1 && echo "successfully create database ${dbname}" || echo "create database ${dbname} failed."
 }
 
 mysql_add_user(){
@@ -464,9 +464,9 @@ mysql_add_user(){
     read -p "input the client you'll allow access to this user,input \"%\" means allow all client.(default:localhost 127.0.0.1): " grantclient
     grantclient=${grantclient:="localhost 127.0.0.1"}
     for client in $grantclient; do
-    	echo "GRANT ALL PRIVILEGES ON ${grantdb}.* TO '${user}'@'$client' IDENTIFIED BY '$passwd'" | mysql -uroot -p${root_password} > /dev/null 2>&1
+    	echo "GRANT ALL PRIVILEGES ON ${grantdb}.* TO '${user}'@'$client' IDENTIFIED BY '$passwd'" | ${mysql_location}/bin/mysql -uroot -p${root_password} > /dev/null 2>&1
 	done
-	echo  "flush privileges;" | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo  "flush privileges;" | ${mysql_location}/bin/mysql -uroot -p${root_password} > /dev/null 2>&1
 	echo "successfully add user ${user}"
 }
 
@@ -480,13 +480,13 @@ mysql_add(){
 
 mysql_del_db(){
 	read -p "please input the database name: " $db
-	echo "drop database $db;" | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo "drop database $db;" | ${mysql_location}/bin/mysql -uroot -p${root_password} > /dev/null 2>&1
 	echo "successfully delete database $db."
 }
 
 mysql_del_user(){
 	read -p "please input the user name: " user
-	echo "use mysql;delete from user where User='$user' " | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo "use mysql;delete from user where User='$user' " | ${mysql_location}/bin/mysql -uroot -p${root_password} > /dev/null 2>&1
 	echo "successfully delete user $user."
 }
 
@@ -494,7 +494,7 @@ mysql_user_mod(){
 	check_root_passwd
 	read -p "please input the user: " user
 	read -p "please input a new password: " passwd
-	echo "use mysql;update user set password=PASSWORD("$passwd") where User='$user';flush privileges;" | mysql -uroot -p${root_password} > /dev/null 2>&1
+	echo "use mysql;update user set password=PASSWORD('$passwd') where User='$user';flush privileges;" | ${mysql_location}/bin/mysql -uroot -p${root_password} > /dev/null 2>&1
 	echo "successfully modify user $user password."
 }
 
@@ -512,9 +512,9 @@ mysql_reset(){
 	fi	
 	${mysql_location}/bin/mysqld_safe  --defaults-file=${mysql_location}/etc/my.cnf --skip-grant-tables 2>&1 >/dev/null &
 	echo "wait for 8 seconds..."
-	sleep 8 && mysql -u root -e "use mysql;update user set password=PASSWORD(\"${password}\") where User='root';flush privileges;" 
+	sleep 8 && ${mysql_location}/bin/mysql -u root -e "use mysql;update user set password=PASSWORD(\"${password}\") where User='root';flush privileges;" 
 	/etc/init.d/mysqld restart 2>&1 >/dev/null
-	echo  "show databases;" | mysql -uroot -p${password}  > /dev/null 2>&1 && echo "successfully reset your mysql root password" || echo "Sorry,failed to reset your root password."
+	echo  "show databases;" | ${mysql_location}/bin/mysql -uroot -p${password}  > /dev/null 2>&1 && echo "successfully reset your mysql root password" || echo "Sorry,failed to reset your root password."
 
 }
 

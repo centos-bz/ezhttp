@@ -33,6 +33,7 @@ load_functions php
 load_functions php-modules
 load_functions tools
 load_functions other
+load_functions upgrade
 
 
 #开始执行脚本

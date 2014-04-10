@@ -179,12 +179,13 @@ while true
 do
 	#使read能支持回格删除
 	stty erase "^H"
-	echo -e "1) LAMP LNMP LANMP Installation.\n2) Some Useful Tools.\n3) Exit.\n"
+	echo -e "1) LAMP LNMP LANMP Installation.\n2) Some Useful Tools.\n3) Upgrade Software\n4) Exit.\n"
 	read -p "please select: " select
 	case $select in
 	1) echo "you select Pre-installation settings." ; if_use_previous_setting ; break;;
 	2) echo "you select tools." ; tools_setting ; break;;
-	3) echo "you select exit." ; exit 1;;
+	3) echo "you select Upgrade Software." ; upgrade_software ; break;;
+	4) echo "you select exit." ; exit 1;;
 	*) echo "input error.";;
 	esac
 done

@@ -363,6 +363,9 @@ other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpM
 #工具菜单设置
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Back_to_main_menu)
 
+#升级软件菜单
+upgrade_arr=(Upgrade_nginx_tengine_openresty Back_to_main_menu)
+
 #支持rpm打包的软件
 rpm_support_arr=(Nginx Apache PHP MySQL Memcached PureFTPd)
 

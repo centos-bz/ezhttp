@@ -119,7 +119,7 @@ Upgrade_nginx_tengine_openresty(){
 		fi	
 
 	else
-		echo "can be get nginx master pid,may be nginx is not started,nginx is going to start..."
+		echo "can not get nginx master pid,may be nginx is not started,nginx is going to start..."
 		/etc/init.d/nginx start
 	fi
 

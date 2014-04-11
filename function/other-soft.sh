@@ -402,6 +402,7 @@ EOF
 
 chown -R mongod ${mongodb_location}
 chown -R mongod ${mongodb_data_location}
+chmod +x /etc/init.d/mongod
 }
 
 

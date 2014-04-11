@@ -8,6 +8,20 @@ export PATH
 #   website: http://www.centos.bz/ezhttp/
 #===============================================================================
 
+#判断路径输入是否合法
+filter_location(){
+local location=$1
+if ! echo $location | grep -q "^/";then
+	while true
+	do
+		read -p "input error,please input location again." location
+		echo $location | grep -q "^/" && echo $location && break
+	done
+else
+	echo $location
+fi
+}
+
 yes_or_no(){
 local prompt=$1
 local yaction=$2
@@ -115,6 +129,8 @@ fi
 }
 
 lnamp_vhost_add(){
+set_apache_allow_syntax
+
 #输入域名
 while true; do
 	read -p "input server names(ie.www.centos.bz centos.bz): " server_names
@@ -184,7 +200,7 @@ DirectoryIndex index.php index.html index.htm
 Options +Includes -Indexes
 AllowOverride All
 Order Deny,Allow
-Allow from All
+${allow_from_all}
 php_admin_value open_basedir ${website_root}:/tmp:/proc
 </Directory>
 ErrorLog  /home/wwwlog/${server_names%% *}/error_apache.log
@@ -350,7 +366,54 @@ apache_vhost(){
 	esac
 }
 
+set_apache_allow_syntax(){
+	if [[ $apache_location == "" ]]; then
+		while true; do
+			read -p "sorry,can not figure out the apache location,please input(default:/usr/local/apache): " apache_location
+			apache_location=${apache_location:=/usr/local/apache}
+			apache_location=`filter_location "$apache_location"`
+
+			#判断版本
+			if ${apache_location}/bin/httpd -v | grep -q "Apache/2.4"; then
+				allow_from_all="Require all granted"
+				break
+			elif ${apache_location}/bin/httpd -v | grep -q "Apache/2.2"; then
+				allow_from_all="Allow from All"
+				break
+			else
+				echo "can not get apache version,may be the "
+			fi		
+		done
+	else
+		#判断版本
+		if ${apache_location}/bin/httpd -v | grep -q "Apache/2.4"; then
+			allow_from_all="Require all granted"	
+		elif ${apache_location}/bin/httpd -v | grep -q "Apache/2.2"; then
+			allow_from_all="Allow from All"
+		else
+			while true; do
+				read -p "sorry,can not figure out the apache location,please input(default:/usr/local/apache): " apache_location
+				apache_location=${apache_location:=/usr/local/apache}
+				apache_location=`filter_location "$apache_location"`
+
+				#判断版本
+				if ${apache_location}/bin/httpd -v | grep -q "Apache/2.4"; then
+					allow_from_all="Require all granted"
+					break
+				elif ${apache_location}/bin/httpd -v | grep -q "Apache/2.2"; then
+					allow_from_all="Allow from All"
+					break
+				else
+					echo "can not get apache version,may be the "
+				fi		
+			done
+		fi		
+	fi		
+}
+
 apache_vhost_add(){
+set_apache_allow_syntax
+
 #输入域名
 while true; do
 	read -p "input server names(ie.www.centos.bz centos.bz): " server_names
@@ -378,7 +441,7 @@ DirectoryIndex index.php index.html index.htm
 Options +Includes -Indexes
 AllowOverride All
 Order Deny,Allow
-Allow from All
+${allow_from_all}
 php_admin_value open_basedir ${website_root}:/tmp:/proc
 </Directory>
 ErrorLog  /home/wwwlog/${server_names%% *}/error.log

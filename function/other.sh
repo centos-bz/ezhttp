@@ -195,13 +195,13 @@ done
 post_done(){
 echo "start programs..."
 #启动nginx
-[ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] &&  /etc/init.d/nginx start
+[ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] &&  service nginx start
 #启动apache
-[ "$apache" != "do_not_install" ] && [ "$stack" != "lnmp" ] && /etc/init.d/httpd start
+[ "$apache" != "do_not_install" ] && [ "$stack" != "lnmp" ] && service httpd start
 #启动mysql
 if 	[ "$mysql" != "do_not_install" ] &&  [ "$mysql" != "libmysqlclient18" ];then
 	#配置mysql
-	/etc/init.d/mysqld start
+	service mysqld start
 	${mysql_location}/bin/mysqladmin -u root password "$mysql_root_pass"
 	#add to path
 	! grep -q "${mysql_location}/bin" /etc/profile && echo "PATH=${mysql_location}/bin:$PATH" >> /etc/profile
@@ -210,17 +210,17 @@ fi
 #启动php
 [ "$php" != "do_not_install" ] && [ $php_mode == "with_fastcgi" ] && /etc/init.d/php-fpm start
 #启动各软件
-if_in_array "${memcached_filename}" "$other_soft_install" && /etc/init.d/memcached start
-if_in_array "${PureFTPd_filename}" "$other_soft_install" && /etc/init.d/pureftpd start
-if_in_array "${redis_filename}" "$other_soft_install" && /etc/init.d/redis start
-if_in_array "${mongodb_filename}" "$other_soft_install" && /etc/init.d/mongod start
+if_in_array "${memcached_filename}" "$other_soft_install" && service memcached start
+if_in_array "${PureFTPd_filename}" "$other_soft_install" && service pureftpd start
+if_in_array "${redis_filename}" "$other_soft_install" && service redis start
+if_in_array "${mongodb_filename}" "$other_soft_install" && service mongod start
 
 #安装模块时重启php
 if [ "$php" == "do_not_install" ] && [ "$php_modules_install" != "do_not_install" ];then
 	if [ "$stack" == "lnmp" ];then
-		/etc/init.d/php-fpm restart
+		service php-fpm restart
 	else
-		/etc/init.d/httpd restart
+		service httpd restart
 	fi
 fi
 

@@ -50,7 +50,7 @@ uninstall(){
 
 	if [ "$nginx_location" != "" ];then
 		echo "uninstalling nginx"
-		/etc/init.d/nginx stop
+		service nginx stop
 		boot_stop nginx
 		rm -f /etc/init.d/nginx
 		rm -rf "$nginx_location"  && echo "Sucess" 
@@ -58,7 +58,7 @@ uninstall(){
 
 	if [ "$apache_location" != "" ];then
 		echo "uninstalling apache"
-		/etc/init.d/httpd stop
+		service httpd stop
 		boot_stop httpd
 		rm -f /etc/init.d/httpd
 		rm -rf "$apache_location"  && echo "Sucess" 
@@ -66,7 +66,7 @@ uninstall(){
 		
 	if [ "$mysql_location" != "" ];then
 		echo "uninstalling mysql"
-		/etc/init.d/mysqld stop
+		service mysqld stop
 		boot_stop mysqld
 		rm -f /etc/init.d/mysqld
 		rm -rf "$mysql_location"  && echo "Sucess" 
@@ -82,7 +82,7 @@ uninstall(){
 		
 	if [ "$memcached_location" != "" ];then
 		echo "uninstalling memcached"
-		/etc/init.d/memcached stop
+		service memcached stop
 		boot_stop memcached
 		rm -f /etc/init.d/memcached
 		rm -rf "$memcached_location"  && echo "Sucess"
@@ -90,7 +90,7 @@ uninstall(){
 		
 	if [ "$pureftpd_location" != "" ];then
 		echo "uninstalling pureftpd"
-		/etc/init.d/pureftpd stop
+		service pureftpd stop
 		boot_stop pureftpd
 		rm -f /etc/init.d/pureftpd
 		rm -rf "$pureftpd_location"  && echo "Sucess"

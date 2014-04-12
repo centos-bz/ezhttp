@@ -525,9 +525,9 @@ CentOSVerCheck(){
 restart_php(){
 	eval `grep "stack=" /tmp/ezhttp_info_do_not_del | tail -1`
 	if [[ $stack == "lnamp" ]] || [[ $stack == "lamp" ]];then
-		/etc/init.d/httpd restart
+		service httpd restart
 	elif [[ $stack == "lnmp" ]]; then
-		/etc/init.d/php-fpm restart
+		service php-fpm restart
 	else
 		echo "can not restart php."
 		exit 1

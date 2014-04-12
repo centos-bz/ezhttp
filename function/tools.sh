@@ -262,11 +262,11 @@ create_nginx_rpm(){
 	local version=`${nginx_location}/sbin/nginx -v 2>&1 | awk -F'/' '{print $2}'`
 	local location="${nginx_location}"
 	local filesPackage="${nginx_location} /etc/init.d/nginx /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
-	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/nginx start"
+	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\nservice nginx start"
 	postCmd=$(echo -e $postCmd)
 	local summary="nginx web server"
 	local description="nginx web server"
-	local preun="/etc/init.d/nginx stop"
+	local preun="service nginx stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 }
@@ -277,11 +277,11 @@ create_apache_rpm(){
 	local version=`${apache_location}/bin/httpd -v | awk -F'[/ ]' 'NR==1{print $4}'`
 	local location="${apache_location}"
 	local filesPackage="${apache_location} /etc/init.d/httpd /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
-	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/httpd start"
+	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\nservice httpd start"
 	postCmd=$(echo -e $postCmd)
 	local summary="apache web server"
 	local description="apache web server"
-	local preun="/etc/init.d/httpd stop"
+	local preun="service httpd stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 
@@ -339,15 +339,15 @@ create_mysql_rpm(){
 	filesPackage="$filesPackage /etc/init.d/mysqld /usr/bin/mysql /usr/bin/mysqldump /usr/bin/ez /tmp/ezhttp_info_do_not_del"
 	local mysql_data_location=`${mysql_location}/bin/mysqld --print-defaults  | sed -r -n 's#.*datadir=([^ ]+).*#\1#p'`
 
-	local postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\n/etc/init.d/mysqld start"
+	local postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\nservice mysqld start"
 	if echo $version | grep -q "^5\.1\.";then
-		postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\n/etc/init.d/mysqld start"
+		postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\nservice mysqld start"
 	fi
 
 	postCmd=$(echo -e $postCmd)
 	local summary="mysql server"
 	local description="mysql server"
-	local preun="/etc/init.d/mysqld stop"
+	local preun="service mysqld stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 
@@ -359,10 +359,10 @@ create_memcached_rpm(){
 	local version=`${memcached_location}/bin/memcached -h | awk 'NR==1{print $2}'`
 	local location="${memcached_location}"
 	local filesPackage="${memcached_location} /etc/init.d/memcached"
-	local postCmd="/etc/init.d/memcached start"
+	local postCmd="service memcached start"
 	local summary="memcached cache server"
 	local description="memcached cache server"
-	local preun="/etc/init.d/memcached stop"
+	local preun="service memcached stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 
@@ -375,10 +375,10 @@ create_pureftpd_rpm(){
 	local version=`${pureftpd_location}/sbin/pure-ftpd -h | awk 'NR==1{print $2}' | tr -d v`
 	local location="${pureftpd_location}"
 	local filesPackage="${pureftpd_location} /etc/init.d/pureftpd /usr/bin/ez /tmp/ezhttp_info_do_not_del"
-	local postCmd="/etc/init.d/pureftpd start"
+	local postCmd="service pureftpd start"
 	local summary="pureftpd ftp server"
 	local description="pureftpd ftp server"
-	local preun="/etc/init.d/pureftpd stop"
+	local preun="service pureftpd stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 
@@ -588,9 +588,9 @@ Change_sshd_port(){
 	#重启sshd
 	local restartCmd=''
 	if check_sys_version debian || check_sys_version ubuntu; then
-		restartCmd="/etc/init.d/ssh restart"
+		restartCmd="service ssh restart"
 	else
-		restartCmd="/etc/init.d/sshd restart"
+		restartCmd="service sshd restart"
 	fi
 	$restartCmd
 
@@ -797,7 +797,7 @@ save_iptables(){
 	if check_sys_version ubuntu || check_sys_version debian;then
 		iptables-save > /etc/iptables.rule
 	elif check_sys_version centos;then
-		/etc/init.d/iptables save
+		service iptables save
 	fi
 }
 
@@ -819,7 +819,7 @@ rescore_iptables(){
 			echo "/etc/iptables.rule not found,can not be rescore iptables."
 		fi	
 	elif check_sys_version centos;then
-		/etc/init.d/iptables restart
+		service iptables restart
 		echo "rescore iptables done."
 	fi
 	list_iptables
@@ -937,13 +937,13 @@ Set_timezone_and_sync_time(){
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
 		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
-		/etc/init.d/cron restart
+		service cron restart
 	elif check_sys_version centos; then
 		yum -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
 		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root
-		/etc/init.d/crond restart
+		service crond restart
 	fi
 	echo "current timezone is $(date +%z)"
 	echo "current time is $(date +%Y-%m-%d" "%H:%M:%S)"	

@@ -295,7 +295,7 @@ check_port_socket_exist(){
 		fi
 
 		if [[ $php != "do_not_install" ]]; then
-			kill_pid "socket" "/tmp/php-cgi.sock"
+			kill_pid "port" "9000"
 		fi	
 
 		if [[ $mysql != "do_not_install" ]]; then

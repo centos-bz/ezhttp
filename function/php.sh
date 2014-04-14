@@ -342,21 +342,18 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		sed -i "s#^php_location=.*#php_location=$php_location#" /etc/init.d/php-fpm
 		chmod +x /etc/init.d/php-fpm
 		sed -i  's#.*<value name="user">.*#<value name="user">www</value>#' ${php_location}/etc/php-fpm.conf
-		sed -i 's#127.0.0.1:9000#/tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
 	elif [ "$php" == "${php5_3_filename}" ]; then
 		\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 		chmod +x /etc/init.d/php-fpm
 		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
 		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
-		sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
 	elif [ "$php" == "${php5_4_filename}" ]; then
 		\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 		chmod +x /etc/init.d/php-fpm
 		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
 		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
-		sed -i 's#listen = 127.0.0.1:9000#listen = /tmp/php-cgi.sock#' ${php_location}/etc/php-fpm.conf
 
 	fi
 

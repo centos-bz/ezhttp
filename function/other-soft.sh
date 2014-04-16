@@ -93,7 +93,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 
 		default_data_location="$mongodb_location/data/"
 		read -p "input $mongodb_filename data location(default:$default_data_location): " mongodb_data_location
-		mongodb_data_location=${mongodb_data_location:=$default_location}
+		mongodb_data_location=${mongodb_data_location:=$default_data_location}
 		mongodb_data_location=`filter_location "$mongodb_data_location"`
 		echo "mongodb data location: $mongodb_data_location"		
 	fi

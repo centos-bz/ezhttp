@@ -1,3 +1,8 @@
+#随机生成密码
+generate_password(){
+	cat /dev/urandom | head -1 | md5sum | head -c 8
+}
+
 #杀掉进程
 kill_pid(){
 	local processType=$1
@@ -525,7 +530,7 @@ CentOSVerCheck(){
 restart_php(){
 	eval `grep "stack=" /tmp/ezhttp_info_do_not_del | tail -1`
 	if [[ $stack == "lnamp" ]] || [[ $stack == "lamp" ]];then
-		service httpd restart
+		/etc/init.d/httpd restart
 	elif [[ $stack == "lnmp" ]]; then
 		service php-fpm restart
 	else

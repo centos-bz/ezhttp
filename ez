@@ -119,7 +119,7 @@ else
 	#重载配置
 	echo "reloading the apache config file..."
 	if ${apache_location}/bin/apachectl -t;then
-		service httpd restart
+		/etc/init.d/httpd restart
 		echo "reload success."
 	else
 	 	echo "reload failed.config file had an error,please fix it."
@@ -211,7 +211,7 @@ EOF
 #重载配置
 echo "reloading the apache config file..."
 if ${apache_location}/bin/apachectl -t;then
-	service httpd restart
+	/etc/init.d/httpd restart
 	echo "reload success."
 else
  	echo "reload failed.config file had an error,please fix it."
@@ -456,7 +456,7 @@ chown -R www ${website_root}
 #重载配置
 echo "reloading the apache config file..."
 if ${apache_location}/bin/apachectl -t;then
-	service httpd restart
+	/etc/init.d/httpd restart
 	echo "reload success."
 else
  	echo "reload failed.config file had an error,please fix it."
@@ -479,7 +479,7 @@ else
 	#重载配置
 	echo "reloading the apache config file..."
 	if ${apache_location}/bin/apachectl -t;then
-		service httpd restart
+		/etc/init.d/httpd restart
 		echo "reload success."
 	else
 	 	echo "reload failed.config file had an error,please fix it."
@@ -569,14 +569,14 @@ mysql_del(){
 
 mysql_reset(){
 	read -p "please input a new password for root user: " password
-	service mysqld stop 2>&1 >/dev/null
+	/etc/init.d/mysqld stop 2>&1 >/dev/null
 	if [ "$mysql_location" == "" ];then
 		read -p "mysql location not found,input mysql location(ie./usr/local/mysql): " mysql_location
 	fi	
 	${mysql_location}/bin/mysqld_safe  --defaults-file=${mysql_location}/etc/my.cnf --skip-grant-tables 2>&1 >/dev/null &
 	echo "wait for 8 seconds..."
 	sleep 8 && ${mysql_location}/bin/mysql -u root -e "use mysql;update user set password=PASSWORD(\"${password}\") where User='root';flush privileges;" 
-	service mysqld restart 2>&1 >/dev/null
+	/etc/init.d/mysqld restart 2>&1 >/dev/null
 	echo  "show databases;" | ${mysql_location}/bin/mysql -uroot -p${password}  > /dev/null 2>&1 && echo "successfully reset your mysql root password" || echo "Sorry,failed to reset your root password."
 
 }
@@ -594,13 +594,18 @@ ftp_user(){
 }
 
 ftp_user_add(){
-	read -p "input ftp user name: " ftp_username
-	read  -p "input ftp password: " ftp_pass
-	read -p "input ftp user $ftp_username Home Directory: " ftp_home
-	useradd -d $ftp_home -c pure-ftpd -s /bin/sh $ftp_username
-	echo $ftp_username:$ftp_pass | chpasswd
-	chown -R "$ftp_username" "$ftp_home"
-	echo "successfully add ftp user $ftp_username."
+	if [[ $user_manager_pureftpd == true ]]; then
+		echo "you had installed pure-ftpd with mysql.you should add ftp user with user manager panel."
+		exit 1
+	else
+		read -p "input ftp user name: " ftp_username
+		read  -p "input ftp password: " ftp_pass
+		read -p "input ftp user $ftp_username Home Directory: " ftp_home
+		useradd -d $ftp_home -c pure-ftpd -s /bin/sh $ftp_username
+		echo $ftp_username:$ftp_pass | chpasswd
+		chown -R "$ftp_username" "$ftp_home"
+		echo "successfully add ftp user $ftp_username."
+	fi	
 }
 
 ftp_user_list(){

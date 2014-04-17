@@ -46,6 +46,34 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		pureftpd_location=${pureftpd_location:=/usr/local/pureftpd}
 		pureftpd_location=`filter_location "$pureftpd_location"`
 		echo "pureftpd location: $pureftpd_location"
+		yes_or_no "Would you like to install web user manager for pureftpd [N/y]: " "user_manager_pureftpd=true" "echo 'you select not install web manager'"
+		if [[ $yn == "y" ]]; then
+			if [[ $mysql_root_pass == "" ]]; then
+				read -p "please input mysql root password: " mysql_root_pass
+				read -p "please input mysql install location(default:/usr/local/mysql): " mysql_location
+				mysql_location=${mysql_location:=/usr/local/mysql}
+				mysql_location=`filter_location "$mysql_location"`
+			fi
+
+			#输入use_manager_pureftpd安装路径
+			read -p "please input pureftpd user web manager install location(default:/home/wwwroot/ftp/): " user_manager_location
+			user_manager_location=${user_manager_location:=/home/wwwroot/ftp/}
+			user_manager_location=`filter_location "$user_manager_location"`
+
+			#输入pureftpd数据库及用户信息
+			read -p "please input mysql database name for storing pureftpd user data(default:pureftpd): " pureftpd_database
+			pureftpd_database=${pureftpd_database:=pureftpd}
+			read -p "please input the user for database $pureftpd_database(default:ftpuser)" pureftpd_user
+			pureftpd_user=${pureftpd_user:=ftpuser}
+			read -p "please input the password for mysql user $pureftpd_user(default:generate by random.): " pureftpd_user_pass
+			[[ $pureftpd_user_pass == "" ]] && echo "generate password.." &&  pureftpd_user_pass=`generate_password` && echo "password is $pureftpd_user_pass"
+
+			#输入user_manger_pureftpd用户和密码
+			read -p "please input the user for login pureftpd web manager(default:admin): " pureftpd_login_user
+			pureftpd_login_user=${pureftpd_login_user:=admin}
+			read -p "please input the password for user $pureftpd_login_user(default:generate by random.): " pureftpd_login_pass
+			[[ $pureftpd_login_pass == "" ]] && echo "generate password.." &&  pureftpd_login_pass=`generate_password` && echo "password is $pureftpd_login_pass"
+		fi
 	fi	
 
 	#phpmyadmin安装路径
@@ -193,7 +221,8 @@ cd $cur_dir/soft/
 tar xzvf ${PureFTPd_filename}.tar.gz
 cd ${PureFTPd_filename}
 make clean
-error_detect "./configure --prefix=$pureftpd_location"
+[[ $user_manager_pureftpd == true ]] && other_option="--with-mysql=${mysql_location} --with-altlog --with-cookie --with-throttling --with-ratios --with-quotas --with-language=simplified-chinese" || other_option=""
+error_detect "./configure --prefix=$pureftpd_location $other_option"
 error_detect "parallel_make"
 error_detect "make install"
 mkdir -p $pureftpd_location/etc
@@ -207,6 +236,54 @@ sed -i "s#\${exec_prefix}#$pureftpd_location#" $pureftpd_location/bin/pure-confi
 chmod +x ${pureftpd_location}/bin/pure-config.pl
 echo "pureftpd_location=$pureftpd_location" >> /tmp/ezhttp_info_do_not_del
 boot_start pureftpd
+
+#如果选择安装ftp面板
+if [[ $user_manager_pureftpd == true ]]; then
+	#修改pure-ftpd.conf
+	if ! grep -q "^MySQLConfigFile" $pureftpd_location/etc/pure-ftpd.conf;then
+		sed -i "s@# MySQLConfigFile.*@MySQLConfigFile    $pureftpd_location/etc/pureftpd-mysql.conf@" $pureftpd_location/etc/pure-ftpd.conf
+		if ! grep -q "^MySQLConfigFile" $pureftpd_location/etc/pure-ftpd.conf;then
+			echo "MySQLConfigFile    $pureftpd_location/etc/pureftpd-mysql.conf" >> $pureftpd_location/etc/pure-ftpd.conf
+		fi	
+	fi
+
+	#增加pureftpd-mysql.conf
+	cat > $pureftpd_location/etc/pureftpd-mysql.conf <<EOF
+	MYSQLSocket     /tmp/mysql.sock
+	MYSQLPort       3306
+	MYSQLUser       $pureftpd_user
+	MYSQLPassword   $pureftpd_user_pass
+	MYSQLDatabase   $pureftpd_database
+	MYSQLCrypt 	md5
+
+
+	MYSQLGetPW      SELECT Password FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+	MYSQLGetUID     SELECT Uid FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+	MYSQLGetGID     SELECT Gid FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+	MYSQLGetDir     SELECT Dir FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+	MySQLGetRatioUL SELECT ULRatio FROM users WHERE User="\L"
+	MySQLGetRatioDL SELECT DLRatio FROM users WHERE User="\L"
+	MySQLGetBandwidthUL SELECT ULBandwidth FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+	MySQLGetBandwidthDL SELECT DLBandwidth FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+
+EOF
+
+	#安装ftp面板
+	download_file "$user_manager_pureftpd_other_link" "$user_manager_pureftpd_official_link" "${user_manager_pureftpd_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${user_manager_pureftpd_filename}.tar.gz
+	mkdir -p ${user_manager_location}
+	\cp -a ftp/* ${user_manager_location}
+	sed -i 's/$LANG = "English";/$LANG = "Chinese";/' ${user_manager_location}/config.php
+	sed -i "s/$DBLogin = \"ftp\";/$DBLogin = \"$pureftpd_user\";/" ${user_manager_location}/config.php
+	sed -i "s/$DBPassword = \"tmppasswd\";/$DBPassword = \"$pureftpd_user_pass\";/" ${user_manager_location}/config.php
+	sed -i "s/$DBDatabase = \"ftpusers\";/$DBDatabase = \"$pureftpd_database\";/" ${user_manager_location}/config.php
+
+	#记录安装信息
+	echo "user_manager_pureftpd=true" >> /tmp/ezhttp_info_do_not_del
+else
+	echo "user_manager_pureftpd=false" >> /tmp/ezhttp_info_do_not_del
+fi	
 }
 
 #安装redis

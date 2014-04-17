@@ -262,11 +262,11 @@ create_nginx_rpm(){
 	local version=`${nginx_location}/sbin/nginx -v 2>&1 | awk -F'/' '{print $2}'`
 	local location="${nginx_location}"
 	local filesPackage="${nginx_location} /etc/init.d/nginx /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
-	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\nservice nginx start"
+	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/nginx start"
 	postCmd=$(echo -e $postCmd)
 	local summary="nginx web server"
 	local description="nginx web server"
-	local preun="service nginx stop"
+	local preun="/etc/init.d/nginx stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 }
@@ -277,11 +277,11 @@ create_apache_rpm(){
 	local version=`${apache_location}/bin/httpd -v | awk -F'[/ ]' 'NR==1{print $4}'`
 	local location="${apache_location}"
 	local filesPackage="${apache_location} /etc/init.d/httpd /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
-	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\nservice httpd start"
+	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/httpd start"
 	postCmd=$(echo -e $postCmd)
 	local summary="apache web server"
 	local description="apache web server"
-	local preun="service httpd stop"
+	local preun="/etc/init.d/httpd stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 
@@ -339,15 +339,15 @@ create_mysql_rpm(){
 	filesPackage="$filesPackage /etc/init.d/mysqld /usr/bin/mysql /usr/bin/mysqldump /usr/bin/ez /tmp/ezhttp_info_do_not_del"
 	local mysql_data_location=`${mysql_location}/bin/mysqld --print-defaults  | sed -r -n 's#.*datadir=([^ ]+).*#\1#p'`
 
-	local postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\nservice mysqld start"
+	local postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\n/etc/init.d/mysqld start"
 	if echo $version | grep -q "^5\.1\.";then
-		postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\nservice mysqld start"
+		postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\n/etc/init.d/mysqld start"
 	fi
 
 	postCmd=$(echo -e $postCmd)
 	local summary="mysql server"
 	local description="mysql server"
-	local preun="service mysqld stop"
+	local preun="/etc/init.d/mysqld stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 
@@ -359,10 +359,10 @@ create_memcached_rpm(){
 	local version=`${memcached_location}/bin/memcached -h | awk 'NR==1{print $2}'`
 	local location="${memcached_location}"
 	local filesPackage="${memcached_location} /etc/init.d/memcached"
-	local postCmd="service memcached start"
+	local postCmd="/etc/init.d/memcached start"
 	local summary="memcached cache server"
 	local description="memcached cache server"
-	local preun="service memcached stop"
+	local preun="/etc/init.d/memcached stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 
@@ -375,10 +375,10 @@ create_pureftpd_rpm(){
 	local version=`${pureftpd_location}/sbin/pure-ftpd -h | awk 'NR==1{print $2}' | tr -d v`
 	local location="${pureftpd_location}"
 	local filesPackage="${pureftpd_location} /etc/init.d/pureftpd /usr/bin/ez /tmp/ezhttp_info_do_not_del"
-	local postCmd="service pureftpd start"
+	local postCmd="/etc/init.d/pureftpd start"
 	local summary="pureftpd ftp server"
 	local description="pureftpd ftp server"
-	local preun="service pureftpd stop"
+	local preun="/etc/init.d/pureftpd stop"
 
 	make_rpm "${name}" "$version" "$location" "$filesPackage" "$postCmd" "$summary" "$description" "$preun"
 

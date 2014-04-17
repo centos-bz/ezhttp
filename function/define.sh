@@ -179,6 +179,11 @@ PureFTPd_filename="pure-ftpd-1.0.36"
 PureFTPd_other_link="http://cdn.yyupload.com/down/499809/software/pure-ftpd-1.0.36.tar.gz"
 PureFTPd_official_link="http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz"
 
+#user_manager_pureftpd设置
+user_manager_pureftpd_filename="ftp_v2.1"
+user_manager_pureftpd_other_link="http://cdn.yyupload.com/down/499809/software/ftp_v2.1.tar.gz"
+user_manager_pureftpd_official_link="http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz"
+
 #mongodb设置
 mongodb32_filename="mongodb-linux-i686-2.4.9"
 mongodb32_other_link="http://cdn.yyupload.com/down/499809/software/mongodb-linux-i686-2.4.9.tgz"

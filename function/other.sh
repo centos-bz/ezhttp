@@ -158,6 +158,13 @@ php_configure_args='${php_configure_args}'
 other_soft_install="${other_soft_install}"
 memcached_location="${memcached_location}"
 pureftpd_location="${pureftpd_location}"
+user_manager_location="${user_manager_location}"
+user_manager_pureftpd="${user_manager_pureftpd}"
+pureftpd_database="${pureftpd_database}"
+pureftpd_user="${pureftpd_user}"
+pureftpd_user_pass="${pureftpd_user_pass}"
+pureftpd_login_user="${pureftpd_login_user}"
+pureftpd_login_pass="${pureftpd_login_pass}"
 phpmyadmin_location="${phpmyadmin_location}"
 redis_location="${redis_location}"
 redisMaxMemory="${redisMaxMemory}"
@@ -195,32 +202,75 @@ done
 post_done(){
 echo "start programs..."
 #启动nginx
-[ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] &&  service nginx start
+[ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] &&  /etc/init.d/nginx start
 #启动apache
-[ "$apache" != "do_not_install" ] && [ "$stack" != "lnmp" ] && service httpd start
+[ "$apache" != "do_not_install" ] && [ "$stack" != "lnmp" ] && /etc/init.d/httpd start
 #启动mysql
 if 	[ "$mysql" != "do_not_install" ] &&  [ "$mysql" != "libmysqlclient18" ];then
 	#配置mysql
-	service mysqld start
+	/etc/init.d/mysqld start
 	${mysql_location}/bin/mysqladmin -u root password "$mysql_root_pass"
 	#add to path
 	! grep -q "${mysql_location}/bin" /etc/profile && echo "PATH=${mysql_location}/bin:$PATH" >> /etc/profile
 	. /etc/profile
 fi
+
+if [[ $user_manager_pureftpd == true ]]; then
+
+#pureftpd web panel设置
+${mysql_location}/bin/mysql -uroot -p${mysql_root_pass} <<EOF
+DROP DATABASE IF EXISTS ${pureftpd_database};
+CREATE DATABASE ${pureftpd_database};
+
+grant all privileges on ${pureftpd_database}.* to '${pureftpd_user}'@'localhost' identified by '${pureftpd_user_pass}';
+grant all privileges on ${pureftpd_database}.* to '${pureftpd_user}'@'127.0.0.1' identified by '${pureftpd_user_pass}';
+FLUSH PRIVILEGES;
+
+USE ${pureftpd_database};
+CREATE TABLE admin (
+  Username varchar(35) NOT NULL default '',
+  Password char(32) binary NOT NULL default '',
+  PRIMARY KEY  (Username)
+);
+
+INSERT INTO admin VALUES ('${pureftpd_login_user}',MD5('${pureftpd_login_pass}'));
+CREATE TABLE users (
+  User varchar(16) NOT NULL default '',
+  Password varchar(32) binary NOT NULL default '',
+  Uid int(11) NOT NULL default '14',
+  Gid int(11) NOT NULL default '5',
+  Dir varchar(128) NOT NULL default '',
+  QuotaFiles int(10) NOT NULL default '500',
+  QuotaSize int(10) NOT NULL default '30',
+  ULBandwidth int(10) NOT NULL default '80',
+  DLBandwidth int(10) NOT NULL default '80',
+  Ipaddress varchar(15) NOT NULL default '*',
+  Comment tinytext,
+  Status enum('0','1') NOT NULL default '1',
+  ULRatio smallint(5) NOT NULL default '1',
+  DLRatio smallint(5) NOT NULL default '1',
+  PRIMARY KEY  (User),
+  UNIQUE KEY User (User)
+);
+
+EOF
+
+fi
+
 #启动php
 [ "$php" != "do_not_install" ] && [ $php_mode == "with_fastcgi" ] && /etc/init.d/php-fpm start
 #启动各软件
-if_in_array "${memcached_filename}" "$other_soft_install" && service memcached start
-if_in_array "${PureFTPd_filename}" "$other_soft_install" && service pureftpd start
-if_in_array "${redis_filename}" "$other_soft_install" && service redis start
-if_in_array "${mongodb_filename}" "$other_soft_install" && service mongod start
+if_in_array "${memcached_filename}" "$other_soft_install" && /etc/init.d/memcached start
+if_in_array "${PureFTPd_filename}" "$other_soft_install" && /etc/init.d/pureftpd start
+if_in_array "${redis_filename}" "$other_soft_install" && /etc/init.d/redis start
+if_in_array "${mongodb_filename}" "$other_soft_install" && /etc/init.d/mongod start
 
 #安装模块时重启php
 if [ "$php" == "do_not_install" ] && [ "$php_modules_install" != "do_not_install" ];then
 	if [ "$stack" == "lnmp" ];then
 		service php-fpm restart
 	else
-		service httpd restart
+		/etc/init.d/httpd restart
 	fi
 fi
 
@@ -270,6 +320,9 @@ last_confirm(){
 	echo "Other Software: ${other_soft_install}"
 	if_in_array "${memcached_filename}" "$other_soft_install" && echo "memcached location: $memcached_location"
 	if_in_array "${PureFTPd_filename}" "$other_soft_install" && echo "pureftpd location: $pureftpd_location"
+	[[ $user_manager_pureftpd == true ]] && echo "pureftpd web panel location: $user_manager_location" && \
+	echo "pureftpd db: $pureftpd_database" && echo "pureftpd db user: ${pureftpd_user}" && \
+	echo "pureftpd db user password: $pureftpd_user_pass" && echo "pureftpd panel login user: ${pureftpd_login_user}" && echo "pureftpd panel login user password: ${pureftpd_login_pass}"
 	if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && echo "phpmyadmin_location: $phpmyadmin_location"
 	if_in_array "${redis_filename}" "$other_soft_install" && echo "redis_location: $redis_location"
 	if_in_array "${mongodb_filename}" "$other_soft_install" && echo "mongodb_location: $mongodb_location"

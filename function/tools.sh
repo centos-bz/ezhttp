@@ -76,9 +76,16 @@ make_mysql_my_cnf(){
 	#设置myisam及innodb内存
 	if [ "$storage" == "InnoDB" ];then
 		key_buffer_size=32M
+		if ! is_64bit && [[ `echo $innodb_buffer_pool_size | tr -d G` -ge 4 ]];then
+			innodb_buffer_pool_size=2G
+		fi	
+
 	elif [ "$storage" == "MyISAM" ]; then
 		innodb_log_file_size=32M
 		innodb_buffer_pool_size=8M
+		if ! is_64bit && [[ `echo $key_buffer_size | tr -d G` -ge 4 ]];then
+			key_buffer_size=2G
+		fi			
 	fi
 
 	echo "generate my.cnf..."

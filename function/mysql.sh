@@ -264,4 +264,8 @@ cd /usr/bin/
 ln -s $mysql_location/bin/mysql
 ln -s $mysql_location/bin/mysqldump
 boot_start mysqld
+
+#add to /etc/ld.so.conf.d/mysql.conf
+! grep "${mysql_location}/lib$" /etc/ld.so.conf.d/mysql.conf && echo "${mysql_location}/lib" >> /etc/ld.so.conf.d/mysql.conf
+! grep "${mysql_location}/lib64$" /etc/ld.so.conf.d/mysql.conf && echo "${mysql_location}/lib64" >> /etc/ld.so.conf.d/mysql.conf
 }

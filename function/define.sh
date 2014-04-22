@@ -81,9 +81,9 @@ php_memcache_other_link="http://cdn.yyupload.com/down/499809/software/memcache-3
 php_memcache_official_link="http://pecl.php.net/get/memcache-3.0.8.tgz"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.8.8-9"
-ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.8-9.tar.gz"
-ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.8-9.tar.gz"
+ImageMagick_filename="ImageMagick-6.8.9-0"
+ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.9-0.tar.gz"
+ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.9-0.tar.gz"
 
 #php redis模块设置
 php_redis_filename="redis-2.2.4"
@@ -341,9 +341,9 @@ libevent_other_link="http://cdn.yyupload.com/down/499809/software/libevent-2.0.2
 libevent_official_link="http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz"
 
 #apr设置
-apr_filename="apr-1.5.0"
-apr_other_link="http://cdn.yyupload.com/down/499809/software/apr-1.5.0.tar.gz"
-apr_official_link="http://apache.cs.utah.edu/apr/apr-1.5.0.tar.gz"
+apr_filename="apr-1.5.1"
+apr_other_link="http://cdn.yyupload.com/down/499809/software/apr-1.5.1.tar.gz"
+apr_official_link="http://apache.cs.utah.edu/apr/apr-1.5.1.tar.gz"
 
 #apr-util设置
 apr_util_filename="apr-util-1.5.3"

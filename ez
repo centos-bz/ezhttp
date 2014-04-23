@@ -8,6 +8,15 @@ export PATH
 #   website: http://www.centos.bz/ezhttp/
 #===============================================================================
 
+#保证是在根用户下运行
+rootness(){
+# Make sure only root can run our script
+if [[ $EUID -ne 0 ]]; then
+	echo "This script must be run as root" 1>&2
+	exit 1
+fi
+}
+
 #判断路径输入是否合法
 filter_location(){
 local location=$1
@@ -677,8 +686,10 @@ done
 rewrite_rule=${rewrite_rules[$rule-1]}
 }
 
+#程序从这里开始
+rootness
 if [ $# != 2 ];then
-	echo "Usage: lx program_name action"
+	echo "Usage: ez program_name action"
 	exit 1
 fi
 

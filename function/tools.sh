@@ -957,6 +957,45 @@ Set_timezone_and_sync_time(){
 
 }
 
+#初始化mysql数据库
+Initialize_mysql_server(){
+	while true; do
+		read -p "please input mysql install location(default:/usr/local/mysql): " mysql_location
+		mysql_location=${mysql_location:=/usr/local/mysql}
+		version=`${mysql_location}/bin/mysql -V  | grep -o -E "[0-9]+\.[0-9]+\.[0-9]+"`
+		if [[ $version == "" ]]; then
+			echo "can not get mysql version,may be the location of you input is invalid."
+		else
+			break
+		fi
+	done
+
+	read -p "please input mysql data location(default:${mysql_location}/data/): " mysql_data_location
+	mysql_data_location=${mysql_data_location:=${mysql_location}/data/}
+	mysql_data_location=`filter_location $mysql_data_location`
+
+	read -p "please input mysql root password(default:root): " mysql_root_pass
+	mysql_root_pass=${mysql_root_pass:=root}
+
+	service mysqld stop
+	sleep 1
+	rm -rf ${mysql_data_location}/mysql/
+	if echo $version | grep -q "5\.1";then
+		${mysql_location}/bin/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
+	elif echo $version | grep -q "5\.5";then
+		${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
+	elif echo $version | grep -q "5\.6";then
+		yes_or_no "below operation will be lose all of your mysql data,do you want to continue?[N/y]: " "rm -f ${mysql_data_location}/ibdata1;rm -rf ${mysql_data_location}/ib_logfile*" "exit 1"
+		${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location} --defaults-file=${mysql_location}/etc/my.cnf --user=mysql
+	fi
+	
+	chown -R mysql ${mysql_location} ${mysql_data_location}
+	service mysqld start
+	sleep 1
+	${mysql_location}/bin/mysqladmin -u root password "$mysql_root_pass"
+	echo "initialize mysql done."
+}
+
 #工具设置
 tools_setting(){
 	clear

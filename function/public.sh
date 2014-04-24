@@ -287,9 +287,15 @@ if ! check_integrity ${filename};then
 	wget_file "${backup_url}" "${filename}"
 	#再次测试文件完整性
 	if ! check_integrity ${filename};then
-		echo "fail to download $filename,exited."
-		exit 1
-	fi	
+		echo "fail to download $filename with url $backup_url."
+		echo "begin use backup url to download.."
+		ez_url="https://www.lxconfig.com/files/ezhttp/$(echo $url1 | awk -F '/' '{print $NF}')"
+		wget_file "${ez_url}" "${filename}"
+		if ! check_integrity ${filename};then
+			echo "fail to download $filename,exited."
+			exit 1
+		fi	
+	fi
 fi
 
 }
@@ -298,9 +304,8 @@ fi
 wget_file(){
 	local url=$1
 	local filename=$2
-	if ! wget --tries=3 ${url} -O $filename;then
-		echo "fail to download $filename,exited."
-		exit 1
+	if ! wget --no-check-certificate --tries=3 ${url} -O $filename;then
+		echo "fail to download $filename with url $url."
 	fi
 }
 

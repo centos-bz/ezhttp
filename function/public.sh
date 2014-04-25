@@ -581,3 +581,18 @@ get_php_version(){
 	check_php_config "$phpConfig" || ( echo "php config $phpConfig is invalid";exit 1) 
 	$phpConfig --version | cut -d'.' -f1-2	
 }
+
+#设置php参数
+set_php_variable(){
+	local key=$1
+	local value=$2
+	if grep -q -E "^$key\s*=" $php_location/etc/php.ini;then
+		sed -i -r "s#^$key\s*=.*#$key=$value#" $php_location/etc/php.ini
+	else
+		sed -i -r "s#;\s*$key\s*=.*#$key=$value#" $php_location/etc/php.ini
+	fi
+
+	if ! grep -q -E "^$key\s*=" $php_location/etc/php.ini;then
+		echo "$key=$value" >> $php_location/etc/php.ini
+	fi
+}

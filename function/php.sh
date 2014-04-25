@@ -343,11 +343,25 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		chmod +x /etc/init.d/php-fpm
 		sed -i  's#.*<value name="user">.*#<value name="user">www</value>#' ${php_location}/etc/php-fpm.conf
 
+		set_php_variable safe_mode On
+		set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
+		set_php_variable expose_php Off
+		set_php_variable error_log "${php_location}/logs/php-error.log"
+		set_php_variable cgi.fix_pathinfo 0
+		set_php_variable short_open_tag on
+
 	elif [ "$php" == "${php5_3_filename}" ]; then
 		\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 		chmod +x /etc/init.d/php-fpm
 		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
 		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
+
+		set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
+		set_php_variable expose_php Off
+		set_php_variable error_log  /usr/local/php/var/log/php_errors.log
+		set_php_variable request_order  "CGP"
+		set_php_variable cgi.fix_pathinfo 0
+		set_php_variable short_open_tag on
 
 	elif [ "$php" == "${php5_4_filename}" ]; then
 		\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
@@ -355,13 +369,17 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
 		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
 
+		set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
+		set_php_variable expose_php Off
+		set_php_variable error_log  /usr/local/php/var/log/php_errors.log
+		set_php_variable request_order  "CGP"
+		set_php_variable cgi.fix_pathinfo 0
+		set_php_variable short_open_tag on
+
 	fi
 
 	boot_start php-fpm
 fi
-
-#开启short_open_tag
-sed -i "s/^short_open_tag.*/short_open_tag = on/" $php_location/etc/php.ini
 
 #设置php连接mysql mysql.sock的路径
 sed -i "s#mysql.default_socket.*#mysql.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini

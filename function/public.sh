@@ -104,7 +104,7 @@ create_lib64_dir(){
 	fi	
 }
 
-#监控编译安装中是否有错误，有错误就停止安装,并把错误写入到文件/root/ezhttp_errors.log
+#监控编译安装中是否有错误，有错误就停止安装,并把错误写入到文件/root/ezhttp.log
 error_detect(){
 local command=$1
 local cur_soft=`pwd | awk -F'/' '{print $NF}'`
@@ -113,7 +113,7 @@ if [ $? != 0 ];then
 	distro=`cat /etc/issue`
 	version=`cat /proc/version`
 	architecture=`uname -m`
-	cat >>/root/ezhttp_errors.log<<EOF
+	cat >>/root/ezhttp.log<<EOF
 	ezhttp errors:
 	distributions:$distro
 	architecture:$architecture
@@ -131,7 +131,7 @@ EOF
 	echo "#########################################################"
 	echo "failed to install $cur_soft."    
 	echo "please visit website http://www.centos.bz/ezhttp/"
-	echo "and submit /root/ezhttp_errors.log ask for help."
+	echo "and submit /root/ezhttp.log ask for help."
 	echo "#########################################################"
 	exit 1
 fi

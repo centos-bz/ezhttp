@@ -37,5 +37,5 @@ load_functions upgrade
 
 
 #开始执行脚本
-rm -f /root/ezhttp_errors.log
-deploy_linux 2>&1 | tee -a /root/ezhttp_errors.log
+rm -f /root/ezhttp.log
+deploy_linux 2>&1 | tee -a /root/ezhttp.log

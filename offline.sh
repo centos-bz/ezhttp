@@ -11,17 +11,17 @@ export PATH
 cur_dir=`pwd`
 
 #初始化
-if [ -f $cur_dir/init ];then
-	. $cur_dir/init
+if [ -f $cur_dir/function/define.sh ];then
+	. $cur_dir/function/define.sh
 else
-	echo "init file not found.shell script can't be executed."
+	echo "/define.sh file not found.shell script can't be executed."
 	exit 1
 fi
 #载入常用函数
-if [ -f $cur_dir/func ];then
-	. $cur_dir/func
+if [ -f $cur_dir/function/public.sh ];then
+	. $cur_dir/function/public.sh
 else
-	echo "func file not found.shell script can't be executed."
+	echo "public.sh file not found.shell script can't be executed."
 	exit 1
 fi
 

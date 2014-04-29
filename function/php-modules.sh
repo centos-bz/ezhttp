@@ -100,6 +100,7 @@ if_in_array "${ionCube_filename}" "$php_modules_install" && install_ionCube "$ph
 if_in_array "${php_redis_filename}" "$php_modules_install" && install_php_redis "$phpConfig"
 if_in_array "${php_mongo_filename}" "$php_modules_install" && install_php_mongo "$phpConfig"
 if_in_array "${apc_filename}" "$php_modules_install" && install_php_apc "$phpConfig"
+if_in_array "${xdebug_filename}" "$php_modules_install" && install_xdebug "$phpConfig"
 }
 
 #安装ZendOptimizer
@@ -349,5 +350,22 @@ else
 fi
 
 ! grep -q  "\[ZendGuardLoader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ZendGuardLoader\]\nzend_extension=\"/${depends_prefix}/ZendGuardLoader/ZendGuardLoader.so\"\n" $(get_php_ini $phpConfig)
+
+}
+
+#安装xdebug
+install_xdebug(){
+local phpConfig=$1
+download_file "${xdebug_other_link}" "${xdebug_official_link}" "${xdebug_filename}.tar.gz"
+cd $cur_dir/soft/
+rm -rf ${xdebug_filename}
+tar xzvf ${xdebug_filename}.tar.gz
+cd ${xdebug_filename}
+error_detect "$(dirname $phpConfig)/phpize"
+error_detect "./configure --enable-xdebug --with-php-config=$phpConfig"
+error_detect "make"
+error_detect "make install"
+EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
+! grep -q  "\[xdebug\]" $(get_php_ini $phpConfig) && sed -i "\$a\[xdebug]\nzend_extension=$EXTENSION_DIR/xdebug.so\nxdebug.profiler_enable=0\nxdebug.profiler_output_dir=\"/tmp/xdebug\"\nxdebug.profiler_output_name=\"cachegrind.out.%t\"\nxdebug.profiler_enable_trigger=1\n" $(get_php_ini $phpConfig)
 
 }

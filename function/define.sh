@@ -139,6 +139,11 @@ ZendGuardLoader54_64_filename="ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_6
 ZendGuardLoader54_64_other_link="http://cdn.yyupload.com/down/499809/software/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz"
 ZendGuardLoader54_64_official_link="http://downloads.zend.com/guard/6.0.0/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz"
 
+#xdebug设置
+xdebug_filename="xdebug-XDEBUG_2_2_2"
+xdebug_other_link="http://cdn.yyupload.com/down/499809/software/xdebug-XDEBUG_2_2_2.tar.gz"
+xdebug_official_link="https://github.com/derickr/xdebug/archive/XDEBUG_2_2_2.tar.gz"
+
 #memcached设置
 memcached_filename="memcached-1.4.15"
 memcached_other_link="http://cdn.yyupload.com/down/499809/software/memcached-1.4.15.tar.gz"
@@ -362,7 +367,7 @@ apache_arr=(do_not_install ${apache2_2_filename} ${apache2_4_filename} custom_ve
 mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version)
 php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} custom_version)
 php_mode_arr=(with_apache  with_fastcgi)
-php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} ${apc_filename})
+php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} ${apc_filename} ${xdebug_filename})
 other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename})
 
 #工具菜单设置

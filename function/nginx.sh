@@ -182,6 +182,6 @@ EOF
 fi
 
 #开放80端口
-iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 
 }

@@ -189,8 +189,8 @@ do
 	echo -e "1) LAMP LNMP LANMP Installation.\n2) Some Useful Tools.\n3) Upgrade Software\n4) Exit.\n"
 	read -p "please select: " select
 	case $select in
-	1) echo "you select Pre-installation settings." ; if_use_previous_setting ; break;;
-	2) echo "you select tools." ; tools_setting ; break;;
+	1) echo "you select LAMP LNMP LANMP Installation." ; if_use_previous_setting ; break;;
+	2) echo "you select Some Useful Tools." ; tools_setting ; break;;
 	3) echo "you select Upgrade Software." ; upgrade_software ; break;;
 	4) echo "you select exit." ; exit 1;;
 	*) echo "input error.";;
@@ -382,25 +382,4 @@ check_port_socket_exist(){
 	if_in_array "${PureFTPd_filename}" "$other_soft_install" && kill_pid "port" "21"
 	if_in_array "${redis_filename}" "$other_soft_install" && kill_pid "port" "6379"		
 	if_in_array "${mongodb_filename}" "$other_soft_install" && kill_pid "port" "27017"	
-}
-
-#配置linux
-deploy_linux(){
-#创建记录安装路径信息文件
-touch /tmp/ezhttp_info_do_not_del
-#不允许删除，只允许追加
-chattr +a /tmp/ezhttp_info_do_not_del	
-clear
-echo "#############################################################################"
-echo
-echo "You are welcome to use this script to deploy your linux,hope you like."
-echo "The script is written by Zhu Maohai."
-echo "If you have any question."
-echo "please visit http://www.centos.bz/ezhttp/ and submit your issue.thank you."
-echo
-echo "############################################################################"
-echo
-rootness
-define
-pre_setting
 }

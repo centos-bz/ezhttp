@@ -21,6 +21,8 @@ load_functions(){
 	fi	
 }
 
+#配置linux
+main(){
 #开始载入
 load_functions define
 load_functions public
@@ -35,7 +37,25 @@ load_functions tools
 load_functions other
 load_functions upgrade
 
+#创建记录安装路径信息文件
+touch /tmp/ezhttp_info_do_not_del
+#不允许删除，只允许追加
+chattr +a /tmp/ezhttp_info_do_not_del	
+clear
+echo "#############################################################################"
+echo
+echo "You are welcome to use this script to deploy your linux,hope you like."
+echo "The script is written by Zhu Maohai."
+echo "If you have any question."
+echo "please visit http://www.centos.bz/ezhttp/ and submit your issue.thank you."
+echo
+echo "############################################################################"
+echo
+rootness
+define
+pre_setting
+}
 
-#开始执行脚本
+########从这里开始运行程序######
 rm -f /root/ezhttp.log
-deploy_linux 2>&1 | tee -a /root/ezhttp.log
+main 2>&1 | tee -a /root/ezhttp.log

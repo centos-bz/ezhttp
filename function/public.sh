@@ -49,7 +49,7 @@ kill_pid(){
 
 }
 
-#显示菜单
+#显示菜单(单选)
 display_menu(){
 local soft=$1
 local prompt="which ${soft} you'd select: "
@@ -69,6 +69,43 @@ do
 		break
 	fi
 done
+}
+
+#显示菜单(多选)
+display_menu_multi(){
+local soft=$1
+local prompt="please input numbers(ie. 1 2 3): "
+eval local arr=(\${${soft}_arr[@]})
+local arr_len=${#arr[@]}
+
+echo  "#################### $soft install ####################"
+echo
+for ((i=1;i<=$arr_len;i++ )); do echo -e "$i) ${arr[$i-1]}"; done
+echo
+while true
+do
+	read -p "${prompt}" select
+	local select=($select)
+	eval unset ${soft}_install
+	unset wrong
+	for j in ${select[@]}
+	do
+		if (! echo $j | grep -q -E "^[0-9]+$") || [[ $j -le 0 ]] || [[ $j -gt $arr_len ]];then
+			prompt="input errors,please input numbers(ie. 1 2 3): ";
+			wrong=1
+			break
+		elif [ "${arr[$j-1]}" == "do_not_install" ];then
+			eval unset ${soft}_install
+			eval ${soft}_install="do_not_install"
+			break 2
+		else
+			eval ${soft}_install="\"\$${soft}_install ${arr[$j-1]}\""
+			wrong=0
+		fi
+	done
+	[ "$wrong" == 0 ] && break
+done
+eval echo -e "your selection \$${soft}_install"
 }
 
 #在/usr/lib创建库文件的链接
@@ -594,5 +631,37 @@ set_php_variable(){
 
 	if ! grep -q -E "^$key\s*=" $php_location/etc/php.ini;then
 		echo "$key=$value" >> $php_location/etc/php.ini
+	fi
+}
+
+#获取ubuntu版本名称
+get_ubuntu_version_name(){
+	if [[ -s "/etc/lsb-release" ]];then
+		version_name=`awk -F''= '/DISTRIB_CODENAME/{print $2}' /etc/lsb-release`
+		if [[ $version_name == "" ]]; then
+			echo "sorry,can not get ubuntu/debian version."
+			exit 1
+		else
+			echo $version_name
+		fi
+	else
+		echo "/etc/lsb-release not found,may be your system is not ubuntu/debian."
+		exit 1
+	fi	
+}
+
+#获取ubuntu版本号
+get_ubuntu_version(){
+	if [[ -s "/etc/lsb-release" ]];then
+		version=`awk -F''= '/DISTRIB_RELEASE/{print $2}' /etc/lsb-release`
+		if [[ $version == "" ]];then
+			echo "sorry,can not get ubuntu/debian version."
+			exit 1
+		else
+			echo $version
+		fi	
+	else
+		echo "/etc/lsb-release not found,may be your system is not ubuntu/debian."
+		exit 1
 	fi
 }

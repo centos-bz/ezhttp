@@ -51,33 +51,8 @@ php_modules_preinstall_settings(){
 			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
 		fi
-
-		for ((i=1;i<=${#php_modules_arr[@]};i++ )); do echo -e "$i) ${php_modules_arr[$i-1]}"; done
-		echo
-		php_modules_prompt="please input numbers(ie.1 2 3): "
-		while true
-		do
-			read -p "${php_modules_prompt}" php_modules
-			php_modules=(${php_modules})
-			unset php_modules_install wrong
-			for i in ${php_modules[@]}
-			do
-				if [ "${php_modules_arr[$i-1]}" == "" ];then
-					php_modules_prompt="input errors,please input numbers(ie.1 2 3): ";
-					wrong=1
-					break
-				elif [ "${php_modules_arr[$i-1]}" == "do_not_install" ];then
-					unset php_modules_install
-					php_modules_install="do_not_install"
-					break 2
-				else	
-					php_modules_install="$php_modules_install ${php_modules_arr[$i-1]}"
-					wrong=0
-				fi
-			done
-			[ "$wrong" == 0 ] && break
-		done
-		echo -e "your php modules selection ${php_modules_install}"	
+		#显示菜单
+		display_menu_multi php_modules
 		#恢复php变量为do_not_install
 		$phpDoNotInstall && php="do_not_install"
 

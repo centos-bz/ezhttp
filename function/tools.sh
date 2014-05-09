@@ -536,9 +536,9 @@ Create_rpm_package(){
 Percona_xtrabackup_install(){
 	if check_sys_version ubuntu || check_sys_version debian;then
 		apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
-		local version=`awk -F''= '/DISTRIB_CODENAME/{print $2}' /etc/lsb-release`
+		local version_name=`get_ubuntu_version_name`
 		if ! grep -q "http://repo.percona.com/apt" /etc/apt/sources.list;then
-			echo -e "deb http://repo.percona.com/apt $version main\ndeb-src http://repo.percona.com/apt $version main\n" >>  /etc/apt/sources.list
+			echo -e "deb http://repo.percona.com/apt $version_name main\ndeb-src http://repo.percona.com/apt $version_name main\n" >>  /etc/apt/sources.list
 		fi
 		
 		apt-get -y update

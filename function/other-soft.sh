@@ -1,34 +1,7 @@
 #安装其它软件前设置
 othersoft_preinstall_settings(){
-echo  "#################### Other software install ####################"
-echo
-for ((i=1;i<=${#other_soft_arr[@]};i++ )); do echo -e "$i) ${other_soft_arr[$i-1]}"; done
-echo
-other_prompt="please input numbers(ie. 1 2 3): "
-while true
-do
-	read -p "${other_prompt}" other_soft
-	other_soft=(${other_soft})
-	unset other_soft_install wrong
-	for j in ${other_soft[@]}
-	do
-		if [ "${other_soft_arr[$j-1]}" == "" ];then
-			other_soft_prompt="input errors,please input numbers(ie. 1 2 3): ";
-			wrong=1
-			break
-		elif [ "${other_soft_arr[$j-1]}" == "do_not_install" ];then
-			unset other_soft_install
-			other_soft_install="do_not_install"
-			break 2
-		else
-			other_soft_install="$other_soft_install ${other_soft_arr[$j-1]}"
-			wrong=0
-		fi
-	done
-	[ "$wrong" == 0 ] && break
-done
-echo -e "your other software selection ${other_soft_install}"
-
+#显示菜单
+display_menu_multi other_soft
 #配置安装路径
 if [ "$other_soft_install" != "do_not_install" ];then
 

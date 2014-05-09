@@ -355,9 +355,6 @@ apr_util_filename="apr-util-1.5.3"
 apr_util_other_link="http://cdn.yyupload.com/down/499809/software/apr-util-1.5.3.tar.gz"
 apr_util_official_link="http://apache.cs.utah.edu//apr/apr-util-1.5.3.tar.gz"
 
-#tomcat7
-
-
 
 ########################其它设置########################
 

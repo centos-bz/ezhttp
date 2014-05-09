@@ -24,7 +24,7 @@ load_functions(){
 #配置linux
 main(){
 #开始载入
-load_functions define
+load_functions config
 load_functions public
 load_functions apache
 load_functions depends
@@ -51,8 +51,8 @@ echo "please visit http://www.centos.bz/ezhttp/ and submit your issue.thank you.
 echo
 echo "############################################################################"
 echo
-rootness
-define
+need_root_priv
+load_config
 pre_setting
 }
 

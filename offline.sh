@@ -8,7 +8,7 @@ export PATH
 #   website: http://www.centos.bz/ezhttp/
 #===============================================================================
 
-cur_dir=`dirname $0`
+cur_dir=`pwd`
 
 #初始化
 if [ -f $cur_dir/function/config.sh ];then

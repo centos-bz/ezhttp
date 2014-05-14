@@ -8,7 +8,7 @@ export PATH
 #   website: http://www.centos.bz/ezhttp/
 #===============================================================================
 
-cur_dir=`dirname $0`
+cur_dir=`pwd`
 
 #载入函数
 load_functions(){

@@ -7,7 +7,7 @@ export PATH
 #   AUTHOR: Zhu Maohai.
 #   website: http://www.centos.bz/ezhttp/
 #===============================================================================
-cur_dir=`dirname $0`
+cur_dir=`pwd`
 
 #大写转换成小写
 upcase_to_lowcase(){

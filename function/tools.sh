@@ -996,6 +996,95 @@ Initialize_mysql_server(){
 	echo "initialize mysql done."
 }
 
+#添加chroot shell用户
+Add_chroot_shell_user(){
+	while true; do
+		echo -e "1) install jailkit.\n2) jail exist user.\n3) add a new user and jail it.\n"
+		read -p "please input your select(ie 1): " select
+		case  $select in
+			1) install_jailkit;break;;
+			2) jail_exist_user;break;;
+			3) jail_new_user;break;;
+			*) echo "input error,please input a number.";;
+		esac
+	done
+
+	exit
+}
+
+#安装jailkit
+install_jailkit(){
+	if [[ -s /usr/local/jailkit/sbin/jk_init ]];then
+		echo "file /usr/local/jailkit/sbin/jk_init found,maybe jailkit had been installed."
+	else
+		download_file "${jailkit_other_link}" "${jailkit_official_link}" "${jailkit_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${jailkit_filename}.tar.gz
+		cd ${jailkit_filename}
+		make clean
+		error_detect "./configure --prefix=/usr/local/jailkit"
+		error_detect "make"
+		error_detect "make install"
+		cp extra/jailkit /etc/init.d/jailkit
+		chmod +x /etc/init.d/jailkit
+		sed -i 's#JK_SOCKETD=.*#JK_SOCKETD=/usr/local/jailkit/sbin/jk_socketd#' /etc/init.d/jailkit
+		boot_start jailkit
+		/usr/local/jailkit/sbin/jk_init -v -j /home/chroot sftp scp jk_lsh netutils extendedshell
+		service jailkit start
+		echo
+		echo "please press ctrl+c to exit the scripts."
+	fi	
+}
+
+#把已存在的用户加入到限制shell
+jail_exist_user(){
+	if [[ -s /usr/local/jailkit/sbin/jk_init ]];then
+		while true; do
+			read -p "please input username: " username
+			if [[ $username == "" ]]; then
+				echo "username could not be empty."
+			elif ! awk -F: '{print $1}' /etc/passwd | grep -q -E "^${username}$"; then
+				echo "username $username not found."
+			else
+				break
+			fi
+		done
+
+		/usr/local/jailkit/sbin/jk_jailuser -m -n -j /home/chroot --shell=/bin/bash $username
+	else
+		echo "/usr/local/jailkit/sbin/jk_init not found,maybe jailkit is not installed"
+	fi	
+}
+
+#新添加用户并限制shell
+jail_new_user(){
+	if [[ -s /usr/local/jailkit/sbin/jk_init ]];then
+		while true; do
+			read -p "please input username: " username
+			if [[ $username == "" ]]; then
+				echo "username could not be empty."
+			else
+				break
+			fi
+		done
+
+		while true; do
+			read -p "please input username $username password: " password
+			if [[ $password == "" ]]; then
+				echo "password could not be empty."
+			else
+				break
+			fi
+		done
+
+		useradd $username -m
+		echo $username:$password | chpasswd	
+		/usr/local/jailkit/sbin/jk_jailuser -m -n -j /home/chroot --shell=/bin/bash $username
+	else
+		echo "/usr/local/jailkit/sbin/jk_init not found,maybe jailkit is not installed"
+	fi		
+}
+
 #工具设置
 tools_setting(){
 	clear

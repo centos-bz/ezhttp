@@ -355,6 +355,11 @@ apr_util_filename="apr-util-1.5.3"
 apr_util_other_link="http://cdn.yyupload.com/down/499809/software/apr-util-1.5.3.tar.gz"
 apr_util_official_link="http://apache.cs.utah.edu//apr/apr-util-1.5.3.tar.gz"
 
+#jailkit设置
+jailkit_filename="jailkit-2.17"
+jailkit_other_link="http://cdn.yyupload.com/down/499809/software/jailkit-2.17.tar.gz"
+jailkit_official_link="http://olivier.sessink.nl/jailkit/jailkit-2.17.tar.gz"
+
 
 ########################其它设置########################
 
@@ -368,7 +373,7 @@ php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_file
 other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename})
 
 #工具菜单设置
-tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Back_to_main_menu)
+tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user Back_to_main_menu)
 
 #升级软件菜单
 upgrade_arr=(Upgrade_nginx_tengine_openresty Back_to_main_menu)

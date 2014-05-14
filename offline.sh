@@ -8,13 +8,13 @@ export PATH
 #   website: http://www.centos.bz/ezhttp/
 #===============================================================================
 
-cur_dir=`pwd`
+cur_dir=`dirname $0`
 
 #初始化
-if [ -f $cur_dir/function/define.sh ];then
-	. $cur_dir/function/define.sh
+if [ -f $cur_dir/function/config.sh ];then
+	. $cur_dir/function/config.sh
 else
-	echo "/define.sh file not found.shell script can't be executed."
+	echo "/config.sh file not found.shell script can't be executed."
 	exit 1
 fi
 #载入常用函数

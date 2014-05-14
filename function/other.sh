@@ -184,8 +184,6 @@ pre_setting(){
 #主菜单
 while true
 do
-	#使read能支持回格删除
-	stty erase "^H"
 	echo -e "1) LAMP LNMP LANMP Installation.\n2) Some Useful Tools.\n3) Upgrade Software\n4) Exit.\n"
 	read -p "please select: " select
 	case $select in

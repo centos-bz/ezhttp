@@ -193,6 +193,8 @@ else
 	}
 EOF
 
+	#开放80端口
+	iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 fi
 
 #写入默认虚拟主机配置
@@ -242,4 +244,5 @@ chmod +x /etc/init.d/httpd
 \cp  $cur_dir/conf/p.php /home/wwwroot/
 
 boot_start httpd
+
 }

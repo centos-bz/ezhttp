@@ -349,6 +349,7 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		set_php_variable error_log "${php_location}/logs/php-error.log"
 		set_php_variable cgi.fix_pathinfo 0
 		set_php_variable short_open_tag on
+		set_php_variable date.timezone Asia/Chongqing
 
 	elif [ "$php" == "${php5_3_filename}" ]; then
 		\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
@@ -362,6 +363,7 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		set_php_variable request_order  "CGP"
 		set_php_variable cgi.fix_pathinfo 0
 		set_php_variable short_open_tag on
+		set_php_variable date.timezone Asia/Chongqing
 
 	elif [ "$php" == "${php5_4_filename}" ]; then
 		\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
@@ -375,6 +377,7 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		set_php_variable request_order  "CGP"
 		set_php_variable cgi.fix_pathinfo 0
 		set_php_variable short_open_tag on
+		set_php_variable date.timezone Asia/Chongqing
 
 	fi
 

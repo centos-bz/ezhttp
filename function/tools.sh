@@ -802,10 +802,38 @@ delete_iptables_rule(){
 save_iptables(){
 	#保存规则
 	if check_sys_version ubuntu || check_sys_version debian;then
-		iptables-save > /etc/iptables.rule
+		iptables-save > /etc/iptables.up.rule
 	elif check_sys_version centos;then
 		service iptables save
 	fi
+}
+
+#开机加载iptables
+load_iptables_onboot(){
+	if check_sys_version ubuntu || check_sys_version debian;then
+		if [[ ! -s "/etc/network/if-pre-up.d/iptablesload" ]]; then
+			cat >/etc/network/if-pre-up.d/iptablesload<<EOF
+#!/bin/sh
+iptables-restore < /etc/iptables.up.rule
+exit 0
+EOF
+
+		fi
+
+		if [[ ! -s "/etc/network/if-post-down.d/iptablessave" ]]; then
+			cat >/etc/network/if-post-down.d/iptablessave<<EOF
+#!/bin/sh
+iptables-save -c > /etc/iptables.up.rule
+exit 0
+EOF
+
+		fi
+
+		chmod +x /etc/network/if-post-down.d/iptablessave /etc/network/if-pre-up.d/iptablesload
+
+	elif check_sys_version centos;then
+		chkconfig iptables on
+	fi	
 }
 
 #停止ipables
@@ -819,11 +847,11 @@ stop_iptables(){
 rescore_iptables(){
 
 	if check_sys_version ubuntu || check_sys_version debian;then
-		if [ -s "/etc/iptables.rule" ];then
-			iptables-restore < /etc/iptables.rule
+		if [ -s "/etc/iptables.up.rule" ];then
+			iptables-restore < /etc/iptables.up.rule
 			echo "rescore iptables done."
 		else
-			echo "/etc/iptables.rule not found,can not be rescore iptables."
+			echo "/etc/iptables.up.rule not found,can not be rescore iptables."
 		fi	
 	elif check_sys_version centos;then
 		service iptables restart
@@ -839,6 +867,7 @@ list_iptables(){
 #iptales设置
 Iptables_settings(){
 	check_command_exist "iptables"
+	load_iptables_onboot
 	local select=''
 	while true; do
 		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) backup rules and stop iptables.\n5) rescore iptables\n6) list iptables rules\n" 

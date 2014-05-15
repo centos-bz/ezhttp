@@ -37,7 +37,7 @@ fi
 if [ "$php" != "do_not_install" ];then
 	#判断当选择with_apache时，apache_location是否已经设置
 	if [ "$apache_location" == "" ] && [ "$php_mode" == "with_apache" ];then
-		read -p "apache location is not set,please set it: " apache_location
+		read -p "apache location is not set,please input apache location: " apache_location
 		apache_location=`filter_location "$apache_location"`
 	fi
 

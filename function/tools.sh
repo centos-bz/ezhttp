@@ -113,10 +113,10 @@ key-buffer-size                = ${key_buffer_size}
 myisam-recover                 = FORCE,BACKUP
 
 # INNODB #
-innodb-flush-method            = O_DIRECT
+innodb-flush-method            = fdatasync
 innodb-log-files-in-group      = 2
 innodb-log-file-size           = ${innodb_log_file_size}
-innodb-flush-log-at-trx-commit = 1
+innodb-flush-log-at-trx-commit = 2
 innodb-file-per-table          = 1
 innodb-buffer-pool-size        = ${innodb_buffer_pool_size}
 

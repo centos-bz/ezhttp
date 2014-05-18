@@ -15,9 +15,9 @@ tengine_other_link="http://cdn.yyupload.com/down/499809/software/tengine-1.5.2.t
 tengine_official_link="http://tengine.taobao.org/download/tengine-1.5.2.tar.gz"
 
 #openresty设置
-openresty_filename="ngx_openresty-1.4.3.6"
-openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.4.3.6.tar.gz"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.4.3.6.tar.gz"
+openresty_filename="ngx_openresty-1.5.12.1"
+openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.5.12.1.tar.gz"
+openresty_official_link="http://openresty.org/download/ngx_openresty-1.5.12.1.tar.gz"
 
 #apache设置
 apache2_2_filename="httpd-2.2.27"

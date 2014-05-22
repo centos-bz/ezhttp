@@ -697,7 +697,12 @@ fi
 stty erase "^H"
 
 #引入各软件安装路径
-. /tmp/ezhttp_info_do_not_del
+if [[ -s /tmp/ezhttp_info_do_not_del ]]; then
+	. /tmp/ezhttp_info_do_not_del
+else
+	echo "error,file /tmp/ezhttp_info_do_not_del not found,ez command can not be executed."
+	exit 1
+fi	
 
 #接收脚本传参
 proname=$1

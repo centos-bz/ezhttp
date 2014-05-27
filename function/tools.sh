@@ -777,7 +777,7 @@ add_iptables_rule(){
 
 #删除规则
 delete_iptables_rule(){
-	iptables -nL INPUT --line-number
+	iptables -nL INPUT --line-number --verbose
 	echo
 	while true; do
 		read -p "please input the number according to the first column: " number
@@ -862,7 +862,7 @@ rescore_iptables(){
 
 #列出iptables
 list_iptables(){
-	iptables -nL INPUT
+	iptables -nL INPUT --verbose
 }
 #iptales设置
 Iptables_settings(){

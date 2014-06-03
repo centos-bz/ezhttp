@@ -1176,6 +1176,15 @@ realTimeTraffic(){
 
 #流量和连接概览
 trafficAndConnectionOverview(){
+	if ! which tcpdump > /dev/null;then
+		echo "tcpdump not found,going to install it."
+		if check_package_manager apt;then
+			apt-get -y install tcpdump
+		elif check_package_manager yum;then
+			yum -y install tcpdump
+		fi
+	fi
+
 	local reg=""
 	local eth=""
 	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo"`)

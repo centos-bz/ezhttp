@@ -1114,6 +1114,125 @@ jail_new_user(){
 	fi		
 }
 
+#网络分析工具
+Network_analysis(){
+	while true; do
+		echo -e "1) real time traffic.\n2) traffic and connection overview.\n"
+		read -p "please input your select(ie 1): " select
+		case  $select in
+			1) realTimeTraffic;break;;
+			2) trafficAndConnectionOverview;break;;
+			*) echo "input error,please input a number.";;
+		esac
+	done	
+}
+
+#实时流量
+realTimeTraffic(){
+	local eth=""
+	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo"`)
+	local nicLen=${#nic_arr[@]}
+	if [[ $nicLen -eq 0 ]]; then
+		echo "sorry,I can not detect any network device,please report this issue to author."
+		exit 1
+	elif [[ $nicLen -eq 1 ]]; then
+		eth=$nic_arr
+	else
+		display_menu nic
+		eth=$nic
+	fi	
+
+	local clear=true
+	local eth_in_peak=0
+	local eth_out_peak=0
+	local eth_in=0
+	local eth_out=0
+
+	while true;do
+		#移动光标到0:0位置
+		printf "\033[0;0H"
+		#清屏并打印Now Peak
+		[[ $clear == true ]] && printf "\033[2J" && echo "$eth--------Now--------Peak-----------"
+		traffic_be=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev`)
+		sleep 1
+		traffic_af=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev`)
+		#计算速率
+		eth_in=$(( (${traffic_af[0]}-${traffic_be[0]})*8/1024 ))
+		eth_out=$(( (${traffic_af[1]}-${traffic_be[1]})*8/1024 ))
+		#计算流量峰值
+		[[ $eth_in -gt $eth_in_peak ]] && eth_in_peak=$eth_in
+		[[ $eth_out -gt $eth_out_peak ]] && eth_out_peak=$eth_out
+		#移动光标到2:1
+		printf "\033[2;1H"
+		#清除当前行
+		printf "\033[K"
+		printf "%-20s %-20s\n" "Receive:  ${eth_in}Kb/s" "${eth_in_peak}Kb/s"
+		#清除当前行
+		printf "\033[K"
+		printf "%-20s %-20s\n" "Transmit: ${eth_out}Kb/s" "${eth_out_peak}Kb/s"
+		[[ $clear == true ]] && clear=false
+	done
+}
+
+#流量和连接概览
+trafficAndConnectionOverview(){
+	local reg=""
+	local eth=""
+	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo"`)
+	local nicLen=${#nic_arr[@]}
+	if [[ $nicLen -eq 0 ]]; then
+		echo "sorry,I can not detect any network device,please report this issue to author."
+		exit 1
+	elif [[ $nicLen -eq 1 ]]; then
+		eth=$nic_arr
+	else
+		display_menu nic
+		eth=$nic
+	fi
+
+	echo "please wait for 10s to generate network data..."
+	echo
+	#当前流量值
+	local traffic_be=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev`)
+	#tcpdump监听网络
+	tcpdump -tnn > /tmp/tcpdump 2>&1 &
+	sleep 10
+	clear
+	kill `ps aux | grep tcpdump | grep -v grep | awk '{print $2}'`
+	sed -i '/^IP/!d' /tmp/tcpdump
+	#10s后流量值
+	local traffic_af=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev`)
+	#打印10s平均速率
+	local eth_in=$(( (${traffic_af[0]}-${traffic_be[0]})*8/1024/10 ))
+	local eth_out=$(( (${traffic_af[1]}-${traffic_be[1]})*8/1024/10 ))
+	echo -e "\033[32mnetwork device $eth average traffic in 10s: \033[0m"
+	echo "$eth Receive: ${eth_in}Kb/s"
+	echo "$eth Transmit: ${eth_out}Kb/s"
+	echo
+	echo -e "\033[32mport traffic count: \033[0m"
+	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/(/' -e 's/$/)\\\\\.[0-9]+:/')
+	awk -F'[ .:]' -v reg=$reg '{if ($0 ~ reg){line="clients > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > clients"};sum[line]+=$NF*8/1024/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | sort -k 4 -nr | head -n 10 | sed 's#$#Kb/s#'
+	echo
+	echo -e "\033[32mtop 10 ip traffic count: \033[0m"
+	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/(/' -e 's/$/)\\\\\.[0-9]+:/')
+	awk -F'[ .:]' -v reg=$reg '{if ($0 ~ reg){line=$2"."$3"."$4"."$5" > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > "$8"."$9"."$10"."$11};sum[line]+=$NF*8/1024/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | sort -k 4 -nr | head -n 10 | sed 's#$#Kb/s#'
+	echo
+	echo -e "\033[32mconnection state count: \033[0m"
+	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
+	ss -an | grep -v LISTEN | grep -E "$reg" | awk 'NR>1{sum[$1]+=1}END{for (state in sum){print state,sum[state]}}' | sort -k 2 -nr	
+	echo
+	echo -e "\033[32mconnection state count by port: \033[0m"
+	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
+	ss -an | grep -v LISTEN | grep -E "$reg" | awk 'NR>1{sum[$1,$4]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' | sort -k 3 -nr | head -n 10	
+	echo
+	echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
+	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
+	ss -an | grep -v LISTEN | grep -E "$reg" | grep ESTAB | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
+	echo
+	echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
+	ss -an | grep -v LISTEN | grep -E "$reg" | grep SYN-RECV | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
+}
+
 #工具设置
 tools_setting(){
 	clear

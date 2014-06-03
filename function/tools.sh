@@ -1217,20 +1217,19 @@ trafficAndConnectionOverview(){
 	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/(/' -e 's/$/)\\\\\.[0-9]+:/')
 	awk -F'[ .:]' -v reg=$reg '{if ($0 ~ reg){line=$2"."$3"."$4"."$5" > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > "$8"."$9"."$10"."$11};sum[line]+=$NF*8/1024/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | sort -k 4 -nr | head -n 10 | sed 's#$#Kb/s#'
 	echo
-	echo -e "\033[32mconnection state count: \033[0m"
 	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
-	ss -an | grep -v LISTEN | grep -E "$reg" | awk 'NR>1{sum[$1]+=1}END{for (state in sum){print state,sum[state]}}' | sort -k 2 -nr	
+	ss -an | grep -v LISTEN | grep -E "$reg" > /tmp/ss
+	echo -e "\033[32mconnection state count: \033[0m"
+	awk 'NR>1{sum[$1]+=1}END{for (state in sum){print state,sum[state]}}' /tmp/ss | sort -k 2 -nr	
 	echo
 	echo -e "\033[32mconnection state count by port: \033[0m"
-	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
-	ss -an | grep -v LISTEN | grep -E "$reg" | awk 'NR>1{sum[$1,$4]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' | sort -k 3 -nr | head -n 10	
+	awk 'NR>1{sum[$1,$4]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10	
 	echo
 	echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
-	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
-	ss -an | grep -v LISTEN | grep -E "$reg" | grep ESTAB | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
+	cat /tmp/ss | grep ESTAB | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 	echo
 	echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
-	ss -an | grep -v LISTEN | grep -E "$reg" | grep SYN-RECV | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
+	cat /tmp/ss | grep -E "$reg" | grep SYN-RECV | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 }
 
 #工具设置

@@ -1223,7 +1223,7 @@ trafficAndConnectionOverview(){
 	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/(/' -e 's/$/)\\\\\.[0-9]+:/')
 	awk -F'[ .:]' -v reg=$reg '{if ($0 ~ reg){line="clients > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > clients"};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
 	sort -k 4 -nr | head -n 10 | while read a b c d;do
-		echo "$a $b $c $(bit_to_human_readable $d)"
+		echo "$a $b $c $(bit_to_human_readable $d)/s"
 	done
 		
 	echo
@@ -1232,7 +1232,7 @@ trafficAndConnectionOverview(){
 	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/(/' -e 's/$/)\\\\\.[0-9]+:/')
 	awk -F'[ .:]' -v reg=$reg '{if ($0 ~ reg){line=$2"."$3"."$4"."$5" > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > "$8"."$9"."$10"."$11};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
 	sort -k 4 -nr | head -n 10 | while read a b c d;do
-		echo "$a $b $c $(bit_to_human_readable $d)"
+		echo "$a $b $c $(bit_to_human_readable $d)/s"
 	done
 	echo
 	#统计连接状态

@@ -1238,21 +1238,20 @@ trafficAndConnectionOverview(){
 	#统计连接状态
 	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
 	ss -an | grep -v -E "LISTEN|UNCONN" | grep -E "$reg" > /tmp/ss
-	sed -i -r 's/^tcp\s+(.*)/\1/' /tmp/ss
 	echo -e "\033[32mconnection state count: \033[0m"
-	awk 'NR>1{sum[$1]+=1}END{for (state in sum){print state,sum[state]}}' /tmp/ss | sort -k 2 -nr
+	awk 'NR>1{sum[$(NF-4)]+=1}END{for (state in sum){print state,sum[state]}}' /tmp/ss | sort -k 2 -nr
 	echo
 	#统计各端口连接状态
 	echo -e "\033[32mconnection state count by port: \033[0m"
-	awk 'NR>1{sum[$1,$4]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10	
+	awk 'NR>1{sum[$(NF-4),$(NF-1)]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10	
 	echo
 	#统计端口为80且状态为ESTAB连接数最多的前10个IP
 	echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
-	cat /tmp/ss | grep ESTAB | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
+	cat /tmp/ss | grep ESTAB | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 	echo
 	#统计端口为80且状态为SYN-RECV连接数最多的前10个IP
 	echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
-	cat /tmp/ss | grep -E "$reg" | grep SYN-RECV | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
+	cat /tmp/ss | grep -E "$reg" | grep SYN-RECV | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 }
 
 #工具设置

@@ -665,3 +665,23 @@ get_ubuntu_version(){
 		exit 1
 	fi
 }
+
+#把带宽bit单位转换为人类可读单位
+bit_to_human_readable(){
+	#input bit value
+	local trafficValue=$1
+
+	if [[ ${trafficValue%.*} -gt 922 ]];then
+		#conv to Kb
+		trafficValue=`awk -v value=$trafficValue 'BEGIN{printf "%0.1f",value/1024}'`
+		if [[ ${trafficValue%.*} -gt 922 ]];then
+			#conv to Mb
+			trafficValue=`awk -v value=$trafficValue 'BEGIN{printf "%0.1f",value/1024}'`
+			echo "${trafficValue}Mb"
+		else
+			echo "${trafficValue}Kb"
+		fi
+	else
+		echo "${trafficValue}b"
+	fi
+}

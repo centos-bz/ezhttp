@@ -1130,7 +1130,7 @@ Network_analysis(){
 #实时流量
 realTimeTraffic(){
 	local eth=""
-	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo"`)
+	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
 	local nicLen=${#nic_arr[@]}
 	if [[ $nicLen -eq 0 ]]; then
 		echo "sorry,I can not detect any network device,please report this issue to author."
@@ -1187,7 +1187,7 @@ trafficAndConnectionOverview(){
 
 	local reg=""
 	local eth=""
-	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo"`)
+	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
 	local nicLen=${#nic_arr[@]}
 	if [[ $nicLen -eq 0 ]]; then
 		echo "sorry,I can not detect any network device,please report this issue to author."

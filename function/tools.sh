@@ -1234,10 +1234,10 @@ trafficAndConnectionOverview(){
 	echo -e "\033[32mconnection state count by port: \033[0m"
 	awk 'NR>1{sum[$1,$4]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10	
 	echo
-	echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
+	echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
 	cat /tmp/ss | grep ESTAB | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 	echo
-	echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
+	echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
 	cat /tmp/ss | grep -E "$reg" | grep SYN-RECV | awk -F'[: ]+' '{sum[$6]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 }
 

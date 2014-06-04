@@ -1237,9 +1237,10 @@ trafficAndConnectionOverview(){
 	echo
 	#统计连接状态
 	reg=$(ifconfig $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
-	ss -an | grep -v LISTEN | grep -E "$reg" > /tmp/ss
+	ss -an | grep -v -E "LISTEN|UNCONN" | grep -E "$reg" > /tmp/ss
+	sed -i -r 's/^tcp\s+(.*)/\1/' /tmp/ss
 	echo -e "\033[32mconnection state count: \033[0m"
-	awk 'NR>1{sum[$1]+=1}END{for (state in sum){print state,sum[state]}}' /tmp/ss | sort -k 2 -nr	
+	awk 'NR>1{sum[$1]+=1}END{for (state in sum){print state,sum[state]}}' /tmp/ss | sort -k 2 -nr
 	echo
 	#统计各端口连接状态
 	echo -e "\033[32mconnection state count by port: \033[0m"

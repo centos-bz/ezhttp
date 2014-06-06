@@ -94,19 +94,19 @@ Upgrade_nginx_tengine_openresty(){
 		echo "starting new nginx program now..."
 		echo "we will still keep the old nginx process."
 		kill -USR2 $old_pid
-		sleep 1
+		sleep 3
 		new_pid=$(ps aux | grep "nginx: master process" | grep -v grep | awk '{print $2}' | grep -v $old_pid)
 		if echo $new_pid | grep -q -E "^[0-9]+$";then
 			echo "start new nginx program successfully."
 			echo "new nginx process pid is $new_pid"
 			echo "start to kill the old nginx child process to let new nginx process serve request."
 			kill -WINCH $old_pid
-			sleep 1
+			sleep 3
 			echo "kill old nginx child process done."
 			echo "please check if the nginx service is normal."
 			echo "input y will kill the old nginx master process,input n will start old nginx child process and kill new nginx process."
 			yes_or_no "if your nginx service is ok,please input y,else input n.[Y/n]: " "echo 'start to replace old nginx process with new nginx process.';kill -QUIT ${old_pid}" "echo 'start rescore the old nginx process';kill -HUP ${old_pid};kill -QUIT ${new_pid};kill -TERM ${new_pid}"
-			sleep 2
+			sleep 3
 			if [[ $(ps aux | grep "nginx: master process" | grep -v grep | awk '{print $2}') == "${new_pid}" ]]; then
 				echo "upgrade nginx successfully."
 			else

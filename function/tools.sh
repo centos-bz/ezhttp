@@ -1116,6 +1116,8 @@ jail_new_user(){
 
 #网络分析工具
 Network_analysis(){
+	LANG=c
+	export LANG	
 	while true; do
 		echo -e "1) real time traffic.\n2) traffic and connection overview.\n"
 		read -p "please input your select(ie 1): " select

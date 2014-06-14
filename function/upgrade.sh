@@ -106,7 +106,16 @@ Upgrade_nginx_tengine_openresty(){
 			echo "please check if the nginx service is normal."
 			echo "input y will kill the old nginx master process,input n will start old nginx child process and kill new nginx process."
 			yes_or_no "if your nginx service is ok,please input y,else input n.[Y/n]: " "echo 'start to replace old nginx process with new nginx process.';kill -QUIT ${old_pid}" "echo 'start rescore the old nginx process';kill -HUP ${old_pid};kill -QUIT ${new_pid};kill -TERM ${new_pid}"
-			sleep 3
+			#等待旧nginx进程退出
+			while true; do
+				if [[ $(ps aux | grep "nginx: worker process is shutting down" | grep -v grep | wc -l) -eq 0 ]]; then
+					break
+				else
+					echo "waiting the old nginx process quit..."
+				fi
+				sleep 2
+			done
+
 			if [[ $(ps aux | grep "nginx: master process" | grep -v grep | awk '{print $2}') == "${new_pid}" ]]; then
 				echo "upgrade nginx successfully."
 			else

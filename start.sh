@@ -1,8 +1,6 @@
 #!/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
-LANG=c
-export LANG
 #===============================================================================
 #   SYSTEM REQUIRED:  Linux
 #   DESCRIPTION:  automatic deploy your linux

@@ -1222,11 +1222,17 @@ trafficAndConnectionOverview(){
 	echo
 	#统计每个端口在10s内的平均流量
 	regTcpdump=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/(/' -e 's/$/)\\\\\.[0-9]+:/')
-	echo -e "\033[32mport average traffic in 10s: \033[0m"
+	echo -e "\033[32maverage traffic in 10s base on server port: \033[0m"
 	awk -F'[ .:]' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line="clients > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > clients"};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
 	sort -k 4 -nr | head -n 10 | while read a b c d;do
 		echo "$a $b $c $(bit_to_human_readable $d)/s"
 	done
+	echo
+	echo -e "\033[32maverage traffic in 10s base on client port: \033[0m"
+    awk -F'[ .:]' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line=$2"."$3"."$4"."$5":"$6" > server"}else{line="server > "$8"."$9"."$10"."$11":"$12};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
+    sort -k 4 -nr | head -n 10 | while read a b c d;do
+            echo "$a $b $c $(bit_to_human_readable $d)/s"
+    done	
 		
 	echo
 	#统计在10s内占用带宽最大的前10个ip

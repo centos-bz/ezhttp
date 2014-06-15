@@ -1155,9 +1155,9 @@ realTimeTraffic(){
 		printf "\033[0;0H"
 		#清屏并打印Now Peak
 		[[ $clear == true ]] && printf "\033[2J" && echo "$eth--------Now--------Peak-----------"
-		traffic_be=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev | awk '{print $(NF-1),$(NF)}'`)
+		traffic_be=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
 		sleep 2
-		traffic_af=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev | awk '{print $(NF-1),$(NF)}'`)
+		traffic_af=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
 		#计算速率
 		eth_in=$(( (${traffic_af[0]}-${traffic_be[0]})*8/2 ))
 		eth_out=$(( (${traffic_af[1]}-${traffic_be[1]})*8/2 ))
@@ -1204,7 +1204,7 @@ trafficAndConnectionOverview(){
 	echo "please wait for 10s to generate network data..."
 	echo
 	#当前流量值
-	local traffic_be=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev | awk '{print $(NF-1),$(NF)}'`)
+	local traffic_be=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
 	#tcpdump监听网络
 	tcpdump -v -i $eth -tnn > /tmp/tcpdump_temp 2>&1 &
 	sleep 10
@@ -1214,7 +1214,7 @@ trafficAndConnectionOverview(){
 	awk '/^IP/{print;getline;print}' /tmp/tcpdump_temp > /tmp/tcpdump_temp2
 	awk '{len=$NF;sub(/)/,"",len);getline;print $0,len}' /tmp/tcpdump_temp2 > /tmp/tcpdump
 	#10s后流量值
-	local traffic_af=(`awk -v eth=$eth -F'[: ]+' 'BEGIN{ORS=" "}/eth/{print $3,$11}' /proc/net/dev | awk '{print $(NF-1),$(NF)}'`)
+	local traffic_af=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
 	#打印10s平均速率
 	local eth_in=$(( (${traffic_af[0]}-${traffic_be[0]})*8/10 ))
 	local eth_out=$(( (${traffic_af[1]}-${traffic_be[1]})*8/10 ))

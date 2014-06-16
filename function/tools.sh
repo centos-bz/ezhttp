@@ -1212,7 +1212,7 @@ trafficAndConnectionOverview(){
 	kill `ps aux | grep tcpdump | grep -v grep | awk '{print $2}'`
 	#处理tcpdump文件
 	awk '/^IP/{print;getline;print}' /tmp/tcpdump_temp > /tmp/tcpdump_temp2
-	awk '{len=$NF;sub(/)/,"",len);getline;print $0,len}' /tmp/tcpdump_temp2 > /tmp/tcpdump
+	awk '{len=$NF;sub(/\)/,"",len);getline;print $0,len}' /tmp/tcpdump_temp2 > /tmp/tcpdump
 	#10s后流量值
 	local traffic_af=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
 	#打印10s平均速率

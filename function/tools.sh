@@ -1227,22 +1227,33 @@ trafficAndConnectionOverview(){
 	echo -e "\033[32maverage traffic in 10s base on server port: \033[0m"
 	awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line="clients > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > clients"};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
 	sort -k 4 -nr | head -n 10 | while read a b c d;do
+		((lineNum++))
 		echo "$a $b $c $(bit_to_human_readable $d)/s"
 	done
-	echo
+	echo -ne "\033[11A"
+	echo -ne "\033[50C"
 	echo -e "\033[32maverage traffic in 10s base on client port: \033[0m"
     awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line=$2"."$3"."$4"."$5":"$6" > server"}else{line="server > "$8"."$9"."$10"."$11":"$12};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
     sort -k 4 -nr | head -n 10 | while read a b c d;do
+    		echo -ne "\033[50C"
             echo "$a $b $c $(bit_to_human_readable $d)/s"
     done	
 		
 	echo
 	#统计在10s内占用带宽最大的前10个ip
-	echo -e "\033[32mtop 10 ip average traffic in 10s : \033[0m"
+	echo -e "\033[32mtop 10 ip average traffic in 10s base on server: \033[0m"
 	awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line=$2"."$3"."$4"."$5" > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > "$8"."$9"."$10"."$11};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
 	sort -k 4 -nr | head -n 10 | while read a b c d;do
 		echo "$a $b $c $(bit_to_human_readable $d)/s"
 	done
+	echo -ne "\033[11A"
+	echo -ne "\033[50C"
+	echo -e "\033[32mtop 10 ip average traffic in 10s base on client: \033[0m"
+	awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line=$2"."$3"."$4"."$5":"$6" > "$8"."$9"."$10"."$11}else{line=$2"."$3"."$4"."$5" > "$8"."$9"."$10"."$11":"$12};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
+	sort -k 4 -nr | head -n 10 | while read a b c d;do
+		echo -ne "\033[50C"
+		echo "$a $b $c $(bit_to_human_readable $d)/s"
+	done	
 	echo
 	#统计连接状态
 	regSS=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
@@ -1251,9 +1262,13 @@ trafficAndConnectionOverview(){
 	awk 'NR>1{sum[$(NF-4)]+=1}END{for (state in sum){print state,sum[state]}}' /tmp/ss | sort -k 2 -nr
 	echo
 	#统计各端口连接状态
-	echo -e "\033[32mconnection state count by port: \033[0m"
+	echo -e "\033[32mconnection state count by port base on server: \033[0m"
 	awk 'NR>1{sum[$(NF-4),$(NF-1)]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10	
-	echo
+	echo -ne "\033[11A"
+	echo -ne "\033[50C"
+	echo -e "\033[32mconnection state count by port base on client: \033[0m"
+	awk 'NR>1{sum[$(NF-4),$(NF)]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10 | awk '{print "\033[50C"$0}'	
+	echo	
 	#统计端口为80且状态为ESTAB连接数最多的前10个IP
 	echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
 	cat /tmp/ss | grep ESTAB | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10

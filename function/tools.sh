@@ -1227,7 +1227,6 @@ trafficAndConnectionOverview(){
 	echo -e "\033[32maverage traffic in 10s base on server port: \033[0m"
 	awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line="clients > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > clients"};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
 	sort -k 4 -nr | head -n 10 | while read a b c d;do
-		((lineNum++))
 		echo "$a $b $c $(bit_to_human_readable $d)/s"
 	done
 	echo -ne "\033[11A"

@@ -150,11 +150,14 @@ if [ $? != 0 ];then
 	distro=`cat /etc/issue`
 	version=`cat /proc/version`
 	architecture=`uname -m`
+	mem=`free -m`
 	cat >>/root/ezhttp.log<<EOF
 	ezhttp errors:
 	distributions:$distro
 	architecture:$architecture
 	version:$version
+	memery:
+	${mem}
 	Nginx: ${nginx}
 	Nginx compile parameter:${nginx_configure_args}
 	Apache compile parameter:${apache_configure_args}

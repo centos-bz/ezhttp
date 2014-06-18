@@ -278,7 +278,10 @@ sed -i 's/^tcp-keepalive.*/tcp-keepalive 60/' ${redis_location}/etc/redis.conf
 sed -i "s#^logfile.*#logfile ${redis_location}/logs/redis.log#" ${redis_location}/etc/redis.conf
 sed -i 's/^stop-writes-on-bgsave-error.*/stop-writes-on-bgsave-error no/' ${redis_location}/etc/redis.conf
 sed -i "s#^dir.*#dir ${redis_location}/db/#" ${redis_location}/etc/redis.conf
-sed -i "s/^# maxmemory.*/maxmemory $redisMaxMemory/" ${redis_location}/etc/redis.conf
+sed -i "s/^# maxmemory .*/maxmemory $redisMaxMemory/" ${redis_location}/etc/redis.conf
+sed -i "s/^# maxmemory-policy.*/maxmemory-policy allkeys-lru/" ${redis_location}/etc/redis.conf
+
+
 sed -i 's/^appendonly.*/appendonly yes/' ${redis_location}/etc/redis.conf
 
 \cp src/redis-server src/redis-cli src/redis-benchmark src/redis-check-aof src/redis-check-dump ${redis_location}/bin/

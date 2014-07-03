@@ -1119,11 +1119,12 @@ Network_analysis(){
 	LANG=c
 	export LANG	
 	while true; do
-		echo -e "1) real time traffic.\n2) traffic and connection overview.\n"
+		echo -e "1) real time traffic.\n2) traffic and connection overview.\n3) http request count\n"
 		read -p "please input your select(ie 1): " select
 		case  $select in
 			1) realTimeTraffic;break;;
 			2) trafficAndConnectionOverview;break;;
+			3) httpRequestCount;break;;
 			*) echo "input error,please input a number.";;
 		esac
 	done	
@@ -1289,6 +1290,48 @@ trafficAndConnectionOverview(){
     #统计端口为80且状态为SYN-RECV连接数最多的前10个IP
     echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
     cat /tmp/ss | grep -E "$regSS" | grep SYN-RECV | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
+}
+
+#http请求统计
+httpRequestCount(){
+    if ! which tcpdump > /dev/null;then
+        echo "tcpdump not found,going to install it."
+        if check_package_manager apt;then
+            apt-get -y install tcpdump
+        elif check_package_manager yum;then
+            yum -y install tcpdump
+        fi
+    fi
+
+    local eth=""
+    local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
+    local nicLen=${#nic_arr[@]}
+    if [[ $nicLen -eq 0 ]]; then
+        echo "sorry,I can not detect any network device,please report this issue to author."
+        exit 1
+    elif [[ $nicLen -eq 1 ]]; then
+        eth=$nic_arr
+    else
+        display_menu nic
+        eth=$nic
+    fi
+ 
+    echo "please wait for 10s to generate network data..."
+    echo
+    rm -f /tmp/tcp.cap
+    tcpdump -i $eth tcp -w /tmp/tcp.cap -s 0 2>&1 &
+	sleep 10
+	kill `ps aux | grep tcpdump | grep -v grep | awk '{print $2}'`
+
+	(( qps=$(strings /tmp/tcp.cap | grep -c -E "GET /|POST /") / 10 ))
+	echo -e "\033[32mHTTP Requests Per seconds:\033[0m"
+	echo "${qps}/s"
+	echo
+	echo -e "\033[32mTop 10 request url for all requests excluding static resource:\033[0m"
+	strings /tmp/tcp.cap | grep -E "GET /|POST /|Host:" | grep -B 1 "Host:" | sed '/^--$/d' | grep -A 1 -E "GET /|POST /" | sed '/^--$/d'| awk '{url=$2;getline;host=$2;printf ("%s\n",host""url)}' | grep -v -i -E "\.(gif|png|jpg|jpeg|ico|js|swf|css)" | sort | uniq -c | sort -nr | head -n 10
+	echo
+	echo -e "\033[32mTop 10 request url for all requests:\033[0m"
+	strings /tmp/tcp.cap | grep -E "GET /|POST /|Host:" | grep -B 1 "Host:" | sed '/^--$/d' | grep -A 1 -E "GET /|POST /" | sed '/^--$/d'| awk '{url=$2;getline;host=$2;printf ("%s\n",host""url)}' | sort | uniq -c | sort -nr | head -n 10	
 }
 
 #工具设置

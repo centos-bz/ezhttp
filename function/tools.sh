@@ -1330,6 +1330,9 @@ httpRequestCount(){
 	echo -e "\033[32mTop 10 request url for all requests excluding static resource:\033[0m"
 	strings /tmp/tcp.cap | grep -E "GET /|POST /|Host:" | grep -B 1 "Host:" | sed '/^--$/d' | grep -A 1 -E "GET /|POST /" | sed '/^--$/d'| awk '{url=$2;getline;host=$2;printf ("%s\n",host""url)}' | grep -v -i -E "\.(gif|png|jpg|jpeg|ico|js|swf|css)" | sort | uniq -c | sort -nr | head -n 10
 	echo
+	echo -e "\033[32mTop 10 request url for all requests excluding static resource and without args:\033[0m"
+	strings /tmp/tcp.cap | grep -E "GET /|POST /|Host:" | grep -B 1 "Host:" | sed '/^--$/d' | grep -A 1 -E "GET /|POST /" | sed '/^--$/d'| awk '{url=$2;getline;host=$2;printf ("%s\n",host""url)}' | grep -v -i -E "\.(gif|png|jpg|jpeg|ico|js|swf|css)" | awk -F'?' '{print $1}' |  sort | uniq -c | sort -nr | head -n 10
+	echo
 	echo -e "\033[32mTop 10 request url for all requests:\033[0m"
 	strings /tmp/tcp.cap | grep -E "GET /|POST /|Host:" | grep -B 1 "Host:" | sed '/^--$/d' | grep -A 1 -E "GET /|POST /" | sed '/^--$/d'| awk '{url=$2;getline;host=$2;printf ("%s\n",host""url)}' | sort | uniq -c | sort -nr | head -n 10	
 }

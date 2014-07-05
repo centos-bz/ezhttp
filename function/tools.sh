@@ -1207,7 +1207,7 @@ trafficAndConnectionOverview(){
     #当前流量值
     local traffic_be=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
     #tcpdump监听网络
-    tcpdump -v -i $eth -tnn > /tmp/tcpdump_temp 2>&1 &
+    tcpdump -v -i $eth -tnn -s 100 > /tmp/tcpdump_temp 2>&1 &
     sleep 10
     clear
     kill `ps aux | grep tcpdump | grep -v grep | awk '{print $2}'`
@@ -1319,7 +1319,7 @@ httpRequestCount(){
     echo "please wait for 10s to generate network data..."
     echo
     rm -f /tmp/tcp.cap
-    tcpdump -i $eth tcp -w /tmp/tcp.cap -s 0 2>&1 &
+    tcpdump -nn -i $eth tcp[20:2]=0x4745 or tcp[20:2]=0x504f -w /tmp/tcp.cap -s 512 2>&1 &
 	sleep 10
 	kill `ps aux | grep tcpdump | grep -v grep | awk '{print $2}'`
 	strings /tmp/tcp.cap | grep -E "GET /|POST /|Host:" | grep --no-group-separator -B 1 "Host:" | grep --no-group-separator -A 1 -E "GET /|POST /" | awk '{url=$2;getline;host=$2;printf ("%s\n",host""url)}' > /tmp/url.txt

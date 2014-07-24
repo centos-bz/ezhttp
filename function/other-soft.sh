@@ -146,9 +146,9 @@ install_Memcached(){
 groupadd memcache
 useradd -M -s /bin/false -g memcache memcache
 #安装依赖
-if check_package_manager apt;then
+if check_sys packageManager apt;then
 	apt-get -y install libevent-dev
-elif check_package_manager yum;then
+elif check_sys packageManager yum;then
 	yum -y install libevent-devel
 else
 	check_installed "install_libevent" "${depends_prefix}/${libevent_filename}"
@@ -159,7 +159,7 @@ cd $cur_dir/soft/
 tar xzvf ${memcached_filename}.tar.gz
 cd ${memcached_filename}
 make clean
-if package_support;then
+if check_sys packageSupport;then
 	other_option=""
 else
 	other_option="--with-libevent=${depends_prefix}/${libevent_filename}"

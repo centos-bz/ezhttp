@@ -16,23 +16,83 @@ echo $words | tr '[A-Z]' '[a-z]'
 }
 
 #判断系统版本
-check_sys_version(){
-if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
-	echo "debian"
-elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
-	echo "centos"	
-elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
-	echo "debian"
-elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
-	echo "centos"
-fi	
+check_sys(){
+	local checkType=$1
+	local value=$2
+
+	local release=''
+	local systemPackage=''
+	local packageSupport=''
+
+	if [[ -f /etc/redhat-release ]];then
+		release="centos"
+		systemPackage="yum"
+		packageSupport=true
+
+	elif cat /etc/issue | grep -q -E -i "debian";then
+		release="debian"
+		systemPackage="apt"
+		packageSupport=true
+
+	elif cat /etc/issue | grep -q -E -i "ubuntu";then
+		release="ubuntu"
+		systemPackage="apt"
+		packageSupport=true
+
+	elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
+		release="centos"
+		systemPackage="yum"
+		packageSupport=true
+
+	elif cat /proc/version | grep -q -E -i "debian";then
+		release="debian"
+		systemPackage="apt"
+		packageSupport=true
+
+	elif cat /proc/version | grep -q -E -i "ubuntu";then
+		release="ubuntu"
+		systemPackage="apt"
+		packageSupport=true
+
+	elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
+		release="centos"
+		systemPackage="yum"
+		packageSupport=true
+
+	else
+		release="unknow"
+		systemPackage="unknow"
+		packageSupport=false
+	fi
+
+	if [[ $checkType == "sysRelease" ]]; then
+		if [ "$value" == "$release" ];then
+			return 0
+		else
+			return 1
+		fi
+
+	elif [[ $checkType == "packageManager" ]]; then
+		if [ "$value" == "$systemPackage" ];then
+			return 0
+		else
+			return 1
+		fi
+
+	elif [[ $checkType == "packageSupport" ]]; then
+		if $packageSupport;then
+			return 0
+		else
+			return 1
+		fi
+	fi
 }
 
 #关闭开机启动
 boot_stop(){
-if [ "`check_sys_version`" == "debian" ];then
+if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 	update-rc.d -f $1 remove
-elif [ "`check_sys_version`" == "centos" ];then
+elif check_sys sysRelease centos;then
 	chkconfig $1 off
 fi
 }

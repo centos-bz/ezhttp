@@ -37,14 +37,14 @@ if [ "$apache" != "do_not_install" ];then
 
 	#获取编译参数
 	if [ "$apache" == "${apache2_2_filename}" ];then
-		if package_support;then
+		if check_sys packageSupport;then
 			other_option=""
 		else
 			other_option="--with-z=${depends_prefix}/${zlib_filename} --with-ssl=${depends_prefix}/${openssl_filename}"
 		fi	
 		apache_configure_args="--prefix=${apache_location} --with-included-apr --enable-so --enable-deflate=shared --enable-expires=shared  --enable-ssl=shared --enable-headers=shared --enable-rewrite=shared --enable-static-support ${other_option}"
 	elif [ "$apache" == "${apache2_4_filename}" ];then
-		if package_support;then
+		if check_sys packageSupport;then
 			other_option=""
 		else
 			other_option="--with-z=${depends_prefix}/${zlib_filename} --with-ssl=${depends_prefix}/${openssl_filename} --with-pcre=${depends_prefix}/${pcre_filename}"
@@ -73,9 +73,9 @@ fi
 #安装apache
 install_apache(){
 #安装依赖
-if check_package_manager apt;then
+if check_sys packageManager apt;then
 	apt-get -y install libssl-dev
-elif check_package_manager yum;then
+elif check_sys packageManager yum;then
 	yum -y install zlib-devel openssl-devel
 else
 	check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
@@ -102,16 +102,16 @@ if [ "$apache" == "${apache2_2_filename}" ];then
 
 elif [ "$apache" == "${apache2_4_filename}" ];then
 	#安装依赖
-	if check_package_manager apt;then
+	if check_sys packageManager apt;then
 		apt-get -y install libpcre3-dev
-	elif check_package_manager yum;then
+	elif check_sys packageManager yum;then
 		yum install -y pcre-devel
 	else
 		check_installed "install_pcre" "${depends_prefix}/${pcre_filename}"
 	fi
 
 	#安装apache 2.4时,pcre不能低于6.7
-	if package_support;then
+	if check_sys packageSupport;then
 		pcreVersion=`pcre-config --version | tr -d '.'`
 		if [[ $pcreVersion -lt 67 ]]; then
 			apache_configure_args="$apache_configure_args --with-pcre=${depends_prefix}/${pcre_filename}"

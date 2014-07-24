@@ -54,21 +54,21 @@ if [ "$mysql" != "do_not_install" ];then
 
 		#定义mysql编译参数
 		if [ "$mysql" == "${mysql5_1_filename}" ];then
-			if package_support;then
+			if check_sys packageSupport;then
 				other_option=""
 			else
 				other_option="--with-named-curses-libs=${depends_prefix}/${ncurses_filename2}/lib/libncurses.a"
 			fi			
 			mysql_configure_args="--prefix=${mysql_location} --sysconfdir=${mysql_location}/etc --with-unix-socket-path=/tmp/mysql.sock --with-charset=utf8 --with-collation=utf8_general_ci --with-extra-charsets=complex --with-plugins=max --with-mysqld-ldflags=-all-static --enable-assembler $other_option"
 		elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" ];then
-			if package_support;then
+			if check_sys packageSupport;then
 				other_option=""
 			else
 				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 			fi
 			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 		elif [ "$mysql" == "${mysql5_6_filename}" ];then
-			if package_support;then
+			if check_sys packageSupport;then
 				other_option=""
 			else
 				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
@@ -90,7 +90,7 @@ if [ "$mysql" != "do_not_install" ];then
 		done
 		[ "$yn" == "y" ] && echo -e "\nyour new mysql configure parameter is : ${mysql_configure_args}\n"		
 	else
-		if package_support;then
+		if check_sys packageSupport;then
 			other_option=""
 		else
 			other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
@@ -105,9 +105,9 @@ install_mysqld(){
 if [ "$mysql" == "${mysql5_1_filename}" ];then
 
 	#安装依赖
-	if check_package_manager apt;then
+	if check_sys packageManager apt;then
 		apt-get -y install libncurses5-dev
-	elif check_package_manager yum;then
+	elif check_sys packageManager yum;then
 		yum -y install ncurses-devel
 	else
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
@@ -119,7 +119,7 @@ if [ "$mysql" == "${mysql5_1_filename}" ];then
 	cd ${mysql5_1_filename}
 	make clean
 
-	if package_support;then
+	if check_sys packageSupport;then
 		other_option=""
 	else
 		other_option="--with-named-curses-libs=${depends_prefix}/${ncurses_filename2}/lib/libncurses.a"
@@ -131,9 +131,9 @@ if [ "$mysql" == "${mysql5_1_filename}" ];then
 
 elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" ];then
 	#安装依赖
-	if check_package_manager apt;then
+	if check_sys packageManager apt;then
 		apt-get -y install libncurses5-dev cmake m4 bison
-	elif check_package_manager yum;then
+	elif check_sys packageManager yum;then
 		yum -y install ncurses-devel cmake m4 bison
 	else
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
@@ -148,7 +148,7 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 	tar xzvf ${mysql5_5_filename}.tar.gz
 	cd ${mysql5_5_filename}
 	make clean
-	if package_support;then
+	if check_sys packageSupport;then
 		other_option=""
 	else
 		other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
@@ -169,9 +169,9 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 	
 elif [ "$mysql" == "${mysql5_6_filename}" ];then
 	#安装依赖
-	if check_package_manager apt;then
+	if check_sys packageManager apt;then
 		apt-get -y install libncurses5-dev cmake m4 bison
-	elif check_package_manager yum;then
+	elif check_sys packageManager yum;then
 		yum -y install ncurses-devel cmake m4 bison
 	else
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
@@ -185,7 +185,7 @@ elif [ "$mysql" == "${mysql5_6_filename}" ];then
 	tar xzvf  ${mysql5_6_filename}.tar.gz
 	cd ${mysql5_6_filename}
 	make clean
-	if package_support;then
+	if check_sys packageSupport;then
 		other_option=""
 	else
 		other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"

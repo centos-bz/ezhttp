@@ -79,16 +79,30 @@ if [ "$php" != "do_not_install" ];then
 		fi
 		
 		#判断是否支持apt或者yum安装依赖
-		if package_support;then
-			other_option="--with-openssl \
-			              --with-zlib \
-			              --with-curl=shared \
-			              --with-gd=shared \
-			              --with-jpeg-dir \
-			              --with-png-dir \
-			              --with-freetype-dir \
-			              --with-mcrypt=shared \
-			              --with-mhash=shared "
+		if check_sys packageSupport;then
+			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
+			if CentOSVerCheck 7;then
+				other_option="--with-openssl \
+							  --with-zlib \
+							  --with-curl=shared \
+							  --with-gd=shared \
+							  --with-jpeg-dir \
+							  --with-png-dir \
+							  --with-freetype-dir \
+							  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
+							  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+			else
+				other_option="--with-openssl \
+							  --with-zlib \
+							  --with-curl=shared \
+							  --with-gd=shared \
+							  --with-jpeg-dir \
+							  --with-png-dir \
+							  --with-freetype-dir \
+							  --with-mcrypt=shared \
+							  --with-mhash=shared "
+			fi
+			
 		else
 			other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config \
 			              --with-libxml-dir=${depends_prefix}/${libxml2_filename} \
@@ -133,16 +147,30 @@ if [ "$php" != "do_not_install" ];then
 			php_run_php_mode="--enable-fpm"
 		fi	
 
-		if package_support;then
-			other_option="--with-openssl \
-			              --with-zlib \
-			              --with-curl=shared \
-			              --with-gd=shared \
-			              --with-jpeg-dir \
-			              --with-png-dir \
-			              --with-freetype-dir \
-			              --with-mcrypt=shared \
-			              --with-mhash=shared"
+		if check_sys packageSupport;then
+			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
+			if CentOSVerCheck 7;then
+				other_option="--with-openssl \
+							  --with-zlib \
+							  --with-curl=shared \
+							  --with-gd=shared \
+							  --with-jpeg-dir \
+							  --with-png-dir \
+							  --with-freetype-dir \
+							  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
+							  --with-mhash=shared,${depends_prefix}/${mhash_filename}"			
+			else
+				other_option="--with-openssl \
+							  --with-zlib \
+							  --with-curl=shared \
+							  --with-gd=shared \
+							  --with-jpeg-dir \
+							  --with-png-dir \
+							  --with-freetype-dir \
+							  --with-mcrypt=shared \
+							  --with-mhash=shared"
+			fi
+			
 		else
 			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} \
 			              --with-openssl=${depends_prefix}/${openssl_filename} \
@@ -187,16 +215,30 @@ if [ "$php" != "do_not_install" ];then
 			php_run_php_mode="--enable-fpm"
 		fi
 
-		if package_support;then
-			other_option="--with-openssl \
-			              --with-zlib \
-			              --with-curl=shared \
-			              --with-gd=shared \
-			              --with-jpeg-dir \
-			              --with-png-dir \
-			              --with-freetype-dir \
-			              --with-mcrypt=shared \
-			              --with-mhash=shared"
+		if check_sys packageSupport;then
+			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
+			if CentOSVerCheck 7;then
+				other_option="--with-openssl \
+							  --with-zlib \
+							  --with-curl=shared \
+							  --with-gd=shared \
+							  --with-jpeg-dir \
+							  --with-png-dir \
+							  --with-freetype-dir \
+							  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
+							  --with-mhash=shared,${depends_prefix}/${mhash_filename} "
+			else
+				other_option="--with-openssl \
+							  --with-zlib \
+							  --with-curl=shared \
+							  --with-gd=shared \
+							  --with-jpeg-dir \
+							  --with-png-dir \
+							  --with-freetype-dir \
+							  --with-mcrypt=shared \
+							  --with-mhash=shared"
+			fi
+			
 		else
 			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} \
 			              --with-openssl=${depends_prefix}/${openssl_filename} \
@@ -257,9 +299,9 @@ install_php_depends
 #开始安装php
 if [ "$php" == "${php5_2_filename}" ];then
 	#安装依赖
-	if check_package_manager apt;then
+	if check_sys packageManager apt;then
 		apt-get -y install patch
-	elif check_package_manager yum;then
+	elif check_sys packageManager yum;then
 		yum install -y patch
 	else
 		check_installed "install_patch" "${depends_prefix}/${patch_filename}"

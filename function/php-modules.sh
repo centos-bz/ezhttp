@@ -105,9 +105,9 @@ fi
 #安装eaccelerator
 install_eaccelerator(){
 #安装依赖
-if check_package_manager apt;then
+if check_sys packageManager apt;then
 	apt-get -y install m4 autoconf
-elif check_package_manager yum;then
+elif check_sys packageManager yum;then
 	yum -y install m4 autoconf
 else
 	check_installed "install_m4" "${depends_prefix}/${m4_filename}"
@@ -158,9 +158,9 @@ EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
 #安装php-memcache
 install_php_memcache(){
 #安装依赖
-if check_package_manager apt;then
+if check_sys packageManager apt;then
 	apt-get -y install zlib1g-dev m4 autoconf
-elif check_package_manager yum;then
+elif check_sys packageManager yum;then
 	yum install -y zlib-devel m4 autoconf
 else
 	check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
@@ -175,7 +175,7 @@ rm -rf ${php_memcache_filename}
 tar xzvf ${php_memcache_filename}.tgz
 cd ${php_memcache_filename}
 error_detect "$(dirname $phpConfig)/phpize"
-if package_support;then
+if check_sys packageSupport;then
 	other_option=""
 else
 	other_option="--with-zlib-dir=${depends_prefix}/${zlib_filename}"
@@ -235,9 +235,9 @@ error_detect "make install"
 install_php_imagesmagick(){
 #安装依赖
 check_installed "install_ImageMagick" "${depends_prefix}/${ImageMagick_filename}"
-if check_package_manager apt;then
+if check_sys packageManager apt;then
 	apt-get -y install m4 autoconf pkg-config
-elif check_package_manager yum;then
+elif check_sys packageManager yum;then
 	yum -y install pkgconfig m4 autoconf
 else
 	check_installed "install_pkgconfig" "${depends_prefix}/${pkgconfig_filename}"

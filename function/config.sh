@@ -5,54 +5,54 @@ load_config(){
 ###################主要安装包设置###################
 
 #nginx设置
-nginx_filename="nginx-1.4.4"
-nginx_other_link="http://cdn.yyupload.com/down/499809/software/nginx-1.4.4.tar.gz"
-nginx_official_link="http://nginx.org/download/nginx-1.4.4.tar.gz"
+nginx_filename="nginx-1.6.0"
+nginx_other_link="http://cdn.yyupload.com/down/499809/software/nginx-1.6.0.tar.gz"
+nginx_official_link="http://nginx.org/download/nginx-1.6.0.tar.gz"
 
 #tengine设置
-tengine_filename="tengine-1.5.2"
-tengine_other_link="http://cdn.yyupload.com/down/499809/software/tengine-1.5.2.tar.gz"
-tengine_official_link="http://tengine.taobao.org/download/tengine-1.5.2.tar.gz"
+tengine_filename="tengine-2.0.3"
+tengine_other_link="http://cdn.yyupload.com/down/499809/software/tengine-2.0.3.tar.gz"
+tengine_official_link="http://tengine.taobao.org/download/tengine-2.0.3.tar.gz"
 
 #openresty设置
-openresty_filename="ngx_openresty-1.5.12.1"
-openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.5.12.1.tar.gz"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.5.12.1.tar.gz"
+openresty_filename="ngx_openresty-1.7.2.1"
+openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.2.1.tar.gz"
+openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.2.1.tar.gz"
 
 #apache设置
 apache2_2_filename="httpd-2.2.27"
 apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.27.tar.gz"
 apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.27.tar.gz"
 
-apache2_4_filename="httpd-2.4.9"
-apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.9.tar.gz"
-apache2_4_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.4.9.tar.gz"
+apache2_4_filename="httpd-2.4.10"
+apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.10.tar.gz"
+apache2_4_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.4.10.tar.gz"
 
 #mysql_server设置
-mysql5_1_filename="mysql-5.1.72"
-mysql5_1_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.1.72.tar.gz"
-mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.72.tar.gz"
+mysql5_1_filename="mysql-5.1.73"
+mysql5_1_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.1.73.tar.gz"
+mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz"
 
-mysql5_5_filename="mysql-5.5.36"
-mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.36.tar.gz"
-mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.36.tar.gz"
+mysql5_5_filename="mysql-5.5.38"
+mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.38.tar.gz"
+mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.38.tar.gz"
 
-mysql5_6_filename="mysql-5.6.16"
-mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.16.tar.gz"
-mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.16.tar.gz"
+mysql5_6_filename="mysql-5.6.19"
+mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.19.tar.gz"
+mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.19.tar.gz"
 
 #php设置
 php5_2_filename="php-5.2.17"
 php5_2_other_link="http://cdn.yyupload.com/down/499809/software/php-5.2.17.tar.gz"
 php5_2_official_link="http://centos.googlecode.com/files/php-5.2.17.tar.gz"
 
-php5_3_filename="php-5.3.27"
-php5_3_other_link="http://cdn.yyupload.com/down/499809/software/php-5.3.27.tar.gz"
-php5_3_official_link="http://www.php.net/get/php-5.3.27.tar.gz/from/us1.php.net/mirror"
+php5_3_filename="php-5.3.28"
+php5_3_other_link="http://cdn.yyupload.com/down/499809/software/php-5.3.28.tar.gz"
+php5_3_official_link="http://us1.php.net/distributions/php-5.3.28.tar.gz"
 
-php5_4_filename="php-5.4.22"
-php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.22.tar.gz"
-php5_4_official_link="http://us1.php.net/distributions/php-5.4.22.tar.gz"
+php5_4_filename="php-5.4.30"
+php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.30.tar.gz"
+php5_4_official_link="http://us1.php.net/distributions/php-5.4.30.tar.gz"
 
 #ZendOptimizer设置
 ZendOptimizer_filename="ZendOptimizer-3.3.9"

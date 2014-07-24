@@ -219,9 +219,9 @@ fi
 
 #开机启动
 boot_start(){
-if check_package_manager apt;then
+if check_sys packageManager apt;then
 	update-rc.d -f $1 defaults
-elif check_package_manager yum;then
+elif check_sys packageManager yum;then
 	chkconfig --add $1
 	chkconfig $1 on
 fi
@@ -229,9 +229,9 @@ fi
 
 #关闭开机启动
 boot_stop(){
-if check_package_manager apt;then
+if check_sys packageManager apt;then
 	update-rc.d -f $1 remove
-elif check_package_manager yum;then
+elif check_sys packageManager yum;then
 	chkconfig $1 off
 fi
 }
@@ -422,18 +422,12 @@ done
 
 #安装编译工具
 install_tool(){ 
-if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
-	apt-get -y update
-	apt-get -y install gcc g++ make wget perl curl bzip2 
-elif cat /etc/issue | grep -q -E -i "centos|read hat|redhat";then
-	yum -y install gcc gcc-c++ make wget perl  curl	bzip2 which
-elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
-	apt-get -y update
-	apt-get -y install gcc g++ make wget perl curl bzip2
-elif cat /proc/version | grep -q -E -i "centos|read hat|redhat";then
-	yum -y install gcc gcc-c++ make wget perl  curl bzip2 which
-
-fi		
+	if check_sys packageManager apt;then
+		apt-get -y update
+		apt-get -y install gcc g++ make wget perl curl bzip2
+	elif check_sys packageManager yum; then
+		yum -y install gcc gcc-c++ make wget perl  curl bzip2 which
+	fi
 
 check_command_exist "gcc"
 check_command_exist "g++"
@@ -443,69 +437,76 @@ check_command_exist "perl"
 }
 
 #判断系统版本
-check_sys_version(){
-	local system_input=$1
-	local system_check=''
+check_sys(){
+	local checkType=$1
+	local value=$2
 
-	if cat /etc/issue | grep -q -E -i "debian";then
-		system_check="debian"
-	elif cat /etc/issue | grep -q -E -i "ubuntu";then
-		system_check="ubuntu"
-	elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
-		system_check="centos"	
-	elif cat /proc/version | grep -q -E -i "debian";then
-		system_check="debian"
-	elif cat /proc/version | grep -q -E -i "ubuntu";then
-		system_check="ubuntu"
-	elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
-		system_check="centos"
-	else
-		system_check="unknow"
-	fi
-
-	if [ "$system_input" == "$system_check" ];then
-		return 0
-	else
-		return 1
-	fi		
-}
-
-#判断包管理工具
-check_package_manager(){
-	local manager=$1
+	local release=''
 	local systemPackage=''
-	if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
-		systemPackage='apt'
+	local packageSupport=''
+
+	if [[ -f /etc/redhat-release ]];then
+		release="centos"
+		systemPackage="yum"
+		packageSupport=true
+
+	elif cat /etc/issue | grep -q -E -i "debian";then
+		release="debian"
+		systemPackage="apt"
+		packageSupport=true
+
+	elif cat /etc/issue | grep -q -E -i "ubuntu";then
+		release="ubuntu"
+		systemPackage="apt"
+		packageSupport=true
+
 	elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
-		systemPackage='yum'
-	elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
-		systemPackage='apt'
+		release="centos"
+		systemPackage="yum"
+		packageSupport=true
+
+	elif cat /proc/version | grep -q -E -i "debian";then
+		release="debian"
+		systemPackage="apt"
+		packageSupport=true
+
+	elif cat /proc/version | grep -q -E -i "ubuntu";then
+		release="ubuntu"
+		systemPackage="apt"
+		packageSupport=true
+
 	elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
-		systemPackage='yum'
+		release="centos"
+		systemPackage="yum"
+		packageSupport=true
+
 	else
-		echo "unkonw"
+		release="unknow"
+		systemPackage="unknow"
+		packageSupport=false
 	fi
 
-	if [ "$manager" == "$systemPackage" ];then
-		return 0
-	else
-		return 1
-	fi	
-}
+	if [[ $checkType == "sysRelease" ]]; then
+		if [ "$value" == "$release" ];then
+			return 0
+		else
+			return 1
+		fi
 
-#支持包管理工具安装依赖的系统
-package_support(){
-if cat /etc/issue | grep -q -E -i "ubuntu|debian";then
-	return 0
-elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
-	return 0
-elif cat /proc/version | grep -q -E -i "ubuntu|debian";then
-	return 0
-elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
-	return 0
-else
-	return 1
-fi	
+	elif [[ $checkType == "packageManager" ]]; then
+		if [ "$value" == "$systemPackage" ];then
+			return 0
+		else
+			return 1
+		fi
+
+	elif [[ $checkType == "packageSupport" ]]; then
+		if $packageSupport;then
+			return 0
+		else
+			return 1
+		fi
+	fi
 }
 
 #添加必要的环境变量
@@ -556,14 +557,18 @@ fi
 
 #获取版本号
 VersionGet(){
-	grep -oE  "[0-9.]+" /etc/issue
+	if [[ -s /etc/redhat-release ]];then
+		grep -oE  "[0-9.]+" /etc/redhat-release
+	else	
+		grep -oE  "[0-9.]+" /etc/issue
+	fi	
 }
 
 #判断centos版本
 CentOSVerCheck(){
 	local code=$1
 	local version="`VersionGet`"
-	local main_ver=${version%.*}
+	local main_ver=${version%%.*}
 	if [ $main_ver == $code ];then
 		return 0
 	else

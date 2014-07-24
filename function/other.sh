@@ -2,8 +2,9 @@
 if_use_previous_setting(){
 if [ -s "/root/previous_setting" ];then
 	#是否使用上次设置安装
-	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting [Y/n]: " "install_with_pre_settings" "rm -f /root/previous_setting;lanmp_menu"
+	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting [Y/n]: " "pre_settings_modify=false;install_with_pre_settings" "pre_settings_modify=true;rm -f /root/previous_setting;lanmp_menu"
 else
+	pre_settings_modify=true
 	lanmp_menu
 fi
 
@@ -56,7 +57,7 @@ preinstall_lnmp(){
 install_lnmp(){	
 	last_confirm
 	#记录设置
-	record_setting
+	$pre_settings_modify && record_setting
 	#开始安装
 	disable_selinux
 	#安装工具
@@ -86,7 +87,7 @@ preinstall_lamp(){
 install_lamp(){	
 	last_confirm
 	#记录设置
-	record_setting	
+	$pre_settings_modify && record_setting	
 	#开始安装
 	disable_selinux
 	#安装工具
@@ -118,7 +119,7 @@ preinstall_lnamp(){
 install_lnamp(){	
 	last_confirm
 	#记录设置
-	record_setting	
+	$pre_settings_modify && record_setting	
 	#开始安装
 	disable_selinux
 	#安装工具

@@ -394,7 +394,7 @@ create_pureftpd_rpm(){
 
 #rpm生成工具
 Create_rpm_package(){
-	if ! check_sys_version centos;then
+	if ! check_sys sysRelease centos;then
 		echo "create rpm package tool is only support system centos/redhat."
 		exit
 	fi
@@ -534,7 +534,7 @@ Create_rpm_package(){
 
 #percona xtrabackup工具安装
 Percona_xtrabackup_install(){
-	if check_sys_version ubuntu || check_sys_version debian;then
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 		apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
 		local version_name=`get_ubuntu_version_name`
 		if ! grep -q "http://repo.percona.com/apt" /etc/apt/sources.list;then
@@ -544,7 +544,7 @@ Percona_xtrabackup_install(){
 		apt-get -y update
 		apt-get -y install percona-xtrabackup
 
-	elif check_sys_version centos;then
+	elif check_sys sysRelease centos;then
 		if is_64bit;then
 			rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
 		else
@@ -594,7 +594,7 @@ Change_sshd_port(){
 	
 	#重启sshd
 	local restartCmd=''
-	if check_sys_version debian || check_sys_version ubuntu; then
+	if check_sys sysRelease debian || check_sys sysRelease ubuntu; then
 		restartCmd="service ssh restart"
 	else
 		restartCmd="service sshd restart"
@@ -801,16 +801,16 @@ delete_iptables_rule(){
 #保存iptables 
 save_iptables(){
 	#保存规则
-	if check_sys_version ubuntu || check_sys_version debian;then
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 		iptables-save > /etc/iptables.up.rule
-	elif check_sys_version centos;then
+	elif check_sys sysRelease centos;then
 		service iptables save
 	fi
 }
 
 #开机加载iptables
 load_iptables_onboot(){
-	if check_sys_version ubuntu || check_sys_version debian;then
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 		if [[ ! -s "/etc/network/if-pre-up.d/iptablesload" ]]; then
 			cat >/etc/network/if-pre-up.d/iptablesload<<EOF
 #!/bin/sh
@@ -831,7 +831,7 @@ EOF
 
 		chmod +x /etc/network/if-post-down.d/iptablessave /etc/network/if-pre-up.d/iptablesload
 
-	elif check_sys_version centos;then
+	elif check_sys sysRelease centos;then
 		chkconfig iptables on
 	fi	
 }
@@ -846,14 +846,14 @@ stop_iptables(){
 #恢复iptables
 rescore_iptables(){
 
-	if check_sys_version ubuntu || check_sys_version debian;then
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 		if [ -s "/etc/iptables.up.rule" ];then
 			iptables-restore < /etc/iptables.up.rule
 			echo "rescore iptables done."
 		else
 			echo "/etc/iptables.up.rule not found,can not be rescore iptables."
 		fi	
-	elif check_sys_version centos;then
+	elif check_sys sysRelease centos;then
 		service iptables restart
 		echo "rescore iptables done."
 	fi
@@ -968,13 +968,13 @@ Set_timezone_and_sync_time(){
 	fi
 
 	echo "start to sync time and add sync command to cronjob..."
-	if check_sys_version ubuntu || check_sys_version debian;then
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 		apt-get -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
 		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
 		service cron restart
-	elif check_sys_version centos; then
+	elif check_sys sysRelease centos; then
 		yum -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
@@ -1181,9 +1181,9 @@ realTimeTraffic(){
 trafficAndConnectionOverview(){
     if ! which tcpdump > /dev/null;then
         echo "tcpdump not found,going to install it."
-        if check_package_manager apt;then
+        if check_sys packageManager apt;then
             apt-get -y install tcpdump
-        elif check_package_manager yum;then
+        elif check_sys packageManager yum;then
             yum -y install tcpdump
         fi
     fi
@@ -1296,9 +1296,9 @@ trafficAndConnectionOverview(){
 httpRequestCount(){
     if ! which tcpdump > /dev/null;then
         echo "tcpdump not found,going to install it."
-        if check_package_manager apt;then
+        if check_sys packageManager apt;then
             apt-get -y install tcpdump
-        elif check_package_manager yum;then
+        elif check_sys packageManager yum;then
             yum -y install tcpdump
         fi
     fi

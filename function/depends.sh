@@ -6,7 +6,7 @@ install_php_depends(){
 	fi
 	
 	#安装依赖
-	if check_package_manager apt;then
+	if check_sys packageManager apt;then
 		local packages=(m4 autoconf libcurl4-gnutls-dev  autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev)
 		for p in ${packages[@]}
 		do
@@ -18,7 +18,7 @@ install_php_depends(){
 		create_lib_link "libmcrypt.so"
 		create_lib_link "libiconv.so"
 		create_lib_link "libiconv.so.2"
-	elif check_package_manager yum;then
+	elif check_sys packageManager yum;then
 		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
@@ -38,8 +38,12 @@ install_php_depends(){
 				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.i686.rpm
 				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.i686.rpm
 				rpm -i $cur_dir/conf/mhash-devel-0.9.9.9-3.el6.i686.rpm
-			fi	
-		fi			
+			fi
+		elif CentOSVerCheck 7;then
+			check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
+			check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
+		fi
+		
 	else
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"

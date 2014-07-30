@@ -140,7 +140,7 @@ elif [ "$apache" == "${apache2_4_filename}" ];then
 	config_apache 2.4
 fi
 #记录apache安装位置
-echo "apache_location=$apache_location" >> /tmp/ezhttp_info_do_not_del
+echo "apache_location=$apache_location" >> /etc/ezhttp_info_do_not_del
 #清除openssl的LD_LIBRARY_PATH，以后出现no version information available
 LD_LIBRARY_PATH=$(echo $LD_LIBRARY_PATH | sed "s#${depends_prefix}/${pcre_filename}:##")
 export LD_LIBRARY_PATH

@@ -172,7 +172,7 @@ cp $cur_dir/conf/memcached-init /etc/init.d/memcached
 chmod +x /etc/init.d/memcached
 sed -i "s#^memcached_location=.*#memcached_location=$memcached_location#" /etc/init.d/memcached
 mkdir -p /var/lock/subsys/
-echo "memcached_location=$memcached_location" >> /tmp/ezhttp_info_do_not_del
+echo "memcached_location=$memcached_location" >> /etc/ezhttp_info_do_not_del
 boot_start memcached
 }
 
@@ -207,7 +207,7 @@ chmod +x /etc/init.d/pureftpd
 sed -i "s#^pureftpd_location=.*#pureftpd_location=$pureftpd_location#" /etc/init.d/pureftpd
 sed -i "s#\${exec_prefix}#$pureftpd_location#" $pureftpd_location/bin/pure-config.pl
 chmod +x ${pureftpd_location}/bin/pure-config.pl
-echo "pureftpd_location=$pureftpd_location" >> /tmp/ezhttp_info_do_not_del
+echo "pureftpd_location=$pureftpd_location" >> /etc/ezhttp_info_do_not_del
 boot_start pureftpd
 
 #如果选择安装ftp面板
@@ -253,9 +253,9 @@ EOF
 	sed -i "s/$DBDatabase = \"ftpusers\";/$DBDatabase = \"$pureftpd_database\";/" ${user_manager_location}/config.php
 
 	#记录安装信息
-	echo "user_manager_pureftpd=true" >> /tmp/ezhttp_info_do_not_del
+	echo "user_manager_pureftpd=true" >> /etc/ezhttp_info_do_not_del
 else
-	echo "user_manager_pureftpd=false" >> /tmp/ezhttp_info_do_not_del
+	echo "user_manager_pureftpd=false" >> /etc/ezhttp_info_do_not_del
 fi	
 }
 

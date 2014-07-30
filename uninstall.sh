@@ -98,11 +98,11 @@ fi
 }
 
 uninstall(){
-	if [ ! -s "/tmp/ezhttp_info_do_not_del" ];then
-		echo "/tmp/ezhttp_info_do_not_del not found,uninstall failed."
+	if [ ! -s "/etc/ezhttp_info_do_not_del" ];then
+		echo "/etc/ezhttp_info_do_not_del not found,uninstall failed."
 		exit 1
 	fi
-	. /tmp/ezhttp_info_do_not_del
+	. /etc/ezhttp_info_do_not_del
 	if [ "$depends_prefix" != "" ];then
 		echo "removing depends components.."
 		rm -rf "$depends_prefix" && echo "Sucess" 
@@ -155,7 +155,7 @@ uninstall(){
 		rm -f /etc/init.d/pureftpd
 		rm -rf "$pureftpd_location"  && echo "Sucess"
 	fi
-	chattr -a /tmp/ezhttp_info_do_not_del && rm -f /tmp/ezhttp_info_do_not_del
+	chattr -a /etc/ezhttp_info_do_not_del && rm -f /etc/ezhttp_info_do_not_del
 }
 
 while true

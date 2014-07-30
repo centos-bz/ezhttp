@@ -364,7 +364,7 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 fi
 #记录php安装位置
-echo "php_location=$php_location" >> /tmp/ezhttp_info_do_not_del
+echo "php_location=$php_location" >> /etc/ezhttp_info_do_not_del
 #add php support for apache
 [ $php_mode == "with_apache" ] && ! grep -i "Addtype application/x-httpd-php .php" ${apache_location}/conf/httpd.conf && sed -i 's#AddType application/x-gzip .gz .tgz#AddType application/x-gzip .gz .tgz\nAddtype application/x-httpd-php .php#i' ${apache_location}/conf/httpd.conf
 

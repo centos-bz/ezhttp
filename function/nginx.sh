@@ -123,7 +123,7 @@ fi
 #配置nginx
 config_nginx
 #记录nginx安装位置
-echo "nginx_location=$nginx_location" >> /tmp/ezhttp_info_do_not_del
+echo "nginx_location=$nginx_location" >> /etc/ezhttp_info_do_not_del
 }
 
 #配置nginx

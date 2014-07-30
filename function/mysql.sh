@@ -196,7 +196,7 @@ elif [ "$mysql" == "${mysql5_6_filename}" ];then
 	config_mysql 5.6
 fi
 #记录mysql安装位置
-echo "mysql_location=$mysql_location" >> /tmp/ezhttp_info_do_not_del
+echo "mysql_location=$mysql_location" >> /etc/ezhttp_info_do_not_del
 
 #解决64位系统php可能找不到mysqlclient的问题
 add_to_env "${mysql_location}"

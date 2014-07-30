@@ -578,7 +578,7 @@ CentOSVerCheck(){
 
 #重启php
 restart_php(){
-	eval `grep "stack=" /tmp/ezhttp_info_do_not_del | tail -1`
+	eval `grep "stack=" /etc/ezhttp_info_do_not_del | tail -1`
 	if [[ $stack == "lnamp" ]] || [[ $stack == "lamp" ]];then
 		/etc/init.d/httpd restart
 	elif [[ $stack == "lnmp" ]]; then

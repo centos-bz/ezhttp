@@ -699,10 +699,10 @@ fi
 stty erase "^H"
 
 #引入各软件安装路径
-if [[ -s /tmp/ezhttp_info_do_not_del ]]; then
-	. /tmp/ezhttp_info_do_not_del
+if [[ -s /etc/ezhttp_info_do_not_del ]]; then
+	. /etc/ezhttp_info_do_not_del
 else
-	echo "error,file /tmp/ezhttp_info_do_not_del not found,ez command can not be executed."
+	echo "error,file /etc/ezhttp_info_do_not_del not found,ez command can not be executed."
 	exit 1
 fi	
 

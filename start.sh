@@ -38,9 +38,9 @@ load_functions other
 load_functions upgrade
 
 #创建记录安装路径信息文件
-touch /tmp/ezhttp_info_do_not_del
+touch /etc/ezhttp_info_do_not_del
 #不允许删除，只允许追加
-chattr +a /tmp/ezhttp_info_do_not_del	
+chattr +a /etc/ezhttp_info_do_not_del	
 clear
 echo "#############################################################################"
 echo

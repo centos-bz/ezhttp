@@ -275,12 +275,12 @@ fi
 
 sleep 5
 netstat -nxtlp
-echo "depends_prefix=$depends_prefix" >> /tmp/ezhttp_info_do_not_del
+echo "depends_prefix=$depends_prefix" >> /etc/ezhttp_info_do_not_del
 \cp $cur_dir/ez /usr/bin/ez
 chmod +x /usr/bin/ez
 [ "$apache" == "${apache2_4_filename}" ] && sed -i 's/Allow from All/Require all granted/' /usr/bin/ez
 #记录安装了哪个包
-echo "stack=$stack" >> /tmp/ezhttp_info_do_not_del
+echo "stack=$stack" >> /etc/ezhttp_info_do_not_del
 exit
 }
 

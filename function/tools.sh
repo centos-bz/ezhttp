@@ -268,7 +268,7 @@ create_nginx_rpm(){
 	local name="nginx"
 	local version=`${nginx_location}/sbin/nginx -v 2>&1 | awk -F'/' '{print $2}'`
 	local location="${nginx_location}"
-	local filesPackage="${nginx_location} /etc/init.d/nginx /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	local filesPackage="${nginx_location} /etc/init.d/nginx /home/wwwroot/ /usr/bin/ez /etc/ezhttp_info_do_not_del"
 	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/nginx start"
 	postCmd=$(echo -e $postCmd)
 	local summary="nginx web server"
@@ -283,7 +283,7 @@ create_apache_rpm(){
 	local name="apache"
 	local version=`${apache_location}/bin/httpd -v | awk -F'[/ ]' 'NR==1{print $4}'`
 	local location="${apache_location}"
-	local filesPackage="${apache_location} /etc/init.d/httpd /home/wwwroot/ /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	local filesPackage="${apache_location} /etc/init.d/httpd /home/wwwroot/ /usr/bin/ez /etc/ezhttp_info_do_not_del"
 	local postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/httpd start"
 	postCmd=$(echo -e $postCmd)
 	local summary="apache web server"
@@ -304,9 +304,9 @@ create_php_rpm(){
 	local postCmd=''
 	local preun=''
 	if ${php_location}/bin/php -ini | grep -q "with-apxs";then
-		filesPackage="${php_location} /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+		filesPackage="${php_location} /usr/bin/ez /etc/ezhttp_info_do_not_del"
 	else
-		filesPackage="${php_location} /etc/init.d/php-fpm /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+		filesPackage="${php_location} /etc/init.d/php-fpm /usr/bin/ez /etc/ezhttp_info_do_not_del"
 		postCmd="groupadd www\nuseradd -M -s /bin/false -g www www\n/etc/init.d/php-fpm start"
 		preun="/etc/init.d/php-fpm stop"
 	fi
@@ -343,7 +343,7 @@ create_mysql_rpm(){
 		filesPackage="$filesPackage ${mysql_location}/$file"
 	done
 
-	filesPackage="$filesPackage /etc/init.d/mysqld /usr/bin/mysql /usr/bin/mysqldump /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	filesPackage="$filesPackage /etc/init.d/mysqld /usr/bin/mysql /usr/bin/mysqldump /usr/bin/ez /etc/ezhttp_info_do_not_del"
 	local mysql_data_location=`${mysql_location}/bin/mysqld --print-defaults  | sed -r -n 's#.*datadir=([^ ]+).*#\1#p'`
 
 	local postCmd="useradd  -M -s /bin/false mysql\n${mysql_location}/scripts/mysql_install_db --basedir=${mysql_location} --datadir=${mysql_data_location}  --defaults-file=${mysql_location}/etc/my.cnf --user=mysql\nchown -R mysql ${mysql_data_location}\n/etc/init.d/mysqld start"
@@ -381,7 +381,7 @@ create_pureftpd_rpm(){
 	local name="pureftpd"
 	local version=`${pureftpd_location}/sbin/pure-ftpd -h | awk 'NR==1{print $2}' | tr -d v`
 	local location="${pureftpd_location}"
-	local filesPackage="${pureftpd_location} /etc/init.d/pureftpd /usr/bin/ez /tmp/ezhttp_info_do_not_del"
+	local filesPackage="${pureftpd_location} /etc/init.d/pureftpd /usr/bin/ez /etc/ezhttp_info_do_not_del"
 	local postCmd="/etc/init.d/pureftpd start"
 	local summary="pureftpd ftp server"
 	local description="pureftpd ftp server"

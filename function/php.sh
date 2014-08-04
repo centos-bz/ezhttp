@@ -133,6 +133,7 @@ if [ "$php" != "do_not_install" ];then
 		                    --with-iconv=shared \
 		                    --enable-sockets=shared \
 		                    --enable-zip \
+		                    --enable-soap=shared \
 		                    $other_option \
 		                    ${with_mysql} \
 		                    --without-pear \
@@ -200,6 +201,7 @@ if [ "$php" != "do_not_install" ];then
 		                    --enable-mbstring=shared \
 		                    --enable-sockets=shared \
 		                    --enable-zip  \
+		                    --enable-soap=shared \
 		                    $other_option  \
 		                    ${with_mysqlnd} \
 		                    --without-pear \
@@ -267,6 +269,7 @@ if [ "$php" != "do_not_install" ];then
 		                    --with-pdo_sqlite=shared \
 		                    --with-sqlite3=shared \
 		                    --enable-zip  \
+		                    --enable-soap=shared \		                    
 		                    $other_option \
 		                    ${with_mysqlnd} \
 		                    --without-pear \

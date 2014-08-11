@@ -82,62 +82,17 @@ if [ "$php" != "do_not_install" ];then
 		if check_sys packageSupport;then
 			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
 			if CentOSVerCheck 7;then
-				other_option="--with-openssl \
-							  --with-zlib \
-							  --with-curl=shared \
-							  --with-gd=shared \
-							  --with-jpeg-dir \
-							  --with-png-dir \
-							  --with-freetype-dir \
-							  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
-							  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
 			else
-				other_option="--with-openssl \
-							  --with-zlib \
-							  --with-curl=shared \
-							  --with-gd=shared \
-							  --with-jpeg-dir \
-							  --with-png-dir \
-							  --with-freetype-dir \
-							  --with-mcrypt=shared \
-							  --with-mhash=shared "
+				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared "
 			fi
 			
 		else
-			other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config \
-			              --with-libxml-dir=${depends_prefix}/${libxml2_filename} \
-			              --with-openssl=${depends_prefix}/${openssl_filename} \
-			              --with-zlib=${depends_prefix}/${zlib_filename} \
-			              --with-zlib-dir=${depends_prefix}/${zlib_filename} \
-			              --with-curl=shared,${depends_prefix}/${libcurl_filename} \
-			              --with-pcre-dir=${depends_prefix}/${pcre_filename} \
-			              --with-openssl-dir=${depends_prefix}/${openssl_filename} \
-			              --with-gd=shared \
-			              --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  \
-			              --with-png-dir=${depends_prefix}/${libpng_filename} \
-			              --with-freetype-dir=${depends_prefix}/${freetype_filename} \
-			              --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
-			              --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+			other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config  --with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
 		fi
 
 		#php编译参数
-		php_configure_args="--prefix=$php_location \
-		                    --with-config-file-path=${php_location}/etc \
-		                    ${php_run_php_mode} \
-		                    --with-gettext=shared \
-		                    --with-sqlite=shared \
-		                    --with-pdo_sqlite=shared \
-		                    --enable-bcmath=shared \
-		                    --enable-ftp=shared \
-		                    --enable-mbstring=shared \
-		                    --with-iconv=shared \
-		                    --enable-sockets=shared \
-		                    --enable-zip \
-		                    --enable-soap=shared \
-		                    $other_option \
-		                    ${with_mysql} \
-		                    --without-pear \
-		                    $lib64"
+		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite=shared  --with-pdo_sqlite=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv=shared  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
 
 	elif [ "$php" == "${php5_3_filename}" ];then
 
@@ -151,62 +106,16 @@ if [ "$php" != "do_not_install" ];then
 		if check_sys packageSupport;then
 			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
 			if CentOSVerCheck 7;then
-				other_option="--with-openssl \
-							  --with-zlib \
-							  --with-curl=shared \
-							  --with-gd=shared \
-							  --with-jpeg-dir \
-							  --with-png-dir \
-							  --with-freetype-dir \
-							  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
-							  --with-mhash=shared,${depends_prefix}/${mhash_filename}"			
+				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"			
 			else
-				other_option="--with-openssl \
-							  --with-zlib \
-							  --with-curl=shared \
-							  --with-gd=shared \
-							  --with-jpeg-dir \
-							  --with-png-dir \
-							  --with-freetype-dir \
-							  --with-mcrypt=shared \
-							  --with-mhash=shared"
+				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared"
 			fi
 			
 		else
-			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} \
-			              --with-openssl=${depends_prefix}/${openssl_filename} \
-			              --with-zlib=${depends_prefix}/${zlib_filename} \
-			              --with-zlib-dir=${depends_prefix}/${zlib_filename} \
-			              --with-curl=shared,${depends_prefix}/${libcurl_filename} \
-			              --with-pcre-dir=${depends_prefix}/${pcre_filename} \
-			              --with-openssl-dir=${depends_prefix}/${openssl_filename} \
-			              --with-gd=shared \
-			              --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  \
-			              --with-png-dir=${depends_prefix}/${libpng_filename} \
-			              --with-freetype-dir=${depends_prefix}/${freetype_filename} \
-			              --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
-			              --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
 		fi
 
-		php_configure_args="--prefix=$php_location \
-		                    --with-config-file-path=${php_location}/etc \
-		                    ${php_run_php_mode} \
-		                    --enable-bcmath=shared \
-		                    --with-pdo_sqlite=shared \
-		                    --with-gettext=shared \
-		                    --with-iconv=shared \
-		                    --enable-ftp=shared \
-		                    --with-sqlite=shared \
-		                    --with-sqlite3=shared \
-		                    --enable-mbstring=shared \
-		                    --enable-sockets=shared \
-		                    --enable-zip  \
-		                    --enable-soap=shared \
-		                    $other_option  \
-		                    ${with_mysqlnd} \
-		                    --without-pear \
-		                    $lib64 \
-		                    --disable-fileinfo"
+		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite=shared  --with-gettext=shared  --with-iconv=shared  --enable-ftp=shared  --with-sqlite=shared  --with-sqlite3=shared  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
 
 	elif [ "$php" == "${php5_4_filename}" ];then
 
@@ -220,61 +129,16 @@ if [ "$php" != "do_not_install" ];then
 		if check_sys packageSupport;then
 			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
 			if CentOSVerCheck 7;then
-				other_option="--with-openssl \
-							  --with-zlib \
-							  --with-curl=shared \
-							  --with-gd=shared \
-							  --with-jpeg-dir \
-							  --with-png-dir \
-							  --with-freetype-dir \
-							  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
-							  --with-mhash=shared,${depends_prefix}/${mhash_filename} "
+				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename} "
 			else
-				other_option="--with-openssl \
-							  --with-zlib \
-							  --with-curl=shared \
-							  --with-gd=shared \
-							  --with-jpeg-dir \
-							  --with-png-dir \
-							  --with-freetype-dir \
-							  --with-mcrypt=shared \
-							  --with-mhash=shared"
+				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared"
 			fi
 			
 		else
-			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename} \
-			              --with-openssl=${depends_prefix}/${openssl_filename} \
-			              --with-zlib=${depends_prefix}/${zlib_filename} \
-			              --with-zlib-dir=${depends_prefix}/${zlib_filename} \
-			              --with-curl=shared,${depends_prefix}/${libcurl_filename} \
-			              --with-pcre-dir=${depends_prefix}/${pcre_filename} \
-			              --with-openssl-dir=${depends_prefix}/${openssl_filename} \
-			              --with-gd=shared \
-			              --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}  \
-			              --with-png-dir=${depends_prefix}/${libpng_filename} \
-			              --with-freetype-dir=${depends_prefix}/${freetype_filename} \
-			              --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename} \
-			              --with-mhash=shared,${depends_prefix}/${mhash_filename} "
+			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename} "
 		fi
 
-		php_configure_args="--prefix=$php_location \
-		                    --with-config-file-path=${php_location}/etc \
-		                    ${php_run_php_mode} \
-		                    --with-gettext=shared \
-		                    --with-iconv=shared \
-		                    --enable-bcmath=shared \
-		                    --enable-ftp=shared \
-		                    --enable-mbstring=shared \
-		                    --enable-sockets=shared \
-		                    --with-pdo_sqlite=shared \
-		                    --with-sqlite3=shared \
-		                    --enable-zip  \
-		                    --enable-soap=shared \		                    
-		                    $other_option \
-		                    ${with_mysqlnd} \
-		                    --without-pear \
-		                    $lib64 \
-		                    --disable-fileinfo"
+		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-iconv=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --enable-sockets=shared  --with-pdo_sqlite=shared  --with-sqlite3=shared  --enable-zip   --enable-soap=shared  $other_option  ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
 	fi
 
 	#提示是否更改编译参数

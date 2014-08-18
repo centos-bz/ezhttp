@@ -46,9 +46,9 @@ php5_2_filename="php-5.2.17"
 php5_2_other_link="http://cdn.yyupload.com/down/499809/software/php-5.2.17.tar.gz"
 php5_2_official_link="http://centos.googlecode.com/files/php-5.2.17.tar.gz"
 
-php5_3_filename="php-5.3.28"
-php5_3_other_link="http://cdn.yyupload.com/down/499809/software/php-5.3.28.tar.gz"
-php5_3_official_link="http://us1.php.net/distributions/php-5.3.28.tar.gz"
+php5_3_filename="php-5.3.29"
+php5_3_other_link="http://cdn.yyupload.com/down/499809/software/php-5.3.29.tar.gz"
+php5_3_official_link="http://us1.php.net/distributions/php-5.3.29.tar.gz"
 
 php5_4_filename="php-5.4.30"
 php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.30.tar.gz"

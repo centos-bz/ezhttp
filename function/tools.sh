@@ -1119,12 +1119,13 @@ Network_analysis(){
 	LANG=c
 	export LANG	
 	while true; do
-		echo -e "1) real time traffic.\n2) traffic and connection overview.\n3) http request count\n"
+		echo -e "1) real time traffic.\n2) tcp traffic and connection overview.\n3) udp traffic overview\n4) http request count\n"
 		read -p "please input your select(ie 1): " select
 		case  $select in
 			1) realTimeTraffic;break;;
-			2) trafficAndConnectionOverview;break;;
-			3) httpRequestCount;break;;
+			2) tcpTrafficOverview;break;;
+			3) udpTrafficOverview;break;;
+			4) httpRequestCount;break;;
 			*) echo "input error,please input a number.";;
 		esac
 	done	
@@ -1177,14 +1178,14 @@ realTimeTraffic(){
 	done
 }
 
-#流量和连接概览
-trafficAndConnectionOverview(){
-    if ! which tcpdump > /dev/null;then
-        echo "tcpdump not found,going to install it."
+#tcp流量概览
+tcpTrafficOverview(){
+    if ! which tshark > /dev/null;then
+        echo "tshark not found,going to install it."
         if check_sys packageManager apt;then
-            apt-get -y install tcpdump
+            apt-get -y install tshark
         elif check_sys packageManager yum;then
-            yum -y install tcpdump
+            yum -y install wireshark
         fi
     fi
  
@@ -1206,11 +1207,9 @@ trafficAndConnectionOverview(){
     echo
     #当前流量值
     local traffic_be=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
-    #tcpdump监听网络
-    tcpdump -v -i $eth -tnn -s 100 > /tmp/tcpdump_temp 2>&1 &
-    sleep 10
+    #tshark监听网络
+	tshark -n -s 100 -i $eth -f 'ip' -a duration:10 -R 'tcp' -T fields -e ip.src_host -e tcp.srcport -e ip.dst_host  -e tcp.dstport  -e ip.len | grep -v , > /tmp/tcp.txt
     clear
-    kill `ps aux | grep tcpdump | grep -v grep | awk '{print $2}'`
 
     #10s后流量值
     local traffic_af=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
@@ -1222,51 +1221,37 @@ trafficAndConnectionOverview(){
     echo "$eth Transmit: $(bit_to_human_readable $eth_out)/s"
     echo
 
-    local regTcpdump=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/(/' -e 's/$/)\\\\\.[0-9]+:/')
+    local ipReg=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/^(/' -e 's/$/)/')
   
-    #新旧版本tcpdump输出格式不一样,分别处理
-    if awk '/^IP/{print;exit}' /tmp/tcpdump_temp | grep -q ")$";then
-        #处理tcpdump文件
-        awk '/^IP/{print;getline;print}' /tmp/tcpdump_temp > /tmp/tcpdump_temp2
-    else
-        #处理tcpdump文件
-        awk '/^IP/{print}' /tmp/tcpdump_temp > /tmp/tcpdump_temp2
-        sed -i -r 's#(.*: [0-9]+\))(.*)#\1\n    \2#' /tmp/tcpdump_temp2
-    fi
-    
-    awk '{len=$NF;sub(/\)/,"",len);getline;print $0,len}' /tmp/tcpdump_temp2 > /tmp/tcpdump
 
     #统计每个端口在10s内的平均流量
     echo -e "\033[32maverage traffic in 10s base on server port: \033[0m"
-    awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line="clients > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > clients"};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
-    sort -k 4 -nr | head -n 10 | while read a b c d;do
-        echo "$a $b $c $(bit_to_human_readable $d)/s"
-    done
-    echo -ne "\033[11A"
-    echo -ne "\033[50C"
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$1":"$2}else{line=$3":"$4};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done
+	
+    #echo -ne "\033[11A"
+    #echo -ne "\033[50C"
+	echo
     echo -e "\033[32maverage traffic in 10s base on client port: \033[0m"
-    awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line=$2"."$3"."$4"."$5":"$6" > server"}else{line="server > "$8"."$9"."$10"."$11":"$12};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
-    sort -k 4 -nr | head -n 10 | while read a b c d;do
-            echo -ne "\033[50C"
-            echo "$a $b $c $(bit_to_human_readable $d)/s"
-    done   
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$3":"$4}else{line=$1":"$2};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done  
         
     echo
 
     #统计在10s内占用带宽最大的前10个ip
     echo -e "\033[32mtop 10 ip average traffic in 10s base on server: \033[0m"
-    awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line=$2"."$3"."$4"."$5" > "$8"."$9"."$10"."$11":"$12}else{line=$2"."$3"."$4"."$5":"$6" > "$8"."$9"."$10"."$11};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
-    sort -k 4 -nr | head -n 10 | while read a b c d;do
-        echo "$a $b $c $(bit_to_human_readable $d)/s"
-    done
-    echo -ne "\033[11A"
-    echo -ne "\033[50C"
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$1}else{line=$3};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done
+    #echo -ne "\033[11A"
+    #echo -ne "\033[50C"
+	echo
     echo -e "\033[32mtop 10 ip average traffic in 10s base on client: \033[0m"
-    awk -F'[ .:]+' -v regTcpdump=$regTcpdump '{if ($0 ~ regTcpdump){line=$2"."$3"."$4"."$5":"$6" > "$8"."$9"."$10"."$11}else{line=$2"."$3"."$4"."$5" > "$8"."$9"."$10"."$11":"$12};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcpdump | \
-    sort -k 4 -nr | head -n 10 | while read a b c d;do
-        echo -ne "\033[50C"
-        echo "$a $b $c $(bit_to_human_readable $d)/s"
-    done 
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$3}else{line=$1};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/tcp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done
 
     echo
     #统计连接状态
@@ -1283,23 +1268,98 @@ trafficAndConnectionOverview(){
     echo -e "\033[32mconnection state count by port base on client: \033[0m"
     awk 'NR>1{sum[$(NF-4),$(NF)]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10 | awk '{print "\033[50C"$0}'   
     echo   
-    #统计端口为80且状态为ESTAB连接数最多的前10个IP
+    #统计状态为ESTAB连接数最多的前10个IP
     echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
     cat /tmp/ss | grep ESTAB | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
     echo
-    #统计端口为80且状态为SYN-RECV连接数最多的前10个IP
+    #统计状态为SYN-RECV连接数最多的前10个IP
     echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
     cat /tmp/ss | grep -E "$regSS" | grep SYN-RECV | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 }
 
+#udp流量概览
+udpTrafficOverview(){
+    if ! which tshark > /dev/null;then
+        echo "tshark not found,going to install it."
+        if check_sys packageManager apt;then
+            apt-get -y install tshark
+        elif check_sys packageManager yum;then
+            yum -y install wireshark
+        fi
+    fi
+ 
+    local reg=""
+    local eth=""
+    local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
+    local nicLen=${#nic_arr[@]}
+    if [[ $nicLen -eq 0 ]]; then
+        echo "sorry,I can not detect any network device,please report this issue to author."
+        exit 1
+    elif [[ $nicLen -eq 1 ]]; then
+        eth=$nic_arr
+    else
+        display_menu nic
+        eth=$nic
+    fi
+ 
+    echo "please wait for 10s to generate network data..."
+    echo
+    #当前流量值
+    local traffic_be=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
+    #tshark监听网络
+	tshark -n -s 100 -i $eth -f 'ip' -a duration:10 -R 'udp' -T fields -e ip.src_host -e udp.srcport -e ip.dst_host  -e udp.dstport  -e ip.len | grep -v , > /tmp/udp.txt
+    clear
+
+    #10s后流量值
+    local traffic_af=(`awk -v eth=$eth -F'[: ]+' '{if ($0 ~eth){print $3,$11}}' /proc/net/dev`)
+    #打印10s平均速率
+    local eth_in=$(( (${traffic_af[0]}-${traffic_be[0]})*8/10 ))
+    local eth_out=$(( (${traffic_af[1]}-${traffic_be[1]})*8/10 ))
+    echo -e "\033[32mnetwork device $eth average traffic in 10s: \033[0m"
+    echo "$eth Receive: $(bit_to_human_readable $eth_in)/s"
+    echo "$eth Transmit: $(bit_to_human_readable $eth_out)/s"
+    echo
+	
+    local ipReg=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/^(/' -e 's/$/)/')
+ 
+    #统计每个端口在10s内的平均流量
+    echo -e "\033[32maverage traffic in 10s base on server port: \033[0m"
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$1":"$2}else{line=$3":"$4};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/udp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done
+	
+    #echo -ne "\033[11A"
+    #echo -ne "\033[50C"
+	echo
+    echo -e "\033[32maverage traffic in 10s base on client port: \033[0m"
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$3":"$4}else{line=$1":"$2};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/udp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done  
+        
+    echo
+
+    #统计在10s内占用带宽最大的前10个ip
+    echo -e "\033[32mtop 10 ip average traffic in 10s base on server: \033[0m"
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$1}else{line=$3};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/udp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done
+    #echo -ne "\033[11A"
+    #echo -ne "\033[50C"
+	echo
+    echo -e "\033[32mtop 10 ip average traffic in 10s base on client: \033[0m"
+	awk -F'\t' -v ipReg=$ipReg '{if ($0 ~ ipReg) {line=$3}else{line=$1};sum[line]+=$NF*8/10}END{for (line in sum){printf "%s %d\n",line,sum[line]}}' /tmp/udp.txt | sort -k 2 -nr | head -n 10 | while read addr len;do
+			echo "$addr $(bit_to_human_readable $len)/s"
+	done
+}
+
 #http请求统计
 httpRequestCount(){
-    if ! which tcpdump > /dev/null;then
-        echo "tcpdump not found,going to install it."
+    if ! which tshark > /dev/null;then
+        echo "tshark not found,going to install it."
         if check_sys packageManager apt;then
-            apt-get -y install tcpdump
+            apt-get -y install tshark
         elif check_sys packageManager yum;then
-            yum -y install tcpdump
+            yum -y install wireshark
         fi
     fi
 
@@ -1318,13 +1378,12 @@ httpRequestCount(){
  
     echo "please wait for 10s to generate network data..."
     echo
-    rm -f /tmp/tcp.cap
-    tcpdump -nn -i $eth tcp[20:2]=0x4745 or tcp[20:2]=0x504f -w /tmp/tcp.cap -s 512 2>&1 &
-	sleep 10
-	kill `ps aux | grep tcpdump | grep -v grep | awk '{print $2}'`
-	strings /tmp/tcp.cap | grep -E "GET /|POST /|Host:" | grep --no-group-separator -B 1 "Host:" | grep --no-group-separator -A 1 -E "GET /|POST /" | awk '{url=$2;getline;host=$2;printf ("%s\n",host""url)}' > /tmp/url.txt
-	(( qps=$(wc -l /tmp/url.txt | cut -d' ' -f 1) / 10 ))
+	# tshark抓包
+	tshark -n -s 512 -i $eth -a duration:10 -w /tmp/tcp.cap
+	# 解析包
+	tshark -n -R 'http.host and http.request.uri' -T fields -e http.host -e http.request.uri  -r /tmp/tcp.cap | tr -d '\t' > /tmp/url.txt
 	echo -e "\033[32mHTTP Requests Per seconds:\033[0m"
+	(( qps=$(wc -l /tmp/url.txt | cut -d ' ' -f1) / 10 ))
 	echo "${qps}/s"
 	echo
 	echo -e "\033[32mTop 10 request url for all requests excluding static resource:\033[0m"
@@ -1335,6 +1394,9 @@ httpRequestCount(){
 	echo
 	echo -e "\033[32mTop 10 request url for all requests:\033[0m"
 	cat /tmp/url.txt | sort | uniq -c | sort -nr | head -n 10
+	echo
+	echo -e "\033[32mRespond code count:\033[0m"
+	tshark -n -R 'http.response.code' -T fields -e http.response.code -r /tmp/tcp.cap | sort | uniq -c | sort -nr
 }
 
 #工具设置

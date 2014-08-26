@@ -972,13 +972,13 @@ Set_timezone_and_sync_time(){
 		apt-get -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
-		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
+		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
 		service cron restart
 	elif check_sys sysRelease centos; then
 		yum -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
-		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root
+		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root > /dev/null 2>&1 && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root
 		service crond restart
 	fi
 	echo "current timezone is $(date +%z)"

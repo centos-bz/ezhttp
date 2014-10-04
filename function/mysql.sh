@@ -47,6 +47,19 @@ if [ "$mysql" != "do_not_install" ];then
 		mysql_data_location=${mysql_data_location:=$mysql_location/data}
 		mysql_data_location=`filter_location "$mysql_data_location"`
 		echo "$mysql install location: $mysql_data_location"
+
+		#mysql端口设置
+		while true;do
+			read -p "mysql port number(default:3306,leave blank for default): " mysql_port_number
+			mysql_port_number=${mysql_port_number:=3306}
+			if verify_port "$mysql_port_number";then
+				echo "mysql port number: $mysql_port_number"
+				break
+			else
+				echo "port number $mysql_port_number is invalid,please reinput."
+			fi	
+		done	
+
 		#mysql密码设置
 		read -p "mysql server root password (default:root,leave blank for default): " mysql_root_pass
 		mysql_root_pass=${mysql_root_pass:=root}
@@ -59,21 +72,21 @@ if [ "$mysql" != "do_not_install" ];then
 			else
 				other_option="--with-named-curses-libs=${depends_prefix}/${ncurses_filename2}/lib/libncurses.a"
 			fi			
-			mysql_configure_args="--prefix=${mysql_location} --sysconfdir=${mysql_location}/etc --with-unix-socket-path=/tmp/mysql.sock --with-charset=utf8 --with-collation=utf8_general_ci --with-extra-charsets=complex --with-plugins=max --with-mysqld-ldflags=-all-static --enable-assembler $other_option"
+			mysql_configure_args="--prefix=${mysql_location} --sysconfdir=${mysql_location}/etc --with-unix-socket-path=${mysql_data_location}/mysql.sock --with-charset=utf8 --with-collation=utf8_general_ci --with-extra-charsets=complex --with-plugins=max --with-mysqld-ldflags=-all-static --enable-assembler $other_option"
 		elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" ];then
 			if check_sys packageSupport;then
 				other_option=""
 			else
 				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 			fi
-			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 		elif [ "$mysql" == "${mysql5_6_filename}" ];then
 			if check_sys packageSupport;then
 				other_option=""
 			else
 				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 			fi
-			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 		fi
 
 		#提示是否更改编译参数
@@ -239,7 +252,7 @@ else
 	sysMemory=32G
 fi
 
-make_mysql_my_cnf "$sysMemory" "$storage" "${mysql_data_location}" "true" "false" "${mysql_location}/etc/my.cnf"
+make_mysql_my_cnf "$sysMemory" "$storage" "${mysql_data_location}" "true" "false" "${mysql_location}/etc/my.cnf" "${mysql_port_number}"
 
 if [ $version == "5.1" ];then
 	rm -f /etc/init.d/mysqld

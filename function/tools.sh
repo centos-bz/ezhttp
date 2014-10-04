@@ -44,6 +44,7 @@ make_mysql_my_cnf(){
 	local binlog=$4
 	local replica=$5
 	local my_cnf_location=$6
+	local port_number=$7
 
 	case $memory in
 		256M)innodb_log_file_size=32M;innodb_buffer_pool_size=64M;key_buffer_size=64M;open_files_limit=512;table_definition_cache=50;table_open_cache=200;max_connections=50;;
@@ -97,15 +98,16 @@ make_mysql_my_cnf(){
 [mysql]
 
 # CLIENT #
-port                           = 3306
-socket                         = /tmp/mysql.sock
+port                           = ${port_number}
+socket                         = ${mysqlDataLocation}/mysql.sock
 
 [mysqld]
 
 # GENERAL #
+port                           = ${port_number}
 user                           = mysql
 default-storage-engine         = ${storage}
-socket                         = /tmp/mysql.sock
+socket                         = ${mysqlDataLocation}/mysql.sock
 pid-file                       = ${mysqlDataLocation}/mysql.pid
 
 # MyISAM #
@@ -191,13 +193,25 @@ Generate_mysql_my_cnf(){
 	mysqlDataLocation=${mysqlDataLocation:=/usr/local/mysql/data}
 	mysqlDataLocation=`filter_location $mysqlDataLocation`
 
+	#mysql端口设置
+	while true;do
+		read -p "mysql port number(default:3306,leave blank for default): " mysql_port_number
+		mysql_port_number=${mysql_port_number:=3306}
+		if verify_port "$mysql_port_number";then
+			echo "mysql port number: $mysql_port_number"
+			break
+		else
+			echo "port number $mysql_port_number is invalid,please reinput."
+		fi	
+	done
+
 	#是否开启二进制日志
 	yes_or_no "enable binlog [Y/n]: " "binlog=true;echo 'you select y,enable binlog'" "binlog=false;echo 'you select n,disable binlog.'"
 
 	#是否为复制节点
 	yes_or_no "mysql server will be a replica [N/y]: " "replica=true;echo 'you select y,setup replica config.'" "replica=false;echo 'you select n.'"
 
-	make_mysql_my_cnf "$mysqlMemory" "$storage" "$mysqlDataLocation" "$binlog" "$replica" "$cur_dir/my.cnf"
+	make_mysql_my_cnf "$mysqlMemory" "$storage" "$mysqlDataLocation" "$binlog" "$replica" "$cur_dir/my.cnf" "$mysql_port_number"
 	echo "you should copy this file to the right location."
 	exit
 }
@@ -1269,11 +1283,11 @@ tcpTrafficOverview(){
     awk 'NR>1{sum[$(NF-4),$(NF)]+=1}END{for (key in sum){split(key,subkey,SUBSEP);print subkey[1],subkey[2],sum[subkey[1],subkey[2]]}}' /tmp/ss | sort -k 3 -nr | head -n 10 | awk '{print "\033[50C"$0}'   
     echo   
     #统计状态为ESTAB连接数最多的前10个IP
-    echo -e "\033[32mtop 10 ip ESTAB state count at port 80: \033[0m"
+    echo -e "\033[32mtop 10 ip ESTAB state count: \033[0m"
     cat /tmp/ss | grep ESTAB | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
     echo
     #统计状态为SYN-RECV连接数最多的前10个IP
-    echo -e "\033[32mtop 10 ip SYN-RECV state count at port 80: \033[0m"
+    echo -e "\033[32mtop 10 ip SYN-RECV state count: \033[0m"
     cat /tmp/ss | grep -E "$regSS" | grep SYN-RECV | awk -F'[: ]+' '{sum[$(NF-2)]+=1}END{for (ip in sum){print ip,sum[ip]}}' | sort -k 2 -nr | head -n 10
 }
 

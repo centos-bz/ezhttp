@@ -294,9 +294,10 @@ if [ "$php_mode" == "with_fastcgi" ];then
 fi
 
 #设置php连接mysql mysql.sock的路径
-sed -i "s#mysql.default_socket.*#mysql.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
-sed -i "s#mysqli.default_socket.*#mysqli.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
-sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = /tmp/mysql.sock#" $php_location/etc/php.ini
+[ -z ${mysql_data_location} ] && sock_location=/usr/local/mysql/data/mysql.sock || sock_location=${mysql_data_location}/mysql.sock
+sed -i "s#mysql.default_socket.*#mysql.default_socket = ${sock_location}#" $php_location/etc/php.ini
+sed -i "s#mysqli.default_socket.*#mysqli.default_socket = ${sock_location}#" $php_location/etc/php.ini
+sed -i "s#pdo_mysql.default_socket.*#pdo_mysql.default_socket = ${sock_location}#" $php_location/etc/php.ini
 
 #默认开启一些扩展
 echo "extension=curl.so" >> ${php_location}/etc/php.ini

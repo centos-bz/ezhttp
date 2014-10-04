@@ -149,6 +149,7 @@ mysql="$mysql"
 mysql_location="$mysql_location"
 mysql_data_location="$mysql_data_location"
 mysql_root_pass="$mysql_root_pass"
+mysql_port_number="$mysql_port_number"
 mysql_configure_args='${mysql_configure_args}'
 php="$php"
 php_location="$php_location"

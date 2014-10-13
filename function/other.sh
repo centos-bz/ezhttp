@@ -307,6 +307,7 @@ last_confirm(){
 	echo "MySQL Server: $mysql"
 	[ "$mysql" != "do_not_install" ] || [ "$mysql_location" != "" ] && echo "MySQL Location: $mysql_location"
 	[ "$mysql" != "do_not_install" ] || [ "$mysql_data_location" != "" ] &&  echo "MySQL Data Location: $mysql_data_location"
+	[ "$mysql" != "do_not_install" ] || [ "$mysql_data_location" != "" ] &&  echo "MySQL Port Number: ${mysql_port_number}"
 	[ "$mysql" != "do_not_install" ] || [ "$mysql_root_pass" != "" ] && echo "MySQL Root Password: $mysql_root_pass"
 	[ "$mysql" != "do_not_install" ] && echo "MySQL Configure Parameter: ${mysql_configure_args}"
 	echo
@@ -352,7 +353,7 @@ check_port_socket_exist(){
 		fi	
 
 		if [[ $mysql != "do_not_install" ]]; then
-			kill_pid "port" "3306"
+			kill_pid "port" "${mysql_port_number}"
 		fi		
 
 	elif [[ $stack == "lamp" ]]; then
@@ -361,7 +362,7 @@ check_port_socket_exist(){
 		fi
 			
 		if [[ $mysql != "do_not_install" ]]; then
-			kill_pid "port" "3306"
+			kill_pid "port" "${mysql_port_number}"
 		fi		
 
 	elif [[ $stack == "lnamp" ]]; then
@@ -374,7 +375,7 @@ check_port_socket_exist(){
 		fi
 			
 		if [[ $mysql != "do_not_install" ]]; then
-			kill_pid "port" "3306"
+			kill_pid "port" "${mysql_port_number}"
 		fi	
 	fi	
 

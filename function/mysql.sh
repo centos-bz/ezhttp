@@ -272,6 +272,7 @@ elif [ $version == "5.6" ];then
 
 fi
 
+\cp -f /etc/init.d/mysqld /etc/init.d/mysqld${mysql_port_number}
 chown -R mysql ${mysql_location} ${mysql_data_location}
 cd /usr/bin/
 ln -s $mysql_location/bin/mysql

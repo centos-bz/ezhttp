@@ -163,6 +163,9 @@ install_php(){
 #安装php依赖
 install_php_depends
 
+#解决freetype.h找不到的问题
+[ ! -f /usr/include/freetype2/freetype ] && [ ! -d /usr/include/freetype2/freetype ] &&  ln -sf /usr/include/freetype2 /usr/include/freetype2/freetype
+
 #开始安装php
 if [ "$php" == "${php5_2_filename}" ];then
 	#安装依赖

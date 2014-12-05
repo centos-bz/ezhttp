@@ -1,9 +1,7 @@
 #安装php依赖
 install_php_depends(){
 	#安装libiconv
-	if [ ! -f "/usr/lib/libiconv.so" ] && [ ! -f "/usr/lib64/libiconv.so" ];then
-		install_libiconv
-	fi
+	check_installed	"install_libiconv" "${depends_prefix}/${libiconv_filename}"
 	
 	#安装依赖
 	if check_sys packageManager apt;then
@@ -95,7 +93,7 @@ cd $cur_dir/soft/
 tar xzvf ${libiconv_filename}.tar.gz
 cd ${libiconv_filename}
 make clean
-./configure --prefix=/usr
+./configure --prefix=${depends_prefix}/${libiconv_filename}
 #修复ubuntu 13.04 错误:‘gets’未声明(不在函数内)
 if grep -q -i "Ubuntu 13.04" /etc/issue;then
 		parallel_make
@@ -105,6 +103,7 @@ else
 	parallel_make
 fi
 	make install
+add_to_env "${depends_prefix}/${libiconv_filename}"
 }
 
 #安装autoconf

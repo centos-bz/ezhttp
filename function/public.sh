@@ -445,46 +445,83 @@ check_sys(){
 	local systemPackage=''
 	local packageSupport=''
 
-	if [[ -f /etc/redhat-release ]];then
-		release="centos"
-		systemPackage="yum"
-		packageSupport=true
+	. /tmp/ezhttp_sys_check_result > /dev/null 2>&1
+	if [[ "$release" == "" ]] || [[ "$systemPackage" == "" ]] || [[ "$packageSupport" == "" ]];then
 
-	elif cat /etc/issue | grep -q -E -i "debian";then
-		release="debian"
-		systemPackage="apt"
-		packageSupport=true
+		if [[ -f /etc/redhat-release ]];then
+			release="centos"
+			systemPackage="yum"
+			packageSupport=true
 
-	elif cat /etc/issue | grep -q -E -i "ubuntu";then
-		release="ubuntu"
-		systemPackage="apt"
-		packageSupport=true
+		elif cat /etc/issue | grep -q -E -i "debian";then
+			release="debian"
+			systemPackage="apt"
+			packageSupport=true
 
-	elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
-		release="centos"
-		systemPackage="yum"
-		packageSupport=true
+		elif cat /etc/issue | grep -q -E -i "ubuntu";then
+			release="ubuntu"
+			systemPackage="apt"
+			packageSupport=true
 
-	elif cat /proc/version | grep -q -E -i "debian";then
-		release="debian"
-		systemPackage="apt"
-		packageSupport=true
+		elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat";then
+			release="centos"
+			systemPackage="yum"
+			packageSupport=true
 
-	elif cat /proc/version | grep -q -E -i "ubuntu";then
-		release="ubuntu"
-		systemPackage="apt"
-		packageSupport=true
+		elif cat /proc/version | grep -q -E -i "debian";then
+			release="debian"
+			systemPackage="apt"
+			packageSupport=true
 
-	elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
-		release="centos"
-		systemPackage="yum"
-		packageSupport=true
+		elif cat /proc/version | grep -q -E -i "ubuntu";then
+			release="ubuntu"
+			systemPackage="apt"
+			packageSupport=true
 
-	else
-		release="unknow"
-		systemPackage="unknow"
-		packageSupport=false
+		elif cat /proc/version | grep -q -E -i "centos|red hat|redhat";then
+			release="centos"
+			systemPackage="yum"
+			packageSupport=true
+
+		else
+			release="other"
+			systemPackage="other"
+			packageSupport=false
+		fi
+
+		yes_or_no "ezhttp have detected your system as $release,is that correct [Y/n]" "sys_correct=true;echo 'confirm correct.'" "sys_correct=false"
+		if ! $sys_correct;then
+			while true;do
+				echo
+				echo -e "1) CentOS/Redhat\n2) Ubuntu/Debian\n3) Others\n"
+				read -p "please choose the system release you'll install ezhttp.(input a number,ie. 1): " sys_release
+				if [[ "$sys_release" == "1" ]];then
+					release="centos"
+					systemPackage="yum"
+					packageSupport=true
+					break
+
+				elif [[ "$sys_release" == "2" ]]; then
+					release="ubuntu"
+					systemPackage="apt"
+					packageSupport=true
+					break
+
+				elif [[ "$sys_release" == "3" ]]; then
+					release="other"
+					systemPackage="other"
+					packageSupport=false
+					break
+
+				else
+					echo "your input is incorrect,please reinput a number."
+				fi	
+
+			done
+		fi
 	fi
+
+	echo -e "release=$release\nsystemPackage=$systemPackage\npackageSupport=$packageSupport\n" > /tmp/ezhttp_sys_check_result
 
 	if [[ $checkType == "sysRelease" ]]; then
 		if [ "$value" == "$release" ];then

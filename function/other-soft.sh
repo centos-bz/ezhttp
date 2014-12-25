@@ -286,7 +286,7 @@ sed -i 's/^appendonly.*/appendonly yes/' ${redis_location}/etc/redis.conf
 
 \cp src/redis-server src/redis-cli src/redis-benchmark src/redis-check-aof src/redis-check-dump ${redis_location}/bin/
 
-\cp utils/redis_init_script /etc/init.d/redis 
+\cp $cur_dir/conf/init.d.redis /etc/init.d/redis
 sed -i "s#^EXEC=.*#EXEC=${redis_location}/bin/redis-server#" /etc/init.d/redis 
 sed -i "s#^CLIEXEC=.*#CLIEXEC=${redis_location}/bin/redis-cli#" /etc/init.d/redis 
 sed -i "s#^PIDFILE=.*#PIDFILE=${redis_location}/logs/redis.pid#" /etc/init.d/redis 

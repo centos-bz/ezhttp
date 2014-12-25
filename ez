@@ -674,9 +674,9 @@ echo $words | tr '[A-Z]' '[a-z]'
 
 #nginx重写规则选择
 select_rewrite_rule(){
-local rewrite_rules=("include rewrite/DEDECMS.conf;" "include rewrite/Discuz_7.conf;" "include rewrite/Discuz_X.conf;" "include rewrite/ecshop.conf;" "include rewrite/phpcms.conf;"  "include rewrite/PHPWind.conf;"  "include rewrite/shopex.conf;"  "include rewrite/Typecho.conf;"  "include rewrite/wordpress.conf;"  )
+local rewrite_rules=( "include rewrite/wordpress.conf;" "include rewrite/DEDECMS.conf;" "include rewrite/Discuz_7.conf;" "include rewrite/Discuz_X.conf;" "include rewrite/ecshop.conf;" "include rewrite/phpcms.conf;"  "include rewrite/PHPWind.conf;"  "include rewrite/shopex.conf;"  "include rewrite/Typecho.conf;"    )
 echo "available nginx rewrite rules:"
-echo -e "1. DEDECMS\n2. Discuz_7\n3. Discuz_X\n4. ECshop\n5. PHPCMS\n6. PHPWind\n7. Shopex\n8. Typecho\n9. WordPress"
+echo -e "1. Custom\n2. WordPress\n3. DEDECMS\n4. Discuz_7\n5. Discuz_X\n6. ECshop\n7. PHPCMS\n8. PHPWind\n9. Shopex\n10. Typecho"
 while true; do
 	read -p "please input a number: " rule
 	if ! echo $rule | sed -n "/^[1-9]$/q0;q1" -;then
@@ -685,7 +685,22 @@ while true; do
 		break
 	fi
 done
-rewrite_rule=${rewrite_rules[$rule-1]}
+if [[ "$rule" == "1" ]];then
+	while true;do
+		read -p "please input your rewrite rule name: " rule_name
+		if [[ -f ${nginx_location}/conf/rewrite/${rule_name}.conf ]];then
+			echo "${rule_name}.conf file exists,please reinput"
+		else
+			touch ${nginx_location}/conf/rewrite/${rule_name}.conf
+			echo "file ${nginx_location}/conf/rewrite/${rule_name}.conf have created,please input your rewrite rule to this file."
+			rewrite_rule="include rewrite/${rule_name}.conf;"
+			break
+		fi	
+	done
+else	
+	rewrite_rule=${rewrite_rules[$rule-1]}
+fi
+	
 }
 
 #程序从这里开始

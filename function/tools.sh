@@ -1414,6 +1414,75 @@ httpRequestCount(){
 	tshark -n -R 'http.response.code' -T fields -e http.response.code -r /tmp/tcp.cap | sort | uniq -c | sort -nr
 }
 
+#配置apt yum源
+Configure_apt_yum_repository(){
+	while true; do
+		echo -e "available repository:\n1) mirrors.ustc.edu.cn(recommended)\n2) mirrors.sohu.com\n3) mirrors.aliyun.com\n4) mirrors.163.com\n" 
+		read -p "please choose a mirrors(ie.1): " repository
+		if [[ "$repository" == "1" ]]; then
+		 	repo="ustc"
+		 	break
+
+		elif [[ "$repository" == "2" ]]; then
+		 	repo="sohu"
+		 	break
+
+		elif [[ "$repository" == "3" ]]; then
+		 	repo="aliyun"
+		 	break	
+
+		elif [[ "$repository" == "4" ]]; then
+		 	repo="163"
+		 	break	
+
+		else
+			echo "input error,please input a number."
+		fi			
+	done
+	
+	dateName=$(date +%Y%m%d-%H%M)
+	if check_sys sysRelease centos;then
+		echo "backing up /etc/yum.repos.d/CentOS-Base.repo to /etc/yum.repos.d/CentOS-Base.repo-${dateName}"
+		mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo-${dateName}
+		if CentOSVerCheck 5;then
+			cp $cur_dir/conf/sources/${repo}-centos5-source.conf /etc/yum.repos.d/CentOS-Base.repo
+
+		elif CentOSVerCheck 6; then
+			cp $cur_dir/conf/sources/${repo}-centos6-source.conf /etc/yum.repos.d/CentOS-Base.repo
+
+		elif CentOSVerCheck 7;then
+			cp $cur_dir/conf/sources/${repo}-centos7-source.conf /etc/yum.repos.d/CentOS-Base.repo
+
+		else
+			echo "Sorry,can not detect your centos version number,or does not support your version."
+			read -p "please input your centos version number(ie.6): " versionNumber
+			if [[ "$versionNumber" == "5" ]]; then
+				cp $cur_dir/conf/sources/${repo}-centos5-source.conf /etc/yum.repos.d/CentOS-Base.repo
+			elif [[ "$versionNumber" == "6" ]]; then
+				cp $cur_dir/conf/sources/${repo}-centos6-source.conf /etc/yum.repos.d/CentOS-Base.repo
+			elif [[ "$versionNumber" == "7" ]]; then
+				cp $cur_dir/conf/sources/${repo}-centos7-source.conf /etc/yum.repos.d/CentOS-Base.repo
+			else
+				echo "your input version number is not supported."
+				exit 1
+			fi		
+		fi	
+
+	elif check_sys sysRelease ubuntu;then
+		echo "backing up /etc/apt/sources.list to /etc/apt/sources.list-${dateName}"
+		mv /etc/apt/sources.list /etc/apt/sources.list-${dateName}
+		versionName=`get_ubuntu_version_name`
+		cp $cur_dir/conf/sources/${repo}-ubuntu-source.conf /etc/apt/sources.list
+		sed -i "s/versionName/${versionName}/g" /etc/apt/sources.list
+
+	else
+		echo "Sorry,only support CentOS and Ubuntu Release now."
+		exit 1
+	fi
+
+	echo "configure done."
+}
+
 #工具设置
 tools_setting(){
 	clear

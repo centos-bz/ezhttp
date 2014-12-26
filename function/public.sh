@@ -493,7 +493,7 @@ check_sys(){
 		if ! $sys_correct;then
 			while true;do
 				echo
-				echo -e "1) CentOS/Redhat\n2) Ubuntu/Debian\n3) Others\n"
+				echo -e "1) CentOS/Redhat\n2) Ubuntu\n3) Debian\n4) Others\n"
 				read -p "please choose the system release you'll install ezhttp.(input a number,ie. 1): " sys_release
 				if [[ "$sys_release" == "1" ]];then
 					release="centos"
@@ -508,6 +508,12 @@ check_sys(){
 					break
 
 				elif [[ "$sys_release" == "3" ]]; then
+					release="debian"
+					systemPackage="apt"
+					packageSupport=true
+					break
+
+				elif [[ "$sys_release" == "4" ]]; then
 					release="other"
 					systemPackage="other"
 					packageSupport=false

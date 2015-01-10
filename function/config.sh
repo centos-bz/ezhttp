@@ -5,9 +5,9 @@ load_config(){
 ###################主要安装包设置###################
 
 #nginx设置
-nginx_filename="nginx-1.6.0"
-nginx_other_link="http://cdn.yyupload.com/down/499809/software/nginx-1.6.0.tar.gz"
-nginx_official_link="http://nginx.org/download/nginx-1.6.0.tar.gz"
+nginx_filename="nginx-1.6.2"
+nginx_other_link="http://cdn.yyupload.com/down/499809/software/nginx-1.6.2.tar.gz"
+nginx_official_link="http://nginx.org/download/nginx-1.6.2.tar.gz"
 
 #tengine设置
 tengine_filename="tengine-2.0.3"
@@ -15,14 +15,14 @@ tengine_other_link="http://cdn.yyupload.com/down/499809/software/tengine-2.0.3.t
 tengine_official_link="http://tengine.taobao.org/download/tengine-2.0.3.tar.gz"
 
 #openresty设置
-openresty_filename="ngx_openresty-1.7.2.1"
-openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.2.1.tar.gz"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.2.1.tar.gz"
+openresty_filename="ngx_openresty-1.7.7.1"
+openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.7.1.tar.gz"
+openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.7.1.tar.gz"
 
 #apache设置
-apache2_2_filename="httpd-2.2.27"
-apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.27.tar.gz"
-apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.27.tar.gz"
+apache2_2_filename="httpd-2.2.29"
+apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.29.tar.gz"
+apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.29.tar.gz"
 
 apache2_4_filename="httpd-2.4.10"
 apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.10.tar.gz"
@@ -33,13 +33,13 @@ mysql5_1_filename="mysql-5.1.73"
 mysql5_1_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.1.73.tar.gz"
 mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz"
 
-mysql5_5_filename="mysql-5.5.38"
-mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.38.tar.gz"
-mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.38.tar.gz"
+mysql5_5_filename="mysql-5.5.41"
+mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.41.tar.gz"
+mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.41.tar.gz"
 
-mysql5_6_filename="mysql-5.6.19"
-mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.19.tar.gz"
-mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.19.tar.gz"
+mysql5_6_filename="mysql-5.6.22"
+mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.22.tar.gz"
+mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.22.tar.gz"
 
 #php设置
 php5_2_filename="php-5.2.17"
@@ -50,9 +50,13 @@ php5_3_filename="php-5.3.29"
 php5_3_other_link="http://cdn.yyupload.com/down/499809/software/php-5.3.29.tar.gz"
 php5_3_official_link="http://us1.php.net/distributions/php-5.3.29.tar.gz"
 
-php5_4_filename="php-5.4.30"
-php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.30.tar.gz"
-php5_4_official_link="http://us1.php.net/distributions/php-5.4.30.tar.gz"
+php5_4_filename="php-5.4.36"
+php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.36.tar.gz"
+php5_4_official_link="http://us1.php.net/distributions/php-5.4.36.tar.gz"
+
+php5_5_filename="php-5.5.20"
+php5_5_other_link="http://cdn.yyupload.com/down/499809/software/php-5.5.20.tar.gz"
+php5_5_official_link="http://us1.php.net/distributions/php-5.5.20.tar.gz"
 
 #ZendOptimizer设置
 ZendOptimizer_filename="ZendOptimizer-3.3.9"
@@ -155,9 +159,9 @@ redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-2.8.8.tar.g
 redis_official_link="http://download.redis.io/releases/redis-2.8.8.tar.gz"
 
 #phpMyAdmin设置
-phpMyAdmin_filename="phpMyAdmin-4.0.9-all-languages"
-phpMyAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpMyAdmin-4.0.9-all-languages.tar.gz"
-phpMyAdmin_official_link="http://hivelocity.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.9/phpMyAdmin-4.0.9-all-languages.tar.gz"
+phpMyAdmin_filename="phpMyAdmin-4.3.6-all-languages"
+phpMyAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpMyAdmin-4.3.6-all-languages.tar.gz"
+phpMyAdmin_official_link="http://hivelocity.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.3.6/phpMyAdmin-4.3.6-all-languages.tar.gz"
 
 #phpRedisAdmin设置
 phpRedisAdmin_filename="phpRedisAdmin-1.1.0"
@@ -367,13 +371,13 @@ jailkit_official_link="http://olivier.sessink.nl/jailkit/jailkit-2.17.tar.gz"
 nginx_arr=(do_not_install ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version)
 apache_arr=(do_not_install ${apache2_2_filename} ${apache2_4_filename} custom_version)
 mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version)
-php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} custom_version)
+php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} ${xdebug_filename})
 other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename})
 
 #工具菜单设置
-tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user Network_analysis Configure_apt_yum_repository Back_to_main_menu)
+tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user Network_analysis Configure_apt_yum_repository  Back_to_main_menu)
 
 #升级软件菜单
 upgrade_arr=(Upgrade_nginx_tengine_openresty Back_to_main_menu)

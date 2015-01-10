@@ -20,6 +20,8 @@ php_modules_preinstall_settings(){
 						php=${php5_3_filename}
 					elif [[ `get_php_version $phpConfig` == "5.4" ]]; then
 						php=${php5_4_filename}
+					elif [[ `get_php_version $phpConfig` == "5.5" ]]; then
+						php=${php5_5_filename}						
 					else
 						echo "sorry,unsupported php version."
 						exit 1
@@ -50,6 +52,13 @@ php_modules_preinstall_settings(){
 			#从数组中删除ZendOptimizer、eaccelerator
 			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
+		elif [ "$php" == "${php5_5_filename}" ];then
+			#从数组中删除ZendOptimizer、eaccelerator、xcache ionCube_filename
+			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${xcache_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${ionCube_filename}})
 		fi
 		#显示菜单
 		display_menu_multi php_modules

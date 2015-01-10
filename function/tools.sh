@@ -570,8 +570,6 @@ Percona_xtrabackup_install(){
 		echo "sorry,the percona xtrabackup install tool do not support your system,please let me know and make it support."
 	fi
 
-	exit
-
 }
 
 #更改ssh server端口
@@ -957,7 +955,12 @@ Enable_disable_php_extension(){
 		fi		
 	else
 		#开启扩展
-		echo "extension=${extensionName}.so" >> $(get_php_ini "$phpConfig")
+		if [[ "$extensionName" == "opcache" ]]; then
+			echo "zend_extension=${extensionName}.so" >> $(get_php_ini "$phpConfig")
+		else
+			echo "extension=${extensionName}.so" >> $(get_php_ini "$phpConfig")
+		fi
+			
 		enabled_extensions=`$(get_php_bin "$phpConfig")  -m | awk '$0 ~/^[a-zA-Z]/{printf $0" " }' | tr "[A-Z]" "[a-z]"`
 		if if_in_array $extensionName "$enabled_extensions";then
 			echo "enable extension $extensionName successfully."
@@ -986,16 +989,16 @@ Set_timezone_and_sync_time(){
 		apt-get -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
-		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1;hwclock -w"  >> /var/spool/cron/crontabs/root
+		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1;/sbin/hwclock -w"  >> /var/spool/cron/crontabs/root
 		service cron restart
 	elif check_sys sysRelease centos; then
 		yum -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
-		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root > /dev/null 2>&1 && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1;hwclock -w" >> /var/spool/cron/root
+		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root > /dev/null 2>&1 && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1;/sbin/hwclock -w" >> /var/spool/cron/root
 		service crond restart
 	fi
-	hwclock -w
+	/sbin/hwclock -w
 	echo "current timezone is $(date +%z)"
 	echo "current time is $(date +%Y-%m-%d" "%H:%M:%S)"	
 
@@ -1482,6 +1485,313 @@ Configure_apt_yum_repository(){
 
 	echo "configure done."
 }
+
+#备份设置
+Backup_setup(){
+	while true; do
+		echo -e "1) files\n2) mysql database\n3) files and mysql database\n"
+		read -p "please choose what you'd like to backup(ie.1): " backupContent
+		case $backupContent in
+			1|2|3) break;;
+			*) echo "input error,please input a number.";;
+		esac
+	done
+
+	while true; do
+		echo -e "1) localhost\n2) remote\n3) localhost and remote\n"
+		read -p "please choose your backup destination(ie.1): " backupDestination
+		case $backupContent in
+			1|2|3) break;;
+			*) echo "input error,please input a number.";;
+		esac		
+	done
+
+	if [[ "$backupContent" == "1" && "$backupDestination" == "1" ]]; then
+		file_local_backup_setup
+
+	elif [[ "$backupContent" == "1" && "$backupDestination" == "2" ]]; then
+		file_remote_backup_setup
+
+ 	elif [[ "$backupContent" == "1" && "$backupDestination" == "3" ]]; then
+ 		file_local_backup_setup
+ 		file_remote_backup_setup
+
+	elif [[ "$backupContent" == "2" && "$backupDestination" == "1" ]]; then
+		mysql_local_backup_setup
+
+	elif [[ "$backupContent" == "2" && "$backupDestination" == "2" ]]; then	
+		mysql_remote_backup_setup
+
+	elif [[ "$backupContent" == "2" && "$backupDestination" == "3" ]]; then
+		mysql_local_backup_setup
+		mysql_remote_backup_setup
+
+	elif [[ "$backupContent" == "3" && "$backupDestination" == "1" ]]; then	
+		file_local_backup_setup
+		mysql_local_backup_setup
+
+	elif [[ "$backupContent" == "3" && "$backupDestination" == "2" ]]; then
+		file_remote_backup_setup
+		mysql_remote_backup_setup
+
+	elif [[ "$backupContent" == "3" && "$backupDestination" == "3" ]]; then
+		file_local_backup_setup
+		file_remote_backup_setup
+		mysql_local_backup_setup
+		mysql_remote_backup_setup
+
+ 	fi	
+}
+
+backup_dir_setup(){
+	if [[ -z $backupDir ]];then
+		while true; do
+			valid=true
+			read -p "please input the directory you'll backup(ie./data1 /data2): " backupDir
+			for dir in ${backupDir};do
+				if [[ ! -d "${dir}" ]];then
+					echo "the directory $dir does not exist,or is not a directory,please reinput."
+					valid=false
+					break
+				fi
+			done
+
+			$valid && break
+		done
+	fi	
+}
+
+exclude_regex_setup(){
+	if [[ -z $excludeRegex ]];then
+		read -p "please input the exclude regex for the backup dir $backupDir(default:none,multiply regex separated by a space.): " excludeRegex
+		excludeRegex=${excludeRegex:=none}
+	fi	
+}
+
+enable_compress_setup(){
+	if [[ -z $enableCompress ]];then
+		yes_or_no "compress the backup directory [Y/n]: " "enableCompress=true" "enableCompress=false"
+	fi	
+}
+
+storage_dir_setup(){
+	if [[ -z $storageDir ]];then
+		read -p "please input the directory you'll backup the files to: " storageDir
+		storageDir=`filter_location $storageDir`
+	fi	
+}
+
+expire_days_setup(){
+	if [[ -z $expireDays ]]; then
+		while true; do
+			read -p "please input the number of days total to retain the backup(ie.3,default:7): " expireDays
+			expireDays=${expireDays:=7}
+			if [[ "$expireDays" =~ ^[0-9]+$ && "$expireDays" != "0" ]]; then
+				break
+			else
+				echo "input error,please input the number that greater that 0."
+			fi
+		done
+	fi	
+}
+
+backup_rate_setup(){
+	if [[ -z $backupRate ]]; then
+		while true; do
+			echo -e "1) every day\n2) every week\n3) custom input cron expression\n"
+			read -p "please choose the backup rate(ie.1,default:1): " backupRate
+			backupRate=${backupRate:=1}
+			if [[ "$backupRate" == "1" || "$backupRate" == "2" ]]; then
+				break
+			elif [[ "$backupRate" == "3" ]]; then
+				while true; do
+					read -p "please input cron expression(ie.01 04 * * *): " backupRate
+					if verify_cron_exp "$backupRate";then
+						break 2
+					else
+						echo "cron expression is invalid.please reinput."
+					fi	
+				done
+				
+
+			else
+				echo "input error,please input a number 1-3."
+			fi	
+		done
+	fi	
+}
+
+backup_script_dir_setup(){
+	if [[ -z $backupScriptDir ]]; then
+		read -p "please input the backup script location you'll store(default:/data/sh/) " backupScriptDir
+		backupScriptDir=${backupScriptDir:=/data/sh/}
+		backupScriptDir=`filter_location "$backupScriptDir"`
+		mkdir -p "$backupScriptDir"
+	fi	
+}
+
+choose_backup_tool_setup(){
+	if [[ -z "$backupTool" ]];then
+		while true; do
+			echo -e "backup tool supported:\n1) rsync(with rsync protocol)\n2)rsync(with ssh protocol)\n3) dropbox\n4) ftp\n"
+			read -p "please choose a backup tool(ie.1): " backupTool
+			case "$backupTool" in
+				1|2|3|4) break;;
+				*) echo "input error,please input a number 1-3."
+			esac
+		done
+	fi
+}
+
+
+mysql_setup(){
+	if [[ -z "$mysqlSetup" ]];then
+		while true; do
+			echo -e "supported mysql backup tool: \n1) mysqldump\n2) innobackupex\n"
+			read -p "please choose a mysql backup tool(ie.1): " mysqlBackupTool
+			case "$mysqlBackupTool" in
+				1|2) break;;
+				*) echo "input error,please input a number 1-2."
+			esac
+		done
+
+		if [[ "$mysqlBackupTool" == "1" ]]; then
+			mysqldump_setup
+
+		elif [[ "$mysqlBackupTool" == "2" ]]; then
+			innobackupex_setup
+
+		fi
+		
+		mysqlSetup=true	
+	fi
+}
+
+mysqldump_setup(){
+	while true;do
+		while true; do
+			read -p "please input mysql bin directory(default:/usr/local/mysql/bin/): " mysqlBinDir
+			mysqlBinDir=${mysqlBinDir:=/usr/local/mysql/bin}
+			mysqlBinPath="${mysqlBinPath}"/mysql
+			mysqldumpBinPath="{mysqlBinPath}"/mysqldump
+			if [[ ! -f "$mysqlBinPath" || ! -f "$mysqldumpBinPath" ]]; then
+				echo "mysql or mysqldump not found,please reinput."
+			else
+				break
+			fi	
+		done
+
+		read -p "please input mysql address(default:localhost): " mysqlAddress
+		mysqlAddress=${mysqlAddress:=localhost}
+
+		while true; do
+			read -p "please input mysql port number(default:3389): " mysqlPort
+			mysqlPort=${mysqlPort:=3389}
+			if verify_port "$mysqlPort";then
+				break
+			else
+				echo "the port $mysqlPort is invalid."
+			fi	
+		done
+
+		read -p "please input mysql user(default:root): " mysqlUser
+		mysqlUser=${mysqlUser:=root}
+
+		read -p "please input mysql user $mysqlUser password(default:root): " mysqlPass
+		mysqlPass=${mysqlPass:=root}
+
+		if ${mysqlBinPath} -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} -e "select 1" > /dev/null 2>&1;then
+			break
+		else
+			echo "${mysqlBinPath} -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} -e 'select 1' return error."
+			echo "failed to connect mysql server,please reinput." 
+		fi	
+
+	done
+}
+
+innobackupex_setup(){
+	read -p "please input mysql user(default:root): " mysqlUser
+	mysqlUser=${mysqlUser:=root}
+
+	read -p "please input mysql user $mysqlUser password(default:root): " mysqlPass
+	mysqlPass=${mysqlPass:=root}
+
+	while true; do
+		read -p "please input my.cnf location(default:/usr/local/mysql/etc/my.cnf): " myCnfLocation
+		myCnfLocation=${myCnfLocation:=/usr/local/mysql/etc/my.cnf}
+		if [[ ! -f "$myCnfLocation" ]]; then
+			echo "file $myCnfLocation not found,please reinput."
+		else
+			break
+		fi	
+	done
+
+}
+
+choose_database_policy(){
+	if [[ -z "$databaseSelectionPolicy" ]]; then
+		while true; do
+			echo -e "1) include specify databases only\n2) exclude specify databases from all databases.\n3) all databases\n"
+			read -p "please choose one database selection policy(ie.1 default:1): " databaseSelectionPolicy
+			databaseSelectionPolicy=${databaseSelectionPolicy:=1}
+			case "$databaseSelectionPolicy" in
+				1|2|3) break;;
+				*) echo "input error,please input a number."
+			esac
+		done
+
+		if [[ "databaseSelectionPolicy" != "3" ]]; then
+			while true; do
+				read -p "please input databases(ie.centos|ezhttp): " databasesBackup
+				if [[ "$databasesBackup" == "" ]]; then
+					echo "input can not be empty,please reinput."
+				else
+					break
+				fi	
+			done		
+		fi
+	fi
+}
+
+file_local_backup_setup(){
+	backup_dir_setup
+	exclude_regex_setup
+	enable_compress_setup
+	storage_dir_setup
+	expire_days_setup
+	backup_rate_setup
+	backup_script_dir_setup
+}
+
+file_remote_backup_setup(){
+	backup_dir_setup
+	exclude_regex_setup
+	enable_compress_setup
+	choose_backup_tool_setup
+	expire_days_setup
+	backup_rate_setup
+	backup_script_dir_setup
+}
+
+mysql_local_backup_setup(){
+	mysql_setup
+	choose_database_policy
+	storage_dir_setup
+	expire_days_setup
+	backup_rate_setup
+	backup_script_dir_setup
+}
+
+mysql_remote_backup_setup(){
+	mysql_setup
+	choose_database_policy
+	choose_backup_tool_setup
+	expire_days_setup
+	backup_rate_setup
+	backup_script_dir_setup
+}
+
 
 #工具设置
 tools_setting(){

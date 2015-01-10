@@ -5,7 +5,7 @@ display_menu php
 if [ "$php" == "custom_version" ];then
 	while true
 	do
-		read -p "input version.(ie.php-5.2.17 php-5.3.26 php-5.4.16): " version
+		read -p "input version.(ie.php-5.2.17 php-5.3.26 php-5.4.16 php-5.5.20): " version
 		#判断版本号是否有效
 		if echo "$version" | grep -q -E '^php-5\.2\.[0-9]+$';then
 			php5_2_filename=$version
@@ -27,7 +27,14 @@ if [ "$php" == "custom_version" ];then
 			read -p "please input $php download url(must be tar.gz file format): " php5_4_official_link
 			php5_4_other_link=""
 			custom_info="$custom_info\nphp5_4_filename=$version\nphp5_4_official_link=$php5_4_official_link\nphp5_4_other_link=''\n"
-			break			
+			break
+		elif echo "$version" | grep -q -E '^php-5\.5\.[0-9]+$';then
+			php5_5_filename=$version
+			php=$version
+			read -p "please input $php download url(must be tar.gz file format): " php5_5_official_link
+			php5_5_other_link=""
+			custom_info="$custom_info\nphp5_5_filename=$version\nphp5_5_official_link=$php5_5_official_link\nphp5_5_other_link=''\n"
+			break				
 		else
 			echo "version invalid,please reinput."
 		fi
@@ -63,7 +70,7 @@ if [ "$php" != "do_not_install" ];then
 	#判断是否需要支持php mysql，否则取消php的--with-mysql编译参数
 	[ "$mysql" == "do_not_install" ] && [ "$mysql_location" == "" ] && unset with_mysql || with_mysql="--with-mysql=$mysql_location --with-mysqli=$mysql_location/bin/mysql_config --with-pdo-mysql=$mysql_location/bin/mysql_config"
 
-	#设置php5.3 php5.4使用mysqlnd
+	#设置php5.3 php5.4 php5.5使用mysqlnd
 	with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=shared,mysqlnd --with-pdo-mysql=shared,mysqlnd"
 
 	#判断是64系统就加上--with-libdir=lib64  
@@ -94,7 +101,7 @@ if [ "$php" != "do_not_install" ];then
 		#php编译参数
 		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite=shared  --with-pdo_sqlite=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv=shared  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
 
-	elif [ "$php" == "${php5_3_filename}" ];then
+	elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" ]];then
 
 		#判断php运行模式
 		if [ "$php_mode" == "with_apache" ];then
@@ -116,30 +123,7 @@ if [ "$php" != "do_not_install" ];then
 		fi
 
 		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite=shared  --with-gettext=shared  --with-iconv=shared  --enable-ftp=shared  --with-sqlite=shared  --with-sqlite3=shared  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
-
-	elif [ "$php" == "${php5_4_filename}" ];then
-
-		#判断php运行模式
-		if [ "$php_mode" == "with_apache" ];then
-			php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
-		elif [ "$php_mode" == "with_fastcgi" ];then
-			php_run_php_mode="--enable-fpm"
-		fi
-
-		if check_sys packageSupport;then
-			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
-			if CentOSVerCheck 7;then
-				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename} "
-			else
-				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared"
-			fi
-			
-		else
-			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename} "
-		fi
-
-		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-iconv=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --enable-sockets=shared  --with-pdo_sqlite=shared  --with-sqlite3=shared  --enable-zip   --enable-soap=shared  $other_option  ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
-	fi
+	fi	
 
 	#提示是否更改编译参数
 	php_configure_args=`echo $php_configure_args | sed -r 's/\s+/ /g'`
@@ -232,7 +216,23 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	mkdir -p ${php_location}/etc
 	\cp  php.ini-production $php_location/etc/php.ini	
 	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
+
+elif [ "$php" == "${php5_5_filename}" ];then
+	download_file "${php5_5_other_link}" "${php5_5_official_link}" "${php5_5_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${php5_5_filename}.tar.gz
+	cd ${php5_5_filename}
+	make clean
+	error_detect "./configure ${php_configure_args}"
+	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+	error_detect "make install"	
+	
+	#配置php
+	mkdir -p ${php_location}/etc
+	\cp  php.ini-production $php_location/etc/php.ini	
+	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf	
 fi
+
 #记录php安装位置
 echo "php_location=$php_location" >> /etc/ezhttp_info_do_not_del
 #add php support for apache
@@ -263,22 +263,8 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		set_php_variable short_open_tag on
 		set_php_variable date.timezone Asia/Chongqing
 
-	elif [ "$php" == "${php5_3_filename}" ]; then
-		\cp $cur_dir/soft/${php5_3_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
-		chmod +x /etc/init.d/php-fpm
-		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
-		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf
-
-		set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
-		set_php_variable expose_php Off
-		set_php_variable error_log  /usr/local/php/var/log/php_errors.log
-		set_php_variable request_order  "CGP"
-		set_php_variable cgi.fix_pathinfo 0
-		set_php_variable short_open_tag on
-		set_php_variable date.timezone Asia/Chongqing
-
-	elif [ "$php" == "${php5_4_filename}" ]; then
-		\cp $cur_dir/soft/${php5_4_filename}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+	elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" ]]; then
+		\cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 		chmod +x /etc/init.d/php-fpm
 		sed -i 's/^user =.*/user = www/' ${php_location}/etc/php-fpm.conf
 		sed -i 's/^group =.*/group = www/' ${php_location}/etc/php-fpm.conf

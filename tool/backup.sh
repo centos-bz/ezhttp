@@ -130,7 +130,7 @@ backup_files(){
 		check_var_null fileRemoteExpireDays || exit 1
 
 		log "INFO" "tranfering backup file to dropbox server with dropbox_uploader tool"
-		${CUR_DIR}/dropbox_uploader.sh upload ${storageFileDir}/${fileName}.tar.gz ${mysqlRemoteBackupDest}/$(date +%Y%m%d)/${fileName}.tar.gz >> ${LOG_PATH} 2>&1
+		${CUR_DIR}/dropbox_uploader.sh upload ${storageFileDir}/${fileName}.tar.gz ${fileRemoteBackupDest}/$(date +%Y%m%d)/${fileName}.tar.gz >> ${LOG_PATH} 2>&1
 
 		log "INFO" "deleting directory ${fileRemoteBackupDest}/$(date -d "$fileRemoteExpireDays days ago" +%Y%m%d)/"
 		${CUR_DIR}/dropbox_uploader.sh delete ${fileRemoteBackupDest}/$(date -d "$fileRemoteExpireDays days ago" +%Y%m%d)/ >> ${LOG_PATH} 2>&1

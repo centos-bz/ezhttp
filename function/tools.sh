@@ -1582,29 +1582,43 @@ Backup_setup(){
 
 	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 		apt-get -y install rsync
-		! grep -q "backup.sh file" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh file > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
+		if [[ "$fileBackup" != "3" ]]; then
+			! grep -q "backup.sh file" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh file > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
+		fi
+		
+		if [[ "$mysqlBackup" != "3" ]]; then
+			! grep -q "backup.sh mysql" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
+		fi
+
 		service cron restart
 	elif check_sys sysRelease centos; then
 		yum -y install rsync
-		! grep -q "backup.sh mysql" /var/spool/cron/root > /dev/null 2>&1 && echo "${mysqlBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1" >> /var/spool/cron/root
+		if [[ "$fileBackup" != "3" ]]; then
+			! grep -q "backup.sh file" /var/spool/cron/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh file > /dev/null 2>&1"  >> /var/spool/cron/root
+		fi
+		
+		if [[ "$mysqlBackup" != "3" ]]; then
+			! grep -q "backup.sh mysql" /var/spool/cron/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1"  >> /var/spool/cron/root
+		fi
+		
 		service crond restart
 	fi
 
 	#安装工具
-	if [[ "$mysqlBackupTool" == "innobackupex" ]]; then
+	if [[ "$mysqlBackupTool" == "innobackupex" || "$fileBackupTool" == "innobackupex" ]]; then
 		Percona_xtrabackup_install
 	fi
 
-	if [[ "$mysqlRemoteBackupTool" == "dropbox" ]]; then
+	if [[ "$mysqlRemoteBackupTool" == "dropbox" || "$fileRemoteBackupTool" == "dropbox" ]]; then
 		${backupScriptDir}/dropbox_uploader.sh
 	fi
 
-	if [[ "$mysqlRemoteBackupTool" == "rsync" ]]; then
+	if [[ "$mysqlRemoteBackupTool" == "rsync"  || "$fileRemoteBackupTool" == "rsync"]]; then
 		echo "$mysqlRsyncPassword" > /etc/rsync.pass
 		chmod 600 /etc/rsync.pass
 	fi
 
-	if [[ "$mysqlRemoteBackupTool" == "rsync-ssh" ]]; then
+	if [[ "$mysqlRemoteBackupTool" == "rsync-ssh" || "$fileRemoteBackupTool" == "rsync-ssh" ]]; then
 		if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 			apt-get -y install rsync expect
 
@@ -1614,7 +1628,7 @@ Backup_setup(){
 		fi
 	fi
 
-	if [[ "$mysqlRemoteBackupTool" == "ftp" ]]; then
+	if [[ "$mysqlRemoteBackupTool" == "ftp" || "$fileRemoteBackupTool" == "ftp" ]]; then
 		if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
 			apt-get -y install ftp
 

@@ -242,7 +242,7 @@ local location=$1
 if ! echo $location | grep -q "^/";then
 	while true
 	do
-		read -p "input error,please input location again." location
+		read -p "input error,please input location again: " location
 		echo $location | grep -q "^/" && echo $location && break
 	done
 else
@@ -418,6 +418,25 @@ while true; do
 		* ) echo "input error,please only input y or n."
 	esac
 done
+}
+
+#非空值read
+ask_not_null_var(){
+	local prompt=$1
+	local var=$2
+	local default=$3
+	local tmpVar=""
+	while true; do
+		read -p "$prompt" tmpVar
+		[[ "$default" != "" ]] && tmpVar=${tmpVar:=$default}
+		if [[ "$tmpVar" == "" ]]; then
+			echo "the input can not be empty,please reinput."
+		else
+			eval $var="$tmpVar"
+			break
+		fi	
+	done
+
 }
 
 #安装编译工具
@@ -735,4 +754,51 @@ bit_to_human_readable(){
 	else
 		echo "${trafficValue}b"
 	fi
+}
+
+verify_cron_exp(){
+	local exp1=`echo "$1" | awk '{print $1}'`
+	local exp2=`echo "$1" | awk '{print $2}'` 
+	local exp3=`echo "$1" | awk '{print $3}'` 
+	local exp4=`echo "$1" | awk '{print $4}'` 
+	local exp5=`echo "$1" | awk '{print $5}'`
+
+	if [[ "$exp1" == "" || "$exp2" == "" || "$exp3" == "" || "$exp4" == "" || "$exp5" == "" ]]; then
+		return 1
+	fi
+
+	exp1=`echo "$exp1" | grep -o -E "[^0].*$"`
+	exp2=`echo "$exp2" | grep -o -E "[^0].*$"`
+	exp3=`echo "$exp3" | grep -o -E "[^0].*$"`
+	exp4=`echo "$exp4" | grep -o -E "[^0].*$"`
+	exp5=`echo "$exp5" | grep -o -E "[^0].*$"`
+
+	exp1="${exp1:=0}"
+	exp2="${exp2:=0}"
+	exp3="${exp3:=0}"
+	exp4="${exp4:=0}"
+	exp5="${exp5:=0}"
+
+	if [[ "$exp1" != "*" && ( ! "$exp1" =~ ^[0-9]+$ || "$exp1" > 59 ) ]]; then
+		return 1
+	fi
+
+	if [[ "$exp2" != "*" && ( ! "$exp2" =~ ^[0-9]+$ || "$exp2" > 23 ) ]]; then
+		return 1
+	fi
+
+	if [[ "$exp3" != "*" && ( ! "$exp3" =~ ^[0-9]+$ || "$exp3" == "0" || "$exp3" > 31 ) ]]; then
+		return 1
+	fi
+
+	if [[ "$exp4" != "*" && ( ! "$exp4" =~ ^[0-9]+$ || "$exp4" == "0" || "$exp4" > 12 ) ]]; then
+		return 1
+	fi
+
+	if [[ "$exp5" != "*" && ( ! "$exp5" =~ ^[0-9]+$ || "$exp5" > 7 ) ]]; then
+		return 1
+	fi
+
+	return 0
+
 }

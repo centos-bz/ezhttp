@@ -1488,192 +1488,338 @@ Configure_apt_yum_repository(){
 
 #备份设置
 Backup_setup(){
+	echo "########## file backup setting ##########"
+	echo
 	while true; do
-		echo -e "1) files\n2) mysql database\n3) files and mysql database\n"
-		read -p "please choose what you'd like to backup(ie.1): " backupContent
-		case $backupContent in
-			1|2|3) break;;
+		echo -e "1) backup files to local\n2) backup file to local and remote\n3) I don't want to backup file\n"
+		read -p "please input your choice(ie.1): " fileBackup
+		case "$fileBackup" in
+			1) file_local_backup_setup;break;;
+			2) file_local_backup_setup;file_remote_backup_setup;break;;
+			3) break;;
 			*) echo "input error,please input a number.";;
 		esac
 	done
 
+	echo "########## mysql database backup setting ##########"
+	echo
 	while true; do
-		echo -e "1) localhost\n2) remote\n3) localhost and remote\n"
-		read -p "please choose your backup destination(ie.1): " backupDestination
-		case $backupContent in
-			1|2|3) break;;
+		echo -e "1) backup mysql database to local\n2) backup mysql database to local and remote\n3) I don't want to backup mysql\n"
+		read -p "please input your choice(ie.1): " mysqlBackup
+		case $mysqlBackup in
+			1) mysql_local_backup_setup;break;;
+			2) mysql_local_backup_setup;mysql_remote_backup_setup;break;;
+			3) break;;
 			*) echo "input error,please input a number.";;
 		esac		
 	done
 
-	if [[ "$backupContent" == "1" && "$backupDestination" == "1" ]]; then
-		file_local_backup_setup
+ 	rm -f $ini_file
+ 	touch $ini_file
+ 	echo > $ini_file
 
-	elif [[ "$backupContent" == "1" && "$backupDestination" == "2" ]]; then
-		file_remote_backup_setup
+	add_entry_to_ini_file file fileBackupDir "$fileBackupDir"
+	add_entry_to_ini_file file excludeRegex "$excludeRegex"
+	add_entry_to_ini_file file storageFileDir "$storageFileDir"
+	add_entry_to_ini_file file fileLocalExpireDays "$fileLocalExpireDays"
 
- 	elif [[ "$backupContent" == "1" && "$backupDestination" == "3" ]]; then
- 		file_local_backup_setup
- 		file_remote_backup_setup
+	add_entry_to_ini_file file fileRemoteBackupTool "$fileRemoteBackupTool"
+	add_entry_to_ini_file file fileRsyncRemoteAddr "$fileRsyncRemoteAddr"
+	add_entry_to_ini_file file fileRsyncPort "$fileRsyncPort"
+	add_entry_to_ini_file file fileRsyncUsername "$fileRsyncUsername"
+	add_entry_to_ini_file file fileRsyncModuleName "$fileRsyncModuleName"
+	add_entry_to_ini_file file fileSshRemoteAddr "$fileSshRemoteAddr"
+	add_entry_to_ini_file file fileSshPort "$fileSshPort"
+	add_entry_to_ini_file file fileSshUsername "$fileSshUsername"
+	add_entry_to_ini_file file fileSshPassword "$fileSshPassword"
+	add_entry_to_ini_file file fileRemoteBackupDest "$fileRemoteBackupDest"
+	add_entry_to_ini_file file fileFtpServerAddr "$fileFtpServerAddr"
+	add_entry_to_ini_file file fileFtpPort "$fileFtpPort"
+	add_entry_to_ini_file file fileFtpUsername "$fileFtpUsername"
+	add_entry_to_ini_file file fileFtpPassword "$fileFtpPassword"
+	add_entry_to_ini_file file rsyncBinPath "$rsyncBinPath"
+	add_entry_to_ini_file file fileRemoteExpireDays "$fileRemoteExpireDays"
 
-	elif [[ "$backupContent" == "2" && "$backupDestination" == "1" ]]; then
-		mysql_local_backup_setup
+	add_entry_to_ini_file mysql mysqlBackupTool "$mysqlBackupTool"
+	add_entry_to_ini_file mysql mysqlBinDir "$mysqlBinDir"
+	add_entry_to_ini_file mysql mysqlAddress "$mysqlAddress"
+	add_entry_to_ini_file mysql mysqlPort "$mysqlPort"
+	add_entry_to_ini_file mysql mysqlUser "$mysqlUser"
+	add_entry_to_ini_file mysql mysqlPass "$mysqlPass"
+	add_entry_to_ini_file mysql myCnfLocation "$myCnfLocation"
+	add_entry_to_ini_file mysql databaseSelectionPolicy "$databaseSelectionPolicy"
+	add_entry_to_ini_file mysql databasesBackup "$databasesBackup"
+	add_entry_to_ini_file mysql storageMysqlDir "$storageMysqlDir"
+	add_entry_to_ini_file mysql mysqlLocalExpireDays "$mysqlLocalExpireDays"
 
-	elif [[ "$backupContent" == "2" && "$backupDestination" == "2" ]]; then	
-		mysql_remote_backup_setup
+	add_entry_to_ini_file mysql mysqlRemoteBackupTool "$mysqlRemoteBackupTool"
+	add_entry_to_ini_file mysql mysqlRsyncRemoteAddr "$mysqlRsyncRemoteAddr"
+	add_entry_to_ini_file mysql mysqlRsyncPort "$mysqlRsyncPort"
+	add_entry_to_ini_file mysql mysqlRsyncUsername "$mysqlRsyncUsername"
+	add_entry_to_ini_file mysql mysqlRsyncModuleName "$mysqlRsyncModuleName"
+	add_entry_to_ini_file mysql mysqlSshRemoteAddr "$mysqlSshRemoteAddr"
+	add_entry_to_ini_file mysql mysqlSshPort "$mysqlSshPort"
+	add_entry_to_ini_file mysql mysqlSshUsername "$mysqlSshUsername"
+	add_entry_to_ini_file mysql mysqlSshPassword "$mysqlSshPassword"
+	add_entry_to_ini_file mysql mysqlRemoteBackupDest "$mysqlRemoteBackupDest"
+	add_entry_to_ini_file mysql mysqlFtpServerAddr "$mysqlFtpServerAddr"
+	add_entry_to_ini_file mysql mysqlFtpPort "$mysqlFtpPort"
+	add_entry_to_ini_file mysql mysqlFtpUsername "$mysqlFtpUsername"
+	add_entry_to_ini_file mysql mysqlFtpPassword "$mysqlFtpPassword"
+	add_entry_to_ini_file mysql rsyncBinPath "$rsyncBinPath"
+	add_entry_to_ini_file mysql mysqlRemoteExpireDays "$mysqlRemoteExpireDays"
+	
+	
 
-	elif [[ "$backupContent" == "2" && "$backupDestination" == "3" ]]; then
-		mysql_local_backup_setup
-		mysql_remote_backup_setup
+	mkdir -p ${backupScriptDir}
+	cp ${cur_dir}/backup.ini ${backupScriptDir}
+	cp ${cur_dir}/tool/ini_parser.sh ${backupScriptDir}
+	cp ${cur_dir}/tool/function.sh ${backupScriptDir}
+	cp ${cur_dir}/tool/backup.sh ${backupScriptDir}
+	cp ${cur_dir}/tool/dropbox_uploader.sh ${backupScriptDir}
+	chmod +x ${backupScriptDir}/backup.sh
+	chmod +x ${backupScriptDir}/dropbox_uploader.sh
 
-	elif [[ "$backupContent" == "3" && "$backupDestination" == "1" ]]; then	
-		file_local_backup_setup
-		mysql_local_backup_setup
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
+		apt-get -y install rsync
+		! grep -q "backup.sh file" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh file > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
+		service cron restart
+	elif check_sys sysRelease centos; then
+		yum -y install rsync
+		! grep -q "backup.sh mysql" /var/spool/cron/root > /dev/null 2>&1 && echo "${mysqlBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1" >> /var/spool/cron/root
+		service crond restart
+	fi
 
-	elif [[ "$backupContent" == "3" && "$backupDestination" == "2" ]]; then
-		file_remote_backup_setup
-		mysql_remote_backup_setup
+	#安装工具
+	if [[ "$mysqlBackupTool" == "innobackupex" ]]; then
+		Percona_xtrabackup_install
+	fi
 
-	elif [[ "$backupContent" == "3" && "$backupDestination" == "3" ]]; then
-		file_local_backup_setup
-		file_remote_backup_setup
-		mysql_local_backup_setup
-		mysql_remote_backup_setup
+	if [[ "$mysqlRemoteBackupTool" == "dropbox" ]]; then
+		${backupScriptDir}/dropbox_uploader.sh
+	fi
 
- 	fi	
+	if [[ "$mysqlRemoteBackupTool" == "rsync" ]]; then
+		echo "$mysqlRsyncPassword" > /etc/rsync.pass
+		chmod 600 /etc/rsync.pass
+	fi
+
+	if [[ "$mysqlRemoteBackupTool" == "rsync-ssh" ]]; then
+		if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
+			apt-get -y install rsync expect
+
+		elif check_sys sysRelease centos; then
+			yum -y install rsync expect
+
+		fi
+	fi
+
+	if [[ "$mysqlRemoteBackupTool" == "ftp" ]]; then
+		if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
+			apt-get -y install ftp
+
+		elif check_sys sysRelease centos; then
+			yum -y install ftp
+
+		fi
+	fi
+
+
 }
 
-backup_dir_setup(){
-	if [[ -z $backupDir ]];then
-		while true; do
-			valid=true
-			read -p "please input the directory you'll backup(ie./data1 /data2): " backupDir
-			for dir in ${backupDir};do
-				if [[ ! -d "${dir}" ]];then
-					echo "the directory $dir does not exist,or is not a directory,please reinput."
-					valid=false
-					break
-				fi
-			done
-
-			$valid && break
+file_local_backup_setup(){
+	while true; do
+		valid=true
+		read -p "please input the directory you'll backup(ie./data1 /data2): " fileBackupDir
+		[[ "$fileBackupDir" == "" ]] && valid=false
+		for dir in ${fileBackupDir};do
+			if [[ ! -d "${dir}" ]];then
+				echo "the directory $dir does not exist,or is not a directory,please reinput."
+				valid=false
+				break
+			fi
 		done
-	fi	
+
+		$valid && break
+	done
+
+	read -p "please input the exclude regex for the file backup dir $fileBackupDir(default:none,multiply regex separated by a space.): " excludeRegex
+	
+	read -p "please input the directory you'll backup the files to: " storageFileDir
+	storageFileDir=`filter_location "$storageFileDir"`
+	
+	while true; do
+		read -p "please input the number of days total to retain the local file backup(ie.3,default:7): " fileLocalExpireDays
+		fileLocalExpireDays=${fileLocalExpireDays:=7}
+		if [[ "$fileLocalExpireDays" =~ ^[0-9]+$ && "$fileLocalExpireDays" != "0" ]]; then
+			break
+		else
+			echo "input error,please input the number that greater that 0."
+		fi
+	done
+
+	while true; do
+		echo -e "1) every day\n2) every week\n3) custom input cron expression\n"
+		read -p "please choose the file backup rate(ie.1,default:1): " fileBackupRate
+		fileBackupRate=${fileBackupRate:=1}
+		if [[ "$fileBackupRate" == "1" ]];then
+			fileBackupRate="01 04 * * *"
+			break
+
+		elif [[ "$fileBackupRate" == "2" ]]; then
+			fileBackupRate="01 04 01 * *"
+			break
+		elif [[ "$fileBackupRate" == "3" ]]; then
+			while true; do
+				read -p "please input cron expression(ie.01 04 * * *): " fileBackupRate
+				if verify_cron_exp "$fileBackupRate";then
+					break 2
+				else
+					echo "cron expression is invalid.please reinput."
+				fi	
+			done
+			
+
+		else
+			echo "input error,please input a number 1-3."
+		fi	
+	done
+	
+
+	backup_script_dir_setup
 }
 
-exclude_regex_setup(){
-	if [[ -z $excludeRegex ]];then
-		read -p "please input the exclude regex for the backup dir $backupDir(default:none,multiply regex separated by a space.): " excludeRegex
-		excludeRegex=${excludeRegex:=none}
-	fi	
-}
+file_remote_backup_setup(){
+	while true; do
+		echo -e "backup tool supported:\n1) rsync(with rsync protocol)\n2) rsync(with ssh protocol)\n3) dropbox\n4) ftp\n"
+		read -p "please choose a backup tool(ie.1): " fileRemoteBackupTool
+		case "$fileRemoteBackupTool" in
+			1) fileRemoteBackupTool=rsync;break;;
+			2) fileRemoteBackupTool=rsync-ssh;break;;
+			3) fileRemoteBackupTool=dropbox;break;;
+			4) fileRemoteBackupTool=ftp;break;;
+			*) echo "input error,please input a number 1-4."
+		esac
+	done
 
-enable_compress_setup(){
-	if [[ -z $enableCompress ]];then
-		yes_or_no "compress the backup directory [Y/n]: " "enableCompress=true" "enableCompress=false"
-	fi	
-}
-
-storage_dir_setup(){
-	if [[ -z $storageDir ]];then
-		read -p "please input the directory you'll backup the files to: " storageDir
-		storageDir=`filter_location $storageDir`
-	fi	
-}
-
-expire_days_setup(){
-	if [[ -z $expireDays ]]; then
+	if [[ "$fileRemoteBackupTool" == "rsync" ]]; then
 		while true; do
-			read -p "please input the number of days total to retain the backup(ie.3,default:7): " expireDays
-			expireDays=${expireDays:=7}
-			if [[ "$expireDays" =~ ^[0-9]+$ && "$expireDays" != "0" ]]; then
+			read -p "please input rsync binary path(default: /usr/bin/rsync): " rsyncBinPath
+			rsyncBinPath=${rsyncBinPath:=/usr/bin/rsync}
+			if [[ -f "$rsyncBinPath" ]]; then
+				break
+			else
+				echo "file ${rsyncBinPath} not found,please reinput"
+			fi	
+		done
+
+		ask_not_null_var "please input rsync server remote address(ie.8.8.8.8 www.centos.bz): " fileRsyncRemoteAddr
+
+		while true; do
+			read -p "please input rsync server port(default:873): " fileRsyncPort
+			fileRsyncPort=${fileRsyncPort:=873}
+			if verify_port "$fileRsyncPort";then
+				break
+			else
+				echo "$fileRsyncPort is not a valid port,please reinput."
+			fi	
+		done
+
+		ask_not_null_var "please input rsync username: " fileRsyncUsername
+		ask_not_null_var "please input rsync password: " fileRsyncPassword
+		ask_not_null_var "please input rsync module name : " fileRsyncModuleName
+
+	elif [[ "$fileRemoteBackupTool" == "rsync-ssh" ]]; then
+		while true; do
+			read -p "please input rsync binary path(default: /usr/bin/rsync): " rsyncBinPath
+			rsyncBinPath=${rsyncBinPath:=/usr/bin/rsync}
+			if [[ -f "$rsyncBinPath" ]]; then
+				break
+			else
+				echo "file ${rsyncBinPath} not found,please reinput"
+			fi	
+		done
+
+		ask_not_null_var "please input ssh remote address(ie.8.8.8.8 www.centos.bz): " fileSshRemoteAddr
+
+		while true; do
+			read -p "please input ssh server port(default:22): " fileSshPort
+			fileSshPort=${fileSshPort:=22}
+			if verify_port "$fileSshPort";then
+				break
+			else
+				echo "$fileSshPort is not a valid port,please reinput."
+			fi	
+		done
+
+		ask_not_null_var "please input ssh username(default:root): " fileSshUsername root
+		ask_not_null_var "please input ssh password: " fileSshPassword
+		read -p "please input the backup destination in the remote server: " fileRemoteBackupDest
+		fileRemoteBackupDest=`filter_location "$fileRemoteBackupDest"`
+
+
+	elif [[ "$fileRemoteBackupTool" == "dropbox" ]]; then
+		read -p "please input the backup destination in the dropbox: " fileRemoteBackupDest
+		fileRemoteBackupDest=`filter_location "$fileRemoteBackupDest"`
+
+		while true; do
+			read -p "please input the number of days total to retain the file backup in the dropbox(ie.3,default:7): " fileRemoteExpireDays
+			fileRemoteExpireDays=${fileRemoteExpireDays:=7}
+			if [[ "$fileRemoteExpireDays" =~ ^[0-9]+$ && "$fileRemoteExpireDays" != "0" ]]; then
 				break
 			else
 				echo "input error,please input the number that greater that 0."
 			fi
 		done
-	fi	
-}
 
-backup_rate_setup(){
-	if [[ -z $backupRate ]]; then
+	elif [[ "$fileRemoteBackupTool" == "ftp" ]]; then
+		ask_not_null_var "please input ftp server address: " fileFtpServerAddr
 		while true; do
-			echo -e "1) every day\n2) every week\n3) custom input cron expression\n"
-			read -p "please choose the backup rate(ie.1,default:1): " backupRate
-			backupRate=${backupRate:=1}
-			if [[ "$backupRate" == "1" || "$backupRate" == "2" ]]; then
+			read -p "please input ftp server port(default:21): " fileFtpPort
+			fileFtpPort=${fileFtpPort:=21}
+			if verify_port "$fileFtpPort";then
 				break
-			elif [[ "$backupRate" == "3" ]]; then
-				while true; do
-					read -p "please input cron expression(ie.01 04 * * *): " backupRate
-					if verify_cron_exp "$backupRate";then
-						break 2
-					else
-						echo "cron expression is invalid.please reinput."
-					fi	
-				done
-				
-
 			else
-				echo "input error,please input a number 1-3."
+				echo "$fileFtpPort is not a valid port,please reinput."
 			fi	
 		done
-	fi	
-}
 
-backup_script_dir_setup(){
-	if [[ -z $backupScriptDir ]]; then
-		read -p "please input the backup script location you'll store(default:/data/sh/) " backupScriptDir
-		backupScriptDir=${backupScriptDir:=/data/sh/}
-		backupScriptDir=`filter_location "$backupScriptDir"`
-		mkdir -p "$backupScriptDir"
-	fi	
-}
+		ask_not_null_var "please input ftp username: " fileFtpUsername
+		ask_not_null_var "please input ftp password: " fileFtpPassword
+		read -p "please input the backup destination in the ftp server: " fileRemoteBackupDest
+		fileRemoteBackupDest=`filter_location "$fileRemoteBackupDest"`
 
-choose_backup_tool_setup(){
-	if [[ -z "$backupTool" ]];then
 		while true; do
-			echo -e "backup tool supported:\n1) rsync(with rsync protocol)\n2)rsync(with ssh protocol)\n3) dropbox\n4) ftp\n"
-			read -p "please choose a backup tool(ie.1): " backupTool
-			case "$backupTool" in
-				1|2|3|4) break;;
-				*) echo "input error,please input a number 1-3."
-			esac
-		done
+			read -p "please input the number of days total to retain the file backup in the ftp server(ie.3,default:7): " fileRemoteExpireDays
+			fileRemoteExpireDays=${fileRemoteExpireDays:=7}
+			if [[ "$fileRemoteExpireDays" =~ ^[0-9]+$ && "$fileRemoteExpireDays" != "0" ]]; then
+				break
+			else
+				echo "input error,please input the number that greater that 0."
+			fi
+		done		
+
 	fi
+	
 }
 
+mysql_local_backup_setup(){
+	while true; do
+		echo -e "supported mysql backup tool: \n1) mysqldump\n2) innobackupex\n"
+		read -p "please choose a mysql backup tool(ie.1): " mysqlBackupTool
+		case "$mysqlBackupTool" in
+			1) mysqlBackupTool=mysqldump;break;;
+			2) mysqlBackupTool=innobackupex;break;;
+			*) echo "input error,please input a number 1-2."
+		esac
+	done
 
-mysql_setup(){
-	if [[ -z "$mysqlSetup" ]];then
-		while true; do
-			echo -e "supported mysql backup tool: \n1) mysqldump\n2) innobackupex\n"
-			read -p "please choose a mysql backup tool(ie.1): " mysqlBackupTool
-			case "$mysqlBackupTool" in
-				1|2) break;;
-				*) echo "input error,please input a number 1-2."
-			esac
-		done
-
-		if [[ "$mysqlBackupTool" == "1" ]]; then
-			mysqldump_setup
-
-		elif [[ "$mysqlBackupTool" == "2" ]]; then
-			innobackupex_setup
-
-		fi
-		
-		mysqlSetup=true	
-	fi
-}
-
-mysqldump_setup(){
 	while true;do
 		while true; do
 			read -p "please input mysql bin directory(default:/usr/local/mysql/bin/): " mysqlBinDir
 			mysqlBinDir=${mysqlBinDir:=/usr/local/mysql/bin}
-			mysqlBinPath="${mysqlBinPath}"/mysql
-			mysqldumpBinPath="{mysqlBinPath}"/mysqldump
+			mysqlBinPath="${mysqlBinDir}"/mysql
+			mysqldumpBinPath="${mysqlBinDir}"/mysqldump
 			if [[ ! -f "$mysqlBinPath" || ! -f "$mysqldumpBinPath" ]]; then
 				echo "mysql or mysqldump not found,please reinput."
 			else
@@ -1681,12 +1827,12 @@ mysqldump_setup(){
 			fi	
 		done
 
-		read -p "please input mysql address(default:localhost): " mysqlAddress
-		mysqlAddress=${mysqlAddress:=localhost}
+		read -p "please input mysql address(default:127.0.0.1): " mysqlAddress
+		mysqlAddress=${mysqlAddress:=127.0.0.1}
 
 		while true; do
-			read -p "please input mysql port number(default:3389): " mysqlPort
-			mysqlPort=${mysqlPort:=3389}
+			read -p "please input mysql port number(default:3306): " mysqlPort
+			mysqlPort=${mysqlPort:=3306}
 			if verify_port "$mysqlPort";then
 				break
 			else
@@ -1700,6 +1846,20 @@ mysqldump_setup(){
 		read -p "please input mysql user $mysqlUser password(default:root): " mysqlPass
 		mysqlPass=${mysqlPass:=root}
 
+
+		if [[ "$mysqlBackupTool" == "innobackupex" ]]; then
+			while true; do
+				read -p "please input my.cnf location(default:/usr/local/mysql/etc/my.cnf): " myCnfLocation
+				myCnfLocation=${myCnfLocation:=/usr/local/mysql/etc/my.cnf}
+				if [[ ! -f "$myCnfLocation" ]]; then
+					echo "file $myCnfLocation not found,please reinput."
+				else
+					break
+				fi	
+			done
+
+		fi	
+
 		if ${mysqlBinPath} -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} -e "select 1" > /dev/null 2>&1;then
 			break
 		else
@@ -1708,90 +1868,285 @@ mysqldump_setup(){
 		fi	
 
 	done
-}
 
-innobackupex_setup(){
-	read -p "please input mysql user(default:root): " mysqlUser
-	mysqlUser=${mysqlUser:=root}
+	databasesName=`${mysqlBinPath} -N -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} -e "show databases;" 2>/dev/null | grep -v -E "information_schema|test|performance_schema"`
+	if [[ "$databasesName" == "" ]]; then
+		echo "there is no database to be backuped."
+		exit 1
+	fi
+	while true; do
+		echo "available databases:"
+		echo "$databasesName"
+		echo
+		echo -e "1) include specify databases only\n2) exclude specify databases from all databases.\n3) all databases\n"
+		read -p "please choose one database selection policy(ie.1 default:1): " databaseSelectionPolicy
+		databaseSelectionPolicy=${databaseSelectionPolicy:=1}
+		case "$databaseSelectionPolicy" in
+			1) databaseSelectionPolicy=include; break;;
+			2) databaseSelectionPolicy=exclude; break;;
+			3) databaseSelectionPolicy=all; break;;
+			*) echo "input error,please input a number."
+		esac
+	done
 
-	read -p "please input mysql user $mysqlUser password(default:root): " mysqlPass
-	mysqlPass=${mysqlPass:=root}
+
+	if [[ "$databaseSelectionPolicy" != "all" ]]; then
+		while true; do
+			read -p "please input databases(ie.centos ezhttp): " databasesBackup
+			if [[ "$databasesBackup" == "" ]]; then
+				echo "input can not be empty,please reinput."
+			else
+				valid=true
+				for db in $databasesBackup;do
+					if ! if_in_array "$db" "$databasesName";then
+						valid=false
+						echo "$db database is not found."
+					fi	
+				done
+				$valid && break
+			fi	
+		done		
+	fi
+
+	read -p "please input the directory you'll backup the mysql database to(default:/data/backup/mysql): " storageMysqlDir
+	storageMysqlDir=${storageMysqlDir:=/data/backup/mysql}
+	storageMysqlDir=`filter_location "$storageMysqlDir"`
 
 	while true; do
-		read -p "please input my.cnf location(default:/usr/local/mysql/etc/my.cnf): " myCnfLocation
-		myCnfLocation=${myCnfLocation:=/usr/local/mysql/etc/my.cnf}
-		if [[ ! -f "$myCnfLocation" ]]; then
-			echo "file $myCnfLocation not found,please reinput."
-		else
+		read -p "please input the number of days total to retain the local mysql database backup(ie.3,default:7): " mysqlLocalExpireDays
+		mysqlLocalExpireDays=${mysqlLocalExpireDays:=7}
+		if [[ "$mysqlLocalExpireDays" =~ ^[0-9]+$ && "$mysqlLocalExpireDays" != "0" ]]; then
 			break
+		else
+			echo "input error,please input the number that greater that 0."
+		fi
+	done
+
+	while true; do
+		echo -e "1) every day\n2) every week\n3) custom input cron expression\n"
+		read -p "please choose the mysql backup rate(ie.1,default:1): " mysqlBackupRate
+		mysqlBackupRate=${mysqlBackupRate:=1}
+		if [[ "$mysqlBackupRate" == "1" ]];then
+			mysqlBackupRate="01 04 * * *"
+			break
+
+		elif [[ "$mysqlBackupRate" == "2" ]]; then
+			mysqlBackupRate="01 04 01 * *"
+			break
+		elif [[ "$mysqlBackupRate" == "3" ]]; then
+			while true; do
+				read -p "please input cron expression(ie.01 04 * * *): " mysqlBackupRate
+				if verify_cron_exp "$mysqlBackupRate";then
+					break 2
+				else
+					echo "cron expression is invalid.please reinput."
+				fi	
+			done
+			
+
+		else
+			echo "input error,please input a number 1-3."
 		fi	
 	done
 
-}
-
-choose_database_policy(){
-	if [[ -z "$databaseSelectionPolicy" ]]; then
-		while true; do
-			echo -e "1) include specify databases only\n2) exclude specify databases from all databases.\n3) all databases\n"
-			read -p "please choose one database selection policy(ie.1 default:1): " databaseSelectionPolicy
-			databaseSelectionPolicy=${databaseSelectionPolicy:=1}
-			case "$databaseSelectionPolicy" in
-				1|2|3) break;;
-				*) echo "input error,please input a number."
-			esac
-		done
-
-		if [[ "databaseSelectionPolicy" != "3" ]]; then
-			while true; do
-				read -p "please input databases(ie.centos|ezhttp): " databasesBackup
-				if [[ "$databasesBackup" == "" ]]; then
-					echo "input can not be empty,please reinput."
-				else
-					break
-				fi	
-			done		
-		fi
-	fi
-}
-
-file_local_backup_setup(){
-	backup_dir_setup
-	exclude_regex_setup
-	enable_compress_setup
-	storage_dir_setup
-	expire_days_setup
-	backup_rate_setup
-	backup_script_dir_setup
-}
-
-file_remote_backup_setup(){
-	backup_dir_setup
-	exclude_regex_setup
-	enable_compress_setup
-	choose_backup_tool_setup
-	expire_days_setup
-	backup_rate_setup
-	backup_script_dir_setup
-}
-
-mysql_local_backup_setup(){
-	mysql_setup
-	choose_database_policy
-	storage_dir_setup
-	expire_days_setup
-	backup_rate_setup
 	backup_script_dir_setup
 }
 
 mysql_remote_backup_setup(){
-	mysql_setup
-	choose_database_policy
-	choose_backup_tool_setup
-	expire_days_setup
-	backup_rate_setup
-	backup_script_dir_setup
+	while true; do
+		echo -e "backup tool supported:\n1) rsync(with rsync protocol)\n2) rsync(with ssh protocol)\n3) dropbox\n4) ftp\n"
+		read -p "please choose a backup tool(ie.1): " mysqlRemoteBackupTool
+		case "$mysqlRemoteBackupTool" in
+			1) mysqlRemoteBackupTool=rsync;break;;
+			2) mysqlRemoteBackupTool=rsync-ssh;break;;
+			3) mysqlRemoteBackupTool=dropbox;break;;
+			4) mysqlRemoteBackupTool=ftp;break;;
+			*) echo "input error,please input a number 1-4."
+		esac
+	done
+
+	if [[ "$mysqlRemoteBackupTool" == "rsync" ]]; then
+		while true; do
+			read -p "please input rsync binary path(default: /usr/bin/rsync): " rsyncBinPath
+			rsyncBinPath=${rsyncBinPath:=/usr/bin/rsync}
+			if [[ -f "$rsyncBinPath" ]]; then
+				break
+			else
+				echo "file ${rsyncBinPath} not found,please reinput"
+			fi	
+		done
+
+		ask_not_null_var "please input rsync server remote address(ie.8.8.8.8 www.centos.bz): " mysqlRsyncRemoteAddr
+
+		while true; do
+			read -p "please input rsync server port(default:873): " mysqlRsyncPort
+			mysqlRsyncPort=${mysqlRsyncPort:=873}
+			if verify_port "$mysqlRsyncPort";then
+				break
+			else
+				echo "$mysqlRsyncPort is not a valid port,please reinput."
+			fi	
+		done
+
+		ask_not_null_var "please input rsync username: " mysqlRsyncUsername
+		ask_not_null_var "please input rsync password: " mysqlRsyncPassword
+		ask_not_null_var "please input rsync module name : " mysqlRsyncModuleName
+
+	elif [[ "$mysqlRemoteBackupTool" == "rsync-ssh" ]]; then
+		while true; do
+			read -p "please input rsync binary path(default: /usr/bin/rsync): " rsyncBinPath
+			rsyncBinPath=${rsyncBinPath:=/usr/bin/rsync}
+			if [[ -f "$rsyncBinPath" ]]; then
+				break
+			else
+				echo "file ${rsyncBinPath} not found,please reinput"
+			fi	
+		done
+
+		ask_not_null_var "please input ssh remote address(ie.8.8.8.8 www.centos.bz): " mysqlSshRemoteAddr
+
+		while true; do
+			read -p "please input ssh server port(default:22): " mysqlSshPort
+			mysqlSshPort=${mysqlSshPort:=22}
+			if verify_port "$mysqlSshPort";then
+				break
+			else
+				echo "$mysqlSshPort is not a valid port,please reinput."
+			fi	
+		done
+
+		ask_not_null_var "please input ssh username(default:root): " mysqlSshUsername root
+		ask_not_null_var "please input ssh password: " mysqlSshPassword
+		read -p "please input the backup destination in the remote server: " mysqlRemoteBackupDest
+		mysqlRemoteBackupDest=`filter_location "$mysqlRemoteBackupDest"`
+
+
+	elif [[ "$mysqlRemoteBackupTool" == "dropbox" ]]; then
+		read -p "please input the backup destination in the dropbox: " mysqlRemoteBackupDest
+		mysqlRemoteBackupDest=`filter_location "$mysqlRemoteBackupDest"`
+
+		while true; do
+			read -p "please input the number of days total to retain the mysql database backup in the dropbox(ie.3,default:7): " mysqlRemoteExpireDays
+			mysqlRemoteExpireDays=${mysqlRemoteExpireDays:=7}
+			if [[ "$mysqlRemoteExpireDays" =~ ^[0-9]+$ && "$mysqlRemoteExpireDays" != "0" ]]; then
+				break
+			else
+				echo "input error,please input the number that greater that 0."
+			fi
+		done
+
+	elif [[ "$mysqlRemoteBackupTool" == "ftp" ]]; then
+		ask_not_null_var "please input ftp server address: " mysqlFtpServerAddr
+		while true; do
+			read -p "please input ftp server port(default:21): " mysqlFtpPort
+			mysqlFtpPort=${mysqlFtpPort:=21}
+			if verify_port "$mysqlFtpPort";then
+				break
+			else
+				echo "$mysqlFtpPort is not a valid port,please reinput."
+			fi	
+		done
+
+		ask_not_null_var "please input ftp username: " mysqlFtpUsername
+		ask_not_null_var "please input ftp password: " mysqlFtpPassword
+		read -p "please input the backup destination in the ftp server: " mysqlRemoteBackupDest
+		mysqlRemoteBackupDest=`filter_location "$mysqlRemoteBackupDest"`
+
+		while true; do
+			read -p "please input the number of days total to retain the mysql database backup in the ftp server(ie.3,default:7): " mysqlRemoteExpireDays
+			mysqlRemoteExpireDays=${mysqlRemoteExpireDays:=7}
+			if [[ "$mysqlRemoteExpireDays" =~ ^[0-9]+$ && "$mysqlRemoteExpireDays" != "0" ]]; then
+				break
+			else
+				echo "input error,please input the number that greater that 0."
+			fi
+		done		
+
+	fi
 }
 
+backup_script_dir_setup(){
+	if [[ -z $backupScriptDir ]]; then
+		read -p "please input the backup script location you'll store(default:/data/sh/) " backupScriptDir
+		backupScriptDir=${backupScriptDir:=/data/sh/}
+		backupScriptDir=`filter_location "$backupScriptDir"`
+		mkdir -p "$backupScriptDir"
+	fi	
+}
+
+
+add_entry_to_ini_file(){
+	local section="$1"
+	local key="$2"
+	local val="$3"
+
+	if [[ ! -z "$key" && ! -z "$val" ]]; then
+		if grep -q "^\[$section\]$" $ini_file; then
+			sed -i "/\[$section\]/a${key}=${val}" $ini_file
+			
+		else
+			sed -i "\$a\[$section]\n${key}=${val}\n" $ini_file
+		fi
+	fi	
+}
+
+#安装rsync server
+Install_rsync_server(){
+	while true; do
+		read -p "please input rsync server port(default:873): " rsyncPort
+		rsyncPort=${rsyncPort:=873}
+		if verify_port "$rsyncPort";then
+			break
+		else
+			echo "$rsyncPort is not a valid port,please reinput."
+		fi	
+	done
+
+	ask_not_null_var "please input the allowed address for rsync server(ie.192.168.1.100 192.168.1.0/24 192.168.1.0/255.255.255.0): " allowHost
+	ask_not_null_var "please input a module name(ie.webhome): " moduleName
+	ask_not_null_var "please input the path for module $moduleName(ie./home): " rsyncPath
+	ask_not_null_var "please input the auth user for module $moduleName(ie.ezhttp): " rsyncAuthUser
+	ask_not_null_var "please input the auth password for module $moduleName: " rsyncPass
+
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
+		apt-get -y install rsync
+
+	elif check_sys sysRelease centos; then
+		yum -y install rsync
+
+	fi
+
+	cat > /etc/rsyncd.conf <<EOF
+pid file = /var/run/rsyncd.pid   
+port = ${rsyncPort}
+uid = root   
+gid = root   
+use chroot = yes 
+read only = no 
+hosts allow=${allowHost}
+hosts deny=*
+max connections = 50
+timeout = 300
+ 
+[${moduleName}]   
+path = ${rsyncPath}
+list=yes
+ignore errors
+auth users = ${rsyncAuthUser}
+secrets file = /etc/rsyncd.secrets 
+EOF
+
+echo "${rsyncAuthUser}:${rsyncPass}" > /etc/rsyncd.secrets
+chmod 600 /etc/rsyncd.secrets
+cp ${cur_dir}/conf/general-init.sh /etc/init.d/rsyncd 
+chmod +x /etc/init.d/rsyncd
+sed -i 's#cmd=.*#cmd="/usr/bin/rsync --daemon --config=/etc/rsyncd.conf"#' /etc/init.d/rsyncd
+sed -i 's/processName=.*/processName=rsyncd/' /etc/init.d/rsyncd
+
+/etc/init.d/rsyncd start
+boot_start rsyncd
+
+}
 
 #工具设置
 tools_setting(){

@@ -698,7 +698,7 @@ if [[ "$rule" == "1" ]];then
 		fi	
 	done
 else	
-	rewrite_rule=${rewrite_rules[$rule-1]}
+	rewrite_rule=${rewrite_rules[$rule-2]}
 fi
 	
 }

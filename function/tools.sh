@@ -1613,7 +1613,7 @@ Backup_setup(){
 		${backupScriptDir}/dropbox_uploader.sh
 	fi
 
-	if [[ "$mysqlRemoteBackupTool" == "rsync"  || "$fileRemoteBackupTool" == "rsync"]]; then
+	if [[ "$mysqlRemoteBackupTool" == "rsync"  || "$fileRemoteBackupTool" == "rsync" ]]; then
 		echo "$mysqlRsyncPassword" > /etc/rsync.pass
 		chmod 600 /etc/rsync.pass
 	fi

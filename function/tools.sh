@@ -698,15 +698,19 @@ iptables_init(){
 		grep -q "net.ipv4.ip_conntrack_max = 665536" /etc/sysctl.conf || echo "net.ipv4.ip_conntrack_max = 665536" >> /etc/sysctl.conf
 	fi 
 
-	if [ -f /proc/sys/net/nf_conntrack_max ];then
-		echo 665536  > /proc/sys/net/nf_conntrack_max
-		grep -q "net.nf_conntrack_max = 665536" /etc/sysctl.conf || echo "net.nf_conntrack_max = 665536" >> /etc/sysctl.conf
+	if [ -f /proc/sys/net/netfilter/nf_conntrack_max ];then
+		echo 665536  > /proc/sys/net/netfilter/nf_conntrack_max
+		grep -q "net.netfilter.nf_conntrack_max = 665536" /etc/sysctl.conf || echo "net.netfilter.nf_conntrack_max = 665536" >> /etc/sysctl.conf
 	fi
 	
 	if [ -f /proc/sys/net/ipv4/netfilter/ip_conntrack_max ];then
 		echo 665536 > /proc/sys/net/ipv4/netfilter/ip_conntrack_max
 		grep -q "net.ipv4.netfilter.ip_conntrack_max = 665536" /etc/sysctl.conf || echo "net.ipv4.netfilter.ip_conntrack_max = 665536" >> /etc/sysctl.conf
 	fi
+
+	[[ -f /sys/module/nf_conntrack/parameters/hashsize ]] && echo 83456 > /sys/module/nf_conntrack/parameters/hashsize
+	[[ -f /sys/module/ip_conntrack/parameters/hashsize ]] && echo 83456 > /sys/module/ip_conntrack/parameters/hashsize
+	echo "options nf_conntrack hashsize=83456" > /etc/modprobe.d/nf_conntrack_hashsize.conf
 
 	echo "configure iptables done."
 }

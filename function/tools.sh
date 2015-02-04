@@ -691,6 +691,23 @@ iptables_init(){
 
 	save_iptables
 	list_iptables
+
+	#设置内核参数
+	if [ -f /proc/sys/net/ipv4/ip_conntrack_max ];then
+		echo 665536  > /proc/sys/net/ipv4/ip_conntrack_max
+		grep -q "net.ipv4.ip_conntrack_max = 665536" /etc/sysctl.conf || echo "net.ipv4.ip_conntrack_max = 665536" >> /etc/sysctl.conf
+	fi 
+
+	if [ -f /proc/sys/net/nf_conntrack_max ];then
+		echo 665536  > /proc/sys/net/nf_conntrack_max
+		grep -q "net.nf_conntrack_max = 665536" /etc/sysctl.conf || echo "net.nf_conntrack_max = 665536" >> /etc/sysctl.conf
+	fi
+	
+	if [ -f /proc/sys/net/ipv4/netfilter/ip_conntrack_max ];then
+		echo 665536 > /proc/sys/net/ipv4/netfilter/ip_conntrack_max
+		grep -q "net.ipv4.netfilter.ip_conntrack_max = 665536" /etc/sysctl.conf || echo "net.ipv4.netfilter.ip_conntrack_max = 665536" >> /etc/sysctl.conf
+	fi
+
 	echo "configure iptables done."
 }
 

@@ -609,9 +609,14 @@ Change_sshd_port(){
 	if check_sys sysRelease debian || check_sys sysRelease ubuntu; then
 		restartCmd="service ssh restart"
 	else
-		restartCmd="service sshd restart"
+		if check_sys sysRelease centos && CentOSVerCheck 7;then
+			restartCmd="/bin/systemctl restart sshd.service"
+		else	
+			restartCmd="service sshd restart"
+		fi	
 	fi
 	$restartCmd
+	sleep 1
 
 	#验证是否成功
 	local nowPort=`netstat -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
@@ -865,7 +870,11 @@ EOF
 		chmod +x /etc/network/if-post-down.d/iptablessave /etc/network/if-pre-up.d/iptablesload
 
 	elif check_sys sysRelease centos;then
-		chkconfig iptables on
+		if CentOSVerCheck 7;then
+			systemctl enable iptables.service
+		else	
+			chkconfig iptables on
+		fi	
 	fi	
 }
 
@@ -900,7 +909,15 @@ list_iptables(){
 #iptales设置
 Iptables_settings(){
 	check_command_exist "iptables"
+	# centos7 need to install iptables-services package
+	if check_sys sysRelease centos && CentOSVerCheck 7;then
+		if [[ ! -f "/etc/sysconfig/iptables" ]]; then
+			yum install -y iptables-services
+		fi
+	fi
+
 	load_iptables_onboot
+
 	local select=''
 	while true; do
 		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) backup rules and stop iptables.\n5) rescore iptables\n6) list iptables rules\n" 

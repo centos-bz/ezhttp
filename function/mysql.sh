@@ -254,6 +254,11 @@ fi
 
 make_mysql_my_cnf "$sysMemory" "$storage" "${mysql_data_location}" "true" "false" "${mysql_location}/etc/my.cnf" "${mysql_port_number}"
 
+#centos 7 does not include perl-Data-Dumper package
+if check_sys sysRelease centos && CentOSVerCheck 7;then
+	yum -y install perl-Data-Dumper
+fi
+
 if [ $version == "5.1" ];then
 	rm -f /etc/init.d/mysqld
 	\cp  -f ${mysql_location}/share/mysql/mysql.server /etc/init.d/mysqld

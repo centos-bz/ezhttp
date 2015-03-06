@@ -10,6 +10,7 @@ System_swap_settings(){
 				2) swapSize=1048576;break;;
 				3) swapSize=2097152;break;;
 				4) swapSize=4194304;break;;
+				5) swapSize=8388608;break;;
 				*) echo "input error,please reinput."
 			esac
 		done

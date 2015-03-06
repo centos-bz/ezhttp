@@ -701,16 +701,25 @@ iptables_init(){
 	if [ -f /proc/sys/net/ipv4/ip_conntrack_max ];then
 		echo 665536  > /proc/sys/net/ipv4/ip_conntrack_max
 		grep -q "net.ipv4.ip_conntrack_max = 665536" /etc/sysctl.conf || echo "net.ipv4.ip_conntrack_max = 665536" >> /etc/sysctl.conf
+
+		echo 3600 > /proc/sys/net/ipv4/nf_conntrack_tcp_timeout_established
+		grep -q "net.ipv4.nf_conntrack_tcp_timeout_established = 3600" /etc/sysctl.conf || echo "net.ipv4.nf_conntrack_tcp_timeout_established = 3600" >> /etc/sysctl.conf
 	fi 
 
 	if [ -f /proc/sys/net/netfilter/nf_conntrack_max ];then
 		echo 665536  > /proc/sys/net/netfilter/nf_conntrack_max
 		grep -q "net.netfilter.nf_conntrack_max = 665536" /etc/sysctl.conf || echo "net.netfilter.nf_conntrack_max = 665536" >> /etc/sysctl.conf
+
+		echo 3600  > /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established
+		grep -q "net.netfilter.nf_conntrack_tcp_timeout_established = 3600" /etc/sysctl.conf || echo "net.netfilter.nf_conntrack_tcp_timeout_established = 3600" >> /etc/sysctl.conf		
 	fi
 	
 	if [ -f /proc/sys/net/ipv4/netfilter/ip_conntrack_max ];then
 		echo 665536 > /proc/sys/net/ipv4/netfilter/ip_conntrack_max
 		grep -q "net.ipv4.netfilter.ip_conntrack_max = 665536" /etc/sysctl.conf || echo "net.ipv4.netfilter.ip_conntrack_max = 665536" >> /etc/sysctl.conf
+
+		echo 3600 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established
+		grep -q "net.ipv4.netfilter.ip_conntrack_tcp_timeout_established = 3600" /etc/sysctl.conf || echo "net.ipv4.netfilter.ip_conntrack_tcp_timeout_established = 3600" >> /etc/sysctl.conf		
 	fi
 
 	[[ -f /sys/module/nf_conntrack/parameters/hashsize ]] && echo 83456 > /sys/module/nf_conntrack/parameters/hashsize

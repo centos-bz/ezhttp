@@ -290,9 +290,9 @@ libxml2_other_link="http://cdn.yyupload.com/down/499809/software/libxml2-2.8.0.t
 libxml2_official_link="ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz"
 
 #openssl设置 
-openssl_filename="openssl-1.0.1h"
-openssl_other_link="http://cdn.yyupload.com/down/499809/software/openssl-1.0.1h.tar.gz"
-openssl_official_link="http://www.openssl.org/source/openssl-1.0.1h.tar.gz"
+openssl_filename="openssl-1.0.2"
+openssl_other_link="http://cdn.yyupload.com/down/499809/software/openssl-1.0.2.tar.gz"
+openssl_official_link="http://www.openssl.org/source/openssl-1.0.2.tar.gz"
 
 #zlib设置
 zlib_filename="zlib-1.2.8"

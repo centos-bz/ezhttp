@@ -612,20 +612,20 @@ ftp_user_add(){
 		read -p "input ftp user name: " ftp_username
 		read -p "input ftp user $ftp_username Home Directory: " ftp_home
 		read -p "input system user name: " sys_username
-		$pureftpd_location/bin/pure-pw useradd $ftp_username -u $sys_username -d $ftp_home
-		$pureftpd_location/bin/pure-pw mkdb
+		${pureftpd_location}/bin/pure-pw useradd $ftp_username -u $sys_username -d $ftp_home
+		${pureftpd_location}/bin/pure-pw mkdb
 		echo "successfully add ftp user $ftp_username."
 	fi	
 }
 
 ftp_user_list(){
 printf "FTPUser\t\tRoot Directory\n"
-$pureftpd_location/bin/pure-pw list
+${pureftpd_location}/bin/pure-pw list
 }
 
 ftp_user_del(){
 read -p "(Please input the ftpuser you'll delete):" ftpuser
-$pureftpd_location/bin/pure-pw userdel $ftpuser
+${pureftpd_location}/bin/pure-pw userdel $ftpuser
 echo "successfully delete ftpuser $ftpuser"
 }
 
@@ -637,9 +637,9 @@ echo "3. modify ftpuser $ftpuser system user name"
 while true; do
 	read -p "please input a number: " ftp_mod
 	case $ftp_mod in
-		1 ) $pureftpd_location/bin/pure-pw passwd $ftpuser;echo "change ftp user $ftpuser password successfully.";break;;
-		2 )	read -p "please enter ftpuser $ftpuser new home directory: " ftp_home;$pureftpd_location/bin/pure-pw usermod $ftpuser -d $ftp_home;break;;
-		3 )	read -p "please enter ftpuser $ftpuser system user name: " sys_username;$pureftpd_location/bin/pure-pw usermod $ftpuser -u $sys_username;break;;
+		1 ) ${pureftpd_location}/bin/pure-pw passwd $ftpuser;echo "change ftp user $ftpuser password successfully.";break;;
+		2 )	read -p "please enter ftpuser $ftpuser new home directory: " ftp_home;${pureftpd_location}/bin/pure-pw usermod $ftpuser -d $ftp_home;break;;
+		3 )	read -p "please enter ftpuser $ftpuser system user name: " sys_username;${pureftpd_location}/bin/pure-pw usermod $ftpuser -u $sys_username;break;;
 		* ) echo "input error.";;
 	esac
 done

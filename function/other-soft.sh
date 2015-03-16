@@ -194,8 +194,8 @@ cd $cur_dir/soft/
 tar xzvf ${PureFTPd_filename}.tar.gz
 cd ${PureFTPd_filename}
 make clean
-[[ $user_manager_pureftpd == true ]] && other_option="--with-mysql=${mysql_location} --with-altlog --with-cookie --with-throttling --with-ratios --with-quotas --with-language=simplified-chinese" || other_option=""
-error_detect "./configure --prefix=$pureftpd_location $other_option"
+[[ $user_manager_pureftpd == true ]] && other_option="--with-mysql=${mysql_location}" || other_option="--with-puredb"
+error_detect "./configure --prefix=$pureftpd_location --with-altlog --with-cookie --with-throttling --with-ratios --with-quotas --with-language=simplified-chinese $other_option"
 error_detect "parallel_make"
 error_detect "make install"
 mkdir -p $pureftpd_location/etc
@@ -255,6 +255,12 @@ EOF
 	#记录安装信息
 	echo "user_manager_pureftpd=true" >> /etc/ezhttp_info_do_not_del
 else
+	#修改pure-ftpd.conf
+	if ! grep -q "^PureDB" $pureftpd_location/etc/pure-ftpd.conf;then
+		sed -i "s@# PureDB                        /etc/pureftpd.pdb@PureDB                        $pureftpd_location/etc/pureftpd.pdb@" $pureftpd_location/etc/pure-ftpd.conf
+	fi
+
+	#记录安装信息
 	echo "user_manager_pureftpd=false" >> /etc/ezhttp_info_do_not_del
 fi	
 }

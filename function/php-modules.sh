@@ -333,7 +333,7 @@ else
 	fi
 fi
 
-! grep -q  "\[ZendGuardLoader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ZendGuardLoader\]\nzend_extension=\"/${depends_prefix}/ZendGuardLoader/ZendGuardLoader.so\"\n" $(get_php_ini $phpConfig)
+! grep -q  "\[ZendGuardLoader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ZendGuardLoader\]\nzend_loader.enable=1\nzend_extension=\"${depends_prefix}/ZendGuardLoader/ZendGuardLoader.so\"\n" $(get_php_ini $phpConfig)
 
 }
 

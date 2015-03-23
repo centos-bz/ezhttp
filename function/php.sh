@@ -173,12 +173,17 @@ if [ "$php" == "${php5_2_filename}" ];then
 	patch -p1 < ${php5_2_filename}-max-input-vars.patch
 	error_detect "./buildconf --force"
 	error_detect "./configure ${php_configure_args}"
-	if grep -q -i -E "ubuntu 12.04|debian.*7" /etc/issue;then
-		#解决SSL_PROTOCOL_SSLV2’ undeclared问题
-		cd ext/openssl/
-		patch -p3 < $cur_dir/conf/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
-		cd ../../
-	fi	
+    if grep -q -i -E "ubuntu 12.04|ubuntu 14.04|debian.*7" /etc/issue;then
+            #解决SSL_PROTOCOL_SSLV2’ undeclared问题
+            cd ext/openssl/
+            patch -p3 < $cur_dir/conf/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
+            cd ../../
+    fi
+
+    if grep -q -i -E "ubuntu 14.04" /etc/issue;then
+            # 解决ext/dom/node.c:1953:21: error: dereferencing pointer to incomplete type
+            patch -p0 < $cur_dir/conf/php-5.2.17-dom-node.c.patch
+    fi
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
 	error_detect "make install"
 	

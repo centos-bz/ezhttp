@@ -28,16 +28,39 @@ SCRIPTNAME=/etc/init.d/nginx
 set -e
 [ -x "$DAEMON" ] || exit 0
 
+acqNginxPid(){
+  local pid
+  if [ -f $PIDFILE ] ; then
+  	 pid=`cat $PIDFILE`
+  	 echo ${pid}
+  fi 	 
+}
+
 do_start() {
- $DAEMON -c $CONFIGFILE || echo -n "nginx already running"
+ local pid=`acqNginxPid`
+ if [ ".${pid}" == "." ] ; then
+    $DAEMON -c $CONFIGFILE 
+ else
+    echo -n "nginx already running"
+ fi
 }
 
 do_stop() {
- kill -INT `cat $PIDFILE` || echo -n "nginx not running"
+ local pid=`acqNginxPid`
+ if [ ".${pid}" != "." ] ; then
+    kill -INT ${pid}
+ else
+    echo -n "nginx not running"
+ fi
 }
 
 do_reload() {
- kill -HUP `cat $PIDFILE` || echo -n "nginx can't reload"
+ local pid=`acqNginxPid`
+ if [ ".${pid}" != "." ] ; then
+    kill -HUP ${pid}
+ else
+    echo -n "nginx can't reload"
+ fi
 }
 
 case "$1" in

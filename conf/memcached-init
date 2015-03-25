@@ -27,6 +27,10 @@ memcached_location=/usr/local/memcached
 RETVAL=0
 prog="memcached"
 
+#build pid
+[ -f "/var/run/memcached.pid" ] || touch /var/run/memcached.pid
+chown memcache.memcache /var/run/memcached.pid 
+
 start () {
     echo -n $"Starting $prog: "
     $memcached_location/bin/memcached -d -p $PORT -u $USER -m $CACHESIZE -c $MAXCONN -P /var/run/memcached.pid $OPTIONS
@@ -37,7 +41,8 @@ start () {
 }
 stop () {
     echo -n $"Stopping $prog: "
-    kill `cat /var/run/memcached.pid`
+    local pid=`cat /var/run/memcached.pid`
+    [ ".${pid}" != "." ] && kill ${pid}
     RETVAL=$?
     echo
     if [ $RETVAL -eq 0 ] ; then

@@ -67,6 +67,8 @@ getPropertyVar mysqlFtpPassword mysql.mysqlFtpPassword
 getPropertyVar rsyncBinPath mysql.rsyncBinPath
 getPropertyVar mysqlRemoteExpireDays mysql.mysqlRemoteExpireDays
 
+# 删除过期日志
+find $LOG_DIR -type f -mtime +${LOG_EXPIRE_DAYS} -exec rm -f {} \;
 
 backup_files(){
 	check_var_null fileBackupDir || exit 1

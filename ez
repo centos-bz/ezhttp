@@ -682,7 +682,7 @@ echo "available nginx rewrite rules:"
 echo -e "1. Custom\n2. WordPress\n3. DEDECMS\n4. Discuz_7\n5. Discuz_X\n6. ECshop\n7. PHPCMS\n8. PHPWind\n9. Shopex\n10. Typecho"
 while true; do
 	read -p "please input a number: " rule
-	if ! echo $rule | sed -n "/^[1-9]$/q0;q1" -;then
+	if ! echo $rule | sed -n "/^[0-9]+$/q0;q1" -;then
 		echo "input error."
 	else
 		break

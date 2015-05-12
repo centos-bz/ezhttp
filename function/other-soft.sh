@@ -183,8 +183,6 @@ cd $cur_dir/soft/
 tar xzvf ${phpMyAdmin_filename}.tar.gz
 mkdir -p ${phpmyadmin_location}
 \cp -a ${phpMyAdmin_filename}/* ${phpmyadmin_location}
-#禁用phpmyadmin自动在线检测版本功能，因为在国内有时无法访问检测版本的链接，会导致超时，影响phpmyadmin操作。
-sed -i '1aexit;' $phpmyadmin_location/version_check.php
 }
 
 #安装PureFTPd

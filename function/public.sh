@@ -628,14 +628,18 @@ VersionGet(){
 
 #判断centos版本
 CentOSVerCheck(){
-	local code=$1
-	local version="`VersionGet`"
-	local main_ver=${version%%.*}
-	if [ $main_ver == $code ];then
-		return 0
+	if check_sys sysRelease centos
+		local code=$1
+		local version="`VersionGet`"
+		local main_ver=${version%%.*}
+		if [ $main_ver == $code ];then
+			return 0
+		else
+			return 1
+		fi
 	else
 		return 1
-	fi		
+	fi
 }
 
 #重启php

@@ -46,7 +46,7 @@ if [ "$mysql" != "do_not_install" ];then
 		read -p "mysql data location(default:${mysql_location}/data,leave blank for default): " mysql_data_location
 		mysql_data_location=${mysql_data_location:=$mysql_location/data}
 		mysql_data_location=`filter_location "$mysql_data_location"`
-		echo "$mysql install location: $mysql_data_location"
+		echo "$mysql data location: $mysql_data_location"
 
 		#mysql端口设置
 		while true;do

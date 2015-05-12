@@ -628,7 +628,7 @@ VersionGet(){
 
 #判断centos版本
 CentOSVerCheck(){
-	if check_sys sysRelease centos
+	if check_sys sysRelease centos;then
 		local code=$1
 		local version="`VersionGet`"
 		local main_ver=${version%%.*}

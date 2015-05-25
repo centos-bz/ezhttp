@@ -50,13 +50,13 @@ php5_3_filename="php-5.3.29"
 php5_3_other_link="http://cdn.yyupload.com/down/499809/software/php-5.3.29.tar.gz"
 php5_3_official_link="http://us1.php.net/distributions/php-5.3.29.tar.gz"
 
-php5_4_filename="php-5.4.36"
-php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.36.tar.gz"
-php5_4_official_link="http://us1.php.net/distributions/php-5.4.36.tar.gz"
+php5_4_filename="php-5.4.41"
+php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.41.tar.gz"
+php5_4_official_link="http://us1.php.net/distributions/php-5.4.41.tar.gz"
 
-php5_5_filename="php-5.5.20"
-php5_5_other_link="http://cdn.yyupload.com/down/499809/software/php-5.5.20.tar.gz"
-php5_5_official_link="http://us1.php.net/distributions/php-5.5.20.tar.gz"
+php5_5_filename="php-5.5.25"
+php5_5_other_link="http://cdn.yyupload.com/down/499809/software/php-5.5.25.tar.gz"
+php5_5_official_link="http://us1.php.net/distributions/php-5.5.25.tar.gz"
 
 #ZendOptimizer设置
 ZendOptimizer_filename="ZendOptimizer-3.3.9"

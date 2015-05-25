@@ -1635,7 +1635,7 @@ Backup_setup(){
 		fi
 		
 		if [[ "$mysqlBackup" != "3" ]]; then
-			! grep -q "backup.sh mysql" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
+			! grep -q "backup.sh mysql" /var/spool/cron/crontabs/root > /dev/null 2>&1 && echo "${mysqlBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1"  >> /var/spool/cron/crontabs/root
 		fi
 
 		service cron restart
@@ -1646,7 +1646,7 @@ Backup_setup(){
 		fi
 		
 		if [[ "$mysqlBackup" != "3" ]]; then
-			! grep -q "backup.sh mysql" /var/spool/cron/root > /dev/null 2>&1 && echo "${fileBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1"  >> /var/spool/cron/root
+			! grep -q "backup.sh mysql" /var/spool/cron/root > /dev/null 2>&1 && echo "${mysqlBackupRate} ${backupScriptDir}/backup.sh mysql > /dev/null 2>&1"  >> /var/spool/cron/root
 		fi
 		
 		service crond restart

@@ -171,6 +171,11 @@ if [ "$php" == "${php5_2_filename}" ];then
 	#hash漏洞补丁
 	\cp  $cur_dir/conf/${php5_2_filename}-max-input-vars.patch ./
 	patch -p1 < ${php5_2_filename}-max-input-vars.patch
+
+	# (PHP Multipart/form-data remote dos Vulnerability
+	\cp $cur_dir/conf/php-5.2-multipart-form-data-remote-dos.patch ./
+	patch -p1 < php-5.2-multipart-form-data-remote-dos.patch
+
 	error_detect "./buildconf --force"
 	error_detect "./configure ${php_configure_args}"
     if grep -q -i -E "ubuntu 12.04|ubuntu 14.04|debian.*7" /etc/issue;then
@@ -197,6 +202,10 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	cd $cur_dir/soft/
 	tar xzvf ${php5_3_filename}.tar.gz
 	cd ${php5_3_filename}
+	# (PHP Multipart/form-data remote dos Vulnerability
+	\cp $cur_dir/conf/php-5.3-multipart-form-data-remote-dos.patch ./
+	patch -p1 < php-5.3-multipart-form-data-remote-dos.patch
+
 	make clean
 	error_detect "./configure ${php_configure_args}"
 	error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"

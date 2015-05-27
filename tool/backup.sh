@@ -174,7 +174,6 @@ backup_mysql(){
 	check_var_null mysqlUser || exit 1
 	check_var_null mysqlPass || exit 1
 	check_var_null databaseSelectionPolicy || exit 1
-	check_var_null databasesBackup || exit 1
 	check_var_null storageMysqlDir || exit 1
 	check_var_null mysqlLocalExpireDays || exit 1
 	check_var_null mysqlBinDir || exit 1
@@ -196,6 +195,7 @@ backup_mysql(){
 		databasesBackup=`echo $databasesName | grep -v -E "$dbExcludeReg"`
 
 	elif [[ "$databaseSelectionPolicy" == "include" ]]; then
+		check_var_null databasesBackup || exit 1
 		databasesBackup="$databasesBackup"
 
 	elif [[ "$databaseSelectionPolicy" == "all" ]]; then
@@ -209,7 +209,7 @@ backup_mysql(){
 		for db in $databasesBackup;do
 			mysqlDbsFileName="$mysqlDbsFileName mysql-${DATE_NAME}-${db}.sql.gz"
 			log "INFO" "start to backup database $db..."
-			${mysqlBinDir}/mysqldump -e --single-transaction skip-add-locks -R -f --max_allowed_packet=16777216 --net_buffer_length=16384 -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} $db > ${storageMysqlDir}/mysql-${DATE_NAME}-${db}.sql 
+			${mysqlBinDir}/mysqldump -e --single-transaction --skip-add-locks -R -f --max_allowed_packet=16777216 --net_buffer_length=16384 -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} $db > ${storageMysqlDir}/mysql-${DATE_NAME}-${db}.sql 
 			gzip ${storageMysqlDir}/mysql-${DATE_NAME}-${db}.sql >> ${LOG_PATH} 2>&1
 		done
 

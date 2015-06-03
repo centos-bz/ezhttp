@@ -5,9 +5,9 @@ load_config(){
 ###################主要安装包设置###################
 
 #nginx设置
-nginx_filename="nginx-1.6.2"
-nginx_other_link="http://cdn.yyupload.com/down/499809/software/nginx-1.6.2.tar.gz"
-nginx_official_link="http://nginx.org/download/nginx-1.6.2.tar.gz"
+nginx_filename="nginx-1.8.0"
+nginx_other_link="http://cdn.yyupload.com/down/499809/software/nginx-1.8.0.tar.gz"
+nginx_official_link="http://nginx.org/download/nginx-1.8.0.tar.gz"
 
 #tengine设置
 tengine_filename="tengine-2.0.3"
@@ -15,9 +15,9 @@ tengine_other_link="http://cdn.yyupload.com/down/499809/software/tengine-2.0.3.t
 tengine_official_link="http://tengine.taobao.org/download/tengine-2.0.3.tar.gz"
 
 #openresty设置
-openresty_filename="ngx_openresty-1.7.7.1"
-openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.7.1.tar.gz"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.7.1.tar.gz"
+openresty_filename="ngx_openresty-1.7.10.1"
+openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.10.1.tar.gz"
+openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz"
 
 #apache设置
 apache2_2_filename="httpd-2.2.29"

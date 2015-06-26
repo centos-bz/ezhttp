@@ -2210,6 +2210,119 @@ boot_start rsyncd
 
 }
 
+# 统计指定进程文件访问
+Count_process_file_access(){
+	check_command_exist timeout
+	check_command_exist strace
+	check_command_exist stty
+	while true; do
+		read -p "please input process pid: " pid
+		if [[ "$pid" == "" ]]; then
+			echo "pid can not be empty."
+			continue
+		fi
+
+		if ! [[ "$pid" =~ ^[0-9]+$ ]]; then
+		    echo -e "\nGiven Process ID is not a number." >&2
+		    continue
+		fi
+
+		if [ ! -e /proc/$pid ]; then
+		    echo -e "\nThere is no process with $pid as the PID." >&2
+		    continue
+		fi
+
+		break
+	done
+
+	####
+	## Initialization
+	####
+
+	outputFile=/tmp/out.$RANDOM.$$
+	uniqueLinesFile=/tmp/unique.$RANDOM.$$
+	finalResults=/tmp/finalOutput.txt.$$
+
+	if [[ "x$PAGER" == "x" ]]; then
+
+	   for currentNeedle in less more cat; do
+
+	      which $currentNeedle >/dev/null 2>&1
+
+	      if [ $? -eq 0 ]; then
+	         PAGER=$currentNeedle
+	         break;
+	      fi
+
+	   done
+
+	  if [[ "x$PAGER" == "x" ]]; then
+
+	     echo "Please set \$PAGER appropriately and re-run" >&2
+	     exit 1
+
+	  fi
+
+	fi
+
+	####
+	## Tracing
+	####
+
+	echo "Tracing command for 30 seconds..."
+
+	timeout 30 strace -e trace=file -fvv -p $pid 2>&1 | egrep -v -e "detached$" -e "interrupt to quit$" | cut -f2 -d \" > $outputFile
+
+	if [ $? -ne 0 ]; then
+	   echo -e "\nError performing Trace. Exiting"
+	   rm -f $outputFile 2>/dev/null
+	   exit 1
+	fi
+
+	echo "Trace complete. Preparing Results..."
+
+	####
+	## Processing
+	####
+
+	sort $outputFile | uniq > $uniqueLinesFile
+
+	echo -e "\n--------  RESULTS --------\n\n  #\t Path " > $finalResults
+	echo -e " ---\t-------" >> $finalResults
+
+	while IFS= read -r currentLine; do
+
+	   echo -n $(grep -c "$currentLine" "$outputFile")
+	   echo -e "\t$currentLine"
+
+	done < "$uniqueLinesFile" | sort -rn >> $finalResults
+
+	####
+	## Presentation
+	####
+
+	resultSize=$(wc -l $finalResults | awk '{print $1}')
+	currentWindowSize=$(stty size | awk '{print $1}')
+
+	  # We put five literal lines in the file so if we don't have more than that, there were no results
+	if [ $resultSize -eq 5 ]; then
+
+	   echo -e "\n\n No Results found!"
+
+	elif [ $resultSize -ge $currentWindowSize ] ; then
+
+	   $PAGER $finalResults
+
+	else
+
+	   cat $finalResults
+
+	fi
+
+	  # Cleanup
+	rm -f $uniqueLinesFile $outputFile $finalResults
+
+}
 #工具设置
 tools_setting(){
 	clear

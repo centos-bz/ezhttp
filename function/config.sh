@@ -10,53 +10,53 @@ nginx_other_link="http://cdn.yyupload.com/down/499809/software/nginx-1.8.0.tar.g
 nginx_official_link="http://nginx.org/download/nginx-1.8.0.tar.gz"
 
 #tengine设置
-tengine_filename="tengine-2.0.3"
-tengine_other_link="http://cdn.yyupload.com/down/499809/software/tengine-2.0.3.tar.gz"
-tengine_official_link="http://tengine.taobao.org/download/tengine-2.0.3.tar.gz"
+tengine_filename="tengine-2.1.0"
+tengine_other_link="http://cdn.yyupload.com/down/499809/software/tengine-2.1.0.tar.gz"
+tengine_official_link="http://tengine.taobao.org/download/tengine-2.1.0.tar.gz"
 
 #openresty设置
-openresty_filename="ngx_openresty-1.7.10.1"
-openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.10.1.tar.gz"
-openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.10.1.tar.gz"
+openresty_filename="ngx_openresty-1.7.10.2"
+openresty_other_link="http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.10.2.tar.gz"
+openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.10.2.tar.gz"
 
 #apache设置
-apache2_2_filename="httpd-2.2.29"
-apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.29.tar.gz"
-apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.29.tar.gz"
+apache2_2_filename="httpd-2.2.31"
+apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.31.tar.gz"
+apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.31.tar.gz"
 
-apache2_4_filename="httpd-2.4.10"
-apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.10.tar.gz"
-apache2_4_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.4.10.tar.gz"
+apache2_4_filename="httpd-2.4.16"
+apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.16.tar.gz"
+apache2_4_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.4.16.tar.gz"
 
 #mysql_server设置
 mysql5_1_filename="mysql-5.1.73"
 mysql5_1_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.1.73.tar.gz"
 mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz"
 
-mysql5_5_filename="mysql-5.5.41"
-mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.41.tar.gz"
-mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.41.tar.gz"
+mysql5_5_filename="mysql-5.5.44"
+mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.44.tar.gz"
+mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.44.tar.gz"
 
-mysql5_6_filename="mysql-5.6.22"
-mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.22.tar.gz"
-mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.22.tar.gz"
+mysql5_6_filename="mysql-5.6.25"
+mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.25.tar.gz"
+mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.25.tar.gz"
 
 #php设置
 php5_2_filename="php-5.2.17"
 php5_2_other_link="http://cdn.yyupload.com/down/499809/software/php-5.2.17.tar.gz"
-php5_2_official_link="http://centos.googlecode.com/files/php-5.2.17.tar.gz"
+php5_2_official_link="http://museum.php.net/php5/php-5.2.17.tar.gz"
 
 php5_3_filename="php-5.3.29"
 php5_3_other_link="http://cdn.yyupload.com/down/499809/software/php-5.3.29.tar.gz"
 php5_3_official_link="http://us1.php.net/distributions/php-5.3.29.tar.gz"
 
-php5_4_filename="php-5.4.41"
-php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.41.tar.gz"
-php5_4_official_link="http://us1.php.net/distributions/php-5.4.41.tar.gz"
+php5_4_filename="php-5.4.43"
+php5_4_other_link="http://cdn.yyupload.com/down/499809/software/php-5.4.43.tar.gz"
+php5_4_official_link="http://us1.php.net/distributions/php-5.4.43.tar.gz"
 
-php5_5_filename="php-5.5.25"
-php5_5_other_link="http://cdn.yyupload.com/down/499809/software/php-5.5.25.tar.gz"
-php5_5_official_link="http://us1.php.net/distributions/php-5.5.25.tar.gz"
+php5_5_filename="php-5.5.27"
+php5_5_other_link="http://cdn.yyupload.com/down/499809/software/php-5.5.27.tar.gz"
+php5_5_official_link="http://us1.php.net/distributions/php-5.5.27.tar.gz"
 
 #ZendOptimizer设置
 ZendOptimizer_filename="ZendOptimizer-3.3.9"
@@ -75,9 +75,9 @@ eaccelerator_other_link="http://cdn.yyupload.com/down/499809/software/eaccelerat
 eaccelerator_official_link="http://cloud.github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1.tar.bz2"
 
 #xcache设置
-xcache_filename="xcache-3.0.4"
-xcache_other_link="http://cdn.yyupload.com/down/499809/software/xcache-3.0.4.tar.gz"
-xcache_official_link="http://xcache.lighttpd.net/pub/Releases/3.0.4/xcache-3.0.4.tar.gz"
+xcache_filename="xcache-3.2.0"
+xcache_other_link="http://cdn.yyupload.com/down/499809/software/xcache-3.2.0.tar.gz"
+xcache_official_link="http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz"
 
 #php-memcache设置
 php_memcache_filename="memcache-3.0.8"
@@ -85,19 +85,19 @@ php_memcache_other_link="http://cdn.yyupload.com/down/499809/software/memcache-3
 php_memcache_official_link="http://pecl.php.net/get/memcache-3.0.8.tgz"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.8.9-0"
-ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.8.9-0.tar.gz"
-ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.8.9-0.tar.gz"
+ImageMagick_filename="ImageMagick-6.9.1-9"
+ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.1-9.tar.gz"
+ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.9.1-9.tar.gz"
 
 #php redis模块设置
-php_redis_filename="redis-2.2.4"
-php_redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-2.2.4.tgz"
-php_redis_official_link="http://pecl.php.net/get/redis-2.2.4.tgz"
+php_redis_filename="redis-2.2.7"
+php_redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-2.2.7.tgz"
+php_redis_official_link="http://pecl.php.net/get/redis-2.2.7.tgz"
 
 #php mongo模块设置
-php_mongo_filename="mongo-php-driver-1.4.5"
-php_mongo_other_link="http://cdn.yyupload.com/down/499809/software/mongo-php-driver-1.4.5.tar.gz"
-php_mongo_official_link="https://github.com/mongodb/mongo-php-driver/archive/1.4.5.tar.gz"
+php_mongo_filename="mongo-php-driver-1.6.10"
+php_mongo_other_link="http://cdn.yyupload.com/down/499809/software/mongo-php-driver-1.6.10.tar.gz"
+php_mongo_official_link="https://github.com/mongodb/mongo-php-driver/archive/1.6.10.tar.gz"
 
 #pkgconfig设置
 pkgconfig_filename="pkgconfig-0.18"
@@ -149,19 +149,19 @@ xdebug_other_link="http://cdn.yyupload.com/down/499809/software/xdebug-XDEBUG_2_
 xdebug_official_link="https://github.com/derickr/xdebug/archive/XDEBUG_2_2_2.tar.gz"
 
 #memcached设置
-memcached_filename="memcached-1.4.15"
-memcached_other_link="http://cdn.yyupload.com/down/499809/software/memcached-1.4.15.tar.gz"
-memcached_official_link="http://memcached.googlecode.com/files/memcached-1.4.15.tar.gz"
+memcached_filename="memcached-1.4.24"
+memcached_other_link="http://cdn.yyupload.com/down/499809/software/memcached-1.4.24.tar.gz"
+memcached_official_link="http://www.memcached.org/files/memcached-1.4.24.tar.gz"
 
 #redis设置
-redis_filename="redis-2.8.8"
-redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-2.8.8.tar.gz"
-redis_official_link="http://download.redis.io/releases/redis-2.8.8.tar.gz"
+redis_filename="redis-3.0.3"
+redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-3.0.3.tar.gz"
+redis_official_link="http://download.redis.io/releases/redis-3.0.3.tar.gz"
 
 #phpMyAdmin设置
-phpMyAdmin_filename="phpMyAdmin-4.3.6-all-languages"
-phpMyAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpMyAdmin-4.3.6-all-languages.tar.gz"
-phpMyAdmin_official_link="http://hivelocity.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.3.6/phpMyAdmin-4.3.6-all-languages.tar.gz"
+phpMyAdmin_filename="phpMyAdmin-4.4.12-all-languages"
+phpMyAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpMyAdmin-4.4.12-all-languages.tar.gz"
+phpMyAdmin_official_link="https://files.phpmyadmin.net/phpMyAdmin/4.4.12/phpMyAdmin-4.4.12-all-languages.tar.gz"
 
 #phpRedisAdmin设置
 phpRedisAdmin_filename="phpRedisAdmin-1.1.0"
@@ -169,9 +169,9 @@ phpRedisAdmin_other_link="http://cdn.yyupload.com/down/499809/software/phpRedisA
 phpRedisAdmin_official_link="https://github.com/ErikDubbelboer/phpRedisAdmin/archive/v1.1.0.tar.gz"
 
 #Predis设置(phpRedisAdmin依赖)
-Predis_filename="predis-0.8.5"
-Predis_other_link="http://cdn.yyupload.com/down/499809/software/predis-0.8.5.tar.gz"
-Predis_official_link="https://github.com/nrk/predis/archive/v0.8.5.tar.gz"
+Predis_filename="predis-1.0.1"
+Predis_other_link="http://cdn.yyupload.com/down/499809/software/predis-1.0.1.tar.gz"
+Predis_official_link="https://github.com/nrk/predis/archive/v1.0.1.tar.gz"
 
 #memadmin设置
 memadmin_filename="memadmin-1.0.12"
@@ -184,9 +184,9 @@ rockmongo_other_link="http://cdn.yyupload.com/down/499809/software/rockmongo-fix
 rockmongo_official_link="https://github.com/centos-bz/rockmongo/archive/fix-auth.zip"
 
 #PureFTPd设置
-PureFTPd_filename="pure-ftpd-1.0.36"
-PureFTPd_other_link="http://cdn.yyupload.com/down/499809/software/pure-ftpd-1.0.36.tar.gz"
-PureFTPd_official_link="http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz"
+PureFTPd_filename="pure-ftpd-1.0.41"
+PureFTPd_other_link="http://cdn.yyupload.com/down/499809/software/pure-ftpd-1.0.41.tar.gz"
+PureFTPd_official_link="http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.41.tar.gz"
 
 #user_manager_pureftpd设置
 user_manager_pureftpd_filename="ftp_v2.1"
@@ -290,9 +290,9 @@ libxml2_other_link="http://cdn.yyupload.com/down/499809/software/libxml2-2.8.0.t
 libxml2_official_link="ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz"
 
 #openssl设置 
-openssl_filename="openssl-1.0.2"
-openssl_other_link="http://cdn.yyupload.com/down/499809/software/openssl-1.0.2.tar.gz"
-openssl_official_link="http://www.openssl.org/source/openssl-1.0.2.tar.gz"
+openssl_filename="openssl-1.0.2d"
+openssl_other_link="http://cdn.yyupload.com/down/499809/software/openssl-1.0.2d.tar.gz"
+openssl_official_link="http://www.openssl.org/source/openssl-1.0.2d.tar.gz"
 
 #zlib设置
 zlib_filename="zlib-1.2.8"
@@ -317,7 +317,7 @@ libtool_official_link="http://mirrors.kernel.org/gnu/libtool/libtool-2.4.tar.gz"
 #libjpeg设置
 libjpeg_filename="jpeg-6b"
 libjpeg_other_link="http://cdn.yyupload.com/down/499809/software/jpegsrc.v6b.tar.gz"
-libjpeg_official_link="http://hivelocity.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz"
+libjpeg_official_link="http://jaist.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz"
 
 #freetype设置
 freetype_filename="freetype-2.5.0"
@@ -325,19 +325,19 @@ freetype_other_link="http://cdn.yyupload.com/down/499809/software/freetype-2.5.0
 freetype_official_link="http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz"
 
 #libpng设置
-libpng_filename="libpng-1.6.9"
-libpng_other_link="http://cdn.yyupload.com/down/499809/software/libpng-1.6.9.tar.gz"
-libpng_official_link="http://jaist.dl.sourceforge.net/project/libpng/libpng16/1.6.9/libpng-1.6.9.tar.gz"
+libpng_filename="libpng-1.6.17"
+libpng_other_link="http://cdn.yyupload.com/down/499809/software/libpng-1.6.17.tar.gz"
+libpng_official_link="http://jaist.dl.sourceforge.net/project/libpng/libpng16/1.6.17/libpng-1.6.17.tar.gz"
 
 #mhash设置
 mhash_filename="mhash-0.9.9.9"
 mhash_other_link="http://cdn.yyupload.com/down/499809/software/mhash-0.9.9.9.tar.gz"
-mhash_official_link="http://hivelocity.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz"
+mhash_official_link="http://jaist.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz"
 
 #libmcrypt设置
 libmcrypt_filename="libmcrypt-2.5.8"
 libmcrypt_other_link="http://cdn.yyupload.com/down/499809/software/libmcrypt-2.5.8.tar.gz"
-libmcrypt_official_link="http://hivelocity.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz"
+libmcrypt_official_link="http://jaist.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz"
 
 #m4设置
 m4_filename="m4-1.4.16"
@@ -350,14 +350,14 @@ libevent_other_link="http://cdn.yyupload.com/down/499809/software/libevent-2.0.2
 libevent_official_link="http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz"
 
 #apr设置
-apr_filename="apr-1.5.1"
-apr_other_link="http://cdn.yyupload.com/down/499809/software/apr-1.5.1.tar.gz"
-apr_official_link="http://apache.cs.utah.edu/apr/apr-1.5.1.tar.gz"
+apr_filename="apr-1.5.2"
+apr_other_link="http://cdn.yyupload.com/down/499809/software/apr-1.5.2.tar.gz"
+apr_official_link="http://apache.cs.utah.edu/apr/apr-1.5.2.tar.gz"
 
 #apr-util设置
-apr_util_filename="apr-util-1.5.3"
-apr_util_other_link="http://cdn.yyupload.com/down/499809/software/apr-util-1.5.3.tar.gz"
-apr_util_official_link="http://apache.cs.utah.edu//apr/apr-util-1.5.3.tar.gz"
+apr_util_filename="apr-util-1.5.4"
+apr_util_other_link="http://cdn.yyupload.com/down/499809/software/apr-util-1.5.4.tar.gz"
+apr_util_official_link="http://apache.cs.utah.edu//apr/apr-util-1.5.4.tar.gz"
 
 #jailkit设置
 jailkit_filename="jailkit-2.17"

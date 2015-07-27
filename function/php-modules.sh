@@ -161,7 +161,7 @@ error_detect "make"
 error_detect "make install"
 EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
 #配置php.ini
-! grep -q "\[xcache\]" $(get_php_ini $phpConfig) && sed -i '$a\[xcache]\nextension=xcache.so\n' $(get_php_ini $phpConfig) 
+! grep -q "\[xcache\]" $(get_php_ini $phpConfig) && sed -i '$a\[xcache]\nextension=xcache.so\nxcache.size = 60m\nxcache.count = 5\nxcache.ttl = 0\nxcache.gc_interval = 600\n' $(get_php_ini $phpConfig) 
 }
 
 #安装php-memcache

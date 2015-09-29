@@ -229,7 +229,7 @@ make_rpm(){
 	local preun=$8
 
 	local release=`uname -r | awk -F'.' '{print $4}'`
-	local arch=`uname -r | awk -F'.' '{print $5}'`
+	local arch=`uname -r | awk -F'.' '{print $NF}'`
 
 	local rpmExportPath=$HOME/rpmbuild/BUILDROOT/${name}-${version}-${release}.${arch}/
 	mkdir -p $HOME/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}

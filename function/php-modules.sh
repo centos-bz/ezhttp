@@ -67,6 +67,19 @@ php_modules_preinstall_settings(){
 
 		#如果在apache 2.4选择ZendGuardLoader,自动加上--with-mpm=prefork
 		[ "$apache" == "$apache2_4_filename" ] && if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && apache_configure_args="$apache_configure_args --with-mpm=prefork"
+		
+		#如果安装mssql,我们需要知道php源码位置
+		if if_in_array "mssql" "$php_modules_install";then
+			while true;do
+				read -p "as you choose mssql,we need to know the php source location,please input: " php_source_location
+				local mssql_location=${php_source_location}/ext/mssql
+				if [[ -d "$mssql_location" ]];then
+					break
+				else
+					echo "can not find mssql dir in ${php_source_location},please reinput."
+				fi
+			done	
+		fi
 	fi	
 }
 
@@ -85,6 +98,36 @@ if_in_array "${php_redis_filename}" "$php_modules_install" && install_php_redis 
 if_in_array "${php_mongo_filename}" "$php_modules_install" && install_php_mongo "$phpConfig"
 if_in_array "${apc_filename}" "$php_modules_install" && install_php_apc "$phpConfig"
 if_in_array "${xdebug_filename}" "$php_modules_install" && install_xdebug "$phpConfig"
+if_in_array "mssql" "$php_modules_install" && install_mssql "$phpConfig"
+}
+
+#安装mssql
+install_mssql(){
+	# 安装freetds
+	check_installed "install_freetds" "${depends_prefix}/${freetds_filename}"
+	
+	local phpConfig=$1
+	[[ "$php" != "do_not_install" ]] && php_source_location=$cur_dir/soft/$php
+	
+	cd ${php_source_location}/ext/mssql
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --with-php-config=${phpConfig} --with-mssql=${depends_prefix}/${freetds_filename}"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "\[mssql\]" $(get_php_ini $phpConfig) && sed -i '$a\[mssql]\nextension=mssql.so\n' $(get_php_ini $phpConfig) 
+}
+
+#安装freetds
+install_freetds()
+{
+	download_file "${freetds_other_link}" "${freetds_official_link}" "${freetds_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${freetds_filename}.tar.gz
+	cd ${freetds_filename}
+	error_detect "./configure --prefix=${depends_prefix}/${freetds_filename} --enable-msdblib --with-tdsver=0.7"
+	error_detect "make"
+	error_detect "make install"
+
 }
 
 #安装ZendOptimizer

@@ -68,18 +68,20 @@ php_modules_preinstall_settings(){
 		#如果在apache 2.4选择ZendGuardLoader,自动加上--with-mpm=prefork
 		[ "$apache" == "$apache2_4_filename" ] && if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && apache_configure_args="$apache_configure_args --with-mpm=prefork"
 		
-		#如果安装mssql,我们需要知道php源码位置
-		if if_in_array "mssql" "$php_modules_install";then
-			while true;do
-				read -p "as you choose mssql,we need to know the php source location,please input: " php_source_location
-				local mssql_location=${php_source_location}/ext/mssql
-				if [[ -d "$mssql_location" ]];then
-					break
-				else
-					echo "can not find mssql dir in ${php_source_location},please reinput."
-				fi
-			done	
-		fi
+		#如果安装mssql,并且没有指定php安装,我们需要知道php源码位置
+		if [[ $php == "do_not_install" ]];then
+			if if_in_array "mssql" "$php_modules_install";then
+				while true;do
+					read -p "as you choose mssql,we need to know the php source location,please input: " php_source_location
+					local mssql_location=${php_source_location}/ext/mssql
+					if [[ -d "$mssql_location" ]];then
+						break
+					else
+						echo "can not find mssql dir in ${php_source_location},please reinput."
+					fi
+				done	
+			fi
+		fi	
 	fi	
 }
 

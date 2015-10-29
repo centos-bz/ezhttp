@@ -1525,6 +1525,7 @@ Configure_apt_yum_repository(){
 		versionName=`get_ubuntu_version_name`
 		cp $cur_dir/conf/sources/${repo}-ubuntu-source.conf /etc/apt/sources.list
 		sed -i "s/versionName/${versionName}/g" /etc/apt/sources.list
+		apt-get -y update
 
 	else
 		echo "Sorry,only support CentOS and Ubuntu Release now."

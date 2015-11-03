@@ -112,7 +112,7 @@ eval echo -e "your selection \$${soft}_install"
 create_lib_link(){
         local lib=$1
         if [ ! -s "/usr/lib64/$lib" ] && [ ! -s "/usr/lib/$lib" ];then
-                libdir=$(find /usr -name "$lib" | awk 'NR==1{print}')
+                libdir=$(find /usr/lib /usr/lib64 -name "$lib" | awk 'NR==1{print}')
                 if [ "$libdir" != "" ];then
                         if is_64bit;then
 				mkdir /usr/lib64

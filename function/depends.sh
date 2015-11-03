@@ -103,6 +103,10 @@ else
 	parallel_make
 fi
 	make install
+	
+# 修复编译时error while loading shared libraries: libiconv.so.0: cannot open shared object file: No such file or directory
+ln -s ${depends_prefix}/${libiconv_filename}/lib/libiconv.so /usr/lib/libiconv.so.0
+ln -s ${depends_prefix}/${libiconv_filename}/lib/libiconv.so /usr/lib64/libiconv.so.0
 add_to_env "${depends_prefix}/${libiconv_filename}"
 }
 

@@ -100,9 +100,9 @@ php_redis_other_link="http://cdn.yyupload.com/down/499809/software/redis-2.2.7.t
 php_redis_official_link="http://pecl.php.net/get/redis-2.2.7.tgz"
 
 #php mongo模块设置
-php_mongo_filename="mongo-php-driver-1.6.10"
-php_mongo_other_link="http://cdn.yyupload.com/down/499809/software/mongo-php-driver-1.6.10.tar.gz"
-php_mongo_official_link="https://github.com/mongodb/mongo-php-driver/archive/1.6.10.tar.gz"
+php_mongo_filename="mongo-php-driver-1.0.0"
+php_mongo_other_link="http://cdn.yyupload.com/down/499809/software/mongo-php-driver-1.0.0.tar.gz"
+php_mongo_official_link="https://codeload.github.com/mongodb/mongo-php-driver/tar.gz/1.0.0"
 
 #pkgconfig设置
 pkgconfig_filename="pkgconfig-0.18"

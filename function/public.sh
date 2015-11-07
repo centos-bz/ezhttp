@@ -344,7 +344,7 @@ fi
 wget_file(){
 	local url=$1
 	local filename=$2
-	if ! wget --no-check-certificate --tries=3 ${url} -O $filename;then
+	if ! wget --dns-timeout=5 --connect-timeout=10 --read-timeout=30 --no-check-certificate --tries=3 ${url} -O $filename;then
 		echo "fail to download $filename with url $url."
 	fi
 }

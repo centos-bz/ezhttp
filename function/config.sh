@@ -22,24 +22,24 @@ openresty_official_link="http://openresty.org/download/ngx_openresty-1.7.10.2.ta
 #apache设置
 apache2_2_filename="httpd-2.2.31"
 apache2_2_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.2.31.tar.gz"
-apache2_2_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.2.31.tar.gz"
+apache2_2_official_link="http://www.webhostingjams.com/mirror/apache//httpd/httpd-2.2.31.tar.gz"
 
-apache2_4_filename="httpd-2.4.16"
-apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.16.tar.gz"
-apache2_4_official_link="http://psg.mtu.edu/pub/apache//httpd/httpd-2.4.16.tar.gz"
+apache2_4_filename="httpd-2.4.17"
+apache2_4_other_link="http://cdn.yyupload.com/down/499809/software/httpd-2.4.17.tar.gz"
+apache2_4_official_link="http://www.webhostingreviewjam.com/mirror/apache//httpd/httpd-2.4.17.tar.gz"
 
 #mysql_server设置
 mysql5_1_filename="mysql-5.1.73"
 mysql5_1_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.1.73.tar.gz"
 mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz"
 
-mysql5_5_filename="mysql-5.5.44"
-mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.44.tar.gz"
-mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.44.tar.gz"
+mysql5_5_filename="mysql-5.5.46"
+mysql5_5_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.5.46.tar.gz"
+mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.46.tar.gz"
 
-mysql5_6_filename="mysql-5.6.25"
-mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.25.tar.gz"
-mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.25.tar.gz"
+mysql5_6_filename="mysql-5.6.27"
+mysql5_6_other_link="http://cdn.yyupload.com/down/499809/software/mysql-5.6.27.tar.gz"
+mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.27.tar.gz"
 
 #php设置
 php5_2_filename="php-5.2.17"
@@ -90,9 +90,9 @@ php_memcache_other_link="http://cdn.yyupload.com/down/499809/software/memcache-3
 php_memcache_official_link="http://pecl.php.net/get/memcache-3.0.8.tgz"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.9.1-9"
-ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.1-9.tar.gz"
-ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.9.1-9.tar.gz"
+ImageMagick_filename="ImageMagick-6.9.2-5"
+ImageMagick_other_link="http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.2-5.tar.gz"
+ImageMagick_official_link="http://www.imagemagick.org/download/ImageMagick-6.9.2-5.tar.gz"
 
 #php redis模块设置
 php_redis_filename="redis-2.2.7"

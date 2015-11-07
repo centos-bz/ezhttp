@@ -300,6 +300,12 @@ download_file(){
 	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
     local filename_val=$(echo $filename_without_suffix | sed 's/[-.]/_/g')
     eval local md5_preset=\${md5_${filename_val}}
+
+    if [[ "$md5_preset" == "" ]];then
+    	echo "Warning!$filename preset md5 not found,ignore checking md5."
+    	return
+    fi
+
     local md5_cal=$(md5sum ${cur_dir}/soft/${filename}  | awk '{print $1}')
     if [[ "$md5_preset" == "$md5_cal" ]];then
     	echo "$filename is secure."

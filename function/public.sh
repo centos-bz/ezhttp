@@ -3,6 +3,14 @@ generate_password(){
 	cat /dev/urandom | head -1 | md5sum | head -c 8
 }
 
+# 根据文件名设置md5变量,以便文件下载完成时能根据文件名取得md5值
+set_md5_val(){
+    local val=$1
+    local md5=$2
+    local new_val=$(echo $val | sed 's/[-.]/_/g')
+    eval md5_${new_val}=$md5
+}
+
 #杀掉进程
 kill_pid(){
 	local processType=$1
@@ -51,83 +59,83 @@ kill_pid(){
 
 #显示菜单(单选)
 display_menu(){
-local soft=$1
-local prompt="which ${soft} you'd select: "
-eval local arr=(\${${soft}_arr[@]})
-while true
-do
-	echo -e "#################### ${soft} setting ####################\n\n"
-	for ((i=1;i<=${#arr[@]};i++ )); do echo -e "$i) ${arr[$i-1]}"; done
-	echo
-	read -p "${prompt}" $soft
-	eval local select=\$$soft
-	if [ "$select" == "" ] || [ "${arr[$soft-1]}" == ""  ];then
-		prompt="input errors,please input a number: "
-	else
-		eval $soft=${arr[$soft-1]}
-		eval echo "your selection: \$$soft"             
-		break
-	fi
-done
+	local soft=$1
+	local prompt="which ${soft} you'd select: "
+	eval local arr=(\${${soft}_arr[@]})
+	while true
+	do
+		echo -e "#################### ${soft} setting ####################\n\n"
+		for ((i=1;i<=${#arr[@]};i++ )); do echo -e "$i) ${arr[$i-1]}"; done
+		echo
+		read -p "${prompt}" $soft
+		eval local select=\$$soft
+		if [ "$select" == "" ] || [ "${arr[$soft-1]}" == ""  ];then
+			prompt="input errors,please input a number: "
+		else
+			eval $soft=${arr[$soft-1]}
+			eval echo "your selection: \$$soft"             
+			break
+		fi
+	done
 }
 
 #显示菜单(多选)
 display_menu_multi(){
-local soft=$1
-local prompt="please input numbers(ie. 1 2 3): "
-eval local arr=(\${${soft}_arr[@]})
-local arr_len=${#arr[@]}
+	local soft=$1
+	local prompt="please input numbers(ie. 1 2 3): "
+	eval local arr=(\${${soft}_arr[@]})
+	local arr_len=${#arr[@]}
 
-echo  "#################### $soft install ####################"
-echo
-for ((i=1;i<=$arr_len;i++ )); do echo -e "$i) ${arr[$i-1]}"; done
-echo
-while true
-do
-	read -p "${prompt}" select
-	local select=($select)
-	eval unset ${soft}_install
-	unset wrong
-	for j in ${select[@]}
+	echo  "#################### $soft install ####################"
+	echo
+	for ((i=1;i<=$arr_len;i++ )); do echo -e "$i) ${arr[$i-1]}"; done
+	echo
+	while true
 	do
-		if (! echo $j | grep -q -E "^[0-9]+$") || [[ $j -le 0 ]] || [[ $j -gt $arr_len ]];then
-			prompt="input errors,please input numbers(ie. 1 2 3): ";
-			wrong=1
-			break
-		elif [ "${arr[$j-1]}" == "do_not_install" ];then
-			eval unset ${soft}_install
-			eval ${soft}_install="do_not_install"
-			break 2
-		else
-			eval ${soft}_install="\"\$${soft}_install ${arr[$j-1]}\""
-			wrong=0
-		fi
+		read -p "${prompt}" select
+		local select=($select)
+		eval unset ${soft}_install
+		unset wrong
+		for j in ${select[@]}
+		do
+			if (! echo $j | grep -q -E "^[0-9]+$") || [[ $j -le 0 ]] || [[ $j -gt $arr_len ]];then
+				prompt="input errors,please input numbers(ie. 1 2 3): ";
+				wrong=1
+				break
+			elif [ "${arr[$j-1]}" == "do_not_install" ];then
+				eval unset ${soft}_install
+				eval ${soft}_install="do_not_install"
+				break 2
+			else
+				eval ${soft}_install="\"\$${soft}_install ${arr[$j-1]}\""
+				wrong=0
+			fi
+		done
+		[ "$wrong" == 0 ] && break
 	done
-	[ "$wrong" == 0 ] && break
-done
-eval echo -e "your selection \$${soft}_install"
+	eval echo -e "your selection \$${soft}_install"
 }
 
 #在/usr/lib创建库文件的链接
 create_lib_link(){
-        local lib=$1
-        if [ ! -s "/usr/lib64/$lib" ] && [ ! -s "/usr/lib/$lib" ];then
-                libdir=$(find /usr/lib /usr/lib64 -name "$lib" | awk 'NR==1{print}')
-                if [ "$libdir" != "" ];then
-                        if is_64bit;then
-				mkdir /usr/lib64
-                                ln -s $libdir /usr/lib64/$lib
-                                ln -s $libdir /usr/lib/$lib
-                        else
-                                ln -s $libdir /usr/lib/$lib
-                        fi
-                fi
-        fi
-        if is_64bit;then
-		mkdir /usr/lib64
-                [ ! -s "/usr/lib64/$lib" ] && [ -s "/usr/lib/$lib" ] && ln -s /usr/lib/${lib}  /usr/lib64/${lib}
-                [ ! -s "/usr/lib/$lib" ] && [ -s "/usr/lib64/$lib" ] && ln -s /usr/lib64/${lib} /usr/lib/${lib}
-        fi
+    local lib=$1
+    if [ ! -s "/usr/lib64/$lib" ] && [ ! -s "/usr/lib/$lib" ];then
+            libdir=$(find /usr/lib /usr/lib64 -name "$lib" | awk 'NR==1{print}')
+            if [ "$libdir" != "" ];then
+                    if is_64bit;then
+			mkdir /usr/lib64
+                            ln -s $libdir /usr/lib64/$lib
+                            ln -s $libdir /usr/lib/$lib
+                    else
+                            ln -s $libdir /usr/lib/$lib
+                    fi
+            fi
+    fi
+    if is_64bit;then
+	mkdir /usr/lib64
+            [ ! -s "/usr/lib64/$lib" ] && [ -s "/usr/lib/$lib" ] && ln -s /usr/lib/${lib}  /usr/lib64/${lib}
+            [ ! -s "/usr/lib/$lib" ] && [ -s "/usr/lib64/$lib" ] && ln -s /usr/lib64/${lib} /usr/lib/${lib}
+    fi
 }
 
 #在64位时需要创建lib64目录
@@ -143,111 +151,111 @@ create_lib64_dir(){
 
 #监控编译安装中是否有错误，有错误就停止安装,并把错误写入到文件/root/ezhttp.log
 error_detect(){
-local command=$1
-local cur_soft=`pwd | awk -F'/' '{print $NF}'`
-${command}
-if [ $? != 0 ];then
-	distro=`cat /etc/issue`
-	version=`cat /proc/version`
-	architecture=`uname -m`
-	mem=`free -m`
-	cat >>/root/ezhttp.log<<EOF
-	ezhttp errors:
-	distributions:$distro
-	architecture:$architecture
-	version:$version
-	memery:
-	${mem}
-	Nginx: ${nginx}
-	Nginx compile parameter:${nginx_configure_args}
-	Apache compile parameter:${apache_configure_args}
-	MySQL Server: $mysql
-	MySQL compile parameter: ${mysql_configure_args}
-	PHP Version: $php
-	php compile parameter: ${php_configure_args}
-	Other Software: ${other_soft_install[@]}
-	issue:failed to install $cur_soft
+	local command=$1
+	local cur_soft=`pwd | awk -F'/' '{print $NF}'`
+	${command}
+	if [ $? != 0 ];then
+		distro=`cat /etc/issue`
+		version=`cat /proc/version`
+		architecture=`uname -m`
+		mem=`free -m`
+		cat >>/root/ezhttp.log<<EOF
+		ezhttp errors:
+		distributions:$distro
+		architecture:$architecture
+		version:$version
+		memery:
+		${mem}
+		Nginx: ${nginx}
+		Nginx compile parameter:${nginx_configure_args}
+		Apache compile parameter:${apache_configure_args}
+		MySQL Server: $mysql
+		MySQL compile parameter: ${mysql_configure_args}
+		PHP Version: $php
+		php compile parameter: ${php_configure_args}
+		Other Software: ${other_soft_install[@]}
+		issue:failed to install $cur_soft
 EOF
-	echo "#########################################################"
-	echo "failed to install $cur_soft."    
-	echo "please visit website http://www.centos.bz/ezhttp/"
-	echo "and submit /root/ezhttp.log ask for help."
-	echo "#########################################################"
-	exit 1
-fi
+		echo "#########################################################"
+		echo "failed to install $cur_soft."    
+		echo "please visit website http://www.centos.bz/ezhttp/"
+		echo "and submit /root/ezhttp.log ask for help."
+		echo "#########################################################"
+		exit 1
+	fi
 }
 
 #保证是在根用户下运行
 need_root_priv(){
-# Make sure only root can run our script
-if [[ $EUID -ne 0 ]]; then
-	echo "This script must be run as root" 1>&2
-	exit 1
-fi
+	# Make sure only root can run our script
+	if [[ $EUID -ne 0 ]]; then
+		echo "This script must be run as root" 1>&2
+		exit 1
+	fi
 }
 
 #禁止selinux，因为在selinux下会出现很多意想不到的问题
 disable_selinux(){
-if [ -s /etc/selinux/config ] && grep 'SELINUX=enforcing' /etc/selinux/config; then
-	sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
-	setenforce 0
-fi
+	if [ -s /etc/selinux/config ] && grep 'SELINUX=enforcing' /etc/selinux/config; then
+		sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+		setenforce 0
+	fi
 }
 
 #大写转换成小写
 upcase_to_lowcase(){
-words=$1
-echo $words | tr '[A-Z]' '[a-z]'
+	words=$1
+	echo $words | tr '[A-Z]' '[a-z]'
 }
 
 #多核并行编译
 parallel_make(){
-local para=$1
-cpunum=`cat /proc/cpuinfo |grep 'processor'|wc -l`
+	local para=$1
+	cpunum=`cat /proc/cpuinfo |grep 'processor'|wc -l`
 
-#判断是否开启多核编译
-if [ $parallel_compile == 0 ];then
-	cpunum=1
-fi
+	#判断是否开启多核编译
+	if [ $parallel_compile == 0 ];then
+		cpunum=1
+	fi
 
-if [ $cpunum == 1 ];then
-	[ "$para" == "" ] && make || make "$para"
-else
-	[ "$para" == "" ] && make -j$cpunum || 	make -j$cpunum "$para"
-fi	
+	if [ $cpunum == 1 ];then
+		[ "$para" == "" ] && make || make "$para"
+	else
+		[ "$para" == "" ] && make -j$cpunum || 	make -j$cpunum "$para"
+	fi	
 }
 
 #开机启动
 boot_start(){
-if check_sys packageManager apt;then
-	update-rc.d -f $1 defaults
-elif check_sys packageManager yum;then
-	chkconfig --add $1
-	chkconfig $1 on
-fi
+	if check_sys packageManager apt;then
+		update-rc.d -f $1 defaults
+	elif check_sys packageManager yum;then
+		chkconfig --add $1
+		chkconfig $1 on
+	fi
 }
 
 #关闭开机启动
 boot_stop(){
-if check_sys packageManager apt;then
-	update-rc.d -f $1 remove
-elif check_sys packageManager yum;then
-	chkconfig $1 off
-fi
+	if check_sys packageManager apt;then
+		update-rc.d -f $1 remove
+	elif check_sys packageManager yum;then
+		chkconfig $1 off
+	fi
 }
 
 #判断路径输入是否合法
 filter_location(){
-local location=$1
-if ! echo $location | grep -q "^/";then
-	while true
-	do
-		read -p "input error,please input location again: " location
-		echo $location | grep -q "^/" && echo $location && break
-	done
-else
-	echo $location
-fi
+	local location=$1
+	if ! echo $location | grep -q "^/";then
+		while true
+		do
+			read -p "input error,please input location again: " location
+			echo $location | grep -q "^/" && echo $location && break
+		done
+	else
+		echo $location
+	fi
 }
 
 #检查压缩包完善性
@@ -262,25 +270,46 @@ check_integrity(){
 
 #下载软件
 download_file(){
-local url1=$1
-local url2=$2
-local filename=$3
-if [ -s "${cur_dir}/soft/${filename}" ];then
-	echo "${filename} is existed.check the file integrity."
+	local url1=$1
+	local url2=$2
+	local filename=$3
+	if [ -s "${cur_dir}/soft/${filename}" ];then
+		echo "${filename} is existed.check the file integrity."
 
-	if check_integrity "${filename}";then
-		echo "the file $filename is complete."
+		if check_integrity "${filename}";then
+			echo "the file $filename is complete."
+		else
+			echo "the file $filename is incomplete.redownload now..."
+			rm -f ${cur_dir}/soft/${filename}
+			download_file "$url1" "$url2" "$filename"		
+		fi
+
 	else
-		echo "the file $filename is incomplete.redownload now..."
-		rm -f ${cur_dir}/soft/${filename}
-		download_file "$url1" "$url2" "$filename"		
+		[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
+		cd ${cur_dir}/soft
+		choose_url_download "$url1" "$url2" "$filename"
 	fi
 
-else
-	[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
-	cd ${cur_dir}/soft
-	choose_url_download "$url1" "$url2" "$filename"
-fi
+	# 检查文件md5
+	if ! which md5sum > /dev/null;then
+		echo "Warning!md5sum command not found,ignore check file md5."
+		return
+	fi
+
+	echo "checking $filename md5..."
+	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
+    local filename_val=$(echo $filename_without_suffix | sed 's/[-.]/_/g')
+    eval local md5_preset=\${md5_${filename_val}}
+    local md5_cal=$(md5sum ${cur_dir}/soft/${filename}  | awk '{print $1}')
+    if [[ "$md5_preset" == "$md5_cal" ]];then
+    	echo "$filename is secure."
+    else
+    	echo "Danger!The downloaded $filename md5 $md5_cal is not equal with the preset md5 $md5_preset."
+    	echo "It means the downloaded $filename had modified by someone or your network is insecure."
+    	echo "please report to the author admin@centos.bz."
+    	exit 1
+    fi	
+
 }
 
 #判断64位系统
@@ -296,47 +325,47 @@ is_64bit(){
 #选择最优下载url
 choose_url_download()
 {
-local url1=$1
-local url2=$2
-local filename=$3
-#测试官方下载速度
-echo "testing Official mirror download speed..."
-speed2=`curl -m 5 -L -s -w '%{speed_download}' "$url2" -o /dev/null`
-echo "Official mirror download speed is $speed2"
+	local url1=$1
+	local url2=$2
+	local filename=$3
+	#测试官方下载速度
+	echo "testing Official mirror download speed..."
+	speed2=`curl -m 5 -L -s -w '%{speed_download}' "$url2" -o /dev/null`
+	echo "Official mirror download speed is $speed2"
 
-#测试第三方下载速度
-echo "testing third party mirror download speed..."
-speed1=`curl -m 5 -L -s -w '%{speed_download}' "$url1" -o /dev/null`
-echo "third party mirror download speed is $speed1"
-speed1=${speed1%%.*}
-speed2=${speed2%%.*}
-if [ $speed1 -ge $speed2 ];then
-	url=$url1
-	backup_url=$url2
-else
-	url=$url2
-	backup_url=$url1
-fi
-echo "use the url $url to download $filename.."
-sleep 1
-#开始下载
-wget_file "${url}" "${filename}" 
-
-#测试下载文件完整性,不完整则使用第二个下载地址
-if ! check_integrity ${filename};then
-	wget_file "${backup_url}" "${filename}"
-	#再次测试文件完整性
-	if ! check_integrity ${filename};then
-		echo "fail to download $filename with url $backup_url."
-		echo "begin use backup url to download.."
-		ez_url="https://www.lxconfig.com/files/ezhttp/$(echo $url1 | awk -F '/' '{print $NF}')"
-		wget_file "${ez_url}" "${filename}"
-		if ! check_integrity ${filename};then
-			echo "fail to download $filename,exited."
-			exit 1
-		fi	
+	#测试第三方下载速度
+	echo "testing third party mirror download speed..."
+	speed1=`curl -m 5 -L -s -w '%{speed_download}' "$url1" -o /dev/null`
+	echo "third party mirror download speed is $speed1"
+	speed1=${speed1%%.*}
+	speed2=${speed2%%.*}
+	if [ $speed1 -ge $speed2 ];then
+		url=$url1
+		backup_url=$url2
+	else
+		url=$url2
+		backup_url=$url1
 	fi
-fi
+	echo "use the url $url to download $filename.."
+	sleep 1
+	#开始下载
+	wget_file "${url}" "${filename}" 
+
+	#测试下载文件完整性,不完整则使用第二个下载地址
+	if ! check_integrity ${filename};then
+		wget_file "${backup_url}" "${filename}"
+		#再次测试文件完整性
+		if ! check_integrity ${filename};then
+			echo "fail to download $filename with url $backup_url."
+			echo "begin use backup url to download.."
+			ez_url="https://www.lxconfig.com/files/ezhttp/$(echo $url1 | awk -F '/' '{print $NF}')"
+			wget_file "${ez_url}" "${filename}"
+			if ! check_integrity ${filename};then
+				echo "fail to download $filename,exited."
+				exit 1
+			fi	
+		fi
+	fi
 
 }
 
@@ -397,27 +426,27 @@ verify_port(){
 
 #判断命令是否存在
 check_command_exist(){
-local command=$1
-if ! which $command > /dev/null;then
-	echo "$command not found,please install it."
-	exit 1
-fi
+	local command=$1
+	if ! which $command > /dev/null;then
+		echo "$command not found,please install it."
+		exit 1
+	fi
 }
 
 #yes or no询问
 yes_or_no(){
-local prompt=$1
-local yaction=$2
-local naction=$3
-while true; do
-	read -p "${prompt}" yn
-	yn=`upcase_to_lowcase $yn`
-	case $yn in
-		y ) eval "$yaction";break;;
-		n ) eval "$naction";break;;
-		* ) echo "input error,please only input y or n."
-	esac
-done
+	local prompt=$1
+	local yaction=$2
+	local naction=$3
+	while true; do
+		read -p "${prompt}" yn
+		yn=`upcase_to_lowcase $yn`
+		case $yn in
+			y ) eval "$yaction";break;;
+			n ) eval "$naction";break;;
+			* ) echo "input error,please only input y or n."
+		esac
+	done
 }
 
 #非空值read
@@ -448,11 +477,11 @@ install_tool(){
 		yum -y install gcc gcc-c++ make wget perl  curl bzip2 which
 	fi
 
-check_command_exist "gcc"
-check_command_exist "g++"
-check_command_exist "make"
-check_command_exist "wget"
-check_command_exist "perl"
+	check_command_exist "gcc"
+	check_command_exist "g++"
+	check_command_exist "make"
+	check_command_exist "wget"
+	check_command_exist "perl"
 }
 
 #判断系统版本
@@ -573,48 +602,48 @@ check_sys(){
 
 #添加必要的环境变量
 add_to_env(){
-local location=$1
-cd ${location} && [ ! -d lib ] && [ -d lib64 ] && ln -s lib64 lib
-[ -d "${location}/lib" ] && export LD_LIBRARY_PATH=${location}/lib:$LD_LIBRARY_PATH
-[ -d "${location}/bin" ] &&	export PATH=${location}/bin:$PATH
+	local location=$1
+	cd ${location} && [ ! -d lib ] && [ -d lib64 ] && ln -s lib64 lib
+	[ -d "${location}/lib" ] && export LD_LIBRARY_PATH=${location}/lib:$LD_LIBRARY_PATH
+	[ -d "${location}/bin" ] &&	export PATH=${location}/bin:$PATH
 }
 
 #测试元素是否在数组里
 if_in_array(){
-local element=$1
-local array=$2
-for i in $array
-do
-	if [ "$i" == "$element" ];then
-		return 0
-	fi
-done
-return 1
+	local element=$1
+	local array=$2
+	for i in $array
+	do
+		if [ "$i" == "$element" ];then
+			return 0
+		fi
+	done
+	return 1
 }
 
 
 #检测是否安装，存在就不安装了
 check_installed(){
-local command=$1
-local location=$2
-if [ -d "$location" ];then
-	echo "$location found,skip the installation."
-	add_to_env "$location"
-else
-	${command}
-fi
+	local command=$1
+	local location=$2
+	if [ -d "$location" ];then
+		echo "$location found,skip the installation."
+		add_to_env "$location"
+	else
+		${command}
+	fi
 }
 
 #检测是否安装,带确认对话
 check_installed_ask(){
-local command=$1
-local location=$2
-if [ -d "$location" ];then
-	#发现路径存在，是否删除安装
-	yes_or_no "directory $location found,may be the software had installed,remove it and reinstall it [N/y]: " "rm -rf $location && ${command}" "echo 'do not reinstall this software.' "
-else
-	${command}
-fi
+	local command=$1
+	local location=$2
+	if [ -d "$location" ];then
+		#发现路径存在，是否删除安装
+		yes_or_no "directory $location found,may be the software had installed,remove it and reinstall it [N/y]: " "rm -rf $location && ${command}" "echo 'do not reinstall this software.' "
+	else
+		${command}
+	fi
 }
 
 #获取版本号

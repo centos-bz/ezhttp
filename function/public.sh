@@ -11,6 +11,17 @@ set_md5_val(){
     eval md5_${new_val}=$md5
 }
 
+get_md5_val(){
+	local val=$1
+	local new_val=$(echo $val | sed 's/[-.]/_/g')
+	eval echo \$md5_${new_val}
+}
+
+get_md5_valname(){
+	local val=$1
+	local new_val=$(echo $val | sed 's/[-.]/_/g')
+	echo md5_$new_val
+}
 
 # 根据文件名设置other_link变量
 set_other_link_val(){
@@ -20,6 +31,18 @@ set_other_link_val(){
     eval other_link_${new_val}=$other_link
 }
 
+get_other_link_val(){
+	local val=$1
+	local new_val=$(echo $val | sed 's/[-.]/_/g')
+	eval echo \$other_link_${new_val}
+}
+
+get_other_link_valname(){
+	local val=$1
+	local new_val=$(echo $val | sed 's/[-.]/_/g')
+	echo other_link_$new_val
+}
+
 # 根据文件名设置official_link
 set_official_link_val(){
     local val=$1
@@ -27,6 +50,20 @@ set_official_link_val(){
     local new_val=$(echo $val | sed 's/[-.]/_/g')
     eval official_link_${new_val}=$official_link
 }
+
+get_official_link_val(){
+	local val=$1
+	local new_val=$(echo $val | sed 's/[-.]/_/g')
+	eval echo \$official_link_${new_val}
+}
+
+get_official_link_valname(){
+	local val=$1
+	local new_val=$(echo $val | sed 's/[-.]/_/g')
+	echo official_link_$new_val
+}
+
+
 
 #杀掉进程
 kill_pid(){
@@ -386,7 +423,7 @@ choose_url_download()
 		if ! check_integrity ${filename};then
 			echo "fail to download $filename with url $backup_url."
 			echo "begin use backup url to download.."
-			ez_url="https://www.lxconfig.com/files/ezhttp/$(echo $url1 | awk -F '/' '{print $NF}')"
+			ez_url="https://www.lxconfig.com/files/ezhttp/${filename}"
 			wget_file "${ez_url}" "${filename}"
 			if ! check_integrity ${filename};then
 				echo "fail to download $filename,exited."

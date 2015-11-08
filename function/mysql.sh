@@ -10,23 +10,20 @@ if [ "$mysql" == "custom_version" ];then
 		if echo "$version" | grep -q -E '^mysql-5\.1\.[0-9]+$';then
 			mysql5_1_filename=$version
 			mysql=$version
-			mysql5_1_official_link="http://cdn.mysql.com/Downloads/MySQL-5.1/${mysql}.tar.gz"
-			mysql5_1_other_link=""
-			custom_info="$custom_info\nmysql5_1_filename=$version\nmysql5_1_official_link=$mysql5_1_official_link\nmysql5_1_other_link=''\n"
+			set_official_link_val $version "http://cdn.mysql.com/Downloads/MySQL-5.1/${mysql}.tar.gz"
+			custom_info="$custom_info\nmysql5_1_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break
 		elif echo "$version" | grep -q -E '^mysql-5\.5\.[0-9]+$';then
 			mysql5_5_filename=$version
 			mysql=$version
-			mysql5_5_official_link="http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
-			mysql5_5_other_link=""
-			custom_info="$custom_info\nmysql5_5_filename=$version\nmysql5_5_official_link=$mysql5_5_official_link\nmysql5_5_other_link=''\n"
+			set_official_link_val $version "http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql}.tar.gz"
+			custom_info="$custom_info\nmysql5_5_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break
 		elif echo "$version" | grep -q -E '^mysql-5\.6\.[0-9]+$';then
 			mysql5_6_filename=$version
 			mysql=$version
-			mysql5_6_official_link="http://cdn.mysql.com/Downloads/MySQL-5.6/${mysql}.tar.gz"
-			mysql5_6_other_link=""
-			custom_info="$custom_info\nmysql5_6_filename=$version\nmysql5_6_official_link=$mysql5_6_official_link\nmysql5_6_other_link=''\n"
+			set_official_link_val $version "http://cdn.mysql.com/Downloads/MySQL-5.6/${mysql}.tar.gz"
+			custom_info="$custom_info\nmysql5_6_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break			
 		else
 			echo "version invalid,please reinput."

@@ -10,30 +10,30 @@ if [ "$php" == "custom_version" ];then
 		if echo "$version" | grep -q -E '^php-5\.2\.[0-9]+$';then
 			php5_2_filename=$version
 			php=$version
-			read -p "please input $php download url(must be tar.gz file format): "  php5_2_official_link
-			php5_2_other_link=""
-			custom_info="$custom_info\nphp5_2_filename=$version\nphp5_2_official_link=$php5_2_official_link\nphp5_2_other_link=''\n"
+			read -p "please input $php download url(must be tar.gz file format): "  link
+			set_official_link_val $version "$link"
+			custom_info="$custom_info\nphp5_2_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.3\.[0-9]+$';then
 			php5_3_filename=$version
 			php=$version
-			read -p "please input $php download url(must be tar.gz file format): " php5_3_official_link
-			php5_3_other_link=""
-			custom_info="$custom_info\nphp5_3_filename=$version\nphp5_3_official_link=$php5_3_official_link\nphp5_3_other_link=''\n"
+			read -p "please input $php download url(must be tar.gz file format): " link
+			set_official_link_val $version "$link"
+			custom_info="$custom_info\nphp5_3_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.4\.[0-9]+$';then
 			php5_4_filename=$version
 			php=$version
-			read -p "please input $php download url(must be tar.gz file format): " php5_4_official_link
-			php5_4_other_link=""
-			custom_info="$custom_info\nphp5_4_filename=$version\nphp5_4_official_link=$php5_4_official_link\nphp5_4_other_link=''\n"
+			read -p "please input $php download url(must be tar.gz file format): " link
+			set_official_link_val $version "$link"
+			custom_info="$custom_info\nphp5_4_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.5\.[0-9]+$';then
 			php5_5_filename=$version
 			php=$version
-			read -p "please input $php download url(must be tar.gz file format): " php5_5_official_link
-			php5_5_other_link=""
-			custom_info="$custom_info\nphp5_5_filename=$version\nphp5_5_official_link=$php5_5_official_link\nphp5_5_other_link=''\n"
+			read -p "please input $php download url(must be tar.gz file format): " link
+			set_official_link_val $version "$link"
+			custom_info="$custom_info\nphp5_5_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break				
 		else
 			echo "version invalid,please reinput."

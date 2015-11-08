@@ -258,41 +258,30 @@ set_official_link_val $mongodbLegacy64_filename "http://downloads.mongodb.org/li
 local v1=`ldd --version | awk 'NR==1{print $NF}' | awk -F'.' '{print $1}'`
 local v2=`ldd --version | awk 'NR==1{print $NF}' | awk -F'.' '{print $2}'`
 
-mongodb_filename=""
-mongodb_other_link=""
-mongodb_official_link=""
-
 if [[ $v1 -eq 2 ]]; then
 	if [[ $v2 -ge 5 ]];then
 		if is_64bit;then
 			mongodb_filename="$mongodb64_filename"
-			mongodb_other_link="$mongodb64_other_link"
-			mongodb_official_link="$mongodb64_official_link"
 		else
-			mongodb_filename="$mongodb32_filename"
-			mongodb_other_link="$mongodb32_other_link"
-			mongodb_official_link="$mongodb32_official_link"			
+			mongodb_filename="$mongodb32_filename"		
 		fi			
 	else
 		if is_64bit;then
 			mongodb_filename="$mongodbLegacy64_filename"
-			mongodb_other_link="$mongodbLegacy64_other_link"
-			mongodb_official_link="$mongodbLegacy64_official_link"
-		fi			
+		fi
 	fi
 
 elif [[ $v1 -gt 2 ]]; then
 	if is_64bit;then
-		mongodb_filename="$mongodb-linux-x86_64-2.4.9"
-		mongodb_other_link="$mongodb64_other_link"
-		mongodb_official_link="$mongodb64_official_link"
+		mongodb_filename="$mongodb64_filename"
 	else
-		mongodb_filename="$mongodb32_filename"
-		mongodb_other_link="$mongodb32_other_link"
-		mongodb_official_link="$mongodb32_official_link"			
+		mongodb_filename="$mongodb32_filename"		
 	fi	
 fi		
 
+set_md5_val $mongodb_filename $(get_md5_val $mongodb_filename)
+set_other_link_val $mongodb_filename $(get_other_link_val $mongodb_filename)
+set_official_link_val $mongodb_filename $(get_official_link_val $mongodb_filename)
 
 ######################依赖包设置######################
 

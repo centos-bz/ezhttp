@@ -36,13 +36,13 @@ Upgrade_nginx_tengine_openresty(){
 		read -p "please input the new nginx version(ie.nginx-1.4.1 tengine-1.4.6 ngx_openresty-1.2.8.3): "  nginx_new_version
 		#判断版本号是否有效
 		if echo "$nginx_new_version" | grep -q -E '^nginx-[0-9]+\.[0-9]+\.[0-9]+$';then
-			official_link="http://nginx.org/download/${nginx_new_version}.tar.gz"
+			set_official_link_val $nginx_new_version "http://nginx.org/download/${nginx_new_version}.tar.gz"
 			break
 		elif echo "$nginx_new_version" | grep -q -E '^tengine-[0-9]+\.[0-9]+\.[0-9]+$';then
 			official_link="http://tengine.taobao.org/download/${nginx_new_version}.tar.gz"
 			break
 		elif echo "$nginx_new_version" | grep -q -E '^ngx_openresty-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$';then
-			official_link="http://openresty.org/download/${nginx_new_version}.tar.gz"
+			set_official_link_val $nginx_new_version "http://openresty.org/download/${nginx_new_version}.tar.gz"
 			nginx_location=$(echo $nginx_location | sed -r 's#nginx/?$##')
 			nginx_configure_args="--prefix=${nginx_location} --with-luajit --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename} --with-http_realip_module  --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module"
 			break

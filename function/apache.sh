@@ -11,16 +11,16 @@ if [ "$apache" == "custom_version" ];then
 		if echo "$version" | grep -q -E '^httpd-2\.2\.[0-9]+$';then
 			apache2_2_filename=$version
 			apache=$version
-			read -p "please input $apache download url(must be tar.gz file format): "  apache2_2_official_link
-			apache2_2_other_link=""
-			custom_info="$custom_info\napache2_2_filename=$version\napache2_2_official_link=$apache2_2_official_link\napache2_2_other_link=''\n"
+			read -p "please input $apache download url(must be tar.gz file format): "  link
+			set_official_link_val $version "$link"
+			custom_info="$custom_info\napache2_2_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break
 		elif echo "$version" | grep -q -E '^httpd-2\.4\.[0-9]+$';then
 			apache2_4_filename=$version
 			apache=$version
-			read -p "please input $apache download url(must be tar.gz file format): " apache2_4_official_link
-			apache2_4_other_link=""
-			custom_info="$custom_info\napache2_4_filename=$version\napache2_4_official_link=$apache2_4_official_link\napache2_4_other_link=''\n"
+			read -p "please input $apache download url(must be tar.gz file format): " link
+			set_official_link_val $version "$link"
+			custom_info="$custom_info\napache2_4_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
 			break
 		else
 			echo "version invalid,please reinput."

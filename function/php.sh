@@ -161,7 +161,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 		check_installed "install_patch" "${depends_prefix}/${patch_filename}"
 	fi		
 
-	download_file "${php5_2_other_link}" "${php5_2_official_link}" "${php5_2_filename}.tar.gz"
+	download_file  "${php5_2_filename}.tar.gz"
 	cd $cur_dir/soft/
 	rm -rf ${php5_2_filename}
 	tar xzvf ${php5_2_filename}.tar.gz
@@ -198,7 +198,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	sed -i "s#extension_dir.*#extension_dir = \"${php_location}/lib/php/extensions/no-debug-non-zts-20060613\"#"  $php_location/etc/php.ini
 	
 elif [ "$php" == "${php5_3_filename}" ];then
-	download_file "${php5_3_other_link}" "${php5_3_official_link}" "${php5_3_filename}.tar.gz"
+	download_file  "${php5_3_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${php5_3_filename}.tar.gz
 	cd ${php5_3_filename}
@@ -217,7 +217,7 @@ elif [ "$php" == "${php5_3_filename}" ];then
 	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 	
 elif [ "$php" == "${php5_4_filename}" ];then
-	download_file "${php5_4_other_link}" "${php5_4_official_link}" "${php5_4_filename}.tar.gz"
+	download_file  "${php5_4_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${php5_4_filename}.tar.gz
 	cd ${php5_4_filename}
@@ -232,7 +232,7 @@ elif [ "$php" == "${php5_4_filename}" ];then
 	[ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
 
 elif [ "$php" == "${php5_5_filename}" ];then
-	download_file "${php5_5_other_link}" "${php5_5_official_link}" "${php5_5_filename}.tar.gz"
+	download_file  "${php5_5_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${php5_5_filename}.tar.gz
 	cd ${php5_5_filename}

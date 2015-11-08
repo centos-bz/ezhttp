@@ -122,7 +122,7 @@ install_mssql(){
 #安装freetds
 install_freetds()
 {
-	download_file "${freetds_other_link}" "${freetds_official_link}" "${freetds_filename}.tar.gz"
+	download_file  "${freetds_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${freetds_filename}.tar.gz
 	cd ${freetds_filename}
@@ -138,13 +138,13 @@ install_ZendOptimizer()
 local phpConfig=$1	
 #如果是64位系统
 if is_64bit ; then
-	download_file "${ZendOptimizer64_other_link}" "${ZendOptimizer64_official_link}" "${ZendOptimizer64_filename}.tar.gz"
+	download_file  "${ZendOptimizer64_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ZendOptimizer64_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ZendOptimizer
 	cp -a ${ZendOptimizer64_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
 else
-	download_file "${ZendOptimizer32_other_link}" "${ZendOptimizer32_official_link}" "${ZendOptimizer32_filename}.tar.gz"
+	download_file  "${ZendOptimizer32_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ZendOptimizer32_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ZendOptimizer
@@ -169,7 +169,7 @@ else
 fi		
 
 local phpConfig=$1
-download_file "${eaccelerator_other_link}" "${eaccelerator_official_link}" "${eaccelerator_filename}.tar.bz2"
+download_file  "${eaccelerator_filename}.tar.bz2"
 cd $cur_dir/soft/
 rm -rf ${eaccelerator_filename}
 tar xjfv ${eaccelerator_filename}.tar.bz2
@@ -195,7 +195,7 @@ chmod 0777 /var/cache/eaccelerator
 #安装xcache
 install_xcache(){
 local phpConfig=$1
-download_file "${xcache_other_link}" "${xcache_official_link}" "${xcache_filename}.tar.gz"
+download_file  "${xcache_filename}.tar.gz"
 cd $cur_dir/soft/
 rm -rf ${xcache_filename}
 tar xzvf ${xcache_filename}.tar.gz
@@ -223,7 +223,7 @@ else
 fi		
 
 local phpConfig=$1
-download_file "${php_memcache_other_link}" "${php_memcache_official_link}" "${php_memcache_filename}.tgz"
+download_file  "${php_memcache_filename}.tgz"
 cd $cur_dir/soft/
 rm -rf ${php_memcache_filename}
 tar xzvf ${php_memcache_filename}.tgz
@@ -243,7 +243,7 @@ error_detect "make install"
 #安装php redis模块
 install_php_redis(){
 local phpConfig=$1
-download_file "${php_redis_other_link}" "${php_redis_official_link}" "${php_redis_filename}.tgz"
+download_file  "${php_redis_filename}.tgz"
 cd $cur_dir/soft/
 rm -rf ${php_redis_filename}
 tar xzvf ${php_redis_filename}.tgz
@@ -258,7 +258,7 @@ error_detect "make install"
 #安装php mongo模块
 install_php_mongo(){
 local phpConfig=$1
-download_file "${php_mongo_other_link}" "${php_mongo_official_link}" "${php_mongo_filename}.tar.gz"
+download_file  "${php_mongo_filename}.tar.gz"
 cd $cur_dir/soft/
 rm -rf ${php_mongo_filename}
 tar xzvf ${php_mongo_filename}.tar.gz
@@ -273,7 +273,7 @@ error_detect "make install"
 #安装apc模块
 install_php_apc(){
 local phpConfig=$1
-download_file "${apc_other_link}" "${apc_official_link}" "${apc_filename}.tgz"
+download_file  "${apc_filename}.tgz"
 cd $cur_dir/soft/
 rm -rf ${apc_filename}
 tar xzvf ${apc_filename}.tgz
@@ -302,7 +302,7 @@ fi
 
 export PKG_CONFIG_PATH=${depends_prefix}/${ImageMagick_filename}/lib/pkgconfig/
 local phpConfig=$1
-download_file "${php_imagemagick_other_link}" "${php_imagemagick_official_link}" "${php_imagemagick_filename}.tgz"
+download_file  "${php_imagemagick_filename}.tgz"
 cd $cur_dir/soft/
 rm -rf ${php_imagemagick_filename}
 tar xzvf ${php_imagemagick_filename}.tgz
@@ -326,14 +326,14 @@ elif $(get_php_bin $phpConfig) -i | grep "Thread Safety" | grep "disabled";then
 fi
 
 if is_64bit ; then
-	download_file "${ionCube64_other_link}" "${ionCube64_official_link}" "${ionCube64_filename}.tar.gz"
+	download_file  "${ionCube64_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube64_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
 	php_version=`get_php_version "$phpConfig"`
 	cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
 else
-	download_file "${ionCube32_other_link}" "${ionCube32_official_link}" "${ionCube32_filename}.tar.gz"
+	download_file  "${ionCube32_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ionCube32_filename}.tar.gz
 	mkdir -p ${depends_prefix}/ioncube
@@ -350,13 +350,13 @@ local phpConfig=$1
 php_version=`get_php_version "$phpConfig"`
 if is_64bit ; then
 	if [ "$php_version" == "5.3" ];then
-		download_file "${ZendGuardLoader53_64_other_link}" "${ZendGuardLoader53_64_official_link}" "${ZendGuardLoader53_64_filename}.tar.gz"
+		download_file  "${ZendGuardLoader53_64_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader53_64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
 		cp ${ZendGuardLoader53_64_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
 	elif [ "$php_version" == "5.4" ];then
-		download_file "${ZendGuardLoader54_64_other_link}" "${ZendGuardLoader54_64_official_link}" "${ZendGuardLoader54_64_filename}.tar.gz"
+		download_file  "${ZendGuardLoader54_64_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader54_64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
@@ -364,13 +364,13 @@ if is_64bit ; then
 	fi
 else
 	if [ "$php_version" == "5.3" ];then
-		download_file "${ZendGuardLoader53_32_other_link}" "${ZendGuardLoader53_32_official_link}" "${ZendGuardLoader53_32_filename}.tar.gz"
+		download_file  "${ZendGuardLoader53_32_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader53_32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
 		cp ${ZendGuardLoader53_32_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
 	elif [ "$php_version" == "5.4" ];then
-		download_file "${ZendGuardLoader54_32_other_link}" "${ZendGuardLoader54_32_official_link}" "${ZendGuardLoader54_32_filename}.tar.gz"
+		download_file  "${ZendGuardLoader54_32_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader54_32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
@@ -385,7 +385,7 @@ fi
 #安装xdebug
 install_xdebug(){
 local phpConfig=$1
-download_file "${xdebug_other_link}" "${xdebug_official_link}" "${xdebug_filename}.tar.gz"
+download_file  "${xdebug_filename}.tar.gz"
 cd $cur_dir/soft/
 rm -rf ${xdebug_filename}
 tar xzvf ${xdebug_filename}.tar.gz

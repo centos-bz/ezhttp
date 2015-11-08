@@ -67,19 +67,19 @@ Upgrade_nginx_tengine_openresty(){
 	#升级nginx
 
 	#安装pcre
-	download_file "${pcre_other_link}" "${pcre_official_link}" "${pcre_filename}.tar.gz"
+	download_file  "${pcre_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${pcre_filename}.tar.gz
 	#安装openssl
-	download_file "${openssl_other_link}" "${openssl_official_link}" "${openssl_filename}.tar.gz"
+	download_file  "${openssl_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${openssl_filename}.tar.gz
 	#安装zlib
-	download_file "${zlib_other_link}" "${zlib_official_link}" "${zlib_filename}.tar.gz"
+	download_file  "${zlib_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${zlib_filename}.tar.gz
 
-	download_file "" "${official_link}" "${nginx_new_version}.tar.gz"
+	download_file  "${nginx_new_version}.tar.gz"
 	cd $cur_dir/soft/
 	tar xvzf ${nginx_new_version}.tar.gz
 	cd ${nginx_new_version}

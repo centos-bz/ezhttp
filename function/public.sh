@@ -11,6 +11,23 @@ set_md5_val(){
     eval md5_${new_val}=$md5
 }
 
+
+# 根据文件名设置other_link变量
+set_other_link_val(){
+    local val=$1
+    local other_link=$2
+    local new_val=$(echo $val | sed 's/[-.]/_/g')
+    eval other_link_${new_val}=$other_link
+}
+
+# 根据文件名设置official_link
+set_official_link_val(){
+    local val=$1
+    local official_link=$2
+    local new_val=$(echo $val | sed 's/[-.]/_/g')
+    eval official_link_${new_val}=$official_link
+}
+
 #杀掉进程
 kill_pid(){
 	local processType=$1
@@ -270,9 +287,12 @@ check_integrity(){
 
 #下载软件
 download_file(){
-	local url1=$1
-	local url2=$2
-	local filename=$3
+	local filename=$1
+	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
+    local filename_val=$(echo $filename_without_suffix | sed 's/[-.]/_/g')
+
+    eval local url1=\${other_link_${filename_val}}	
+    eval local url2=\${official_link_${filename_val}}	
 	if [ -s "${cur_dir}/soft/${filename}" ];then
 		echo "${filename} is existed.check the file integrity."
 
@@ -281,13 +301,13 @@ download_file(){
 		else
 			echo "the file $filename is incomplete.redownload now..."
 			rm -f ${cur_dir}/soft/${filename}
-			download_file "$url1" "$url2" "$filename"		
+			download_file "$filename"		
 		fi
 
 	else
 		[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
 		cd ${cur_dir}/soft
-		choose_url_download "$url1" "$url2" "$filename"
+		choose_url_download "$filename"
 	fi
 
 	# 检查文件md5
@@ -297,8 +317,7 @@ download_file(){
 	fi
 
 	echo "checking $filename md5..."
-	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
-    local filename_val=$(echo $filename_without_suffix | sed 's/[-.]/_/g')
+
     eval local md5_preset=\${md5_${filename_val}}
 
     if [[ "$md5_preset" == "" ]];then
@@ -331,9 +350,12 @@ is_64bit(){
 #选择最优下载url
 choose_url_download()
 {
-	local url1=$1
-	local url2=$2
-	local filename=$3
+	local filename=$1
+	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
+    local filename_val=$(echo $filename_without_suffix | sed 's/[-.]/_/g')
+    eval local url1=\${other_link_${filename_val}}	
+    eval local url2=\${official_link_${filename_val}}	
+
 	#测试官方下载速度
 	echo "testing Official mirror download speed..."
 	speed2=`curl -m 5 -L -s -w '%{speed_download}' "$url2" -o /dev/null`

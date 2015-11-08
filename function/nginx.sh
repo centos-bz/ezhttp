@@ -75,20 +75,20 @@ nginx_preinstall_settings(){
 #安装nginx
 install_nginx(){
 #安装pcre
-download_file "${pcre_other_link}" "${pcre_official_link}" "${pcre_filename}.tar.gz"
+download_file  "${pcre_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${pcre_filename}.tar.gz
 #安装openssl
-download_file "${openssl_other_link}" "${openssl_official_link}" "${openssl_filename}.tar.gz"
+download_file  "${openssl_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${openssl_filename}.tar.gz
 #安装zlib
-download_file "${zlib_other_link}" "${zlib_official_link}" "${zlib_filename}.tar.gz"
+download_file  "${zlib_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${zlib_filename}.tar.gz
 
 if [ "$nginx" == "${nginx_filename}" ];then
-	download_file "${nginx_other_link}" "${nginx_official_link}" "${nginx_filename}.tar.gz"
+	download_file  "${nginx_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xvzf ${nginx_filename}.tar.gz
 	cd ${nginx_filename}
@@ -98,7 +98,7 @@ if [ "$nginx" == "${nginx_filename}" ];then
 	error_detect "make install"
 
 elif [ "$nginx" == "${tengine_filename}" ];then
-	download_file "${tengine_other_link}" "${tengine_official_link}" "${tengine_filename}.tar.gz"
+	download_file  "${tengine_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${tengine_filename}.tar.gz
 	cd ${tengine_filename}
@@ -108,7 +108,7 @@ elif [ "$nginx" == "${tengine_filename}" ];then
 	error_detect "make install"
 	
 elif [ "$nginx" == "${openresty_filename}" ];then
-	download_file "${openresty_other_link}" "${openresty_official_link}" "${openresty_filename}.tar.gz"
+	download_file  "${openresty_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${openresty_filename}.tar.gz
 	cd ${openresty_filename}

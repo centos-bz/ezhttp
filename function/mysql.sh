@@ -126,7 +126,7 @@ if [ "$mysql" == "${mysql5_1_filename}" ];then
 		check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 	fi	
 
-	download_file "${mysql5_1_other_link}" "${mysql5_1_official_link}" "${mysql5_1_filename}.tar.gz"
+	download_file  "${mysql5_1_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${mysql5_1_filename}.tar.gz
 	cd ${mysql5_1_filename}
@@ -155,7 +155,7 @@ elif [ "$mysql" == "${mysql5_5_filename}" ] || [ "$mysql" == "libmysqlclient18" 
 		check_installed "install_bison" "${depends_prefix}/${bison_filename}"
 	fi		
 
-	download_file "${mysql5_5_other_link}" "${mysql5_5_official_link}" "${mysql5_5_filename}.tar.gz"
+	download_file  "${mysql5_5_filename}.tar.gz"
 	cd $cur_dir/soft/
 	rm -rf ${mysql5_5_filename}
 	tar xzvf ${mysql5_5_filename}.tar.gz
@@ -192,7 +192,7 @@ elif [ "$mysql" == "${mysql5_6_filename}" ];then
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 		check_installed "install_bison" "${depends_prefix}/${bison_filename}"
 	fi		
-	download_file "${mysql5_6_other_link}" "${mysql5_6_official_link}" "${mysql5_6_filename}.tar.gz"	
+	download_file  "${mysql5_6_filename}.tar.gz"	
 	cd $cur_dir/soft/
 	rm -rf ${mysql5_6_filename}
 	tar xzvf  ${mysql5_6_filename}.tar.gz

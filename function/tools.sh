@@ -1112,7 +1112,7 @@ install_jailkit(){
 	if [[ -s /usr/local/jailkit/sbin/jk_init ]];then
 		echo "file /usr/local/jailkit/sbin/jk_init found,maybe jailkit had been installed."
 	else
-		download_file "${jailkit_other_link}" "${jailkit_official_link}" "${jailkit_filename}.tar.gz"
+		download_file  "${jailkit_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${jailkit_filename}.tar.gz
 		cd ${jailkit_filename}

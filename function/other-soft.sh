@@ -154,7 +154,7 @@ else
 	check_installed "install_libevent" "${depends_prefix}/${libevent_filename}"
 fi		
 
-download_file "${memcached_other_link}" "${memcached_official_link}" "${memcached_filename}.tar.gz"
+download_file  "${memcached_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${memcached_filename}.tar.gz
 cd ${memcached_filename}
@@ -178,7 +178,7 @@ boot_start memcached
 
 #安装phpMyAdmin
 install_phpmyadmin(){
-download_file "${phpMyAdmin_other_link}" "${phpMyAdmin_official_link}" "${phpMyAdmin_filename}.tar.gz"
+download_file  "${phpMyAdmin_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${phpMyAdmin_filename}.tar.gz
 mkdir -p ${phpmyadmin_location}
@@ -189,7 +189,7 @@ sed -i '1aexit;' $phpmyadmin_location/version_check.php
 
 #安装PureFTPd
 install_PureFTPd(){
-download_file "${PureFTPd_other_link}" "${PureFTPd_official_link}" "${PureFTPd_filename}.tar.gz"
+download_file  "${PureFTPd_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${PureFTPd_filename}.tar.gz
 cd ${PureFTPd_filename}
@@ -242,7 +242,7 @@ if [[ $user_manager_pureftpd == true ]]; then
 EOF
 
 	#安装ftp面板
-	download_file "$user_manager_pureftpd_other_link" "$user_manager_pureftpd_official_link" "${user_manager_pureftpd_filename}.tar.gz"
+	download_file  "${user_manager_pureftpd_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${user_manager_pureftpd_filename}.tar.gz
 	mkdir -p ${user_manager_location}
@@ -269,7 +269,7 @@ fi
 install_redis(){
 groupadd redis	
 useradd -M -s /bin/false -g redis redis
-download_file "${redis_other_link}" "${redis_official_link}" "${redis_filename}.tar.gz"
+download_file  "${redis_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${redis_filename}.tar.gz
 cd ${redis_filename}
@@ -312,7 +312,7 @@ sysctl -p
 install_mongodb(){
 groupadd mongod	
 useradd -M -s /bin/false -g mongod mongod
-download_file "${mongodb_other_link}" "${mongodb_official_link}" "${mongodb_filename}.tgz"
+download_file  "${mongodb_filename}.tgz"
 cd $cur_dir/soft/
 tar xzvf ${mongodb_filename}.tgz
 mkdir -p  ${mongodb_location}/etc/ ${mongodb_location}/logs/ ${mongodb_data_location}
@@ -468,14 +468,14 @@ boot_start mongod
 
 #安装phpRedisAdmin
 install_redisadmin(){
-download_file "${phpRedisAdmin_other_link}" "${phpRedisAdmin_official_link}" "${phpRedisAdmin_filename}.tar.gz"
+download_file  "${phpRedisAdmin_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${phpRedisAdmin_filename}.tar.gz
 mkdir -p ${phpRedisAdmin_location}
 \cp -a ${phpRedisAdmin_filename}/* ${phpRedisAdmin_location}
 
 #Predis
-download_file "${Predis_other_link}" "${Predis_official_link}" "${Predis_filename}.tar.gz"
+download_file  "${Predis_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${Predis_filename}.tar.gz
 mkdir -p ${phpRedisAdmin_location}/vendor/
@@ -485,7 +485,7 @@ mkdir -p ${phpRedisAdmin_location}/vendor/
 
 #安装memadmin
 install_memadmin(){
-download_file "${memadmin_other_link}" "${memadmin_official_link}" "${memadmin_filename}.tar.gz"
+download_file  "${memadmin_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${memadmin_filename}.tar.gz
 mkdir -p ${memadmin_location}
@@ -494,7 +494,7 @@ mkdir -p ${memadmin_location}
 
 #安装rockmongo
 install_rockmongo(){
-download_file "${rockmongo_other_link}" "${rockmongo_official_link}" "${rockmongo_filename}.zip"
+download_file  "${rockmongo_filename}.zip"
 cd $cur_dir/soft/
 rm -rf rockmongo-fix-auth
 unzip ${rockmongo_filename}.zip

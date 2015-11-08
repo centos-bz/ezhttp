@@ -62,7 +62,7 @@ install_php_depends(){
 
 #安装libevent
 install_libevent(){
-download_file "${libevent_other_link}" "${libevent_official_link}" "${libevent_filename}.tar.gz"
+download_file  "${libevent_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libevent_filename}.tar.gz
 cd ${libevent_filename}
@@ -75,7 +75,7 @@ add_to_env "${depends_prefix}/${libevent_filename}"
 
 #安装patch
 install_patch(){
-download_file "${patch_other_link}" "${patch_official_link}" "${patch_filename}.tar.gz"
+download_file  "${patch_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${patch_filename}.tar.gz
 cd ${patch_filename}
@@ -88,7 +88,7 @@ add_to_env "${depends_prefix}/${patch_filename}"
 
 #安装libiconv
 install_libiconv(){
-download_file "${libiconv_other_link}" "${libiconv_official_link}" "${libiconv_filename}.tar.gz"
+download_file  "${libiconv_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libiconv_filename}.tar.gz
 cd ${libiconv_filename}
@@ -112,7 +112,7 @@ add_to_env "${depends_prefix}/${libiconv_filename}"
 
 #安装autoconf
 install_autoconf(){
-download_file "${autoconf_other_link}" "${autoconf_official_link}" "${autoconf_filename}.tar.gz"
+download_file  "${autoconf_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${autoconf_filename}.tar.gz
 cd ${autoconf_filename}
@@ -125,7 +125,7 @@ add_to_env "${depends_prefix}/${autoconf_filename}"
 
 #安装libxml2
 install_libxml2(){
-download_file "${libxml2_other_link}" "${libxml2_official_link}" "${libxml2_filename}.tar.gz"
+download_file  "${libxml2_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libxml2_filename}.tar.gz
 cd ${libxml2_filename}
@@ -139,7 +139,7 @@ create_lib64_dir "${depends_prefix}/${libxml2_filename}"
 
 #安装openssl
 install_openssl(){
-download_file "${openssl_other_link}" "${openssl_official_link}" "${openssl_filename}.tar.gz"
+download_file  "${openssl_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${openssl_filename}.tar.gz
 cd ${openssl_filename}
@@ -154,7 +154,7 @@ create_lib64_dir "${depends_prefix}/${openssl_filename}"
 
 #安装zlib
 install_zlib(){
-download_file "${zlib_other_link}" "${zlib_official_link}" "${zlib_filename}.tar.gz"
+download_file  "${zlib_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${zlib_filename}.tar.gz
 cd ${zlib_filename}
@@ -168,7 +168,7 @@ create_lib64_dir "${depends_prefix}/${zlib_filename}"
 
 #安装libcurl
 install_curl(){
-download_file "${libcurl_other_link}" "${libcurl_official_link}" "${libcurl_filename}.tar.gz"
+download_file  "${libcurl_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libcurl_filename}.tar.gz
 cd ${libcurl_filename}
@@ -182,7 +182,7 @@ create_lib64_dir "${depends_prefix}/${libcurl_filename}"
 
 #安装pcre
 install_pcre(){
-download_file "${pcre_other_link}" "${pcre_official_link}" "${pcre_filename}.tar.gz"
+download_file  "${pcre_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${pcre_filename}.tar.gz
 cd ${pcre_filename}
@@ -197,7 +197,7 @@ create_lib64_dir "${depends_prefix}/${pcre_filename}"
 
 #安装libtool
 install_libtool(){
-download_file "${libtool_other_link}" "${libtool_official_link}" "${libtool_filename}.tar.gz"
+download_file  "${libtool_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libtool_filename}.tar.gz
 cd ${libtool_filename}
@@ -211,7 +211,7 @@ create_lib64_dir "${depends_prefix}/${libtool_filename}"
 
 #安装libjpeg
 install_libjpeg(){
-download_file "${libjpeg_other_link}" "${libjpeg_official_link}" "${libjpeg_filename}.tar.gz"
+download_file  "${libjpeg_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libjpeg_filename}.tar.gz
 cd ${libjpeg_filename}
@@ -228,7 +228,7 @@ create_lib64_dir "${depends_prefix}/${libjpeg_filename}"
 
 #安装libpng
 install_libpng(){
-download_file "${libpng_other_link}" "${libpng_official_link}" "${libpng_filename}.tar.gz"
+download_file  "${libpng_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libpng_filename}.tar.gz
 cd ${libpng_filename}
@@ -246,7 +246,7 @@ create_lib64_dir "${depends_prefix}/${libpng_filename}"
 
 #安装mhash
 install_mhash(){
-download_file "${mhash_other_link}" "${mhash_official_link}" "${mhash_filename}.tar.gz"
+download_file  "${mhash_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${mhash_filename}.tar.gz
 cd ${mhash_filename}
@@ -260,7 +260,7 @@ create_lib64_dir "${depends_prefix}/${mhash_filename}"
 
 #安装freetype
 install_freetype(){
-download_file "${freetype_other_link}" "${freetype_official_link}" "${freetype_filename}.tar.gz"
+download_file  "${freetype_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${freetype_filename}.tar.gz
 cd ${freetype_filename}
@@ -274,7 +274,7 @@ create_lib64_dir "${depends_prefix}/${freetype_filename}"
 
 #安装libmcrypt
 install_libmcrypt(){
-download_file "${libmcrypt_other_link}" "${libmcrypt_official_link}" "${libmcrypt_filename}.tar.gz"
+download_file  "${libmcrypt_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${libmcrypt_filename}.tar.gz
 cd ${libmcrypt_filename}
@@ -288,7 +288,7 @@ create_lib64_dir "${depends_prefix}/${libmcrypt_filename}"
 
 #安装m4
 install_m4(){
-download_file "${m4_other_link}" "${m4_official_link}" "${m4_filename}.tar.gz"
+download_file  "${m4_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${m4_filename}.tar.gz
 cd ${m4_filename}
@@ -301,7 +301,7 @@ add_to_env "${depends_prefix}/${m4_filename}"
 
 #安装ImageMagick
 install_ImageMagick(){
-download_file "${ImageMagick_other_link}" "${ImageMagick_official_link}" "${ImageMagick_filename}.tar.gz"
+download_file  "${ImageMagick_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${ImageMagick_filename}.tar.gz
 cd ${ImageMagick_filename}
@@ -316,7 +316,7 @@ add_to_env "${depends_prefix}/${ImageMagick_filename}"
 
 #安装pkgconfig
 install_pkgconfig(){
-download_file "${pkgconfig_other_link}" "${pkgconfig_official_link}" "${pkgconfig_filename}.tar.gz"
+download_file  "${pkgconfig_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${pkgconfig_filename}.tar.gz
 cd ${pkgconfig_filename}
@@ -328,7 +328,7 @@ add_to_env "${depends_prefix}/${pkgconfig_filename}"
 
 #安装cmake
 install_cmake(){
-download_file "${cmake_other_link}" "${cmake_official_link}" "${cmake_filename}.tar.gz"
+download_file  "${cmake_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${cmake_filename}.tar.gz
 cd ${cmake_filename}
@@ -342,7 +342,7 @@ add_to_env "${depends_prefix}/${cmake_filename}"
 #安装ncurses
 install_ncurses(){
 if [ "$mysql" == "${mysql5_1_filename}" ];then
-	download_file "${ncurses_other_link2}" "${ncurses_official_link2}" "${ncurses_filename2}.tar.gz"
+	download_file  "${ncurses_filename2}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ncurses_filename2}.tar.gz
 	cd ${ncurses_filename2}
@@ -352,7 +352,7 @@ if [ "$mysql" == "${mysql5_1_filename}" ];then
 	error_detect "make install"
 	add_to_env "${depends_prefix}/${ncurses_filename2}"
 else
-	download_file "${ncurses_other_link}" "${ncurses_official_link}" "${ncurses_filename}.tar.gz"
+	download_file  "${ncurses_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${ncurses_filename}.tar.gz
 	cd ${ncurses_filename}
@@ -366,7 +366,7 @@ fi
 
 #安装bison
 install_bison(){
-download_file "${bison_other_link}" "${bison_official_link}" "${bison_filename}.tar.gz"
+download_file  "${bison_filename}.tar.gz"
 cd $cur_dir/soft/
 tar xzvf ${bison_filename}.tar.gz
 cd ${bison_filename}

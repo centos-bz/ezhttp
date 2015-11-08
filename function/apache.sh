@@ -84,7 +84,7 @@ fi
 
 
 if [ "$apache" == "${apache2_2_filename}" ];then	
-	download_file "${apache2_2_other_link}" "${apache2_2_official_link}" "${apache2_2_filename}.tar.gz"
+	download_file  "${apache2_2_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apache2_2_filename}.tar.gz
 	cd ${apache2_2_filename}
@@ -120,14 +120,14 @@ elif [ "$apache" == "${apache2_4_filename}" ];then
 	fi	
 
 	#下载apr和apr-util
-	download_file "${apr_other_link}" "${apr_official_link}" "${apr_filename}.tar.gz"
+	download_file  "${apr_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apr_filename}.tar.gz
-	download_file "${apr_util_other_link}" "${apr_util_official_link}" "${apr_util_filename}.tar.gz"
+	download_file  "${apr_util_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apr_util_filename}.tar.gz
 
-	download_file "${apache2_4_other_link}" "${apache2_4_official_link}" "${apache2_4_filename}.tar.gz"
+	download_file  "${apache2_4_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${apache2_4_filename}.tar.gz
 	cd ${apache2_4_filename}

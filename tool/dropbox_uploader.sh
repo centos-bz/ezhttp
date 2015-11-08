@@ -691,7 +691,7 @@ function db_download
             FILE=${FILE##*/}
 
             if [[ $TYPE == "false" ]]; then
-                db_download_file 
+                db_download_file "$SRC/$FILE" "$DEST_DIR/$FILE" 
             else
                 db_download "$SRC/$FILE" "$DEST_DIR"
             fi
@@ -713,7 +713,7 @@ function db_download
             DST="$DST/$SRC"
         fi
 
-        db_download_file 
+        db_download_file "$SRC" "$DST"
 
     #Doesn't exists
     else

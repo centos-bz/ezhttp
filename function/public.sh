@@ -361,7 +361,11 @@ download_file(){
     local dl_arr=($(get_dl $filename_val))
     local speed_tmp=/tmp/speed.txt
     local filepath=${cur_dir}/soft/${filename}
-    	
+
+	if check_file_integrity_md5 $filename;then
+		return
+	fi
+	    	    	
     local dl_num=${#dl_arr[@]}
     if [[ $dl_num -eq 0 ]];then
     	echo "there is no availabal download link for $filename."
@@ -372,10 +376,6 @@ download_file(){
 	    rm -f $speed_tmp
 	    # 分别获取各链接下载速度
 	    for url in ${dl_arr[@]};do
-	    	if check_file_integrity_md5 $filename;then
-	    		return
-	    	fi
-
 	    	echo "testing $url download speed..."
 	        speed=`curl -m 5 -L -s -w '%{speed_download}' "$url" -o /dev/null`
 	        speed=${speed%%.*}

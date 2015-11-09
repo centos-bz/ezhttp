@@ -3,67 +3,52 @@ generate_password(){
 	cat /dev/urandom | head -1 | md5sum | head -c 8
 }
 
-# 根据文件名设置md5变量,以便文件下载完成时能根据文件名取得md5值
-set_md5_val(){
-    local val=$1
-    local md5=$2
-    local new_val=$(echo $val | sed 's/[-.]/_/g')
-    eval md5_${new_val}=$md5
+# 转换为有效的变量名
+get_valid_valname(){
+	local val=$1
+	local new_val=$(eval echo $val | sed 's/[-.]/_/g')
+	echo $new_val
 }
 
-get_md5_val(){
+# 根据文件名设置md5变量,以便文件下载完成时能根据文件名取得md5值
+set_md5(){
+    local val=$1
+    local md5=$2
+    local new_val=$(get_valid_valname $val)
+    eval md5_${new_val}="\$md5"
+}
+
+get_md5(){
 	local val=$1
-	local new_val=$(echo $val | sed 's/[-.]/_/g')
-	eval echo \$md5_${new_val}
+	local new_val=$(get_valid_valname $val)
+	eval echo "\$md5_${new_val}"
 }
 
 get_md5_valname(){
 	local val=$1
-	local new_val=$(echo $val | sed 's/[-.]/_/g')
+	local new_val=$(get_valid_valname $val)
 	echo md5_$new_val
 }
 
-# 根据文件名设置other_link变量
-set_other_link_val(){
+# 根据文件名设置dl变量
+set_dl(){
     local val=$1
-    local other_link=$2
-    local new_val=$(echo $val | sed 's/[-.]/_/g')
-    eval other_link_${new_val}=$other_link
+    local dl="$2"
+    local new_val=$(get_valid_valname $val)
+    eval dl_${new_val}="\$dl"
 }
 
-get_other_link_val(){
+get_dl(){
 	local val=$1
-	local new_val=$(echo $val | sed 's/[-.]/_/g')
-	eval echo \$other_link_${new_val}
+	local new_val=$(get_valid_valname $val)
+	eval echo "\$dl_${new_val}"
 }
 
-get_other_link_valname(){
+get_dl_valname(){
 	local val=$1
-	local new_val=$(echo $val | sed 's/[-.]/_/g')
-	echo other_link_$new_val
+	local new_val=$(get_valid_valname $val)
+	echo dl_$new_val
 }
-
-# 根据文件名设置official_link
-set_official_link_val(){
-    local val=$1
-    local official_link=$2
-    local new_val=$(echo $val | sed 's/[-.]/_/g')
-    eval official_link_${new_val}=$official_link
-}
-
-get_official_link_val(){
-	local val=$1
-	local new_val=$(echo $val | sed 's/[-.]/_/g')
-	eval echo \$official_link_${new_val}
-}
-
-get_official_link_valname(){
-	local val=$1
-	local new_val=$(echo $val | sed 's/[-.]/_/g')
-	echo official_link_$new_val
-}
-
-
 
 #杀掉进程
 kill_pid(){
@@ -322,56 +307,107 @@ check_integrity(){
 	fi
 }
 
-#下载软件
+# 检查文件完整性及md5
+check_file_integrity_md5(){
+	local filename=$1
+	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
+    local filename_val=$(get_valid_valname $filename_without_suffix)	
+	local filepath=${cur_dir}/soft/${filename}
+
+	if [[ -s "${filepath}" ]];then
+		echo "check the file ${filepath} integrity."
+		if check_integrity "${filename}";then
+			echo "the file $filename is complete."
+			echo "checking $filename md5..."
+
+		    eval local md5_preset=$(get_md5 $filename_val)
+
+			if ! which md5sum > /dev/null;then
+				echo "Warning!md5sum command not found,ignore check file md5."
+				return 0
+			fi
+
+		    if [[ "$md5_preset" == "" ]];then
+		    	echo "Warning!$filename preset md5 not found,ignore checking md5."
+		    	return 0
+		    fi
+
+		    local md5_cal=$(md5sum ${filepath}  | awk '{print $1}')
+		    if [[ "$md5_preset" == "$md5_cal" ]];then
+		    	echo "$filename is secure."
+		    	return 0
+		    else
+		    	echo "Danger!The downloaded $filename md5 $md5_cal is not equal with the preset md5 $md5_preset."
+		    	echo "It means the downloaded $filename had modified by someone or your network is insecure."
+		    	echo "please report to the author admin@centos.bz."
+		    	exit 1
+		    fi
+
+		else
+			echo "the file $filename is incomplete.redownload now..."
+			rm -f ${filepath}
+			return 1
+		fi
+	else
+		return 1
+	fi		
+}
+
+# 下载文件
 download_file(){
 	local filename=$1
 	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
-    local filename_val=$(echo $filename_without_suffix | sed 's/[-.]/_/g')
-
-    eval local url1=\${other_link_${filename_val}}	
-    eval local url2=\${official_link_${filename_val}}	
-	if [ -s "${cur_dir}/soft/${filename}" ];then
-		echo "${filename} is existed.check the file integrity."
-
-		if check_integrity "${filename}";then
-			echo "the file $filename is complete."
-		else
-			echo "the file $filename is incomplete.redownload now..."
-			rm -f ${cur_dir}/soft/${filename}
-			download_file "$filename"		
-		fi
-
-	else
-		[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
-		cd ${cur_dir}/soft
-		choose_url_download "$filename"
-	fi
-
-	# 检查文件md5
-	if ! which md5sum > /dev/null;then
-		echo "Warning!md5sum command not found,ignore check file md5."
-		return
-	fi
-
-	echo "checking $filename md5..."
-
-    eval local md5_preset=\${md5_${filename_val}}
-
-    if [[ "$md5_preset" == "" ]];then
-    	echo "Warning!$filename preset md5 not found,ignore checking md5."
-    	return
+    local filename_val=$(get_valid_valname $filename_without_suffix)
+    local dl_arr=($(get_dl $filename_val))
+    local speed_tmp=/tmp/speed.txt
+    local filepath=${cur_dir}/soft/${filename}
+    	
+    local dl_num=${#dl_arr[@]}
+    if [[ $dl_num -eq 0 ]];then
+    	echo "there is no availabal download link for $filename."
+    	exit 1
     fi
 
-    local md5_cal=$(md5sum ${cur_dir}/soft/${filename}  | awk '{print $1}')
-    if [[ "$md5_preset" == "$md5_cal" ]];then
-    	echo "$filename is secure."
-    else
-    	echo "Danger!The downloaded $filename md5 $md5_cal is not equal with the preset md5 $md5_preset."
-    	echo "It means the downloaded $filename had modified by someone or your network is insecure."
-    	echo "please report to the author admin@centos.bz."
-    	exit 1
-    fi	
+    if [[ $dl_num -ne 1 ]]; then	
+	    rm -f $speed_tmp
+	    # 分别获取各链接下载速度
+	    for url in ${dl_arr[@]};do
+	    	if check_file_integrity_md5 $filename;then
+	    		return
+	    	fi
 
+	    	echo "testing $url download speed..."
+	        speed=`curl -m 5 -L -s -w '%{speed_download}' "$url" -o /dev/null`
+	        speed=${speed%%.*}
+	        echo "$speed $url" >> $speed_tmp
+	        local bit
+	        (( bit=$speed*8 ))
+	        echo "$url download speed $(bit_to_human_readable $bit)"
+	    done
+
+	    # 按速度排序
+	    dl_arr=($(sort -rn -k 1 $speed_tmp | awk '{print $2}'))
+
+	fi
+
+	[ ! -d "${cur_dir}/soft" ] && mkdir -p ${cur_dir}/soft
+	cd ${cur_dir}/soft
+
+    # 开始下载
+    for url in ${dl_arr[@]};do
+    	echo "start to download via $url..."
+    	if ! wget --dns-timeout=5 --connect-timeout=10 --read-timeout=30 --no-check-certificate --tries=3 ${url} -O $filename;then
+    		echo "download via $url failed,trying another mirror..."
+    		continue
+    	fi	
+
+    	if check_file_integrity_md5 $filename;then
+    		return
+    	fi
+    done
+
+    echo "Oops!all mirror failed,please report to the author admin@centos.bz."
+    exit 1
 }
 
 #判断64位系统
@@ -381,66 +417,6 @@ is_64bit(){
 	else
 		return 1
 	fi		
-}
-
-
-#选择最优下载url
-choose_url_download()
-{
-	local filename=$1
-	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2)$//')
-    local filename_val=$(echo $filename_without_suffix | sed 's/[-.]/_/g')
-    eval local url1=\${other_link_${filename_val}}	
-    eval local url2=\${official_link_${filename_val}}	
-
-	#测试官方下载速度
-	echo "testing Official mirror download speed..."
-	speed2=`curl -m 5 -L -s -w '%{speed_download}' "$url2" -o /dev/null`
-	echo "Official mirror download speed is $speed2"
-
-	#测试第三方下载速度
-	echo "testing third party mirror download speed..."
-	speed1=`curl -m 5 -L -s -w '%{speed_download}' "$url1" -o /dev/null`
-	echo "third party mirror download speed is $speed1"
-	speed1=${speed1%%.*}
-	speed2=${speed2%%.*}
-	if [ $speed1 -ge $speed2 ];then
-		url=$url1
-		backup_url=$url2
-	else
-		url=$url2
-		backup_url=$url1
-	fi
-	echo "use the url $url to download $filename.."
-	sleep 1
-	#开始下载
-	wget_file "${url}" "${filename}" 
-
-	#测试下载文件完整性,不完整则使用第二个下载地址
-	if ! check_integrity ${filename};then
-		wget_file "${backup_url}" "${filename}"
-		#再次测试文件完整性
-		if ! check_integrity ${filename};then
-			echo "fail to download $filename with url $backup_url."
-			echo "begin use backup url to download.."
-			ez_url="https://www.lxconfig.com/files/ezhttp/${filename}"
-			wget_file "${ez_url}" "${filename}"
-			if ! check_integrity ${filename};then
-				echo "fail to download $filename,exited."
-				exit 1
-			fi	
-		fi
-	fi
-
-}
-
-#wget下载
-wget_file(){
-	local url=$1
-	local filename=$2
-	if ! wget --dns-timeout=5 --connect-timeout=10 --read-timeout=30 --no-check-certificate --tries=3 ${url} -O $filename;then
-		echo "fail to download $filename with url $url."
-	fi
 }
 
 #验证ip合法性

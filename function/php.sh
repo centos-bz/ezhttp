@@ -11,29 +11,29 @@ if [ "$php" == "custom_version" ];then
 			php5_2_filename=$version
 			php=$version
 			read -p "please input $php download url(must be tar.gz file format): "  link
-			set_official_link_val $version "$link"
-			custom_info="$custom_info\nphp5_2_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
+			set_dl $version "$link"
+			custom_info="$custom_info\nphp5_2_filename=$version\n$(get_dl_valname $version)=$link)\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.3\.[0-9]+$';then
 			php5_3_filename=$version
 			php=$version
 			read -p "please input $php download url(must be tar.gz file format): " link
-			set_official_link_val $version "$link"
-			custom_info="$custom_info\nphp5_3_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
+			set_dl $version "$link"
+			custom_info="$custom_info\nphp5_3_filename=$version\n$(get_dl_valname $version)=$link)\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.4\.[0-9]+$';then
 			php5_4_filename=$version
 			php=$version
 			read -p "please input $php download url(must be tar.gz file format): " link
-			set_official_link_val $version "$link"
-			custom_info="$custom_info\nphp5_4_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
+			set_dl $version "$link"
+			custom_info="$custom_info\nphp5_4_filename=$version\n$(get_dl_valname $version)=$link)\n"
 			break
 		elif echo "$version" | grep -q -E '^php-5\.5\.[0-9]+$';then
 			php5_5_filename=$version
 			php=$version
 			read -p "please input $php download url(must be tar.gz file format): " link
-			set_official_link_val $version "$link"
-			custom_info="$custom_info\nphp5_5_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
+			set_dl $version "$link"
+			custom_info="$custom_info\nphp5_5_filename=$version\n$(get_dl_valname $version)=$link)\n"
 			break				
 		else
 			echo "version invalid,please reinput."

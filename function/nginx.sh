@@ -11,20 +11,20 @@ nginx_preinstall_settings(){
 			if echo "$version" | grep -q -E '^nginx-[0-9]+\.[0-9]+\.[0-9]+$';then
 				nginx_filename=$version
 				nginx=$version
-				set_official_link_val $version "http://nginx.org/download/${nginx}.tar.gz"
-				custom_info="$custom_info\nnginx_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
+				set_dl $version "http://nginx.org/download/${nginx}.tar.gz"
+				custom_info="$custom_info\nnginx_filename=$version\n$(get_dl_valname $version)=$(get_dl $version)\n"
 				break
 			elif echo "$version" | grep -q -E '^tengine-[0-9]+\.[0-9]+\.[0-9]+$';then
 				tengine_filename=$version
 				nginx=$version
-				set_official_link_val $version "http://tengine.taobao.org/download/${nginx}.tar.gz"
-				custom_info="$custom_info\ntengine_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
+				set_dl $version "http://tengine.taobao.org/download/${nginx}.tar.gz"
+				custom_info="$custom_info\ntengine_filename=$version\n$(get_dl_valname $version)=$(get_dl $version)\n"
 				break
 			elif echo "$version" | grep -q -E '^ngx_openresty-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$';then
 				openresty_filename=$version
 				nginx=$version
-				set_official_link_val $version "http://openresty.org/download/${nginx}.tar.gz"
-				custom_info="$custom_info\nopenresty_filename=$version\n$(get_official_link_valname $version)=$(get_official_link_val $version)\n"
+				set_dl $version "http://openresty.org/download/${nginx}.tar.gz"
+				custom_info="$custom_info\nopenresty_filename=$version\n$(get_dl_valname $version)=$(get_dl $version)\n"
 				break
 			else
 				echo "version invalid,please reinput."

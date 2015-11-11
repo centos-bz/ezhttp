@@ -89,16 +89,26 @@ if [ "$mysql" != "do_not_install" ];then
 		#提示是否更改编译参数
 		echo -e "the $mysql configure parameter is:\n${mysql_configure_args}\n\n"
 		yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new mysql configure parameter: ' mysql_configure_args" "echo 'you select no,configure parameter will not be changed.'"
-		#检查编译参数是否为空
-		while true; do
-			if [ "$mysql_configure_args" == "" ];then
-				echo "error.mysql configure parameter can not be empty,please reinput."
-				read -p 'please input your new mysql configure parameter: ' mysql_configure_args
-			else
+		if [[ "$yn" == "y" ]];then
+			while true; do
+				#检查编译参数是否为空
+				if [ "$mysql_configure_args" == "" ];then
+					echo "input error.mysql configure parameter can not be empty,please reinput."
+					read -p 'please input your new mysql configure parameter: ' mysql_configure_args
+					continue
+				fi
+
+				#检查是否设置prefix
+				mysql_location=$(echo "$mysql_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
+				if [[ "$mysql_location" == "" ]]; then
+					echo "input error.mysql configure parameter prefix can not be empty,please reinput."
+					read -p 'please input your new mysql configure parameter: ' mysql_configure_args
+					continue
+				fi
 				break
-			fi	
-		done
-		[ "$yn" == "y" ] && echo -e "\nyour new mysql configure parameter is : ${mysql_configure_args}\n"		
+			done
+			echo -e "\nyour new mysql configure parameter is : ${mysql_configure_args}\n"
+		fi
 	else
 		if check_sys packageSupport;then
 			other_option=""

@@ -55,16 +55,28 @@ nginx_preinstall_settings(){
 		#提示是否更改编译参数
 		echo -e "the $nginx configure parameter is:\n${nginx_configure_args}\n\n"
 		yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new nginx configure parameter: ' nginx_configure_args" "echo 'you select no,configure parameter will not be changed.'"
-		#检查编译参数是否为空
-		while true; do
-			if [ "$nginx_configure_args" == "" ];then
-				echo "error.nginx configure parameter can not be empty,please reinput."
-				read -p 'please input your new nginx configure parameter: ' nginx_configure_args
-			else
+	
+		if [[ "$yn" == "y" ]];then
+			while true; do
+				#检查编译参数是否为空
+				if [ "$nginx_configure_args" == "" ];then
+					echo "input error.nginx configure parameter can not be empty,please reinput."
+					read -p 'please input your new nginx configure parameter: ' nginx_configure_args
+					continue
+				fi
+
+				#检查是否设置prefix
+				nginx_location=$(echo "$nginx_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
+				if [[ "$nginx_location" == "" ]]; then
+					echo "input error.nginx configure parameter prefix can not be empty,please reinput."
+					read -p 'please input your new nginx configure parameter: ' nginx_configure_args
+					continue
+				fi
 				break
-			fi	
-		done
-		[ "$yn" == "y" ] && echo -e "\nyour new nginx configure parameter is : ${nginx_configure_args}\n"		
+			done
+			echo -e "\nyour new nginx configure parameter is : ${nginx_configure_args}\n"
+		fi
+
 	fi	
 }
 

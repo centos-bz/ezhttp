@@ -54,16 +54,26 @@ if [ "$apache" != "do_not_install" ];then
 	#提示是否更改编译参数
 	echo -e "the $apache configure parameter is:\n${apache_configure_args}\n\n"
 	yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new apache configure parameter: ' apache_configure_args" "echo 'you select no,configure parameter will not be changed.'"
-	#检查编译参数是否为空
-	while true; do
-		if [ "$apache_configure_args" == "" ];then
-			echo "error.apache configure parameter can not be empty,please reinput."
-			read -p 'please input your new apache configure parameter: ' apache_configure_args
-		else
+	if [[ "$yn" == "y" ]];then
+		while true; do
+			#检查编译参数是否为空
+			if [ "$apache_configure_args" == "" ];then
+				echo "input error.apache configure parameter can not be empty,please reinput."
+				read -p 'please input your new apache configure parameter: ' apache_configure_args
+				continue
+			fi
+
+			#检查是否设置prefix
+			apache_location=$(echo "$apache_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
+			if [[ "$apache_location" == "" ]]; then
+				echo "input error.apache configure parameter prefix can not be empty,please reinput."
+				read -p 'please input your new apache configure parameter: ' apache_configure_args
+				continue
+			fi
 			break
-		fi	
-	done
-	[ "$yn" == "y" ] && echo -e "\nyour new apache configure parameter is : ${apache_configure_args}\n"	
+		done
+		echo -e "\nyour new apache configure parameter is : ${apache_configure_args}\n"
+	fi
 
 fi
 

@@ -129,16 +129,26 @@ if [ "$php" != "do_not_install" ];then
 	php_configure_args=`echo $php_configure_args | sed -r 's/\s+/ /g'`
 	echo -e "the $php configure parameter is:\n${php_configure_args}\n\n"
 	yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
-	#检查编译参数是否为空
-	while true; do
-		if [ "$php_configure_args" == "" ];then
-			echo "error.php configure parameter can not be empty,please reinput."
-			read -p 'please input your new php configure parameter: ' php_configure_args
-		else
+	if [[ "$yn" == "y" ]];then
+		while true; do
+			#检查编译参数是否为空
+			if [ "$php_configure_args" == "" ];then
+				echo "input error.php configure parameter can not be empty,please reinput."
+				read -p 'please input your new php configure parameter: ' php_configure_args
+				continue
+			fi
+
+			#检查是否设置prefix
+			php_location=$(echo "$php_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
+			if [[ "$php_location" == "" ]]; then
+				echo "input error.php configure parameter prefix can not be empty,please reinput."
+				read -p 'please input your new php configure parameter: ' php_configure_args
+				continue
+			fi
 			break
-		fi	
-	done
-	[ "$yn" == "y" ] && echo -e "\nyour new php configure parameter is : ${php_configure_args}\n"
+		done
+		echo -e "\nyour new php configure parameter is : ${php_configure_args}\n"
+	fi
 fi
 }
 

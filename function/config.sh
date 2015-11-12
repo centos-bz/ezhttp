@@ -180,12 +180,12 @@ http://pecl.php.net/get/redis-2.2.7.tgz
 '
 
 #php mongo模块设置
-php_mongo_filename="mongo-php-driver-1.0.0"
-set_md5 $php_mongo_filename "1d1838e9ee07bacfab861e0b3f448333"
+php_mongo_filename="mongo-php-driver-legacy-1.6.11"
+set_md5 $php_mongo_filename "674b8598202fff91c90341cfb0e2e25e"
 set_dl $php_mongo_filename '
-http://cdn.yyupload.com/down/499809/software/mongo-php-driver-1.0.0.tar.gz
-https://www.lxconfig.com/files/ezhttp/mongo-php-driver-1.0.0.tar.gz
-https://codeload.github.com/mongodb/mongo-php-driver/tar.gz/1.0.0
+http://cdn.yyupload.com/down/499809/software/mongo-php-driver-legacy-1.6.11.tar.gz
+https://www.lxconfig.com/files/ezhttp/mongo-php-driver-legacy-1.6.11.tar.gz
+https://codeload.github.com/mongodb/mongo-php-driver-legacy/tar.gz/1.6.11
 '
 
 #pkgconfig设置

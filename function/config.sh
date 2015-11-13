@@ -550,12 +550,12 @@ http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
 '
 
 #libpng设置
-libpng_filename="libpng-1.6.17"
-set_md5 $libpng_filename "134282f1752dcf4cd81a37b8ff421cef"
+libpng_filename="libpng-1.6.19"
+set_md5 $libpng_filename "3121bdc77c365a87e054b9f859f421fe"
 set_dl $libpng_filename '
-http://cdn.yyupload.com/down/499809/software/libpng-1.6.17.tar.gz
-https://www.lxconfig.com/files/ezhttp/libpng-1.6.17.tar.gz
-http://jaist.dl.sourceforge.net/project/libpng/libpng16/1.6.17/libpng-1.6.17.tar.gz
+http://cdn.yyupload.com/down/499809/software/libpng-1.6.19.tar.gz
+https://www.lxconfig.com/files/ezhttp/libpng-1.6.19.tar.gz
+http://jaist.dl.sourceforge.net/project/libpng/libpng16/1.6.19/libpng-1.6.19.tar.gz
 '
 
 #mhash设置
@@ -621,6 +621,65 @@ https://www.lxconfig.com/files/ezhttp/jailkit-2.17.tar.gz
 http://olivier.sessink.nl/jailkit/jailkit-2.17.tar.gz
 '
 
+# jdk7设置
+if is_64bit;then
+	jdk7_64_filename="jdk1.7.0_79"
+	set_md5 $jdk7_64_filename "9222e097e624800fdd9bfb568169ccad"
+	set_dl $jdk7_64_filename '
+	http://cdn.yyupload.com/down/499809/software/jdk-7u79-linux-x64.tar.gz
+	https://www.lxconfig.com/files/ezhttp/jdk-7u79-linux-x64.tar.gz
+	http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
+	'
+	jdk7_filename=$jdk7_64_filename
+else
+	jdk7_32_filename="jdk1.7.0_79"
+	set_md5 $jdk7_32_filename "b0ed59147c77a6d3e63a7b340e4e1d28"
+	set_dl $jdk7_32_filename '
+	http://cdn.yyupload.com/down/499809/software/jdk-7u79-linux-i586.tar.gz
+	https://www.lxconfig.com/files/ezhttp/jdk-7u79-linux-i586.tar.gz
+	http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-i586.tar.gz
+	'
+	jdk7_filename=$jdk7_32_filename
+fi
+
+# jdk8设置
+if is_64bit;then
+	jdk8_64_filename="jdk1.8.0_66"
+	set_md5 $jdk8_64_filename "88f31f3d642c3287134297b8c10e61bf"
+	set_dl $jdk8_64_filename '
+	http://cdn.yyupload.com/down/499809/software/jdk-8u66-linux-x64.tar.gz
+	https://www.lxconfig.com/files/ezhttp/jdk-8u66-linux-x64.tar.gz
+	http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-x64.tar.gz
+	'
+	jdk8_filename=$jdk8_64_filename
+else
+	jdk8_32_filename="jdk1.8.0_66"
+	set_md5 $jdk8_32_filename "8a1f36b29152856a5dd2c3953a4c24a1"
+	set_dl $jdk8_32_filename '
+	http://cdn.yyupload.com/down/499809/software/jdk-8u66-linux-i586.tar.gz
+	https://www.lxconfig.com/files/ezhttp/jdk-8u66-linux-i586.tar.gz
+	http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-i586.tar.gz
+	'
+	jdk8_filename=$jdk8_32_filename
+fi
+
+# tomcat7设置
+tomcat7_filename="apache-tomcat-7.0.65"
+set_md5 $tomcat7_filename "5e4cb4c1582e73ad10563f26729c39b6"
+set_dl $tomcat7_filename '
+http://cdn.yyupload.com/down/499809/software/apache-tomcat-7.0.65.tar.gz
+https://www.lxconfig.com/files/ezhttp/apache-tomcat-7.0.65.tar.gz
+http://mirror.symnds.com/software/Apache/tomcat/tomcat-7/v7.0.65/bin/apache-tomcat-7.0.65.tar.gz
+'
+
+# tomcat8设置
+tomcat8_filename="apache-tomcat-8.0.28"
+set_md5 $tomcat8_filename "4b7ba7a5af0a5c395c0740fc011b59d1"
+set_dl $tomcat8_filename '
+http://cdn.yyupload.com/down/499809/software/apache-tomcat-8.0.28.tar.gz
+https://www.lxconfig.com/files/ezhttp/apache-tomcat-8.0.28.tar.gz
+http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.28/bin/apache-tomcat-8.0.28.tar.gz
+'
 
 ########################其它设置########################
 
@@ -630,11 +689,17 @@ apache_arr=(do_not_install ${apache2_2_filename} ${apache2_4_filename} custom_ve
 mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version)
 php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version)
 php_mode_arr=(with_apache  with_fastcgi)
-php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename} ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} ${xdebug_filename} mssql)
-other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename})
+php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
+				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} 
+				 ${xdebug_filename} mssql)
+other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} 
+				${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename} ${jdk7_filename} 
+				${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename})
 
 #工具菜单设置
-tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user Network_analysis Configure_apt_yum_repository Install_rsync_server Backup_setup Count_process_file_access Back_to_main_menu)
+tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port 
+			Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user 
+			Network_analysis Configure_apt_yum_repository Install_rsync_server Backup_setup Count_process_file_access Back_to_main_menu)
 
 #升级软件菜单
 upgrade_arr=(Upgrade_nginx_tengine_openresty Back_to_main_menu)

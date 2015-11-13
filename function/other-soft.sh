@@ -124,201 +124,265 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		rockmongo_location=${rockmongo_location:=$default_location}
 		rockmongo_location=`filter_location "$rockmongo_location"`
 		echo "rockmongo location: $rockmongo_location"
-	fi	
+	fi
 
+	# jdk7安装路径
+	if if_in_array "${jdk7_filename}" "$other_soft_install";then
+		default_location="/usr/local/$jdk7_filename"
+		read -p "input $jdk7_filename location(default:$default_location): " jdk7_location
+		jdk7_location=${jdk7_location:=$default_location}
+		jdk7_location=`filter_location "$jdk7_location"`
+		echo "jdk7 location: $jdk7_location"
+		EZ_JAVA_HOME="${jdk7_location}"
+	fi
+
+	# jdk8安装路径
+	if if_in_array "${jdk8_filename}" "$other_soft_install";then
+		default_location="/usr/local/$jdk8_filename"
+		read -p "input $jdk8_filename location(default:$default_location): " jdk8_location
+		jdk8_location=${jdk8_location:=$default_location}
+		jdk8_location=`filter_location "$jdk8_location"`
+		echo "jdk8 location: $jdk8_location"
+		EZ_JAVA_HOME="${jdk8_location}"
+	fi
+
+	# tomcat7安装路径
+	if if_in_array "${tomcat7_filename}" "$other_soft_install";then
+		default_location="/usr/local/tomcat7"
+		read -p "input $tomcat7_filename location(default:$default_location): " tomcat7_location
+		tomcat7_location=${tomcat7_location:=$default_location}
+		tomcat7_location=`filter_location "$tomcat7_location"`
+		echo "tomcat7 location: $tomcat7_location"
+
+		if [[ "$EZ_JAVA_HOME" == "" ]]; then
+			while true; do
+				read -p "Please input jdk location: " EZ_JAVA_HOME
+				if [[ -d "$EZ_JAVA_HOME" ]];then
+					break
+				else
+					echo "the location $EZ_JAVA_HOME not found or is not a dir,please reinput."
+				fi	
+			done	
+		fi
+	fi
+
+	#  tomcat8安装路径
+	if if_in_array "${tomcat8_filename}" "$other_soft_install";then
+		default_location="/usr/local/tomcat8"
+		read -p "input $tomcat8_filename location(default:$default_location): " tomcat8_location
+		tomcat8_location=${tomcat8_location:=$default_location}
+		tomcat8_location=`filter_location "$tomcat8_location"`
+		echo "tomcat8 location: $tomcat8_location"
+		if [[ "$EZ_JAVA_HOME" == "" ]]; then
+			while true; do
+				read -p "Please input jdk location: " EZ_JAVA_HOME
+				if [[ -d "$EZ_JAVA_HOME" ]];then
+					break
+				else
+					echo "the location $EZ_JAVA_HOME not found or is not a dir,please reinput."
+				fi	
+			done	
+		fi		
+	fi
+				
 fi
 }
 
 #安装其它软件
 install_other_soft(){
-if_in_array "${memcached_filename}" "$other_soft_install" && check_installed_ask "install_Memcached" "${memcached_location}"
-if_in_array "${PureFTPd_filename}" "$other_soft_install" && check_installed_ask "install_PureFTPd" "${pureftpd_location}"
-if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && check_installed_ask "install_phpmyadmin" "${phpmyadmin_location}"
-if_in_array "${redis_filename}" "$other_soft_install" && check_installed_ask "install_redis" "${redis_location}"
-if_in_array "${mongodb_filename}" "$other_soft_install" && check_installed_ask "install_mongodb" "${mongodb_location}"
-if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && check_installed_ask "install_redisadmin" "${phpRedisAdmin_location}"
-if_in_array "${memadmin_filename}" "$other_soft_install" && check_installed_ask "install_memadmin" "${memadmin_location}"
-if_in_array "${rockmongo_filename}" "$other_soft_install" && check_installed_ask "install_rockmongo" "${rockmongo_location}"
+	if_in_array "${memcached_filename}" "$other_soft_install" && check_installed_ask "install_Memcached" "${memcached_location}"
+	if_in_array "${PureFTPd_filename}" "$other_soft_install" && check_installed_ask "install_PureFTPd" "${pureftpd_location}"
+	if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && check_installed_ask "install_phpmyadmin" "${phpmyadmin_location}"
+	if_in_array "${redis_filename}" "$other_soft_install" && check_installed_ask "install_redis" "${redis_location}"
+	if_in_array "${mongodb_filename}" "$other_soft_install" && check_installed_ask "install_mongodb" "${mongodb_location}"
+	if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && check_installed_ask "install_redisadmin" "${phpRedisAdmin_location}"
+	if_in_array "${memadmin_filename}" "$other_soft_install" && check_installed_ask "install_memadmin" "${memadmin_location}"
+	if_in_array "${rockmongo_filename}" "$other_soft_install" && check_installed_ask "install_rockmongo" "${rockmongo_location}"
+	if_in_array "${jdk7_filename}" "$other_soft_install" && check_installed_ask "install_jdk7" "${jdk7_location}"
+	if_in_array "${jdk8_filename}" "$other_soft_install" && check_installed_ask "install_jdk8" "${jdk8_location}"
+	if_in_array "${tomcat7_filename}" "$other_soft_install" && check_installed_ask "install_tomcat7" "${tomcat7_location}"
+	if_in_array "${tomcat8_filename}" "$other_soft_install" && check_installed_ask "install_tomcat8" "${tomcat8_location}"
 }
 
 #安装memcached
 install_Memcached(){
-groupadd memcache
-useradd -M -s /bin/false -g memcache memcache
-#安装依赖
-if check_sys packageManager apt;then
-	apt-get -y install libevent-dev
-elif check_sys packageManager yum;then
-	yum -y install libevent-devel
-else
-	check_installed "install_libevent" "${depends_prefix}/${libevent_filename}"
-fi		
+	groupadd memcache
+	useradd -M -s /bin/false -g memcache memcache
+	#安装依赖
+	if check_sys packageManager apt;then
+		apt-get -y install libevent-dev
+	elif check_sys packageManager yum;then
+		yum -y install libevent-devel
+	else
+		check_installed "install_libevent" "${depends_prefix}/${libevent_filename}"
+	fi		
 
-download_file  "${memcached_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${memcached_filename}.tar.gz
-cd ${memcached_filename}
-make clean
-if check_sys packageSupport;then
-	other_option=""
-else
-	other_option="--with-libevent=${depends_prefix}/${libevent_filename}"
-fi
-error_detect "./configure --prefix=$memcached_location $other_option"
-error_detect "parallel_make"
-error_detect "make install"
-rm -f /etc/init.d/memcached
-cp $cur_dir/conf/memcached-init /etc/init.d/memcached
-chmod +x /etc/init.d/memcached
-sed -i "s#^memcached_location=.*#memcached_location=$memcached_location#" /etc/init.d/memcached
-mkdir -p /var/lock/subsys/
-echo "memcached_location=$memcached_location" >> /etc/ezhttp_info_do_not_del
-boot_start memcached
+	download_file  "${memcached_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${memcached_filename}.tar.gz
+	cd ${memcached_filename}
+	make clean
+	if check_sys packageSupport;then
+		other_option=""
+	else
+		other_option="--with-libevent=${depends_prefix}/${libevent_filename}"
+	fi
+
+	error_detect "./configure --prefix=$memcached_location $other_option"
+	error_detect "parallel_make"
+	error_detect "make install"
+	rm -f /etc/init.d/memcached
+	cp $cur_dir/conf/memcached-init /etc/init.d/memcached
+	chmod +x /etc/init.d/memcached
+	sed -i "s#^memcached_location=.*#memcached_location=$memcached_location#" /etc/init.d/memcached
+	mkdir -p /var/lock/subsys/
+	echo "memcached_location=$memcached_location" >> /etc/ezhttp_info_do_not_del
+	boot_start memcached
 }
 
 #安装phpMyAdmin
 install_phpmyadmin(){
-download_file  "${phpMyAdmin_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${phpMyAdmin_filename}.tar.gz
-mkdir -p ${phpmyadmin_location}
-\cp -a ${phpMyAdmin_filename}/* ${phpmyadmin_location}
-#禁用phpmyadmin自动在线检测版本功能，因为在国内有时无法访问检测版本的链接，会导致超时，影响phpmyadmin操作。
-sed -i '1aexit;' $phpmyadmin_location/version_check.php
+	download_file  "${phpMyAdmin_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${phpMyAdmin_filename}.tar.gz
+	mkdir -p ${phpmyadmin_location}
+	\cp -a ${phpMyAdmin_filename}/* ${phpmyadmin_location}
+	#禁用phpmyadmin自动在线检测版本功能，因为在国内有时无法访问检测版本的链接，会导致超时，影响phpmyadmin操作。
+	sed -i '1aexit;' $phpmyadmin_location/version_check.php
 }
 
 #安装PureFTPd
 install_PureFTPd(){
-download_file  "${PureFTPd_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${PureFTPd_filename}.tar.gz
-cd ${PureFTPd_filename}
-make clean
-[[ $user_manager_pureftpd == true ]] && other_option="--with-mysql=${mysql_location}" || other_option="--with-puredb"
-error_detect "./configure --prefix=$pureftpd_location --with-altlog --with-cookie --with-throttling --with-ratios --with-quotas --with-language=simplified-chinese $other_option"
-error_detect "parallel_make"
-error_detect "make install"
-mkdir -p $pureftpd_location/etc
-cp -f configuration-file/pure-config.pl $pureftpd_location/bin/pure-config.pl
-cp -f configuration-file/pure-ftpd.conf $pureftpd_location/etc
-rm -f /etc/init.d/pureftpd
-cp -f $cur_dir/conf/init.d.pureftpd /etc/init.d/pureftpd
-chmod +x /etc/init.d/pureftpd
-sed -i "s#^pureftpd_location=.*#pureftpd_location=$pureftpd_location#" /etc/init.d/pureftpd
-sed -i "s#\${exec_prefix}#$pureftpd_location#" $pureftpd_location/bin/pure-config.pl
-chmod +x ${pureftpd_location}/bin/pure-config.pl
-echo "pureftpd_location=$pureftpd_location" >> /etc/ezhttp_info_do_not_del
-boot_start pureftpd
+	download_file  "${PureFTPd_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${PureFTPd_filename}.tar.gz
+	cd ${PureFTPd_filename}
+	make clean
+	[[ $user_manager_pureftpd == true ]] && other_option="--with-mysql=${mysql_location}" || other_option="--with-puredb"
+	error_detect "./configure --prefix=$pureftpd_location --with-altlog --with-cookie --with-throttling --with-ratios --with-quotas --with-language=simplified-chinese $other_option"
+	error_detect "parallel_make"
+	error_detect "make install"
+	mkdir -p $pureftpd_location/etc
+	cp -f configuration-file/pure-config.pl $pureftpd_location/bin/pure-config.pl
+	cp -f configuration-file/pure-ftpd.conf $pureftpd_location/etc
+	rm -f /etc/init.d/pureftpd
+	cp -f $cur_dir/conf/init.d.pureftpd /etc/init.d/pureftpd
+	chmod +x /etc/init.d/pureftpd
+	sed -i "s#^pureftpd_location=.*#pureftpd_location=$pureftpd_location#" /etc/init.d/pureftpd
+	sed -i "s#\${exec_prefix}#$pureftpd_location#" $pureftpd_location/bin/pure-config.pl
+	chmod +x ${pureftpd_location}/bin/pure-config.pl
+	echo "pureftpd_location=$pureftpd_location" >> /etc/ezhttp_info_do_not_del
+	boot_start pureftpd
 
-#如果选择安装ftp面板
-if [[ $user_manager_pureftpd == true ]]; then
-	#修改pure-ftpd.conf
-	if ! grep -q "^MySQLConfigFile" $pureftpd_location/etc/pure-ftpd.conf;then
-		sed -i "s@# MySQLConfigFile.*@MySQLConfigFile    $pureftpd_location/etc/pureftpd-mysql.conf@" $pureftpd_location/etc/pure-ftpd.conf
+	#如果选择安装ftp面板
+	if [[ $user_manager_pureftpd == true ]]; then
+		#修改pure-ftpd.conf
 		if ! grep -q "^MySQLConfigFile" $pureftpd_location/etc/pure-ftpd.conf;then
-			echo "MySQLConfigFile    $pureftpd_location/etc/pureftpd-mysql.conf" >> $pureftpd_location/etc/pure-ftpd.conf
-		fi	
-	fi
+			sed -i "s@# MySQLConfigFile.*@MySQLConfigFile    $pureftpd_location/etc/pureftpd-mysql.conf@" $pureftpd_location/etc/pure-ftpd.conf
+			if ! grep -q "^MySQLConfigFile" $pureftpd_location/etc/pure-ftpd.conf;then
+				echo "MySQLConfigFile    $pureftpd_location/etc/pureftpd-mysql.conf" >> $pureftpd_location/etc/pure-ftpd.conf
+			fi	
+		fi
 
-	#增加pureftpd-mysql.conf
-	cat > $pureftpd_location/etc/pureftpd-mysql.conf <<EOF
-	MYSQLSocket     /tmp/mysql.sock
-	MYSQLPort       3306
-	MYSQLUser       $pureftpd_user
-	MYSQLPassword   $pureftpd_user_pass
-	MYSQLDatabase   $pureftpd_database
-	MYSQLCrypt 	md5
+		#增加pureftpd-mysql.conf
+		cat > $pureftpd_location/etc/pureftpd-mysql.conf <<EOF
+		MYSQLSocket     /tmp/mysql.sock
+		MYSQLPort       3306
+		MYSQLUser       $pureftpd_user
+		MYSQLPassword   $pureftpd_user_pass
+		MYSQLDatabase   $pureftpd_database
+		MYSQLCrypt 	md5
 
 
-	MYSQLGetPW      SELECT Password FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
-	MYSQLGetUID     SELECT Uid FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
-	MYSQLGetGID     SELECT Gid FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
-	MYSQLGetDir     SELECT Dir FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
-	MySQLGetRatioUL SELECT ULRatio FROM users WHERE User="\L"
-	MySQLGetRatioDL SELECT DLRatio FROM users WHERE User="\L"
-	MySQLGetBandwidthUL SELECT ULBandwidth FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
-	MySQLGetBandwidthDL SELECT DLBandwidth FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+		MYSQLGetPW      SELECT Password FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+		MYSQLGetUID     SELECT Uid FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+		MYSQLGetGID     SELECT Gid FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+		MYSQLGetDir     SELECT Dir FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+		MySQLGetRatioUL SELECT ULRatio FROM users WHERE User="\L"
+		MySQLGetRatioDL SELECT DLRatio FROM users WHERE User="\L"
+		MySQLGetBandwidthUL SELECT ULBandwidth FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
+		MySQLGetBandwidthDL SELECT DLBandwidth FROM users WHERE User="\L" AND Status="1" AND (Ipaddress = "*" OR Ipaddress LIKE "\R")
 
 EOF
 
-	#安装ftp面板
-	download_file  "${user_manager_pureftpd_filename}.tar.gz"
-	cd $cur_dir/soft/
-	tar xzvf ${user_manager_pureftpd_filename}.tar.gz
-	mkdir -p ${user_manager_location}
-	\cp -a ftp/* ${user_manager_location}
-	sed -i 's/$LANG = "English";/$LANG = "Chinese";/' ${user_manager_location}/config.php
-	sed -i "s/$DBLogin = \"ftp\";/$DBLogin = \"$pureftpd_user\";/" ${user_manager_location}/config.php
-	sed -i "s/$DBPassword = \"tmppasswd\";/$DBPassword = \"$pureftpd_user_pass\";/" ${user_manager_location}/config.php
-	sed -i "s/$DBDatabase = \"ftpusers\";/$DBDatabase = \"$pureftpd_database\";/" ${user_manager_location}/config.php
+		#安装ftp面板
+		download_file  "${user_manager_pureftpd_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${user_manager_pureftpd_filename}.tar.gz
+		mkdir -p ${user_manager_location}
+		\cp -a ftp/* ${user_manager_location}
+		sed -i 's/$LANG = "English";/$LANG = "Chinese";/' ${user_manager_location}/config.php
+		sed -i "s/$DBLogin = \"ftp\";/$DBLogin = \"$pureftpd_user\";/" ${user_manager_location}/config.php
+		sed -i "s/$DBPassword = \"tmppasswd\";/$DBPassword = \"$pureftpd_user_pass\";/" ${user_manager_location}/config.php
+		sed -i "s/$DBDatabase = \"ftpusers\";/$DBDatabase = \"$pureftpd_database\";/" ${user_manager_location}/config.php
 
-	#记录安装信息
-	echo "user_manager_pureftpd=true" >> /etc/ezhttp_info_do_not_del
-else
-	#修改pure-ftpd.conf
-	if ! grep -q "^PureDB" $pureftpd_location/etc/pure-ftpd.conf;then
-		sed -i "s@# PureDB                        /etc/pureftpd.pdb@PureDB                        $pureftpd_location/etc/pureftpd.pdb@" $pureftpd_location/etc/pure-ftpd.conf
-	fi
+		#记录安装信息
+		echo "user_manager_pureftpd=true" >> /etc/ezhttp_info_do_not_del
+	else
+		#修改pure-ftpd.conf
+		if ! grep -q "^PureDB" $pureftpd_location/etc/pure-ftpd.conf;then
+			sed -i "s@# PureDB                        /etc/pureftpd.pdb@PureDB                        $pureftpd_location/etc/pureftpd.pdb@" $pureftpd_location/etc/pure-ftpd.conf
+		fi
 
-	#记录安装信息
-	echo "user_manager_pureftpd=false" >> /etc/ezhttp_info_do_not_del
-fi	
+		#记录安装信息
+		echo "user_manager_pureftpd=false" >> /etc/ezhttp_info_do_not_del
+	fi	
 }
 
 #安装redis
 install_redis(){
-groupadd redis	
-useradd -M -s /bin/false -g redis redis
-download_file  "${redis_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${redis_filename}.tar.gz
-cd ${redis_filename}
-make clean
-error_detect "parallel_make"
-mkdir -p ${redis_location}/etc/ ${redis_location}/logs/ ${redis_location}/db/ ${redis_location}/bin/
-\cp redis.conf ${redis_location}/etc/
-#更改配置文件
-sed -i 's/^daemonize.*/daemonize yes/' ${redis_location}/etc/redis.conf
-sed -i "s#^pidfile.*#pidfile ${redis_location}/logs/redis.pid#" ${redis_location}/etc/redis.conf
-sed -i 's/^tcp-keepalive.*/tcp-keepalive 60/' ${redis_location}/etc/redis.conf
-sed -i "s#^logfile.*#logfile ${redis_location}/logs/redis.log#" ${redis_location}/etc/redis.conf
-sed -i 's/^stop-writes-on-bgsave-error.*/stop-writes-on-bgsave-error no/' ${redis_location}/etc/redis.conf
-sed -i "s#^dir.*#dir ${redis_location}/db/#" ${redis_location}/etc/redis.conf
-sed -i "s/^# maxmemory .*/maxmemory $redisMaxMemory/" ${redis_location}/etc/redis.conf
-sed -i "s/^# maxmemory-policy.*/maxmemory-policy volatile-lru/" ${redis_location}/etc/redis.conf
+	groupadd redis	
+	useradd -M -s /bin/false -g redis redis
+	download_file  "${redis_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${redis_filename}.tar.gz
+	cd ${redis_filename}
+	make clean
+	error_detect "parallel_make"
+	mkdir -p ${redis_location}/etc/ ${redis_location}/logs/ ${redis_location}/db/ ${redis_location}/bin/
+	\cp redis.conf ${redis_location}/etc/
+	#更改配置文件
+	sed -i 's/^daemonize.*/daemonize yes/' ${redis_location}/etc/redis.conf
+	sed -i "s#^pidfile.*#pidfile ${redis_location}/logs/redis.pid#" ${redis_location}/etc/redis.conf
+	sed -i 's/^tcp-keepalive.*/tcp-keepalive 60/' ${redis_location}/etc/redis.conf
+	sed -i "s#^logfile.*#logfile ${redis_location}/logs/redis.log#" ${redis_location}/etc/redis.conf
+	sed -i 's/^stop-writes-on-bgsave-error.*/stop-writes-on-bgsave-error no/' ${redis_location}/etc/redis.conf
+	sed -i "s#^dir.*#dir ${redis_location}/db/#" ${redis_location}/etc/redis.conf
+	sed -i "s/^# maxmemory .*/maxmemory $redisMaxMemory/" ${redis_location}/etc/redis.conf
+	sed -i "s/^# maxmemory-policy.*/maxmemory-policy volatile-lru/" ${redis_location}/etc/redis.conf
 
 
-sed -i 's/^appendonly.*/appendonly yes/' ${redis_location}/etc/redis.conf
+	sed -i 's/^appendonly.*/appendonly yes/' ${redis_location}/etc/redis.conf
 
-\cp src/redis-server src/redis-cli src/redis-benchmark src/redis-check-aof src/redis-check-dump ${redis_location}/bin/
+	\cp src/redis-server src/redis-cli src/redis-benchmark src/redis-check-aof src/redis-check-dump ${redis_location}/bin/
 
-\cp $cur_dir/conf/init.d.redis /etc/init.d/redis
-sed -i "s#^EXEC=.*#EXEC=${redis_location}/bin/redis-server#" /etc/init.d/redis 
-sed -i "s#^CLIEXEC=.*#CLIEXEC=${redis_location}/bin/redis-cli#" /etc/init.d/redis 
-sed -i "s#^PIDFILE=.*#PIDFILE=${redis_location}/logs/redis.pid#" /etc/init.d/redis 
-sed -i "s#^CONF=.*#CONF=${redis_location}/etc/redis.conf#" /etc/init.d/redis 
-sed -i '2 a\# chkconfig:   - 85 15' /etc/init.d/redis
-sed -i 's#$EXEC $CONF#su -s /bin/bash -c "$EXEC $CONF" redis \&#' /etc/init.d/redis
+	\cp $cur_dir/conf/init.d.redis /etc/init.d/redis
+	sed -i "s#^EXEC=.*#EXEC=${redis_location}/bin/redis-server#" /etc/init.d/redis 
+	sed -i "s#^CLIEXEC=.*#CLIEXEC=${redis_location}/bin/redis-cli#" /etc/init.d/redis 
+	sed -i "s#^PIDFILE=.*#PIDFILE=${redis_location}/logs/redis.pid#" /etc/init.d/redis 
+	sed -i "s#^CONF=.*#CONF=${redis_location}/etc/redis.conf#" /etc/init.d/redis 
+	sed -i '2 a\# chkconfig:   - 85 15' /etc/init.d/redis
+	sed -i 's#$EXEC $CONF#su -s /bin/bash -c "$EXEC $CONF" redis \&#' /etc/init.d/redis
 
-chown -R redis ${redis_location} 
-chmod +x /etc/init.d/redis
-boot_start redis
+	chown -R redis ${redis_location} 
+	chmod +x /etc/init.d/redis
+	boot_start redis
 
-! grep "vm.overcommit_memory = 1"  /etc/sysctl.conf && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
-sysctl -p
+	! grep "vm.overcommit_memory = 1"  /etc/sysctl.conf && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
+	sysctl -p
 }
 
 #安装mongo
 install_mongodb(){
-groupadd mongod	
-useradd -M -s /bin/false -g mongod mongod
-download_file  "${mongodb_filename}.tgz"
-cd $cur_dir/soft/
-tar xzvf ${mongodb_filename}.tgz
-mkdir -p  ${mongodb_location}/etc/ ${mongodb_location}/logs/ ${mongodb_data_location}
-cp -a $mongodb_filename/bin/ $mongodb_location
+	groupadd mongod	
+	useradd -M -s /bin/false -g mongod mongod
+	download_file  "${mongodb_filename}.tgz"
+	cd $cur_dir/soft/
+	tar xzvf ${mongodb_filename}.tgz
+	mkdir -p  ${mongodb_location}/etc/ ${mongodb_location}/logs/ ${mongodb_data_location}
+	cp -a $mongodb_filename/bin/ $mongodb_location
 
-cat > ${mongodb_location}/etc/mongod.conf <<EOF
+	cat > ${mongodb_location}/etc/mongod.conf <<EOF
 # mongod.conf
 
 #where to log
@@ -418,7 +482,7 @@ diaglog = 0
 
 EOF
 
-cat > /etc/init.d/mongod <<EOF
+	cat > /etc/init.d/mongod <<EOF
 #!/bin/bash
 
 # mongod - Startup script for mongod
@@ -459,46 +523,84 @@ esac
 
 EOF
 
-chown -R mongod ${mongodb_location}
-chown -R mongod ${mongodb_data_location}
-chmod +x /etc/init.d/mongod
-boot_start mongod
+	chown -R mongod ${mongodb_location}
+	chown -R mongod ${mongodb_data_location}
+	chmod +x /etc/init.d/mongod
+	boot_start mongod
 }
 
 
 #安装phpRedisAdmin
 install_redisadmin(){
-download_file  "${phpRedisAdmin_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${phpRedisAdmin_filename}.tar.gz
-mkdir -p ${phpRedisAdmin_location}
-\cp -a ${phpRedisAdmin_filename}/* ${phpRedisAdmin_location}
+	download_file  "${phpRedisAdmin_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${phpRedisAdmin_filename}.tar.gz
+	mkdir -p ${phpRedisAdmin_location}
+	\cp -a ${phpRedisAdmin_filename}/* ${phpRedisAdmin_location}
 
-#Predis
-download_file  "${Predis_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${Predis_filename}.tar.gz
-mkdir -p ${phpRedisAdmin_location}/vendor/
-\cp -a ${Predis_filename}/* ${phpRedisAdmin_location}/vendor/
+	#Predis
+	download_file  "${Predis_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${Predis_filename}.tar.gz
+	mkdir -p ${phpRedisAdmin_location}/vendor/
+	\cp -a ${Predis_filename}/* ${phpRedisAdmin_location}/vendor/
 
 }
 
 #安装memadmin
 install_memadmin(){
-download_file  "${memadmin_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${memadmin_filename}.tar.gz
-mkdir -p ${memadmin_location}
-\cp -a ${memadmin_filename}/* ${memadmin_location}
+	download_file  "${memadmin_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${memadmin_filename}.tar.gz
+	mkdir -p ${memadmin_location}
+	\cp -a ${memadmin_filename}/* ${memadmin_location}
 }
 
 #安装rockmongo
 install_rockmongo(){
-download_file  "${rockmongo_filename}.zip"
-cd $cur_dir/soft/
-rm -rf rockmongo-fix-auth
-unzip ${rockmongo_filename}.zip
-mkdir -p ${rockmongo_location}
-\cp -a rockmongo-fix-auth/* ${rockmongo_location}
+	download_file  "${rockmongo_filename}.zip"
+	cd $cur_dir/soft/
+	rm -rf rockmongo-fix-auth
+	unzip ${rockmongo_filename}.zip
+	mkdir -p ${rockmongo_location}
+	\cp -a rockmongo-fix-auth/* ${rockmongo_location}
 
+}
+
+# 安装jdk7
+install_jdk7(){
+	download_file "${jdk7_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${jdk7_filename}.tar.gz
+	mkdir -p ${jdk7_location}
+	\cp -a ${jdk7_filename}/* ${jdk7_location}
+}
+
+# 安装jd8
+install_jdk8(){
+	download_file "${jdk8_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${jdk8_filename}.tar.gz
+	mkdir -p ${jdk8_location}
+	\cp -a ${jdk8_filename}/* ${jdk8_location}
+}
+
+# 安装tomcat7
+install_tomcat7(){
+	download_file "${tomcat7_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${tomcat7_filename}.tar.gz
+	mkdir -p ${tomcat7_location}
+	\cp -a ${tomcat7_filename}/* ${tomcat7_location}
+	echo "export JAVA_HOME=${EZ_JAVA_HOME}" > ${tomcat7_location}/bin/setenv.sh
+}
+
+# 安装tomcat8
+install_tomcat8(){
+	download_file "${tomcat8_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${tomcat8_filename}.tar.gz
+	mkdir -p ${tomcat8_location}
+	\cp -a ${tomcat8_filename}/* ${tomcat8_location}
+	echo "export JAVA_HOME=${EZ_JAVA_HOME}" > ${tomcat7_location}/bin/setenv.sh
 }

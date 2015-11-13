@@ -175,6 +175,11 @@ mongodb_data_location="${mongodb_data_location}"
 phpRedisAdmin_location="${phpRedisAdmin_location}"
 memadmin_location=${memadmin_location}
 rockmongo_location=${rockmongo_location}
+jdk7_location=${jdk7_location}
+jdk8_location=${jdk8_location}
+JAVA_HOME=${EZ_JAVA_HOME}
+tomcat7_location=${tomcat7_location}
+tomcat8_location=${tomcat8_location}
 EOF
 #自定义版本时增加变量
 echo -e "$custom_info" >> /root/previous_setting
@@ -330,6 +335,10 @@ last_confirm(){
 	if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && echo "phpRedisAdmin_location: ${phpRedisAdmin_location}"
 	if_in_array "${memadmin_filename}" "$other_soft_install" && echo "memadmin_location: ${memadmin_location}"
 	if_in_array "${rockmongo_filename}" "$other_soft_install" && echo "rockmongo_location: ${rockmongo_location}"
+	if_in_array "${jdk7_filename}" "$other_soft_install" && echo "jdk7_location: ${jdk7_location}"
+	if_in_array "${jdk8_filename}" "$other_soft_install" && echo "jdk8_location: ${jdk8_location}"
+	if_in_array "${tomcat7_filename}" "$other_soft_install" && echo "tomcat7_location: ${tomcat7_location}" && echo "JAVA_HOME: ${EZ_JAVA_HOME}"
+	if_in_array "${tomcat8_filename}" "$other_soft_install" && echo "tomcat8_location: ${tomcat8_location}" && echo "JAVA_HOME: ${EZ_JAVA_HOME}"
 	echo
 	echo "##############################################################"
 	echo

@@ -361,6 +361,7 @@ download_file(){
     local dl_arr=($(get_dl $filename_val))
     local speed_tmp=/tmp/speed.txt
     local filepath=${cur_dir}/soft/${filename}
+    local header
 
 	if check_file_integrity_md5 $filename;then
 		return
@@ -376,8 +377,13 @@ download_file(){
 	    rm -f $speed_tmp
 	    # 分别获取各链接下载速度
 	    for url in ${dl_arr[@]};do
+	    	# oracle的下载链接需要带cookie
+	    	header=""
+	    	if [[ "$url" =~ oracle.com ]]; then
+	    		header="Cookie: oraclelicense=accept-securebackup-cookie"
+	    	fi
 	    	echo "testing $url download speed..."
-	        speed=`curl -m 5 -L -s -w '%{speed_download}' "$url" -o /dev/null`
+	        speed=`curl -m 5 -L -s -H "$header" -w '%{speed_download}' "$url" -o /dev/null`
 	        speed=${speed%%.*}
 	        echo "$speed $url" >> $speed_tmp
 	        local bit
@@ -395,8 +401,13 @@ download_file(){
 
     # 开始下载
     for url in ${dl_arr[@]};do
+    	# oracle的下载链接需要带cookie
+    	header=""
+    	if [[ "$url" =~ oracle.com ]]; then
+    		header="Cookie: oraclelicense=accept-securebackup-cookie"
+    	fi
     	echo "start to download via $url..."
-    	if ! wget --dns-timeout=5 --connect-timeout=10 --read-timeout=30 --no-check-certificate --tries=3 ${url} -O $filename;then
+    	if ! wget --header "$header" --dns-timeout=5 --connect-timeout=10 --read-timeout=30 --no-check-certificate --tries=3 ${url} -O $filename;then
     		echo "download via $url failed,trying another mirror..."
     		continue
     	fi	

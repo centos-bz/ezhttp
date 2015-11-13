@@ -407,7 +407,7 @@ download_file(){
     		header="Cookie: oraclelicense=accept-securebackup-cookie"
     	fi
     	echo "start to download via $url..."
-    	if ! wget --header "$header" --dns-timeout=5 --connect-timeout=10 --read-timeout=30 --no-check-certificate --tries=3 ${url} -O $filename;then
+    	if ! wget --header="$header" --dns-timeout=5 --connect-timeout=10 --read-timeout=30 --no-check-certificate --tries=3 ${url} -O $filename;then
     		echo "download via $url failed,trying another mirror..."
     		continue
     	fi	

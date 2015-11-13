@@ -94,6 +94,7 @@ if_in_array "${eaccelerator_filename}" "$php_modules_install" && install_eaccele
 if_in_array "${xcache_filename}" "$php_modules_install" && install_xcache "$phpConfig"
 if_in_array "${php_imagemagick_filename}" "$php_modules_install" && install_php_imagesmagick "$phpConfig"
 if_in_array "${php_memcache_filename}" "$php_modules_install" && install_php_memcache "$phpConfig"
+if_in_array "${php_memcached_filename}" "$php_modules_install" && install_php_memcached "$phpConfig"
 if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && install_ZendGuardLoader "$phpConfig"
 if_in_array "${ionCube_filename}" "$php_modules_install" && install_ionCube "$phpConfig"
 if_in_array "${php_redis_filename}" "$php_modules_install" && install_php_redis "$phpConfig"
@@ -384,17 +385,32 @@ fi
 
 #安装xdebug
 install_xdebug(){
-local phpConfig=$1
-download_file  "${xdebug_filename}.tar.gz"
-cd $cur_dir/soft/
-rm -rf ${xdebug_filename}
-tar xzvf ${xdebug_filename}.tar.gz
-cd ${xdebug_filename}
-error_detect "$(dirname $phpConfig)/phpize"
-error_detect "./configure --enable-xdebug --with-php-config=$phpConfig"
-error_detect "make"
-error_detect "make install"
-EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
-! grep -q  "\[xdebug\]" $(get_php_ini $phpConfig) && sed -i "\$a\[xdebug]\nzend_extension=$EXTENSION_DIR/xdebug.so\nxdebug.profiler_enable=0\nxdebug.profiler_output_dir=\"/tmp/xdebug\"\nxdebug.profiler_output_name=\"cachegrind.out.%t\"\nxdebug.profiler_enable_trigger=1\n" $(get_php_ini $phpConfig)
+	local phpConfig=$1
+	download_file  "${xdebug_filename}.tar.gz"
+	cd $cur_dir/soft/
+	rm -rf ${xdebug_filename}
+	tar xzvf ${xdebug_filename}.tar.gz
+	cd ${xdebug_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --enable-xdebug --with-php-config=$phpConfig"
+	error_detect "make"
+	error_detect "make install"
+	EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
+	! grep -q  "\[xdebug\]" $(get_php_ini $phpConfig) && sed -i "\$a\[xdebug]\nzend_extension=$EXTENSION_DIR/xdebug.so\nxdebug.profiler_enable=0\nxdebug.profiler_output_dir=\"/tmp/xdebug\"\nxdebug.profiler_output_name=\"cachegrind.out.%t\"\nxdebug.profiler_enable_trigger=1\n" $(get_php_ini $phpConfig)
 
+}
+
+# 安装php-memcached
+install_php_memcached(){
+	local phpConfig=$1
+	check_installed "install_libmemcached" "${depends_prefix}/${libmemcached_filename}"
+	download_file "${php_memcached_filename}.tgz"
+	cd $cur_dir/soft/
+	tar xzf ${php_memcached_filename}.tgz
+	cd ${php_memcached_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --with-libmemcached-dir=${depends_prefix}/${libmemcached_filename} --enable-memcached-sasl --with-php-config=$phpConfig"
+	error_detect "make"
+	error_detect "make install"	
+	! grep -q  "\[memcached\]" $(get_php_ini $phpConfig) && sed -i "\$a\[memcached]\nextension=memcached.so\n" $(get_php_ini $phpConfig)
 }

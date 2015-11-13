@@ -681,6 +681,24 @@ https://www.lxconfig.com/files/ezhttp/apache-tomcat-8.0.28.tar.gz
 http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.28/bin/apache-tomcat-8.0.28.tar.gz
 '
 
+# php-memcached设置
+php_memcached_filename="memcached-2.2.0"
+set_md5 $php_memcached_filename "28937c6144f734e000c6300242f44ce6"
+set_dl $php_memcached_filename '
+http://cdn.yyupload.com/down/499809/software/memcached-2.2.0.tgz
+https://www.lxconfig.com/files/ezhttp/memcached-2.2.0.tgz
+https://pecl.php.net/get/memcached-2.2.0.tgz
+'
+
+# libmemcached设置
+libmemcached_filename="libmemcached-1.0.18"
+set_md5 $libmemcached_filename "b3958716b4e53ddc5992e6c49d97e819"
+set_dl $libmemcached_filename '
+http://cdn.yyupload.com/down/499809/software/libmemcached-1.0.18.tar.gz
+https://www.lxconfig.com/files/ezhttp/libmemcached-1.0.18.tar.gz
+https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
+'
+
 ########################其它设置########################
 
 #nginx apache mysql php等软件菜单设置
@@ -690,8 +708,8 @@ mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_f
 php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
-				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_redis_filename} ${php_mongo_filename} 
-				 ${xdebug_filename} mssql)
+				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_memcached_filename} ${php_redis_filename} 
+				 ${php_mongo_filename}  ${xdebug_filename} mssql)
 other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} 
 				${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename} ${jdk7_filename} 
 				${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename})

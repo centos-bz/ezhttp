@@ -376,3 +376,22 @@ error_detect "parallel_make"
 error_detect "make install"
 add_to_env "${depends_prefix}/${bison_filename}"
 }
+
+
+# 安装libmemcached
+install_libmemcached(){
+	if check_sys packageManager apt;then
+		apt-get -y install libsasl2-dev
+	elif check_sys packageManager yum;then
+		yum -y install cyrus-sasl-devel
+	fi
+
+	download_file "${libmemcached_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${libmemcached_filename}.tar.gz
+	cd ${libmemcached_filename}
+	make clean
+	error_detect "./configure --prefix=${depends_prefix}/${libmemcached_filename} --enable-sasl"
+	error_detect "parallel_make"
+	error_detect "make install"
+}

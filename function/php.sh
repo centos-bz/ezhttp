@@ -206,7 +206,7 @@ if [ "$php" == "${php5_2_filename}" ];then
 	mkdir -p $php_location/etc/
 	\cp  php.ini-recommended $php_location/etc/php.ini
 	sed -i "s#extension_dir.*#extension_dir = \"${php_location}/lib/php/extensions/no-debug-non-zts-20060613\"#"  $php_location/etc/php.ini
-	
+
 elif [ "$php" == "${php5_3_filename}" ];then
 	download_file  "${php5_3_filename}.tar.gz"
 	cd $cur_dir/soft/
@@ -287,6 +287,9 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		set_php_variable short_open_tag on
 		set_php_variable date.timezone Asia/Chongqing
 
+		#开启slow log
+		sed -i 's#<value name="request_slowlog_timeout">0s</value>#<value name="request_slowlog_timeout">5s</value>#' $php_location/etc/php-fpm.conf
+
 	elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" ]]; then
 		\cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 		chmod +x /etc/init.d/php-fpm
@@ -300,6 +303,10 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		set_php_variable cgi.fix_pathinfo 0
 		set_php_variable short_open_tag on
 		set_php_variable date.timezone Asia/Chongqing
+
+		#开启slow log
+		sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' ${php_location}/etc/php-fpm.conf
+		sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' ${php_location}/etc/php-fpm.conf
 
 	fi
 

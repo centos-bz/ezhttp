@@ -2,7 +2,7 @@
 if_use_previous_setting(){
 if [ -s "/root/previous_setting" ];then
 	#是否使用上次设置安装
-	yes_or_no "previous settings found,would you like using the  previous settings from the file /root/previous_setting [Y/n]: " "pre_settings_modify=false;install_with_pre_settings" "pre_settings_modify=true;rm -f /root/previous_setting;lanmp_menu"
+	yes_or_no "previous settings found,would you like using the previous settings from the file /root/previous_setting?[Y/n]" "pre_settings_modify=false;install_with_pre_settings" "pre_settings_modify=true;rm -f /root/previous_setting;lanmp_menu" y
 else
 	pre_settings_modify=true
 	lanmp_menu
@@ -343,7 +343,7 @@ last_confirm(){
 	echo "##############################################################"
 	echo
 	#最终确认是否安装
-	yes_or_no "Are you ready to configure your Linux [Y/n]: " "echo 'start to configure linux...'" "clear ; pre_setting"
+	yes_or_no "Are you ready to configure your Linux?[Y/n]" "echo 'start to configure linux...'" "clear ; pre_setting" y
 
 	#检测端口或socket是否被占用
 	echo "start to check if port is occupied..."

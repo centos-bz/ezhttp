@@ -1,6 +1,6 @@
 #mysql安装前设置
 mysql_preinstall_settings(){
-display_menu mysql
+display_menu mysql 1
 #自定义版本支持
 if [ "$mysql" == "custom_version" ];then
 	while true
@@ -88,7 +88,7 @@ if [ "$mysql" != "do_not_install" ];then
 
 		#提示是否更改编译参数
 		echo -e "the $mysql configure parameter is:\n${mysql_configure_args}\n\n"
-		yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new mysql configure parameter: ' mysql_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+		yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new mysql configure parameter: ' mysql_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
 		if [[ "$yn" == "y" ]];then
 			while true; do
 				#检查编译参数是否为空

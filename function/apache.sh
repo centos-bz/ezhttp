@@ -1,6 +1,6 @@
 #apache安装前设置
 apache_preinstall_settings(){
-display_menu apache
+display_menu apache 1
 
 #自定义版本支持
 if [ "$apache" == "custom_version" ];then
@@ -53,7 +53,7 @@ if [ "$apache" != "do_not_install" ];then
 	fi
 	#提示是否更改编译参数
 	echo -e "the $apache configure parameter is:\n${apache_configure_args}\n\n"
-	yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new apache configure parameter: ' apache_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+	yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new apache configure parameter: ' apache_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
 	if [[ "$yn" == "y" ]];then
 		while true; do
 			#检查编译参数是否为空

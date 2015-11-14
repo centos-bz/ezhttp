@@ -1,6 +1,6 @@
 #php安装前设置
 php_preinstall_settings(){
-display_menu php
+display_menu php 1
 #自定义版本支持
 if [ "$php" == "custom_version" ];then
 	while true
@@ -62,7 +62,7 @@ if [ "$php" != "do_not_install" ];then
 	
 	#当选择不安装mysql server且php为5.2版本时，询问是否让php支持mysql
 	if [ "$mysql" == "do_not_install" ] && [ "$php" == "${php5_2_filename}" ];then
-		yes_or_no "you do_not_install mysql server,but whether make php support mysql [Y/n]" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'"
+		yes_or_no "you do_not_install mysql server,but whether make php support mysql?[N/y]" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'" n
 	fi
 
 	#获取编译参数
@@ -128,7 +128,7 @@ if [ "$php" != "do_not_install" ];then
 	#提示是否更改编译参数
 	php_configure_args=`echo $php_configure_args | sed -r 's/\s+/ /g'`
 	echo -e "the $php configure parameter is:\n${php_configure_args}\n\n"
-	yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+	yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
 	if [[ "$yn" == "y" ]];then
 		while true; do
 			#检查编译参数是否为空

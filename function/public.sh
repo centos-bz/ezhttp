@@ -99,31 +99,57 @@ kill_pid(){
 #显示菜单(单选)
 display_menu(){
 	local soft=$1
-	local prompt="which ${soft} you'd select: "
+	local default=$2
 	eval local arr=(\${${soft}_arr[@]})
+	local default_prompt
+	if [[ "$default" != "" ]]; then
+		default_prompt="(default ${arr[$default-1]})"
+	fi
+	local pick
+	local prompt="which ${soft} you'd select${default_prompt}: "
+
 	while true
 	do
 		echo -e "#################### ${soft} setting ####################\n\n"
 		for ((i=1;i<=${#arr[@]};i++ )); do echo -e "$i) ${arr[$i-1]}"; done
 		echo
-		read -p "${prompt}" $soft
-		eval local select=\$$soft
-		if [ "$select" == "" ] || [ "${arr[$soft-1]}" == ""  ];then
-			prompt="input errors,please input a number: "
-		else
-			eval $soft=${arr[$soft-1]}
-			eval echo "your selection: \$$soft"             
+		read -p "${prompt}" pick
+		if [[ "$pick" == "" && "$default" != "" ]]; then
+			pick=$default
 			break
 		fi
+
+		if ! is_digit "$pick";then
+			prompt="input errors,please input a number: "
+			continue
+		fi
+
+		if [[ "$pick" -lt 1 || "$pick" -gt ${#arr[@]} ]]; then
+			prompt="input errors,please input a number between 1 and ${#arr[@]}: "
+			continue
+		fi
+
+		break
 	done
+
+	eval $soft=${arr[$pick-1]}
+	eval echo "your selection: \$$soft"             
 }
 
 #显示菜单(多选)
 display_menu_multi(){
 	local soft=$1
-	local prompt="please input numbers(ie. 1 2 3): "
+	local default=$2
 	eval local arr=(\${${soft}_arr[@]})
 	local arr_len=${#arr[@]}
+	local pick
+	local correct=true
+	local prompt
+	local default_prompt
+	if [[ "$default" != "" ]]; then
+		default_prompt="(default ${arr[$default-1]})"
+	fi
+	prompt="please input one or more number between 1 and ${arr_len}${default_prompt}(ie.1 2 3): "
 
 	echo  "#################### $soft install ####################"
 	echo
@@ -131,27 +157,46 @@ display_menu_multi(){
 	echo
 	while true
 	do
-		read -p "${prompt}" select
-		local select=($select)
+		read -p "${prompt}" pick
+		pick=($pick)
 		eval unset ${soft}_install
-		unset wrong
-		for j in ${select[@]}
-		do
-			if (! echo $j | grep -q -E "^[0-9]+$") || [[ $j -le 0 ]] || [[ $j -gt $arr_len ]];then
-				prompt="input errors,please input numbers(ie. 1 2 3): ";
-				wrong=1
+		if [[ "$pick" == "" ]]; then
+			if [[ "$default" == "" ]]; then
+				echo "input can not be empty,please reinput."
+				continue
+			else
+				eval ${soft}_install="${arr[$default-1]}"
 				break
-			elif [ "${arr[$j-1]}" == "do_not_install" ];then
-				eval unset ${soft}_install
+			fi	
+		fi
+
+		for j in ${pick[@]}
+		do
+			if ! is_digit "$j";then
+				echo "input error,please input a number"
+				correct=false
+				break 1
+			fi	
+
+			if [[ "$j" -lt 1 || "$j" -gt $arr_len ]]; then
+				echo "input error,please input the number between 1 and ${arr_len}${default_prompt}."
+				correct=false
+				break 1
+			fi
+
+			if [ "${arr[$j-1]}" == "do_not_install" ];then
 				eval ${soft}_install="do_not_install"
 				break 2
-			else
-				eval ${soft}_install="\"\$${soft}_install ${arr[$j-1]}\""
-				wrong=0
 			fi
+				
+			eval ${soft}_install="\"\$${soft}_install ${arr[$j-1]}\""
+			correct=true
+
 		done
-		[ "$wrong" == 0 ] && break
+		[[ "$correct" == true ]] && break
+
 	done
+
 	eval echo -e "your selection \$${soft}_install"
 }
 
@@ -430,6 +475,16 @@ is_64bit(){
 	fi		
 }
 
+# 是否为数字
+is_digit(){
+	local input=$1
+	if [[ "$input" =~ ^[0-9]+$ ]]; then
+		return 0
+	else
+		return 1
+	fi	
+}
+
 #验证ip合法性
 verify_ip(){
 	local ip=$1
@@ -490,8 +545,17 @@ yes_or_no(){
 	local prompt=$1
 	local yaction=$2
 	local naction=$3
+	local default=$4
+	if [[ "$default" == "" ]]; then
+		prompt="${prompt}: "
+	else
+		prompt="${prompt}(default $default): "
+	fi	
 	while true; do
 		read -p "${prompt}" yn
+		if [[ "$yn" == "" ]]; then
+			yn="$default"
+		fi		
 		yn=`upcase_to_lowcase $yn`
 		case $yn in
 			y ) eval "$yaction";break;;

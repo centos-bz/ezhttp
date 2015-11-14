@@ -7,7 +7,7 @@ php_modules_preinstall_settings(){
 		#作个标记,下面要恢复php变量值为do_not_install
 		phpDoNotInstall=true
 		php_modules_install=''
-		yes_or_no "do you want to install php modules[Y/n]: " "echo 'you select install php modules.'" "echo 'you select do not install php modules'"
+		yes_or_no "do you want to install php modules?[N/y]" "echo 'you select install php modules.'" "echo 'you select do not install php modules'" n
 		if [[ $yn == "y" ]];then
 			while true; do
 				read -p "please input the php config location(default:/usr/local/php/bin/php-config): " phpConfig
@@ -61,7 +61,7 @@ php_modules_preinstall_settings(){
 			php_modules_arr=(${php_modules_arr[@]#${ionCube_filename}})
 		fi
 		#显示菜单
-		display_menu_multi php_modules
+		display_menu_multi php_modules 1
 		#恢复php变量为do_not_install
 		$phpDoNotInstall && php="do_not_install"
 

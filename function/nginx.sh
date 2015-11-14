@@ -1,7 +1,7 @@
 #nginx安装前设置
 nginx_preinstall_settings(){
 	custom_info=""	
-	display_menu nginx
+	display_menu nginx 1
 	#自定义版本支持
 	if [ "$nginx" == "custom_version" ];then
 		while true
@@ -54,7 +54,7 @@ nginx_preinstall_settings(){
 
 		#提示是否更改编译参数
 		echo -e "the $nginx configure parameter is:\n${nginx_configure_args}\n\n"
-		yes_or_no "Would you like to change it [N/y]: " "read -p 'please input your new nginx configure parameter: ' nginx_configure_args" "echo 'you select no,configure parameter will not be changed.'"
+		yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new nginx configure parameter: ' nginx_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
 	
 		if [[ "$yn" == "y" ]];then
 			while true; do

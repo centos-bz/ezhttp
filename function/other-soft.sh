@@ -1,7 +1,7 @@
 #安装其它软件前设置
 othersoft_preinstall_settings(){
 #显示菜单
-display_menu_multi other_soft
+display_menu_multi other_soft 1
 #配置安装路径
 if [ "$other_soft_install" != "do_not_install" ];then
 
@@ -19,7 +19,7 @@ if [ "$other_soft_install" != "do_not_install" ];then
 		pureftpd_location=${pureftpd_location:=/usr/local/pureftpd}
 		pureftpd_location=`filter_location "$pureftpd_location"`
 		echo "pureftpd location: $pureftpd_location"
-		yes_or_no "Would you like to install web user manager for pureftpd [N/y]: " "user_manager_pureftpd=true" "echo 'you select not install web manager'"
+		yes_or_no "Would you like to install web user manager for pureftpd?[N/y]" "user_manager_pureftpd=true" "echo 'you select not install web manager'" n
 		if [[ $yn == "y" ]]; then
 			if [[ $mysql_root_pass == "" ]]; then
 				read -p "please input mysql root password: " mysql_root_pass

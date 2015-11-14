@@ -103,6 +103,9 @@ display_menu(){
 	eval local arr=(\${${soft}_arr[@]})
 	local default_prompt
 	if [[ "$default" != "" ]]; then
+		if [[ "$default" == "last" ]]; then
+			default=${#arr[@]}
+		fi
 		default_prompt="(default ${arr[$default-1]})"
 	fi
 	local pick
@@ -147,7 +150,11 @@ display_menu_multi(){
 	local prompt
 	local default_prompt
 	if [[ "$default" != "" ]]; then
+		if [[ "$default" == "last" ]];then
+			default=$arr_len
+		fi
 		default_prompt="(default ${arr[$default-1]})"
+		
 	fi
 	prompt="please input one or more number between 1 and ${arr_len}${default_prompt}(ie.1 2 3): "
 

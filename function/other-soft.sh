@@ -1,7 +1,7 @@
 #安装其它软件前设置
 othersoft_preinstall_settings(){
 #显示菜单
-display_menu_multi other_soft 1
+display_menu_multi other_soft last
 #配置安装路径
 if [ "$other_soft_install" != "do_not_install" ];then
 

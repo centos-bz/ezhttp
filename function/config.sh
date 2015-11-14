@@ -702,17 +702,17 @@ https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.
 ########################其它设置########################
 
 #nginx apache mysql php等软件菜单设置
-nginx_arr=(do_not_install ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version)
-apache_arr=(do_not_install ${apache2_2_filename} ${apache2_4_filename} custom_version)
-mysql_arr=(do_not_install ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version)
-php_arr=(do_not_install ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version)
+nginx_arr=( ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version do_not_install)
+apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
+mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version do_not_install)
+php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
-php_modules_arr=(do_not_install ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
+php_modules_arr=( ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
 				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_memcached_filename} ${php_redis_filename} 
-				 ${php_mongo_filename}  ${xdebug_filename} mssql)
-other_soft_arr=(do_not_install ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} 
+				 ${php_mongo_filename}  ${xdebug_filename} mssql do_not_install)
+other_soft_arr=( ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} 
 				${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename} ${jdk7_filename} 
-				${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename})
+				${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename} do_not_install)
 
 #工具菜单设置
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port 

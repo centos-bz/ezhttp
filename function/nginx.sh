@@ -1,7 +1,7 @@
 #nginx安装前设置
 nginx_preinstall_settings(){
 	custom_info=""	
-	display_menu nginx 1
+	display_menu nginx last
 	#自定义版本支持
 	if [ "$nginx" == "custom_version" ];then
 		while true

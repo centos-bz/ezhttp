@@ -1,6 +1,6 @@
 #php安装前设置
 php_preinstall_settings(){
-display_menu php 1
+display_menu php last
 #自定义版本支持
 if [ "$php" == "custom_version" ];then
 	while true

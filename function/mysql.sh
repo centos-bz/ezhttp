@@ -1,6 +1,6 @@
 #mysql安装前设置
 mysql_preinstall_settings(){
-display_menu mysql 1
+display_menu mysql last
 #自定义版本支持
 if [ "$mysql" == "custom_version" ];then
 	while true
@@ -49,7 +49,7 @@ if [ "$mysql" != "do_not_install" ];then
 			break
 		fi	
 	done
-	
+
 	if [ "$mysql" != "do_not_install" ];then
 		#当只编译client时，不必输入data和密码
 		if [ "$mysql" != "libmysqlclient18" ];then

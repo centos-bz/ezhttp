@@ -1,6 +1,6 @@
 #apache安装前设置
 apache_preinstall_settings(){
-display_menu apache 1
+display_menu apache last
 
 #自定义版本支持
 if [ "$apache" == "custom_version" ];then

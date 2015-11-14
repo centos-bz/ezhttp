@@ -63,9 +63,9 @@ install_lnmp(){
 	#安装工具
 	install_tool
 
-	[ "$nginx" != "do_not_install" ] && check_installed_ask "install_nginx" "$nginx_location"
-	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
-	[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
+	[ "$nginx" != "do_not_install" ] && check_installed "install_nginx" "$nginx_location"
+	[ "$mysql" != "do_not_install" ] && check_installed "install_mysqld" "$mysql_location"
+	[ "$php" != "do_not_install" ] && check_installed "install_php" "$php_location"
 	[ "$php_modules_install" != "do_not_install" ] && install_php_modules "$phpConfig"
 	[ "$other_soft_install" != "do_not_install" ] && install_other_soft
 	post_done
@@ -93,9 +93,9 @@ install_lamp(){
 	#安装工具
 	install_tool
 
-	[ "$apache" != "do_not_install" ] && check_installed_ask "install_apache" "$apache_location"
-	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
-	[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
+	[ "$apache" != "do_not_install" ] && check_installed "install_apache" "$apache_location"
+	[ "$mysql" != "do_not_install" ] && check_installed "install_mysqld" "$mysql_location"
+	[ "$php" != "do_not_install" ] && check_installed "install_php" "$php_location"
 	[ "$php_modules_install" != "do_not_install" ] && install_php_modules "$phpConfig"
 	[ "$other_soft_install" != "do_not_install" ] && install_other_soft
 	post_done
@@ -125,10 +125,10 @@ install_lnamp(){
 	#安装工具
 	install_tool
 
-	[ "$nginx" != "do_not_install" ] && check_installed_ask "install_nginx" "$nginx_location"
-	[ "$apache" != "do_not_install" ] && check_installed_ask "install_apache" "$apache_location"
-	[ "$mysql" != "do_not_install" ] && check_installed_ask "install_mysqld" "$mysql_location"
-	[ "$php" != "do_not_install" ] && check_installed_ask "install_php" "$php_location"
+	[ "$nginx" != "do_not_install" ] && check_installed "install_nginx" "$nginx_location"
+	[ "$apache" != "do_not_install" ] && check_installed "install_apache" "$apache_location"
+	[ "$mysql" != "do_not_install" ] && check_installed "install_mysqld" "$mysql_location"
+	[ "$php" != "do_not_install" ] && check_installed "install_php" "$php_location"
 	[ "$php_modules_install" != "do_not_install" ] && install_php_modules "$phpConfig"
 	[ "$other_soft_install" != "do_not_install" ] && install_other_soft
 	post_done

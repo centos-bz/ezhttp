@@ -7,181 +7,347 @@ if [ "$other_soft_install" != "do_not_install" ];then
 
 	#memcached安装路径
 	if if_in_array "${memcached_filename}" "$other_soft_install";then
-		read -p "input $memcached_filename location(default:/usr/local/memcached): " memcached_location
-		memcached_location=${memcached_location:=/usr/local/memcached}
-		memcached_location=`filter_location "$memcached_location"`
-		echo "memcached location: $memcached_location"
+		while true;do
+			read -p "input $memcached_filename location(default:/usr/local/memcached): " memcached_location
+			memcached_location=${memcached_location:=/usr/local/memcached}
+			memcached_location=`filter_location "$memcached_location"`
+			echo "memcached location: $memcached_location"
+			if [[ -e $memcached_location ]]; then
+				yes_or_no "the location $memcached_location found,maybe memcached had been installed.skip memcached installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$memcached_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done	
 	fi	
 
 	#pureftpd安装路径
 	if if_in_array "${PureFTPd_filename}" "$other_soft_install";then
-		read -p "input $PureFTPd_filename location(default:/usr/local/pureftpd): " pureftpd_location
-		pureftpd_location=${pureftpd_location:=/usr/local/pureftpd}
-		pureftpd_location=`filter_location "$pureftpd_location"`
-		echo "pureftpd location: $pureftpd_location"
-		yes_or_no "Would you like to install web user manager for pureftpd?[N/y]" "user_manager_pureftpd=true" "echo 'you select not install web manager'" n
-		if [[ $yn == "y" ]]; then
-			if [[ $mysql_root_pass == "" ]]; then
-				read -p "please input mysql root password: " mysql_root_pass
-				read -p "please input mysql install location(default:/usr/local/mysql): " mysql_location
-				mysql_location=${mysql_location:=/usr/local/mysql}
-				mysql_location=`filter_location "$mysql_location"`
+		while true;do
+			read -p "input $PureFTPd_filename location(default:/usr/local/pureftpd): " pureftpd_location
+			pureftpd_location=${pureftpd_location:=/usr/local/pureftpd}
+			pureftpd_location=`filter_location "$pureftpd_location"`
+			echo "pureftpd location: $pureftpd_location"
+			if [[ -e $pureftpd_location ]]; then
+				yes_or_no "the location $pureftpd_location found,maybe pureftpd had been installed.skip pureftpd installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$PureFTPd_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done
+		if if_in_array "${PureFTPd_filename}" "$other_soft_install";then
+			yes_or_no "Would you like to install web user manager for pureftpd?[N/y]" "user_manager_pureftpd=true" "echo 'you select not install web manager'" n
+			if [[ $yn == "y" ]]; then
+				if [[ $mysql_root_pass == "" ]]; then
+					read -p "please input mysql root password: " mysql_root_pass
+					read -p "please input mysql install location(default:/usr/local/mysql): " mysql_location
+					mysql_location=${mysql_location:=/usr/local/mysql}
+					mysql_location=`filter_location "$mysql_location"`
+				fi
+
+				#输入use_manager_pureftpd安装路径
+				read -p "please input pureftpd user web manager install location(default:/home/wwwroot/ftp/): " user_manager_location
+				user_manager_location=${user_manager_location:=/home/wwwroot/ftp/}
+				user_manager_location=`filter_location "$user_manager_location"`
+
+				#输入pureftpd数据库及用户信息
+				read -p "please input mysql database name for storing pureftpd user data(default:pureftpd): " pureftpd_database
+				pureftpd_database=${pureftpd_database:=pureftpd}
+				read -p "please input the user for database $pureftpd_database(default:ftpuser)" pureftpd_user
+				pureftpd_user=${pureftpd_user:=ftpuser}
+				read -p "please input the password for mysql user $pureftpd_user(default:generate by random.): " pureftpd_user_pass
+				[[ $pureftpd_user_pass == "" ]] && echo "generate password.." &&  pureftpd_user_pass=`generate_password` && echo "password is $pureftpd_user_pass"
+
+				#输入user_manger_pureftpd用户和密码
+				read -p "please input the user for login pureftpd web manager(default:admin): " pureftpd_login_user
+				pureftpd_login_user=${pureftpd_login_user:=admin}
+				read -p "please input the password for user $pureftpd_login_user(default:generate by random.): " pureftpd_login_pass
+				[[ $pureftpd_login_pass == "" ]] && echo "generate password.." &&  pureftpd_login_pass=`generate_password` && echo "password is $pureftpd_login_pass"
 			fi
-
-			#输入use_manager_pureftpd安装路径
-			read -p "please input pureftpd user web manager install location(default:/home/wwwroot/ftp/): " user_manager_location
-			user_manager_location=${user_manager_location:=/home/wwwroot/ftp/}
-			user_manager_location=`filter_location "$user_manager_location"`
-
-			#输入pureftpd数据库及用户信息
-			read -p "please input mysql database name for storing pureftpd user data(default:pureftpd): " pureftpd_database
-			pureftpd_database=${pureftpd_database:=pureftpd}
-			read -p "please input the user for database $pureftpd_database(default:ftpuser)" pureftpd_user
-			pureftpd_user=${pureftpd_user:=ftpuser}
-			read -p "please input the password for mysql user $pureftpd_user(default:generate by random.): " pureftpd_user_pass
-			[[ $pureftpd_user_pass == "" ]] && echo "generate password.." &&  pureftpd_user_pass=`generate_password` && echo "password is $pureftpd_user_pass"
-
-			#输入user_manger_pureftpd用户和密码
-			read -p "please input the user for login pureftpd web manager(default:admin): " pureftpd_login_user
-			pureftpd_login_user=${pureftpd_login_user:=admin}
-			read -p "please input the password for user $pureftpd_login_user(default:generate by random.): " pureftpd_login_pass
-			[[ $pureftpd_login_pass == "" ]] && echo "generate password.." &&  pureftpd_login_pass=`generate_password` && echo "password is $pureftpd_login_pass"
-		fi
+		fi	
 	fi	
 
 	#phpmyadmin安装路径
 	if if_in_array "${phpMyAdmin_filename}" "$other_soft_install";then
-		default_location="/home/wwwroot/phpmyadmin"
-		read -p "input $phpMyAdmin_filename location(default:$default_location): " phpmyadmin_location
-		phpmyadmin_location=${phpmyadmin_location:=$default_location}
-		phpmyadmin_location=`filter_location "$phpmyadmin_location"`
-		echo "phpmyadmin location: $phpmyadmin_location"
+		while true;do
+			default_location="/home/wwwroot/phpmyadmin"
+			read -p "input $phpMyAdmin_filename location(default:$default_location): " phpmyadmin_location
+			phpmyadmin_location=${phpmyadmin_location:=$default_location}
+			phpmyadmin_location=`filter_location "$phpmyadmin_location"`
+			echo "phpmyadmin location: $phpmyadmin_location"
+			if [[ -e $phpmyadmin_location ]]; then
+				yes_or_no "the location $phpmyadmin_location found,maybe phpmyadmin had been installed.skip phpmyadmin installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$phpMyAdmin_filename//")
+					break
+				fi	
+			else
+				break
+			fi				
+		done
 	fi
 
 	#设置redis安装路径及最大内存使用
 	if if_in_array "${redis_filename}" "$other_soft_install";then
-		default_location="/usr/local/redis"
-		read -p "input $redis_filename location(default:$default_location): " redis_location
-		redis_location=${redis_location:=$default_location}
-		redis_location=`filter_location "$redis_location"`
-		echo "redis location: $redis_location"
-		while true; do
-			read -p "please input the max memory allowed for redis(ie.128M,512m,2G,4g): " redisMaxMemory
-			if echo "$redisMaxMemory" | grep -q -E "^[0-9]+[mMgG]$";then
-				break
+		while true;do
+			default_location="/usr/local/redis"
+			read -p "input $redis_filename location(default:$default_location): " redis_location
+			redis_location=${redis_location:=$default_location}
+			redis_location=`filter_location "$redis_location"`
+			echo "redis location: $redis_location"
+			if [[ -e $redis_location ]]; then
+				yes_or_no "the location $redis_location found,maybe redis had been installed.skip redis installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$redis_filename//")
+					break
+				fi	
 			else
-				echo "input errors,please input ie.128M,512m,2G,4g"
-			fi
+				break
+			fi				
 		done
+		if if_in_array "${redis_filename}" "$other_soft_install";then
+			while true; do
+				read -p "please input the max memory allowed for redis(ie.128M,512m,2G,4g): " redisMaxMemory
+				if echo "$redisMaxMemory" | grep -q -E "^[0-9]+[mMgG]$";then
+					break
+				else
+					echo "input errors,please input ie.128M,512m,2G,4g"
+				fi
+			done
 
-		#转换成Byte
-		if echo "$redisMaxMemory" | grep "[mM]$";then
-			redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
-			((redisMaxMemory=$redisMaxMemory*1024*1024))
-		elif echo "$redisMaxMemory" | grep "[gG]$"; then
-			redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
-			((redisMaxMemory=$redisMaxMemory*1024*1024*1024))
-		fi
+			#转换成Byte
+			if echo "$redisMaxMemory" | grep "[mM]$";then
+				redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
+				((redisMaxMemory=$redisMaxMemory*1024*1024))
+			elif echo "$redisMaxMemory" | grep "[gG]$"; then
+				redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
+				((redisMaxMemory=$redisMaxMemory*1024*1024*1024))
+			fi
+		fi	
 	fi
 
 	#mongodb安装路径及db路径
 	if if_in_array "${mongodb_filename}" "$other_soft_install";then
-		default_location="/usr/local/mongodb"
-		read -p "input $mongodb_filename location(default:$default_location): " mongodb_location
-		mongodb_location=${mongodb_location:=$default_location}
-		mongodb_location=`filter_location "$mongodb_location"`
-		echo "mongodb location: $mongodb_location"
+		while true;do
+			default_location="/usr/local/mongodb"
+			read -p "input $mongodb_filename location(default:$default_location): " mongodb_location
+			mongodb_location=${mongodb_location:=$default_location}
+			mongodb_location=`filter_location "$mongodb_location"`
+			echo "mongodb location: $mongodb_location"
+			if [[ -e $mongodb_location ]]; then
+				yes_or_no "the location $mongodb_location found,maybe mongodb had been installed.skip mongodb installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$mongodb_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done	
 
-		default_data_location="$mongodb_location/data/"
-		read -p "input $mongodb_filename data location(default:$default_data_location): " mongodb_data_location
-		mongodb_data_location=${mongodb_data_location:=$default_data_location}
-		mongodb_data_location=`filter_location "$mongodb_data_location"`
-		echo "mongodb data location: $mongodb_data_location"		
+		if if_in_array "${mongodb_filename}" "$other_soft_install";then
+			default_data_location="$mongodb_location/data/"
+			read -p "input $mongodb_filename data location(default:$default_data_location): " mongodb_data_location
+			mongodb_data_location=${mongodb_data_location:=$default_data_location}
+			mongodb_data_location=`filter_location "$mongodb_data_location"`
+			echo "mongodb data location: $mongodb_data_location"
+		fi		
 	fi
 
 	#phpRedisAdmin安装路径
 	if if_in_array "${phpRedisAdmin_filename}" "$other_soft_install";then
-		default_location="/home/wwwroot/redisadmin"
-		read -p "input $phpRedisAdmin_filename location(default:$default_location): " phpRedisAdmin_location
-		phpRedisAdmin_location=${phpRedisAdmin_location:=$default_location}
-		phpRedisAdmin_location=`filter_location "$phpRedisAdmin_location"`
-		echo "phpRedisAdmin location: $phpRedisAdmin_location"
+		while true;do
+			default_location="/home/wwwroot/redisadmin"
+			read -p "input $phpRedisAdmin_filename location(default:$default_location): " phpRedisAdmin_location
+			phpRedisAdmin_location=${phpRedisAdmin_location:=$default_location}
+			phpRedisAdmin_location=`filter_location "$phpRedisAdmin_location"`
+			echo "phpRedisAdmin location: $phpRedisAdmin_location"
+			if [[ -e $phpRedisAdmin_location ]]; then
+				yes_or_no "the location $phpRedisAdmin_location found,maybe phpRedisAdmin had been installed.skip phpRedisAdmin installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$phpRedisAdmin_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done	
 	fi
 
 	#memadmin安装路径
 	if if_in_array "${memadmin_filename}" "$other_soft_install";then
-		default_location="/home/wwwroot/memadmin"
-		read -p "input $memadmin_filename location(default:$default_location): " memadmin_location
-		memadmin_location=${memadmin_location:=$default_location}
-		memadmin_location=`filter_location "$memadmin_location"`
-		echo "memadmin location: $memadmin_location"
+		while true;do
+			default_location="/home/wwwroot/memadmin"
+			read -p "input $memadmin_filename location(default:$default_location): " memadmin_location
+			memadmin_location=${memadmin_location:=$default_location}
+			memadmin_location=`filter_location "$memadmin_location"`
+			echo "memadmin location: $memadmin_location"
+			if [[ -e $memadmin_location ]]; then
+				yes_or_no "the location $memadmin_location found,maybe memadmin had been installed.skip memadmin installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$memadmin_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done
 	fi
 
 	#rockmongo安装路径
 	if if_in_array "${rockmongo_filename}" "$other_soft_install";then
-		default_location="/home/wwwroot/rockmongo"
-		read -p "input $rockmongo_filename location(default:$default_location): " rockmongo_location
-		rockmongo_location=${rockmongo_location:=$default_location}
-		rockmongo_location=`filter_location "$rockmongo_location"`
-		echo "rockmongo location: $rockmongo_location"
+		while true;do
+			default_location="/home/wwwroot/rockmongo"
+			read -p "input $rockmongo_filename location(default:$default_location): " rockmongo_location
+			rockmongo_location=${rockmongo_location:=$default_location}
+			rockmongo_location=`filter_location "$rockmongo_location"`
+			echo "rockmongo location: $rockmongo_location"
+			if [[ -e $rockmongo_location ]]; then
+				yes_or_no "the location $rockmongo_location found,maybe rockmongo had been installed.skip rockmongo installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$rockmongo_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done	
 	fi
 
 	# jdk7安装路径
 	if if_in_array "${jdk7_filename}" "$other_soft_install";then
-		default_location="/usr/local/$jdk7_filename"
-		read -p "input $jdk7_filename location(default:$default_location): " jdk7_location
-		jdk7_location=${jdk7_location:=$default_location}
-		jdk7_location=`filter_location "$jdk7_location"`
-		echo "jdk7 location: $jdk7_location"
-		EZ_JAVA_HOME="${jdk7_location}"
+		while true;do
+			default_location="/usr/local/$jdk7_filename"
+			read -p "input $jdk7_filename location(default:$default_location): " jdk7_location
+			jdk7_location=${jdk7_location:=$default_location}
+			jdk7_location=`filter_location "$jdk7_location"`
+			echo "jdk7 location: $jdk7_location"
+			EZ_JAVA_HOME="${jdk7_location}"
+			if [[ -e $jdk7_location ]]; then
+				yes_or_no "the location $jdk7_location found,maybe jdk7 had been installed.skip jdk7 installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$jdk7_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done
 	fi
 
 	# jdk8安装路径
 	if if_in_array "${jdk8_filename}" "$other_soft_install";then
-		default_location="/usr/local/$jdk8_filename"
-		read -p "input $jdk8_filename location(default:$default_location): " jdk8_location
-		jdk8_location=${jdk8_location:=$default_location}
-		jdk8_location=`filter_location "$jdk8_location"`
-		echo "jdk8 location: $jdk8_location"
-		EZ_JAVA_HOME="${jdk8_location}"
+		while true;do
+			default_location="/usr/local/$jdk8_filename"
+			read -p "input $jdk8_filename location(default:$default_location): " jdk8_location
+			jdk8_location=${jdk8_location:=$default_location}
+			jdk8_location=`filter_location "$jdk8_location"`
+			echo "jdk8 location: $jdk8_location"
+			EZ_JAVA_HOME="${jdk8_location}"
+			if [[ -e $jdk8_location ]]; then
+				yes_or_no "the location $jdk8_location found,maybe jdk8 had been installed.skip jdk8 installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
+				else
+					other_soft_install=$(echo $other_soft_install | sed "s/$jdk8_filename//")
+					break
+				fi	
+			else
+				break
+			fi			
+		done	
 	fi
 
 	# tomcat7安装路径
 	if if_in_array "${tomcat7_filename}" "$other_soft_install";then
-		default_location="/usr/local/tomcat7"
-		read -p "input $tomcat7_filename location(default:$default_location): " tomcat7_location
-		tomcat7_location=${tomcat7_location:=$default_location}
-		tomcat7_location=`filter_location "$tomcat7_location"`
-		echo "tomcat7 location: $tomcat7_location"
-
-		if [[ "$EZ_JAVA_HOME" == "" ]]; then
-			while true; do
-				read -p "Please input jdk location: " EZ_JAVA_HOME
-				if [[ -d "$EZ_JAVA_HOME" ]];then
-					break
+		while true;do
+			default_location="/usr/local/tomcat7"
+			read -p "input $tomcat7_filename location(default:$default_location): " tomcat7_location
+			tomcat7_location=${tomcat7_location:=$default_location}
+			tomcat7_location=`filter_location "$tomcat7_location"`
+			echo "tomcat7 location: $tomcat7_location"
+			if [[ -e $tomcat7_location ]]; then
+				yes_or_no "the location $tomcat7_location found,maybe tomcat7 had been installed.skip tomcat7 installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
 				else
-					echo "the location $EZ_JAVA_HOME not found or is not a dir,please reinput."
+					other_soft_install=$(echo $other_soft_install | sed "s/$tomcat7_filename//")
+					break
 				fi	
-			done	
-		fi
+			else
+				break
+			fi			
+		done	
+
+		if if_in_array "${tomcat7_filename}" "$other_soft_install";then
+			if [[ "$EZ_JAVA_HOME" == "" ]]; then
+				while true; do
+					read -p "Please input jdk location: " EZ_JAVA_HOME
+					if [[ -d "$EZ_JAVA_HOME" ]];then
+						break
+					else
+						echo "the location $EZ_JAVA_HOME not found or is not a dir,please reinput."
+					fi	
+				done	
+			fi
+		fi	
 	fi
 
 	#  tomcat8安装路径
 	if if_in_array "${tomcat8_filename}" "$other_soft_install";then
-		default_location="/usr/local/tomcat8"
-		read -p "input $tomcat8_filename location(default:$default_location): " tomcat8_location
-		tomcat8_location=${tomcat8_location:=$default_location}
-		tomcat8_location=`filter_location "$tomcat8_location"`
-		echo "tomcat8 location: $tomcat8_location"
-		if [[ "$EZ_JAVA_HOME" == "" ]]; then
-			while true; do
-				read -p "Please input jdk location: " EZ_JAVA_HOME
-				if [[ -d "$EZ_JAVA_HOME" ]];then
-					break
+		while true;do
+			default_location="/usr/local/tomcat8"
+			read -p "input $tomcat8_filename location(default:$default_location): " tomcat8_location
+			tomcat8_location=${tomcat8_location:=$default_location}
+			tomcat8_location=`filter_location "$tomcat8_location"`
+			echo "tomcat8 location: $tomcat8_location"
+			if [[ -e $tomcat8_location ]]; then
+				yes_or_no "the location $tomcat8_location found,maybe tomcat8 had been installed.skip tomcat8 installation?[Y/n]" "" "" y
+				if [[ "$yn" == "n" ]]; then
+					continue
 				else
-					echo "the location $EZ_JAVA_HOME not found or is not a dir,please reinput."
+					other_soft_install=$(echo $other_soft_install | sed "s/$tomcat8_filename//")
+					break
 				fi	
-			done	
+			else
+				break
+			fi			
+		done
+		if if_in_array "${tomcat8_filename}" "$other_soft_install";then
+			if [[ "$EZ_JAVA_HOME" == "" ]]; then
+				while true; do
+					read -p "Please input jdk location: " EZ_JAVA_HOME
+					if [[ -d "$EZ_JAVA_HOME" ]];then
+						break
+					else
+						echo "the location $EZ_JAVA_HOME not found or is not a dir,please reinput."
+					fi	
+				done	
+			fi
 		fi		
 	fi
 				
@@ -190,18 +356,18 @@ fi
 
 #安装其它软件
 install_other_soft(){
-	if_in_array "${memcached_filename}" "$other_soft_install" && check_installed_ask "install_Memcached" "${memcached_location}"
-	if_in_array "${PureFTPd_filename}" "$other_soft_install" && check_installed_ask "install_PureFTPd" "${pureftpd_location}"
-	if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && check_installed_ask "install_phpmyadmin" "${phpmyadmin_location}"
-	if_in_array "${redis_filename}" "$other_soft_install" && check_installed_ask "install_redis" "${redis_location}"
-	if_in_array "${mongodb_filename}" "$other_soft_install" && check_installed_ask "install_mongodb" "${mongodb_location}"
-	if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && check_installed_ask "install_redisadmin" "${phpRedisAdmin_location}"
-	if_in_array "${memadmin_filename}" "$other_soft_install" && check_installed_ask "install_memadmin" "${memadmin_location}"
-	if_in_array "${rockmongo_filename}" "$other_soft_install" && check_installed_ask "install_rockmongo" "${rockmongo_location}"
-	if_in_array "${jdk7_filename}" "$other_soft_install" && check_installed_ask "install_jdk7" "${jdk7_location}"
-	if_in_array "${jdk8_filename}" "$other_soft_install" && check_installed_ask "install_jdk8" "${jdk8_location}"
-	if_in_array "${tomcat7_filename}" "$other_soft_install" && check_installed_ask "install_tomcat7" "${tomcat7_location}"
-	if_in_array "${tomcat8_filename}" "$other_soft_install" && check_installed_ask "install_tomcat8" "${tomcat8_location}"
+	if_in_array "${memcached_filename}" "$other_soft_install" && check_installed "install_Memcached" "${memcached_location}"
+	if_in_array "${PureFTPd_filename}" "$other_soft_install" && check_installed "install_PureFTPd" "${pureftpd_location}"
+	if_in_array "${phpMyAdmin_filename}" "$other_soft_install" && check_installed "install_phpmyadmin" "${phpmyadmin_location}"
+	if_in_array "${redis_filename}" "$other_soft_install" && check_installed "install_redis" "${redis_location}"
+	if_in_array "${mongodb_filename}" "$other_soft_install" && check_installed "install_mongodb" "${mongodb_location}"
+	if_in_array "${phpRedisAdmin_filename}" "$other_soft_install" && check_installed "install_redisadmin" "${phpRedisAdmin_location}"
+	if_in_array "${memadmin_filename}" "$other_soft_install" && check_installed "install_memadmin" "${memadmin_location}"
+	if_in_array "${rockmongo_filename}" "$other_soft_install" && check_installed "install_rockmongo" "${rockmongo_location}"
+	if_in_array "${jdk7_filename}" "$other_soft_install" && check_installed "install_jdk7" "${jdk7_location}"
+	if_in_array "${jdk8_filename}" "$other_soft_install" && check_installed "install_jdk8" "${jdk8_location}"
+	if_in_array "${tomcat7_filename}" "$other_soft_install" && check_installed "install_tomcat7" "${tomcat7_location}"
+	if_in_array "${tomcat8_filename}" "$other_soft_install" && check_installed "install_tomcat8" "${tomcat8_location}"
 }
 
 #安装memcached

@@ -740,25 +740,13 @@ if_in_array(){
 
 #检测是否安装，存在就不安装了
 check_installed(){
-	local command=$1
+	local cmd=$1
 	local location=$2
 	if [ -d "$location" ];then
 		echo "$location found,skip the installation."
 		add_to_env "$location"
 	else
-		${command}
-	fi
-}
-
-#检测是否安装,带确认对话
-check_installed_ask(){
-	local command=$1
-	local location=$2
-	if [ -d "$location" ];then
-		#发现路径存在，是否删除安装
-		yes_or_no "directory $location found,may be the software had installed,remove it and reinstall it [N/y]: " "rm -rf $location && ${command}" "echo 'do not reinstall this software.' "
-	else
-		${command}
+		${cmd}
 	fi
 }
 

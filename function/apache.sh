@@ -29,52 +29,75 @@ if [ "$apache" == "custom_version" ];then
 fi	
 
 if [ "$apache" != "do_not_install" ];then
-	#apache安装路径
-	read -p "$apache install location(default:/usr/local/apache,leave blank for default): " apache_location
-	apache_location=${apache_location:="/usr/local/apache"}
-	apache_location=`filter_location "$apache_location"`
-	echo "$apache install location: $apache_location"
-
-	#获取编译参数
-	if [ "$apache" == "${apache2_2_filename}" ];then
-		if check_sys packageSupport;then
-			other_option=""
-		else
-			other_option="--with-z=${depends_prefix}/${zlib_filename} --with-ssl=${depends_prefix}/${openssl_filename}"
-		fi	
-		apache_configure_args="--prefix=${apache_location} --with-included-apr --enable-so --enable-deflate=shared --enable-expires=shared  --enable-ssl=shared --enable-headers=shared --enable-rewrite=shared --enable-static-support ${other_option}"
-	elif [ "$apache" == "${apache2_4_filename}" ];then
-		if check_sys packageSupport;then
-			other_option=""
-		else
-			other_option="--with-z=${depends_prefix}/${zlib_filename} --with-ssl=${depends_prefix}/${openssl_filename} --with-pcre=${depends_prefix}/${pcre_filename}"
-		fi	
-		apache_configure_args="--prefix=${apache_location} --enable-so --enable-deflate=shared --enable-ssl=shared --enable-expires=shared  --enable-headers=shared --enable-rewrite=shared --enable-static-support  --with-included-apr $other_option"
-	fi
-	#提示是否更改编译参数
-	echo -e "the $apache configure parameter is:\n${apache_configure_args}\n\n"
-	yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new apache configure parameter: ' apache_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
-	if [[ "$yn" == "y" ]];then
-		while true; do
-			#检查编译参数是否为空
-			if [ "$apache_configure_args" == "" ];then
-				echo "input error.apache configure parameter can not be empty,please reinput."
-				read -p 'please input your new apache configure parameter: ' apache_configure_args
+	while true; do
+		#apache安装路径
+		read -p "$apache install location(default:/usr/local/apache,leave blank for default): " apache_location
+		apache_location=${apache_location:="/usr/local/apache"}
+		apache_location=`filter_location "$apache_location"`
+		echo "$apache install location: $apache_location"
+		if [[ -e $apache_location ]]; then
+			yes_or_no "the location $apache_location found,maybe apache had been installed.skip apache installation?[Y/n]" "apache=do_not_install" "" y
+			if [[ "$yn" == "n" ]]; then
 				continue
-			fi
-
-			#检查是否设置prefix
-			apache_location=$(echo "$apache_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
-			if [[ "$apache_location" == "" ]]; then
-				echo "input error.apache configure parameter prefix can not be empty,please reinput."
-				read -p 'please input your new apache configure parameter: ' apache_configure_args
-				continue
-			fi
+			else
+				break
+			fi	
+		else
 			break
-		done
-		echo -e "\nyour new apache configure parameter is : ${apache_configure_args}\n"
-	fi
+		fi	
+	done
 
+	if [[ "$apache" != "do_not_install" ]]; then
+		#获取编译参数
+		if [ "$apache" == "${apache2_2_filename}" ];then
+			if check_sys packageSupport;then
+				other_option=""
+			else
+				other_option="--with-z=${depends_prefix}/${zlib_filename} --with-ssl=${depends_prefix}/${openssl_filename}"
+			fi	
+			apache_configure_args="--prefix=${apache_location} --with-included-apr --enable-so --enable-deflate=shared --enable-expires=shared  --enable-ssl=shared --enable-headers=shared --enable-rewrite=shared --enable-static-support ${other_option}"
+		elif [ "$apache" == "${apache2_4_filename}" ];then
+			if check_sys packageSupport;then
+				other_option=""
+			else
+				other_option="--with-z=${depends_prefix}/${zlib_filename} --with-ssl=${depends_prefix}/${openssl_filename} --with-pcre=${depends_prefix}/${pcre_filename}"
+			fi	
+			apache_configure_args="--prefix=${apache_location} --enable-so --enable-deflate=shared --enable-ssl=shared --enable-expires=shared  --enable-headers=shared --enable-rewrite=shared --enable-static-support  --with-included-apr $other_option"
+		fi
+		#提示是否更改编译参数
+		echo -e "the $apache configure parameter is:\n${apache_configure_args}\n\n"
+		yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new apache configure parameter: ' apache_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
+		if [[ "$yn" == "y" ]];then
+			while true; do
+				#检查编译参数是否为空
+				if [ "$apache_configure_args" == "" ];then
+					echo "input error.apache configure parameter can not be empty,please reinput."
+					read -p 'please input your new apache configure parameter: ' apache_configure_args
+					continue
+				fi
+
+				#检查是否设置prefix
+				apache_location=$(echo "$apache_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
+				if [[ "$apache_location" == "" ]]; then
+					echo "input error.apache configure parameter prefix can not be empty,please reinput."
+					read -p 'please input your new apache configure parameter: ' apache_configure_args
+					continue
+				fi
+
+				if [[ -e $apache_location ]]; then
+					yes_or_no "the location $apache_location found,maybe apache had been installed.skip apache installation?[Y/n]" "apache=do_not_install" "" y
+					if [[ "$yn" == "n" ]]; then
+						read -p 'please input your new apache configure parameter: ' apache_configure_args
+						continue
+					else
+						break
+					fi
+				fi
+				break
+			done
+			[[ "$apache" != "do_not_install" ]] && echo -e "\nyour new apache configure parameter is : ${apache_configure_args}\n"
+		fi
+	fi
 fi
 
 

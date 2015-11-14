@@ -33,50 +33,73 @@ nginx_preinstall_settings(){
 	fi	
 
 	if [ "$nginx" != "do_not_install" ];then
-		#设置默认路径
-		[ "$nginx" == "${openresty_filename}" ] && nginx_default=/usr/local/openresty || nginx_default=/usr/local/nginx
-		#nginx安装路径
-		read -p "$nginx install location(default:$nginx_default,leave blank for default): " nginx_location
-		#设置默认openresty的prefix为/usr/local,则nginx将安装在/usr/local/nginx
-		nginx_location=${nginx_location:=$nginx_default}
-		nginx_location=`filter_location "$nginx_location"`
-		#nginx安装目录会在openresty的下级nginx目录
-		[ "$nginx" == "${openresty_filename}" ] && echo "openresty location $nginx_location,nginx location ${nginx_location}/nginx" || echo "$nginx install location: $nginx_location"
+		while true;do
+			#设置默认路径
+			[ "$nginx" == "${openresty_filename}" ] && nginx_default=/usr/local/openresty || nginx_default=/usr/local/nginx
+			#nginx安装路径
+			read -p "$nginx install location(default:$nginx_default,leave blank for default): " nginx_location
+			#设置默认openresty的prefix为/usr/local,则nginx将安装在/usr/local/nginx
+			nginx_location=${nginx_location:=$nginx_default}
+			nginx_location=`filter_location "$nginx_location"`
+			#nginx安装目录会在openresty的下级nginx目录
+			[ "$nginx" == "${openresty_filename}" ] && echo "openresty location $nginx_location,nginx location ${nginx_location}/nginx" || echo "$nginx install location: $nginx_location"
 
-		#定义nginx编译参数
-		if [ "$nginx" == "${nginx_filename}" ];then
-			nginx_configure_args="--prefix=${nginx_location} --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename}  --with-http_sub_module --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module"
-		elif [ "$nginx" == "${tengine_filename}" ];then
-			nginx_configure_args="--prefix=${nginx_location} --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename} --with-http_realip_module  --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module --with-http_concat_module --with-http_sysguard_module --with-http_upstream_check_module"
-		elif [ "$nginx" == "${openresty_filename}" ];then
-			nginx_configure_args="--prefix=${nginx_location} --with-luajit --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename} --with-http_realip_module  --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module"
-		fi
-
-		#提示是否更改编译参数
-		echo -e "the $nginx configure parameter is:\n${nginx_configure_args}\n\n"
-		yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new nginx configure parameter: ' nginx_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
-	
-		if [[ "$yn" == "y" ]];then
-			while true; do
-				#检查编译参数是否为空
-				if [ "$nginx_configure_args" == "" ];then
-					echo "input error.nginx configure parameter can not be empty,please reinput."
-					read -p 'please input your new nginx configure parameter: ' nginx_configure_args
+			if [[ -e $nginx_location ]]; then
+				yes_or_no "the location $nginx_location found,maybe nginx had been installed.skip nginx installation?[Y/n]" "nginx=do_not_install" "" y
+				if [[ "$yn" == "n" ]]; then
 					continue
-				fi
-
-				#检查是否设置prefix
-				nginx_location=$(echo "$nginx_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
-				if [[ "$nginx_location" == "" ]]; then
-					echo "input error.nginx configure parameter prefix can not be empty,please reinput."
-					read -p 'please input your new nginx configure parameter: ' nginx_configure_args
-					continue
-				fi
+				else
+					break
+				fi	
+			else
 				break
-			done
-			echo -e "\nyour new nginx configure parameter is : ${nginx_configure_args}\n"
-		fi
+			fi
+		done	
 
+		if [ "$nginx" != "do_not_install" ];then
+			#定义nginx编译参数
+			if [ "$nginx" == "${nginx_filename}" ];then
+				nginx_configure_args="--prefix=${nginx_location} --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename}  --with-http_sub_module --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module"
+			elif [ "$nginx" == "${tengine_filename}" ];then
+				nginx_configure_args="--prefix=${nginx_location} --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename} --with-http_realip_module  --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module --with-http_concat_module --with-http_sysguard_module --with-http_upstream_check_module"
+			elif [ "$nginx" == "${openresty_filename}" ];then
+				nginx_configure_args="--prefix=${nginx_location} --with-luajit --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename} --with-http_realip_module  --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module"
+			fi
+
+			#提示是否更改编译参数
+			echo -e "the $nginx configure parameter is:\n${nginx_configure_args}\n\n"
+			yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new nginx configure parameter: ' nginx_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
+		
+			if [[ "$yn" == "y" ]];then
+				while true; do
+					#检查编译参数是否为空
+					if [ "$nginx_configure_args" == "" ];then
+						echo "input error.nginx configure parameter can not be empty,please reinput."
+						read -p 'please input your new nginx configure parameter: ' nginx_configure_args
+						continue
+					fi
+
+					#检查是否设置prefix
+					nginx_location=$(echo "$nginx_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
+					if [[ "$nginx_location" == "" ]]; then
+						echo "input error.nginx configure parameter prefix can not be empty,please reinput."
+						read -p 'please input your new nginx configure parameter: ' nginx_configure_args
+						continue
+					fi
+					if [[ -e $nginx_location ]]; then
+						yes_or_no "the location $nginx_location found,maybe nginx had been installed.skip nginx installation?[Y/n]" "nginx=do_not_install" "" y
+						if [[ "$yn" == "n" ]]; then
+							read -p 'please input your new nginx configure parameter: ' nginx_configure_args
+							continue
+						else
+							break
+						fi
+					fi					
+					break
+				done
+				[[ "$nginx" != "do_not_install" ]] && echo -e "\nyour new nginx configure parameter is : ${nginx_configure_args}\n"
+			fi
+		fi
 	fi	
 }
 

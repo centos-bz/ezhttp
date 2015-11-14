@@ -54,100 +54,124 @@ if [ "$php" != "do_not_install" ];then
 		php_preinstall_settings
 	fi
 
-	#php安装路径
-	read -p "$php install location(default:/usr/local/php,leave blank for default): " php_location
-	php_location=${php_location:=/usr/local/php}
-	php_location=`filter_location "$php_location"`
-	echo "$php install location: $php_location"
-	
+	while true;do
+		#php安装路径
+		read -p "$php install location(default:/usr/local/php,leave blank for default): " php_location
+		php_location=${php_location:=/usr/local/php}
+		php_location=`filter_location "$php_location"`
+		echo "$php install location: $php_location"
+		if [[ -e $php_location ]]; then
+			yes_or_no "the location $php_location found,maybe php had been installed.skip php installation?[Y/n]" "php=do_not_install" "" y
+			if [[ "$yn" == "n" ]]; then
+				continue
+			else
+				break
+			fi	
+		else
+			break
+		fi		
+	done
 	#当选择不安装mysql server且php为5.2版本时，询问是否让php支持mysql
 	if [ "$mysql" == "do_not_install" ] && [ "$php" == "${php5_2_filename}" ];then
 		yes_or_no "you do_not_install mysql server,but whether make php support mysql?[N/y]" "read -p 'set mysql server location: ' mysql_location" "unset mysql_location ; echo 'do not make php support mysql.'" n
 	fi
 
-	#获取编译参数
+	if [ "$php" != "do_not_install" ];then
 
-	#判断是否需要支持php mysql，否则取消php的--with-mysql编译参数
-	[ "$mysql" == "do_not_install" ] && [ "$mysql_location" == "" ] && unset with_mysql || with_mysql="--with-mysql=$mysql_location --with-mysqli=$mysql_location/bin/mysql_config --with-pdo-mysql=$mysql_location/bin/mysql_config"
+		#获取编译参数
 
-	#设置php5.3 php5.4 php5.5使用mysqlnd
-	with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=shared,mysqlnd --with-pdo-mysql=shared,mysqlnd"
+		#判断是否需要支持php mysql，否则取消php的--with-mysql编译参数
+		[ "$mysql" == "do_not_install" ] && [ "$mysql_location" == "" ] && unset with_mysql || with_mysql="--with-mysql=$mysql_location --with-mysqli=$mysql_location/bin/mysql_config --with-pdo-mysql=$mysql_location/bin/mysql_config"
 
-	#判断是64系统就加上--with-libdir=lib64  
-	is_64bit && lib64="--with-libdir=lib64" || lib64=""	
+		#设置php5.3 php5.4 php5.5使用mysqlnd
+		with_mysqlnd="--with-mysql=mysqlnd --with-mysqli=shared,mysqlnd --with-pdo-mysql=shared,mysqlnd"
 
-	if [ "$php" == "${php5_2_filename}" ];then
+		#判断是64系统就加上--with-libdir=lib64  
+		is_64bit && lib64="--with-libdir=lib64" || lib64=""	
 
-		#判断php运行模式
-		if [ "$php_mode" == "with_apache" ];then
-			php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
-		elif [ "$php_mode" == "with_fastcgi" ];then
-			php_run_php_mode="--enable-fastcgi --enable-fpm"
-		fi
-		
-		#判断是否支持apt或者yum安装依赖
-		if check_sys packageSupport;then
-			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
-			if CentOSVerCheck 7;then
-				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
-			else
-				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared "
+		if [ "$php" == "${php5_2_filename}" ];then
+
+			#判断php运行模式
+			if [ "$php_mode" == "with_apache" ];then
+				php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
+			elif [ "$php_mode" == "with_fastcgi" ];then
+				php_run_php_mode="--enable-fastcgi --enable-fpm"
 			fi
 			
-		else
-			other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config  --with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
-		fi
+			#判断是否支持apt或者yum安装依赖
+			if check_sys packageSupport;then
+				#centos 7没有mhash和libmcrypt rpm包,只能编译了.
+				if CentOSVerCheck 7;then
+					other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+				else
+					other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared "
+				fi
+				
+			else
+				other_option="--with-xml-config=${depends_prefix}/${libxml2_filename}/bin/xml2-config  --with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+			fi
 
-		#php编译参数
-		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite=shared  --with-pdo_sqlite=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv=shared  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
+			#php编译参数
+			php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite=shared  --with-pdo_sqlite=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv=shared  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
 
-	elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" ]];then
+		elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" ]];then
 
-		#判断php运行模式
-		if [ "$php_mode" == "with_apache" ];then
-			php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
-		elif [ "$php_mode" == "with_fastcgi" ];then
-			php_run_php_mode="--enable-fpm"
+			#判断php运行模式
+			if [ "$php_mode" == "with_apache" ];then
+				php_run_php_mode="--with-apxs2=${apache_location}/bin/apxs"
+			elif [ "$php_mode" == "with_fastcgi" ];then
+				php_run_php_mode="--enable-fpm"
+			fi	
+
+			if check_sys packageSupport;then
+				#centos 7没有mhash和libmcrypt rpm包,只能编译了.
+				if CentOSVerCheck 7;then
+					other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"			
+				else
+					other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared"
+				fi
+				
+			else
+				other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+			fi
+
+			php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite=shared  --with-gettext=shared  --with-iconv=shared  --enable-ftp=shared  --with-sqlite=shared  --with-sqlite3=shared  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
 		fi	
 
-		if check_sys packageSupport;then
-			#centos 7没有mhash和libmcrypt rpm包,只能编译了.
-			if CentOSVerCheck 7;then
-				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"			
-			else
-				other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared"
-			fi
-			
-		else
-			other_option="--with-libxml-dir=${depends_prefix}/${libxml2_filename}  --with-openssl=${depends_prefix}/${openssl_filename}  --with-zlib=${depends_prefix}/${zlib_filename}  --with-zlib-dir=${depends_prefix}/${zlib_filename}  --with-curl=shared,${depends_prefix}/${libcurl_filename}  --with-pcre-dir=${depends_prefix}/${pcre_filename}  --with-openssl-dir=${depends_prefix}/${openssl_filename}  --with-gd=shared  --with-jpeg-dir=${depends_prefix}/${libjpeg_filename}   --with-png-dir=${depends_prefix}/${libpng_filename}  --with-freetype-dir=${depends_prefix}/${freetype_filename}  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"
+
+		#提示是否更改编译参数
+		php_configure_args=`echo $php_configure_args | sed -r 's/\s+/ /g'`
+		echo -e "the $php configure parameter is:\n${php_configure_args}\n\n"
+		yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
+		if [[ "$yn" == "y" ]];then
+			while true; do
+				#检查编译参数是否为空
+				if [ "$php_configure_args" == "" ];then
+					echo "input error.php configure parameter can not be empty,please reinput."
+					read -p 'please input your new php configure parameter: ' php_configure_args
+					continue
+				fi
+
+				#检查是否设置prefix
+				php_location=$(echo "$php_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
+				if [[ "$php_location" == "" ]]; then
+					echo "input error.php configure parameter prefix can not be empty,please reinput."
+					read -p 'please input your new php configure parameter: ' php_configure_args
+					continue
+				fi
+				if [[ -e $php_location ]]; then
+					yes_or_no "the location $php_location found,maybe php had been installed.skip php installation?[Y/n]" "php=do_not_install" "" y
+					if [[ "$yn" == "n" ]]; then
+						read -p 'please input your new php configure parameter: ' php_configure_args
+						continue
+					else
+						break
+					fi
+				fi				
+				break
+			done
+			[[ "$php" != "do_not_install" ]] && echo -e "\nyour new php configure parameter is : ${php_configure_args}\n"
 		fi
-
-		php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite=shared  --with-gettext=shared  --with-iconv=shared  --enable-ftp=shared  --with-sqlite=shared  --with-sqlite3=shared  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
-	fi	
-
-	#提示是否更改编译参数
-	php_configure_args=`echo $php_configure_args | sed -r 's/\s+/ /g'`
-	echo -e "the $php configure parameter is:\n${php_configure_args}\n\n"
-	yes_or_no "Would you like to change it?[N/y]" "read -p 'please input your new php configure parameter: ' php_configure_args" "echo 'you select no,configure parameter will not be changed.'" n
-	if [[ "$yn" == "y" ]];then
-		while true; do
-			#检查编译参数是否为空
-			if [ "$php_configure_args" == "" ];then
-				echo "input error.php configure parameter can not be empty,please reinput."
-				read -p 'please input your new php configure parameter: ' php_configure_args
-				continue
-			fi
-
-			#检查是否设置prefix
-			php_location=$(echo "$php_configure_args" | sed -r -n 's/.*--prefix=([^ ]*).*/\1/p')
-			if [[ "$php_location" == "" ]]; then
-				echo "input error.php configure parameter prefix can not be empty,please reinput."
-				read -p 'please input your new php configure parameter: ' php_configure_args
-				continue
-			fi
-			break
-		done
-		echo -e "\nyour new php configure parameter is : ${php_configure_args}\n"
 	fi
 fi
 }

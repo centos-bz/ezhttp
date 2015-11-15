@@ -660,7 +660,7 @@ check_sys(){
 			packageSupport=false
 		fi
 
-		yes_or_no "ezhttp have detected your system as $release,is that correct [Y/n]" "sys_correct=true;echo 'confirm correct.'" "sys_correct=false"
+		yes_or_no "ezhttp have detected your system as $release,is that correct?[Y/n]" "sys_correct=true;echo 'confirm correct.'" "sys_correct=false" y
 		if ! $sys_correct;then
 			while true;do
 				echo

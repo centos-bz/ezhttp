@@ -333,7 +333,7 @@ if [ "$php_mode" == "with_fastcgi" ];then
 		sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' ${php_location}/etc/php-fpm.conf
 
 	fi
-
+	cp /etc/init.d/php-fpm /etc/init.d/php-fpm$(echo "$php" | grep -o -E '[0-9+]\.[0-9]+')
 	boot_start php-fpm
 fi
 

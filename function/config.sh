@@ -73,6 +73,24 @@ https://www.lxconfig.com/files/ezhttp/mysql-5.6.27.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.27.tar.gz
 '
 
+mysql5_7_filename="mysql-5.7.9"
+set_md5 $mysql5_7_filename "6d782dda9046acb81e694934fd513993"
+set_dl $mysql5_7_filename '
+http://cdn.yyupload.com/down/499809/software/mysql-5.7.9.tar.gz
+https://www.lxconfig.com/files/ezhttp/mysql-5.7.9.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.9.tar.gz
+'
+
+# boost设置(mysql5.6依赖)
+
+boost_filename="boost_1_59_0"
+set_md5 $boost_filename "51528a0e3b33d9e10aaa311d9eb451e3"
+set_dl $boost_filename '
+http://cdn.yyupload.com/down/499809/software/boost_1_59_0.tar.gz
+https://www.lxconfig.com/files/ezhttp/boost_1_59_0.tar.gz
+http://jaist.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
+'
+
 #php设置
 php5_2_filename="php-5.2.17"
 set_md5 $php5_2_filename "04d321d5aeb9d3a051233dbd24220ef1"
@@ -704,7 +722,7 @@ https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.
 #nginx apache mysql php等软件菜单设置
 nginx_arr=( ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version do_not_install)
 apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
-mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} libmysqlclient18 custom_version do_not_install)
+mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} libmysqlclient18 custom_version do_not_install)
 php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=( ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}

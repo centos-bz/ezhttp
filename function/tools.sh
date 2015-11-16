@@ -61,7 +61,7 @@ make_mysql_my_cnf(){
 
 	#二进制日志
 	if $binlog;then
-		binlog="# BINARY LOGGING #\nlog-bin                        = ${mysqlDataLocation}/mysql-bin\nexpire-logs-days               = 14\nsync-binlog                    = 1"
+		binlog="# BINARY LOGGING #\nlog-bin                        = ${mysqlDataLocation}/mysql-bin\nserver-id	= 1\nexpire-logs-days               = 14\nsync-binlog                    = 1"
 		binlog=$(echo -e $binlog)
 	else
 		binlog=""
@@ -110,10 +110,10 @@ user                           = mysql
 default-storage-engine         = ${storage}
 socket                         = ${mysqlDataLocation}/mysql.sock
 pid-file                       = ${mysqlDataLocation}/mysql.pid
+skip-name-resolve
 
 # MyISAM #
 key-buffer-size                = ${key_buffer_size}
-myisam-recover                 = FORCE,BACKUP
 
 # INNODB #
 #innodb-flush-method            = O_DIRECT

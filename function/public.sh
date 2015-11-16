@@ -250,6 +250,7 @@ error_detect(){
 		version=`cat /proc/version`
 		architecture=`uname -m`
 		mem=`free -m`
+		disk=`df -h`
 		cat >>/root/ezhttp.log<<EOF
 		ezhttp errors:
 		distributions:$distro
@@ -257,6 +258,8 @@ error_detect(){
 		version:$version
 		memery:
 		${mem}
+		disk:
+		${disk}
 		Nginx: ${nginx}
 		Nginx compile parameter:${nginx_configure_args}
 		Apache compile parameter:${apache_configure_args}

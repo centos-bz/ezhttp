@@ -698,7 +698,6 @@ http://cdn.yyupload.com/down/499809/software/apache-tomcat-8.0.28.tar.gz
 https://www.lxconfig.com/files/ezhttp/apache-tomcat-8.0.28.tar.gz
 http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.28/bin/apache-tomcat-8.0.28.tar.gz
 '
-
 # php-memcached设置
 php_memcached_filename="memcached-2.2.0"
 set_md5 $php_memcached_filename "28937c6144f734e000c6300242f44ce6"
@@ -707,7 +706,6 @@ http://cdn.yyupload.com/down/499809/software/memcached-2.2.0.tgz
 https://www.lxconfig.com/files/ezhttp/memcached-2.2.0.tgz
 https://pecl.php.net/get/memcached-2.2.0.tgz
 '
-
 # libmemcached设置
 libmemcached_filename="libmemcached-1.0.18"
 set_md5 $libmemcached_filename "b3958716b4e53ddc5992e6c49d97e819"
@@ -716,11 +714,66 @@ http://cdn.yyupload.com/down/499809/software/libmemcached-1.0.18.tar.gz
 https://www.lxconfig.com/files/ezhttp/libmemcached-1.0.18.tar.gz
 https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
 '
+# nginx lua module设置
+lua_nginx_module_filename="lua-nginx-module-0.9.19"
+set_md5 $lua_nginx_module_filename "987b6dd138f831d4b524c5e7c28a4f84"
+set_dl $lua_nginx_module_filename '
+http://cdn.yyupload.com/down/499809/software/lua-nginx-module-0.9.19.tar.gz
+https://www.lxconfig.com/files/ezhttp/lua-nginx-module-0.9.19.tar.gz
+https://github.com/openresty/lua-nginx-module/archive/v0.9.19.tar.gz
+'
+
+# luajit设置
+luajit_filename="LuaJIT-2.0.4"
+set_md5 $luajit_filename "dd9c38307f2223a504cbfb96e477eca0"
+set_dl $luajit_filename '
+http://cdn.yyupload.com/down/499809/software/LuaJIT-2.0.4.tar.gz
+https://www.lxconfig.com/files/ezhttp/LuaJIT-2.0.4.tar.gz
+http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+'
+
+# ngx_devel_kit设置
+ngx_devel_kit_filename="ngx_devel_kit-0.2.19"
+set_md5 $ngx_devel_kit_filename "09a18178adca7b5674129d8100ce4f68"
+set_dl $ngx_devel_kit_filename '
+http://cdn.yyupload.com/down/499809/software/ngx_devel_kit-0.2.19.tar.gz
+https://www.lxconfig.com/files/ezhttp/ngx_devel_kit-0.2.19.tar.gz
+https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
+'
+
+# nginx-http-concat module设置
+nginx_concat_module_filename="nginx-http-concat-1.2.2"
+set_md5 $nginx_concat_module_filename "490d9705b7461e4c58cf28bd7fee3040"
+set_dl $nginx_concat_module_filename '
+http://cdn.yyupload.com/down/499809/software/nginx-http-concat-1.2.2.tar.gz
+https://www.lxconfig.com/files/ezhttp/nginx-http-concat-1.2.2.tar.gz
+https://github.com/alibaba/nginx-http-concat/archive/1.2.2.tar.gz
+'
+
+# nginx-upload-module-2.2设置
+nginx_upload_module_filename="nginx-upload-module-2.2"
+set_md5 $nginx_upload_module_filename "ad52deb7a5b2ca7a5351ebac92a531df"
+set_dl $nginx_upload_module_filename '
+http://cdn.yyupload.com/down/499809/software/nginx-upload-module-2.2.zip
+https://www.lxconfig.com/files/ezhttp/nginx-upload-module-2.2.zip
+https://codeload.github.com/vkholodkov/nginx-upload-module/zip/2.2
+'
+
+# ngx_http_substitutions_filter_module设置
+ngx_substitutions_filter_module_filename="ngx_http_substitutions_filter_module-0.6.4"
+set_md5 $ngx_substitutions_filter_module_filename "bc4482c8f9a10a59d14e46693b87e00c"
+set_dl $ngx_substitutions_filter_module_filename '
+http://cdn.yyupload.com/down/499809/software/ngx_http_substitutions_filter_module-0.6.4.tar.gz
+https://www.lxconfig.com/files/ezhttp/ngx_http_substitutions_filter_module-0.6.4.tar.gz
+https://codeload.github.com/yaoweibin/ngx_http_substitutions_filter_module/tar.gz/v0.6.4
+'
 
 ########################其它设置########################
 
 #nginx apache mysql php等软件菜单设置
 nginx_arr=( ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version do_not_install)
+nginx_modules_arr=(${lua_nginx_module_filename} ${nginx_concat_module_filename} ${nginx_upload_module_filename} 
+			${ngx_substitutions_filter_module_filename} do_not_install)
 apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
 mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} libmysqlclient18 custom_version do_not_install)
 php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version do_not_install)

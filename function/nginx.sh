@@ -100,120 +100,210 @@ nginx_preinstall_settings(){
 				[[ "$nginx" != "do_not_install" ]] && echo -e "\nyour new nginx configure parameter is : ${nginx_configure_args}\n"
 			fi
 		fi
-	fi	
+	fi
+
+	# nginx模块设置
+	if [[ "$nginx" != "do_not_install" ]];then
+		echo
+		yes_or_no "Do you need to install nginx module?[N/y]" "" "" n
+		if [[ "$yn" == "y" ]]; then
+			if [[ "$nginx" == "${openresty_filename}" ]]; then
+				# openresty已经自带lua,从菜单删除
+				nginx_modules_arr=(${nginx_modules_arr[@]#${lua_nginx_module_filename}})
+			fi
+
+			if [[ "$nginx" == "${tengine_filename}" ]]; then
+				# tengine已经自带concat,从菜单删除
+				nginx_modules_arr=(${nginx_modules_arr[@]#${nginx_concat_module_filename}})
+			fi
+			display_menu_multi nginx_modules last
+
+			#设置编译参数
+			if if_in_array "${lua_nginx_module_filename}" "$nginx_modules_install";then
+				nginx_configure_args="${nginx_configure_args} --with-ld-opt='-Wl,-rpath,${depends_prefix}/${luajit_filename}' --add-module=$cur_dir/soft/${ngx_devel_kit_filename} --add-module=$cur_dir/soft/${lua_nginx_module_filename}"
+			fi
+
+			if if_in_array "${nginx_concat_module_filename}" "$nginx_modules_install";then
+				nginx_configure_args="${nginx_configure_args} --add-module=$cur_dir/soft/${nginx_concat_module_filename}"
+			fi
+
+			if if_in_array "${nginx_upload_module_filename}" "$nginx_modules_install";then
+				nginx_configure_args="${nginx_configure_args} --add-module=$cur_dir/soft/${nginx_upload_module_filename}"
+			fi
+
+			if if_in_array "${ngx_substitutions_filter_module_filename}" "$nginx_modules_install";then
+				nginx_configure_args="${nginx_configure_args} --add-module=$cur_dir/soft/${ngx_substitutions_filter_module_filename}"
+			fi
+
+		fi
+	fi
+
 }
 
+# 安装luajit
+install_luajit(){
+	download_file "${luajit_filename}.tar.gz"
+	cd $cur_dir/soft/
+	rm -rf ${luajit_filename}
+	tar xzvf ${luajit_filename}.tar.gz
+	cd ${luajit_filename}
+	error_detect "parallel_make PREFIX=${depends_prefix}/${luajit_filename}"
+	error_detect "make install PREFIX=${depends_prefix}/${luajit_filename}"
+	add_to_env "${depends_prefix}/${luajit_filename}"
+	echo "${depends_prefix}/${luajit_filename}/lib/" > /etc/ld.so.conf.d/luajit.conf
+	ldconfig
+}
+
+# 安装模块
+install_module(){
+	if if_in_array "${lua_nginx_module_filename}" "$nginx_modules_install";then
+		check_installed install_luajit ${depends_prefix}/${luajit_filename}
+		export LUAJIT_LIB=${depends_prefix}/${luajit_filename}/lib
+		export LUAJIT_INC=${depends_prefix}/${luajit_filename}/include/luajit-2.0
+
+		download_file "${ngx_devel_kit_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${ngx_devel_kit_filename}.tar.gz
+
+		download_file "${lua_nginx_module_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${lua_nginx_module_filename}.tar.gz
+
+	fi
+
+	if if_in_array "${nginx_concat_module_filename}" "$nginx_modules_install";then
+		download_file "${nginx_concat_module_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${nginx_concat_module_filename}.tar.gz
+	fi
+
+	if if_in_array "${nginx_upload_module_filename}" "$nginx_modules_install";then
+		download_file "${nginx_upload_module_filename}.zip"
+		cd $cur_dir/soft/
+		rm -rf ${nginx_upload_module_filename}
+		unzip ${nginx_upload_module_filename}.zip
+	fi
+
+	if if_in_array "${ngx_substitutions_filter_module_filename}" "$nginx_modules_install";then
+		download_file "${ngx_substitutions_filter_module_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${ngx_substitutions_filter_module_filename}.tar.gz
+	fi
+		
+}
 
 #安装nginx
 install_nginx(){
-#安装pcre
-download_file  "${pcre_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${pcre_filename}.tar.gz
-#安装openssl
-download_file  "${openssl_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${openssl_filename}.tar.gz
-#安装zlib
-download_file  "${zlib_filename}.tar.gz"
-cd $cur_dir/soft/
-tar xzvf ${zlib_filename}.tar.gz
-
-if [ "$nginx" == "${nginx_filename}" ];then
-	download_file  "${nginx_filename}.tar.gz"
+	# 安装模块
+	install_module
+	#安装pcre
+	download_file  "${pcre_filename}.tar.gz"
 	cd $cur_dir/soft/
-	tar xvzf ${nginx_filename}.tar.gz
-	cd ${nginx_filename}
-	make clean
-	error_detect "./configure ${nginx_configure_args}"
-	error_detect "make"
-	error_detect "make install"
-
-elif [ "$nginx" == "${tengine_filename}" ];then
-	download_file  "${tengine_filename}.tar.gz"
+	tar xzvf ${pcre_filename}.tar.gz
+	#安装openssl
+	download_file  "${openssl_filename}.tar.gz"
 	cd $cur_dir/soft/
-	tar xzvf ${tengine_filename}.tar.gz
-	cd ${tengine_filename}
-	make clean
-	error_detect "./configure ${nginx_configure_args}"
-	error_detect "make"
-	error_detect "make install"
-	
-elif [ "$nginx" == "${openresty_filename}" ];then
-	download_file  "${openresty_filename}.tar.gz"
+	tar xzvf ${openssl_filename}.tar.gz
+	#安装zlib
+	download_file  "${zlib_filename}.tar.gz"
 	cd $cur_dir/soft/
-	tar xzvf ${openresty_filename}.tar.gz
-	cd ${openresty_filename}
-	make clean	
-	error_detect "./configure ${nginx_configure_args}"
-	error_detect "make"
-	error_detect "make install"
-	#openresty的nginx路径会在下一级nginx目录
-	nginx_location=${nginx_location}/nginx
-fi
+	tar xzvf ${zlib_filename}.tar.gz
 
-#配置nginx
-config_nginx
-#记录nginx安装位置
-echo "nginx_location=$nginx_location" >> /etc/ezhttp_info_do_not_del
+	if [ "$nginx" == "${nginx_filename}" ];then
+		download_file  "${nginx_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xvzf ${nginx_filename}.tar.gz
+		cd ${nginx_filename}
+		make clean
+		error_detect "./configure ${nginx_configure_args}"
+		error_detect "make"
+		error_detect "make install"
+
+	elif [ "$nginx" == "${tengine_filename}" ];then
+		download_file  "${tengine_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${tengine_filename}.tar.gz
+		cd ${tengine_filename}
+		make clean
+		error_detect "./configure ${nginx_configure_args}"
+		error_detect "make"
+		error_detect "make install"
+		
+	elif [ "$nginx" == "${openresty_filename}" ];then
+		download_file  "${openresty_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${openresty_filename}.tar.gz
+		cd ${openresty_filename}
+		make clean	
+		error_detect "./configure ${nginx_configure_args}"
+		error_detect "make"
+		error_detect "make install"
+		#openresty的nginx路径会在下一级nginx目录
+		nginx_location=${nginx_location}/nginx
+	fi
+
+	#配置nginx
+	config_nginx
+	#记录nginx安装位置
+	echo "nginx_location=$nginx_location" >> /etc/ezhttp_info_do_not_del
 }
 
 #配置nginx
 config_nginx(){
-groupadd www	
-useradd -M -s /bin/false -g www www
-mkdir -p ${nginx_location}/conf/vhost
-mkdir -p /home/wwwroot/
-\cp  -a $cur_dir/conf/rewrite ${nginx_location}/conf/
-rm -f /etc/init.d/nginx
-\cp  -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
-sed -i "s#^nginx_location=.*#nginx_location=$nginx_location#" /etc/init.d/nginx
-chmod +x /etc/init.d/nginx
-\cp  $cur_dir/conf/index.html /home/wwwroot/
-\cp  $cur_dir/conf/tz.php /home/wwwroot/
-\cp  $cur_dir/conf/p.php /home/wwwroot/
-boot_start nginx
-mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
+	groupadd www	
+	useradd -M -s /bin/false -g www www
+	mkdir -p ${nginx_location}/conf/vhost
+	mkdir -p /home/wwwroot/
+	\cp  -a $cur_dir/conf/rewrite ${nginx_location}/conf/
+	rm -f /etc/init.d/nginx
+	\cp  -f $cur_dir/conf/init.d.nginx /etc/init.d/nginx
+	sed -i "s#^nginx_location=.*#nginx_location=$nginx_location#" /etc/init.d/nginx
+	chmod +x /etc/init.d/nginx
+	\cp  $cur_dir/conf/index.html /home/wwwroot/
+	\cp  $cur_dir/conf/tz.php /home/wwwroot/
+	\cp  $cur_dir/conf/p.php /home/wwwroot/
+	boot_start nginx
+	mv ${nginx_location}/conf/nginx.conf ${nginx_location}/conf/nginx.conf_bak
 
-if [ "$stack" == "lnamp" ];then
-	\cp  -f $cur_dir/conf/nginx-lnamp.conf ${nginx_location}/conf/nginx.conf
-	\cp -f $cur_dir/conf/proxy.conf ${nginx_location}/conf/
-	#日志分割
-	cat > /etc/logrotate.d/nginx <<EOF
-	/home/wwwlog/*/access_nginx.log /home/wwwlog/*/error_nginx.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
-	    daily
-	    rotate 14
-	    missingok
-	    notifempty
-	    compress
-	    sharedscripts
-	    postrotate
-	        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
-	    endscript
-	}
+	if [ "$stack" == "lnamp" ];then
+		\cp  -f $cur_dir/conf/nginx-lnamp.conf ${nginx_location}/conf/nginx.conf
+		\cp -f $cur_dir/conf/proxy.conf ${nginx_location}/conf/
+		#日志分割
+		cat > /etc/logrotate.d/nginx <<EOF
+		/home/wwwlog/*/access_nginx.log /home/wwwlog/*/error_nginx.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
+		    daily
+		    rotate 14
+		    missingok
+		    notifempty
+		    compress
+		    sharedscripts
+		    postrotate
+		        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
+		    endscript
+		}
 EOF
 
-else	
-	\cp  -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
+	else	
+		\cp  -f $cur_dir/conf/nginx.conf ${nginx_location}/conf/
 
-	#日志分割
-	cat > /etc/logrotate.d/nginx <<EOF
-	/home/wwwlog/*/access.log /home/wwwlog/*/error.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
-	    daily
-	    rotate 14
-	    missingok
-	    notifempty
-	    compress
-	    sharedscripts
-	    postrotate
-	        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
-	    endscript
-	}
+		#日志分割
+		cat > /etc/logrotate.d/nginx <<EOF
+		/home/wwwlog/*/access.log /home/wwwlog/*/error.log ${nginx_location}/logs/access.log ${nginx_location}/logs/error.log {
+		    daily
+		    rotate 14
+		    missingok
+		    notifempty
+		    compress
+		    sharedscripts
+		    postrotate
+		        [ ! -f ${nginx_location}/logs/nginx.pid ] || kill -USR1 \`cat ${nginx_location}/logs/nginx.pid\`
+		    endscript
+		}
 EOF
 
-fi
+	fi
 
-#开放80端口
-iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+	#开放80端口
+	iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 
 }

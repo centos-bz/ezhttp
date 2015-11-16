@@ -141,7 +141,8 @@ cat >/root/previous_setting <<EOF
 stack="$stack"
 nginx="$nginx"
 nginx_location="$nginx_location"
-nginx_configure_args='${nginx_configure_args}'
+nginx_configure_args="${nginx_configure_args}"
+nginx_modules_install="${nginx_modules_install}"
 apache="$apache"
 apache_location="$apache_location"
 apache_configure_args='${apache_configure_args}'
@@ -302,6 +303,7 @@ last_confirm(){
 	[ "$stack" != "lamp" ] && echo "Nginx: ${nginx}"
 	[ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] && echo "Nginx Location: $nginx_location"
 	[ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] && echo "Nginx Configure Parameter: ${nginx_configure_args}"
+	[ "$nginx" != "do_not_install" ] && [ "$stack" != "lamp" ] && echo "Nginx Modules: ${nginx_modules_install}"
 	echo
 	[ "$stack" != "lnmp" ] && echo "*****Apache Setting*****"
 	[ "$stack" != "lnmp" ] && echo "Apache: ${apache}"

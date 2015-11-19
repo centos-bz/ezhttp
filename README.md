@@ -49,5 +49,5 @@ chmod +x start.sh
 ```
 Bugs & Issues
 =============
-Please feel free to report any bugs and issues to me, my email is: admin@centos.bz.
+Please feel free to report any bugs and issues to me, my email is: admin@centos.bz.  
 中文支持:https://www.lxconfig.com/forum-65-1.html

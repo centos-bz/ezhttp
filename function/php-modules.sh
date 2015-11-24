@@ -61,7 +61,7 @@ php_modules_preinstall_settings(){
 			php_modules_arr=(${php_modules_arr[@]#${ionCube_filename}})
 		fi
 		#显示菜单
-		display_menu_multi php_modules 1
+		display_menu_multi php_modules last
 		#恢复php变量为do_not_install
 		$phpDoNotInstall && php="do_not_install"
 

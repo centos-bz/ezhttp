@@ -21,7 +21,9 @@ php_modules_preinstall_settings(){
 					elif [[ `get_php_version $phpConfig` == "5.4" ]]; then
 						php=${php5_4_filename}
 					elif [[ `get_php_version $phpConfig` == "5.5" ]]; then
-						php=${php5_5_filename}						
+						php=${php5_5_filename}
+					elif [[ `get_php_version $phpConfig` == "5.6" ]]; then
+						php=${php5_6_filename}											
 					else
 						echo "sorry,unsupported php version."
 						exit 1
@@ -40,6 +42,13 @@ php_modules_preinstall_settings(){
 	fi	
 
 	if [[ $php_modules_install != "do_not_install" ]];then
+		# 检查fileinfo在编译参数关闭
+		if [[ "$php_configure_args" != "" ]]; then
+			if [[ ! "$php_configure_args" =~ "--disable-fileinfo" ]]; then
+				php_modules_arr=(${php_modules_arr[@]#fileinfo})
+			fi
+		fi
+
 		echo "$php version available modules:"
 		echo
 		if [ "$php" == "${php5_2_filename}" ];then
@@ -59,6 +68,13 @@ php_modules_preinstall_settings(){
 			php_modules_arr=(${php_modules_arr[@]#${xcache_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${ionCube_filename}})
+		elif [ "$php" == "${php5_6_filename}" ];then
+			#从数组中删除ZendOptimizer、eaccelerator、xcache ionCube_filename
+			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${xcache_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${ionCube_filename}})			
 		fi
 		#显示菜单
 		display_menu_multi php_modules last
@@ -81,27 +97,45 @@ php_modules_preinstall_settings(){
 					fi
 				done	
 			fi
-		fi	
+		fi
+
+		#如果安装fileinfo,并且没有指定php安装,我们需要知道php源码位置
+		if [[ $php == "do_not_install" ]];then
+			if if_in_array "fileinfo" "$php_modules_install";then
+				while true;do
+					read -p "as you choose fileinfo,we need to know the php source location,please input: " php_source_location
+					local fileinfo_location=${php_source_location}/ext/fileinfo
+					if [[ -d "$fileinfo_location" ]];then
+						break
+					else
+						echo "can not find fileinfo dir in ${php_source_location},please reinput."
+					fi
+				done	
+			fi
+		fi
+
 	fi	
 }
 
 
 #安装php模块
 install_php_modules(){
-local phpConfig=$1
-if_in_array "${ZendOptimizer_filename}" "$php_modules_install" && install_ZendOptimizer "$phpConfig"
-if_in_array "${eaccelerator_filename}" "$php_modules_install" && install_eaccelerator "$phpConfig"
-if_in_array "${xcache_filename}" "$php_modules_install" && install_xcache "$phpConfig"
-if_in_array "${php_imagemagick_filename}" "$php_modules_install" && install_php_imagesmagick "$phpConfig"
-if_in_array "${php_memcache_filename}" "$php_modules_install" && install_php_memcache "$phpConfig"
-if_in_array "${php_memcached_filename}" "$php_modules_install" && install_php_memcached "$phpConfig"
-if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && install_ZendGuardLoader "$phpConfig"
-if_in_array "${ionCube_filename}" "$php_modules_install" && install_ionCube "$phpConfig"
-if_in_array "${php_redis_filename}" "$php_modules_install" && install_php_redis "$phpConfig"
-if_in_array "${php_mongo_filename}" "$php_modules_install" && install_php_mongo "$phpConfig"
-if_in_array "${apc_filename}" "$php_modules_install" && install_php_apc "$phpConfig"
-if_in_array "${xdebug_filename}" "$php_modules_install" && install_xdebug "$phpConfig"
-if_in_array "mssql" "$php_modules_install" && install_mssql "$phpConfig"
+	local phpConfig=$1
+	if_in_array "${ZendOptimizer_filename}" "$php_modules_install" && install_ZendOptimizer "$phpConfig"
+	if_in_array "${eaccelerator_filename}" "$php_modules_install" && install_eaccelerator "$phpConfig"
+	if_in_array "${xcache_filename}" "$php_modules_install" && install_xcache "$phpConfig"
+	if_in_array "${php_imagemagick_filename}" "$php_modules_install" && install_php_imagesmagick "$phpConfig"
+	if_in_array "${php_memcache_filename}" "$php_modules_install" && install_php_memcache "$phpConfig"
+	if_in_array "${php_memcached_filename}" "$php_modules_install" && install_php_memcached "$phpConfig"
+	if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && install_ZendGuardLoader "$phpConfig"
+	if_in_array "${ionCube_filename}" "$php_modules_install" && install_ionCube "$phpConfig"
+	if_in_array "${php_redis_filename}" "$php_modules_install" && install_php_redis "$phpConfig"
+	if_in_array "${php_mongo_filename}" "$php_modules_install" && install_php_mongo "$phpConfig"
+	if_in_array "${apc_filename}" "$php_modules_install" && install_php_apc "$phpConfig"
+	if_in_array "${xdebug_filename}" "$php_modules_install" && install_xdebug "$phpConfig"
+	if_in_array "mssql" "$php_modules_install" && install_mssql "$phpConfig"
+	if_in_array "fileinfo" "$php_modules_install" && install_fileinfo "$phpConfig"
+	if_in_array "${swoole_filename}" "$php_modules_install" && install_swoole "$phpConfig"
 }
 
 #安装mssql
@@ -117,7 +151,33 @@ install_mssql(){
 	error_detect "./configure --with-php-config=${phpConfig} --with-mssql=${depends_prefix}/${freetds_filename}"
 	error_detect "make"
 	error_detect "make install"
-	! grep -q  "\[mssql\]" $(get_php_ini $phpConfig) && sed -i '$a\[mssql]\nextension=mssql.so\n' $(get_php_ini $phpConfig) 
+	! grep -q  "extension=mssql.so" $(get_php_ini $phpConfig) && sed -i '$a\extension=mssql.so\n' $(get_php_ini $phpConfig) 
+}
+
+#安装swoole
+install_swoole(){
+	local phpConfig=$1
+	download_file "${swoole_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${swoole_filename}.tar.gz
+	cd ${swoole_filename}
+	error_detect "./configure --with-php-config=${phpConfig}"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "extension=swoole.so" $(get_php_ini $phpConfig) && sed -i '$a\extension=swoole.so\n' $(get_php_ini $phpConfig) 
+}
+
+# 安装fileinfo
+install_fileinfo(){
+	local phpConfig=$1
+	[[ "$php" != "do_not_install" ]] && php_source_location=$cur_dir/soft/$php
+	
+	cd ${php_source_location}/ext/fileinfo
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --with-php-config=${phpConfig}"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "extension=fileinfo.so" $(get_php_ini $phpConfig) && sed -i '$a\extension=fileinfo.so\n' $(get_php_ini $phpConfig) 
 }
 
 #安装freetds

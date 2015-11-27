@@ -124,6 +124,14 @@ https://www.lxconfig.com/files/ezhttp/php-5.5.27.tar.gz
 http://us1.php.net/distributions/php-5.5.27.tar.gz
 '
 
+php5_6_filename="php-5.6.15"
+set_md5 $php5_6_filename "4ec2fe201e24c6f65bf7bd4bac1bc880"
+set_dl $php5_6_filename '
+http://cdn.yyupload.com/down/499809/software/php-5.6.15.tar.gz
+https://www.lxconfig.com/files/ezhttp/php-5.6.15.tar.gz
+http://us1.php.net/distributions/php-5.6.15.tar.gz
+'
+
 #freetds设置
 freetds_filename="freetds-0.95.21"
 set_md5 $freetds_filename "90690b8f2f270151092009b71fe9b590"
@@ -132,6 +140,16 @@ http://cdn.yyupload.com/down/499809/software/freetds-0.95.21.tar.gz
 https://www.lxconfig.com/files/ezhttp/freetds-0.95.21.tar.gz
 ftp://ftp.freetds.org/pub/freetds/stable/freetds-0.95.21.tar.gz
 '
+
+#swoole设置
+swoole_filename="swoole-src-swoole-1.7.20-stable"
+set_md5 $swoole_filename "c44284e20d415ac06db512f3fb1f9863"
+set_dl $swoole_filename '
+http://cdn.yyupload.com/down/499809/software/swoole-src-swoole-1.7.20-stable.tar.gz
+https://www.lxconfig.com/files/ezhttp/swoole-src-swoole-1.7.20-stable.tar.gz
+https://codeload.github.com/swoole/swoole-src/tar.gz/swoole-1.7.20-stable
+'
+set_hint $swoole_filename "php-swoole-1.7.20"
 
 #ZendOptimizer设置
 ZendOptimizer_filename="ZendOptimizer-3.3.9"
@@ -178,6 +196,7 @@ http://cdn.yyupload.com/down/499809/software/memcache-3.0.8.tgz
 https://www.lxconfig.com/files/ezhttp/memcache-3.0.8.tgz
 http://pecl.php.net/get/memcache-3.0.8.tgz
 '
+set_hint $php_memcache_filename "php-memcache-3.0.8"
 
 #ImageMagick设置
 ImageMagick_filename="ImageMagick-6.9.2-6"
@@ -196,6 +215,7 @@ http://cdn.yyupload.com/down/499809/software/redis-2.2.7.tgz
 https://www.lxconfig.com/files/ezhttp/redis-2.2.7.tgz
 http://pecl.php.net/get/redis-2.2.7.tgz
 '
+set_hint $php_redis_filename "php-redis-2.2.7"
 
 #php mongo模块设置
 php_mongo_filename="mongo-php-driver-legacy-1.6.11"
@@ -205,6 +225,7 @@ http://cdn.yyupload.com/down/499809/software/mongo-php-driver-legacy-1.6.11.tar.
 https://www.lxconfig.com/files/ezhttp/mongo-php-driver-legacy-1.6.11.tar.gz
 https://codeload.github.com/mongodb/mongo-php-driver-legacy/tar.gz/1.6.11
 '
+set_hint $php_mongo_filename "php-mongo-legacy-1.6.11"
 
 #pkgconfig设置
 pkgconfig_filename="pkgconfig-0.18"
@@ -222,6 +243,7 @@ http://cdn.yyupload.com/down/499809/software/imagick-3.1.2.tgz
 https://www.lxconfig.com/files/ezhttp/imagick-3.1.2.tgz
 http://pecl.php.net/get/imagick-3.1.2.tgz
 '
+set_hint $php_imagemagick_filename "php-imagick-3.1.2"
 
 #APC设置
 apc_filename="APC-3.1.13"
@@ -294,6 +316,7 @@ http://cdn.yyupload.com/down/499809/software/xdebug-XDEBUG_2_2_2.tar.gz
 https://www.lxconfig.com/files/ezhttp/xdebug-XDEBUG_2_2_2.tar.gz
 https://github.com/derickr/xdebug/archive/XDEBUG_2_2_2.tar.gz
 '
+set_hint $xdebug_filename "xdebug-2.2.2"
 
 #memcached设置
 memcached_filename="memcached-1.4.24"
@@ -706,6 +729,8 @@ http://cdn.yyupload.com/down/499809/software/memcached-2.2.0.tgz
 https://www.lxconfig.com/files/ezhttp/memcached-2.2.0.tgz
 https://pecl.php.net/get/memcached-2.2.0.tgz
 '
+set_hint $php_memcached_filename "php-memcached-2.2.0 (Support Aliyun OCS)"
+
 # libmemcached设置
 libmemcached_filename="libmemcached-1.0.18"
 set_md5 $libmemcached_filename "b3958716b4e53ddc5992e6c49d97e819"
@@ -776,11 +801,11 @@ nginx_modules_arr=(${lua_nginx_module_filename} ${nginx_concat_module_filename} 
 			${ngx_substitutions_filter_module_filename} do_not_install)
 apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
 mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} libmysqlclient18 custom_version do_not_install)
-php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename}  custom_version do_not_install)
+php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename} ${php5_6_filename} custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=( ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
 				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_memcached_filename} ${php_redis_filename} 
-				 ${php_mongo_filename}  ${xdebug_filename} mssql do_not_install)
+				 ${php_mongo_filename}  ${xdebug_filename} mssql fileinfo $swoole_filename do_not_install)
 other_soft_arr=( ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} 
 				${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename} ${jdk7_filename} 
 				${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename} do_not_install)

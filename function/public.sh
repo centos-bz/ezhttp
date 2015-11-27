@@ -50,6 +50,20 @@ get_dl_valname(){
 	echo dl_$new_val
 }
 
+# 根据文件名设置hint变量
+set_hint(){
+    local val=$1
+    local hint="$2"
+    local new_val=$(get_valid_valname $val)
+    eval hint_${new_val}="\$hint"
+}
+
+get_hint(){
+	local val=$1
+	local new_val=$(get_valid_valname $val)
+	eval echo "\$hint_${new_val}"
+}
+
 #杀掉进程
 kill_pid(){
 	local processType=$1
@@ -109,12 +123,19 @@ display_menu(){
 		default_prompt="(default ${arr[$default-1]})"
 	fi
 	local pick
+	local hint
+	local vname
 	local prompt="which ${soft} you'd select${default_prompt}: "
 
 	while true
 	do
 		echo -e "#################### ${soft} setting ####################\n\n"
-		for ((i=1;i<=${#arr[@]};i++ )); do echo -e "$i) ${arr[$i-1]}"; done
+		for ((i=1;i<=${#arr[@]};i++ )); do
+			vname="$(get_valid_valname ${arr[$i-1]})"
+			hint="$(get_hint $vname)"
+			[[ "$hint" == "" ]] && hint="${arr[$i-1]}"
+			echo -e "$i) $hint"
+		done
 		echo
 		read -p "${prompt}" pick
 		if [[ "$pick" == "" && "$default" != "" ]]; then
@@ -136,7 +157,10 @@ display_menu(){
 	done
 
 	eval $soft=${arr[$pick-1]}
-	eval echo "your selection: \$$soft"             
+	vname="$(get_valid_valname ${arr[$pick-1]})"
+	hint="$(get_hint $vname)"
+	[[ "$hint" == "" ]] && hint="${arr[$pick-1]}"
+	echo "your selection: $hint"
 }
 
 #显示菜单(多选)
@@ -148,6 +172,8 @@ display_menu_multi(){
 	local pick
 	local correct=true
 	local prompt
+	local vname
+	local hint
 	local default_prompt
 	if [[ "$default" != "" ]]; then
 		if [[ "$default" == "last" ]];then
@@ -160,7 +186,12 @@ display_menu_multi(){
 
 	echo  "#################### $soft install ####################"
 	echo
-	for ((i=1;i<=$arr_len;i++ )); do echo -e "$i) ${arr[$i-1]}"; done
+	for ((i=1;i<=$arr_len;i++ )); do
+		vname="$(get_valid_valname ${arr[$i-1]})"
+		hint="$(get_hint $vname)"
+		[[ "$hint" == "" ]] && hint="${arr[$i-1]}"		
+		echo -e "$i) $hint"
+	done
 	echo
 	while true
 	do

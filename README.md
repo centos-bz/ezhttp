@@ -19,7 +19,7 @@ Supported Software
 * Nginx Module: lua_nginx_module nginx_concat_module nginx_upload_module ngx_substitutions_filter_module
 * Apache-2.2 Apache-2.4
 * MySQL-5.1 MySQL-5.5 MySQL-5.6 MySQL-5.7
-* PHP-5.2 PHP-5.3 PHP-5.4 PHP-5.5
+* PHP-5.2 PHP-5.3 PHP-5.4 PHP-5.5 PHP-5.6
 * PHP Module: ZendOptimizer ZendGuardLoader Xcache Eaccelerator Imagemagick IonCube Memcache Memcached Redis Mongo Xdebug Mssql
 * Other Software: Memcached PureFtpd PhpMyAdmin Redis Mongodb PhpRedisAdmin MemAdmin RockMongo Jdk7 Jdk8 Tomcat7 Tomcat8
 
@@ -83,6 +83,17 @@ Process Management
 | apache  | /etc/init.d/httpd (start\|stop\|restart)   |
 | php-fpm | /etc/init.d/php-fpm (start\|stop\|restart) |
 | mysql   | /etc/init.d/mysqld (start\|stop\|restart)  |
+
+ez command description
+=======================
+| Command | Description                                  |
+|---------|------------------------------------------|
+| ez vhost add   | create virtual host   |
+| ez vhost list  | list all virtual host   |
+| ez vhost del | remove a virtual host |
+| ez mysql reset  | reset mysql password  |
+| ez mysql add  | create a mysql user   |
+
 Bugs & Issues
 =============
 Please feel free to report any bugs and issues to me, my email is: admin@centos.bz.

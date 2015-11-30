@@ -302,11 +302,12 @@ install_m4(){
 #安装ImageMagick
 install_ImageMagick(){
 	if ! check_sys packageManager apt && ! check_sys packageManager yum;then
-	    check_installed "install_freetype" "${depends_prefix}/${freetype_filename}"
+		check_installed "install_libtool" "${depends_prefix}/${libtool_filename}"
 	    check_installed "install_libjpeg" "${depends_prefix}/${libjpeg_filename}"
 	    check_installed "install_libpng" "${depends_prefix}/${libpng_filename}"
 	    check_installed "install_libxml2" "${depends_prefix}/${libxml2_filename}"
 	    check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
+	    check_installed "install_freetype" "${depends_prefix}/${freetype_filename}"
 
 	    export PKG_CONFIG_PATH=${depends_prefix}/${freetype_filename}/lib/pkgconfig:${depends_prefix}/${libpng_filename}/lib/pkgconfig:${depends_prefix}/${libxml2_filename}/lib/pkgconfig:${depends_prefix}/${zlib_filename}/lib/pkgconfig:$PKG_CONFIG_PATH
         export CPPFLAGS=-I${depends_prefix}/${libjpeg_filename}/include

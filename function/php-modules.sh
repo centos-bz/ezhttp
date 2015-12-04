@@ -161,6 +161,7 @@ install_swoole(){
 	cd $cur_dir/soft/
 	tar xzvf ${swoole_filename}.tar.gz
 	cd ${swoole_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
 	error_detect "./configure --with-php-config=${phpConfig}"
 	error_detect "make"
 	error_detect "make install"

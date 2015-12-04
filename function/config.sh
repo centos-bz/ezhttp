@@ -80,6 +80,7 @@ http://cdn.yyupload.com/down/499809/software/mysql-5.7.9.tar.gz
 https://www.lxconfig.com/files/ezhttp/mysql-5.7.9.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.9.tar.gz
 '
+set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when building,try mysql-5.6 if failed)"
 
 # boost设置(mysql5.6依赖)
 

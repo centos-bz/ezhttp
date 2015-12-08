@@ -834,7 +834,7 @@ restart_php(){
 #判断php-config是否正确
 check_php_config(){
 	local phpConfig=$1
-	if $phpConfig --vernum | grep -q -E "^50[0-9]{3}$";then
+	if $phpConfig --vernum | grep -q -E "^[5|7]0[0-9]{3}$";then
 		return 0
 	else
 		return 1

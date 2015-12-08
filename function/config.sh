@@ -133,6 +133,14 @@ https://www.lxconfig.com/files/ezhttp/php-5.6.15.tar.gz
 http://us1.php.net/distributions/php-5.6.15.tar.gz
 '
 
+php7_0_filename="php-7.0.0"
+set_md5 $php7_0_filename "4ac36fc0c028c7f704b8485b9cd636e9"
+set_dl $php7_0_filename '
+http://cdn.yyupload.com/down/499809/software/php-7.0.0.tar.gz
+https://www.lxconfig.com/files/ezhttp/php-7.0.0.tar.gz
+http://us1.php.net/distributions/php-7.0.0.tar.gz
+'
+
 #freetds设置
 freetds_filename="freetds-0.95.21"
 set_md5 $freetds_filename "90690b8f2f270151092009b71fe9b590"
@@ -802,7 +810,7 @@ nginx_modules_arr=(${lua_nginx_module_filename} ${nginx_concat_module_filename} 
 			${ngx_substitutions_filter_module_filename} do_not_install)
 apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
 mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} libmysqlclient18 custom_version do_not_install)
-php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename} ${php5_6_filename} custom_version do_not_install)
+php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename} ${php5_6_filename} ${php7_0_filename} custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=( ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
 				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_memcached_filename} ${php_redis_filename} 

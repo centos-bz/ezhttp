@@ -156,6 +156,7 @@ php="$php"
 php_location="$php_location"
 php_mode="$php_mode"
 php_modules_install="${php_modules_install}"
+php_source_location="${php_source_location}"
 phpConfig="${phpConfig}"
 php_configure_args='${php_configure_args}'
 other_soft_install="${other_soft_install}"

@@ -713,9 +713,6 @@ if [ $# != 2 ];then
 	exit 1
 fi
 
-#使read能支持回格删除
-stty erase "^H"
-
 #引入各软件安装路径
 if [[ -s /etc/ezhttp_info_do_not_del ]]; then
 	. /etc/ezhttp_info_do_not_del

@@ -10,121 +10,213 @@ export PATH
 
 #保证是在根用户下运行
 rootness(){
-# Make sure only root can run our script
-if [[ $EUID -ne 0 ]]; then
-	echo "This script must be run as root" 1>&2
-	exit 1
-fi
+	# Make sure only root can run our script
+	if [[ $EUID -ne 0 ]]; then
+		echo "This script must be run as root" 1>&2
+		exit 1
+	fi
 }
 
 #判断路径输入是否合法
 filter_location(){
-local location=$1
-if ! echo $location | grep -q "^/";then
-	while true
-	do
-		read -p "input error,please input location again." location
-		echo $location | grep -q "^/" && echo $location && break
-	done
-else
-	echo $location
-fi
+	local location=$1
+	if ! echo $location | grep -q "^/";then
+		while true
+		do
+			read -p "input error,please input location again." location
+			echo $location | grep -q "^/" && echo $location && break
+		done
+	else
+		echo $location
+	fi
 }
 
 yes_or_no(){
-local prompt=$1
-local yaction=$2
-local naction=$3
-while true; do
-	read -p "${prompt}?[Y/n]: " yn
-	yn=`upcase_to_lowcase $yn`
-	case $yn in
-		y ) eval "$yaction";break;;
-		n ) eval "$naction";break;;
-		* ) echo "input error,please only input y or n."
-	esac
-done
+	local prompt=$1
+	local yaction=$2
+	local naction=$3
+	while true; do
+		read -p "${prompt}?[Y/n]: " yn
+		yn=`upcase_to_lowcase $yn`
+		case $yn in
+			y ) eval "$yaction";break;;
+			n ) eval "$naction";break;;
+			* ) echo "input error,please only input y or n."
+		esac
+	done
 }
 
 vhost(){
-local action=$1
-case $action in
-	add ) vhost_add;;
-	list ) vhost_list;;
-	del ) vhost_del;;
-	*) echo "action $action not found";exit 1;;
-esac	
+	local action=$1
+	case $action in
+		add ) vhost_add;;
+		list ) vhost_list;;
+		del ) vhost_del;;
+		*) echo "action $action not found";exit 1;;
+	esac	
 }
 
 vhost_add(){
-if [ "$stack" == "lnmp" ];then
-	nginx_vhost_add
-elif [ "$stack" == "lamp" ];then
-	apache_vhost_add
-elif [ "$stack" == "lnamp" ];then
-	lnamp_vhost_add
-else
-	echo "stack variable not found,exit."
-	exit 1
-fi	
+	if [ "$stack" == "lnmp" ];then
+		nginx_vhost_add
+	elif [ "$stack" == "lamp" ];then
+		apache_vhost_add
+	elif [ "$stack" == "lnamp" ];then
+		lnamp_vhost_add
+	else
+		echo "stack variable not found,exit."
+		exit 1
+	fi	
 }
 
 vhost_del(){
-if [ "$stack" == "lnmp" ];then
-	nginx_vhost_del
-elif [ "$stack" == "lamp" ];then
-	apache_vhost_del
-elif [ "$stack" == "lnamp" ];then
-	lnamp_vhost_del
-else
-	echo "stack variable not found,exit."
-	exit 1
-fi	
+	if [ "$stack" == "lnmp" ];then
+		nginx_vhost_del
+	elif [ "$stack" == "lamp" ];then
+		apache_vhost_del
+	elif [ "$stack" == "lnamp" ];then
+		lnamp_vhost_del
+	else
+		echo "stack variable not found,exit."
+		exit 1
+	fi	
 }
 
 vhost_list(){
-if [ "$stack" == "lnmp" ];then
-	nginx_vhost_list
-elif [ "$stack" == "lamp" ];then
-	apache_vhost_list
-elif [ "$stack" == "lnamp" ];then
-	lnamp_vhost_list
-else
-	echo "stack variable not found,exit."
-	exit 1
-fi	
+	if [ "$stack" == "lnmp" ];then
+		nginx_vhost_list
+	elif [ "$stack" == "lamp" ];then
+		apache_vhost_list
+	elif [ "$stack" == "lnamp" ];then
+		lnamp_vhost_list
+	else
+		echo "stack variable not found,exit."
+		exit 1
+	fi	
 }
 
 lnamp_vhost_list(){
-sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  ${apache_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
+	sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  ${apache_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
 }
 
 lnamp_vhost_del(){
-read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
-#删除nginx配置
-if vhost_is_exist "$domain";then
-	rm -f ${nginx_location}/conf/vhost/$domain.conf
-	echo "complete deleted the server_name ${domain} of vhost."
-	echo "reloading the nginx config file..."
-	if ${nginx_location}/sbin/nginx -t;then
-		${nginx_location}/sbin/nginx -s reload
-		echo "reload success."
+	read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
+	#删除nginx配置
+	if vhost_is_exist "$domain";then
+		rm -f ${nginx_location}/conf/vhost/$domain.conf
+		echo "complete deleted the server_name ${domain} of vhost."
+		echo "reloading the nginx config file..."
+		if ${nginx_location}/sbin/nginx -t;then
+			${nginx_location}/sbin/nginx -s reload
+			echo "reload success."
+		else
+		 	echo "reload failed.config file had an error,please fix it."
+		 	exit 1
+		fi
 	else
-	 	echo "reload failed.config file had an error,please fix it."
-	 	exit 1
+		echo "vhost $domain not found,failed to delete."
+		exit 1
 	fi
-else
-	echo "vhost $domain not found,failed to delete."
-	exit 1
-fi
 
-#删除apache配置
-if ! apache_vhost_is_exist "$domain";then
-	echo "vhost $domain not found"
-	exit 1
-else
-	rm -f ${apache_location}/conf/vhost/$domain.conf	
-	echo "complete deleted the server_name ${domain} of vhost."
+	#删除apache配置
+	if ! apache_vhost_is_exist "$domain";then
+		echo "vhost $domain not found"
+		exit 1
+	else
+		rm -f ${apache_location}/conf/vhost/$domain.conf	
+		echo "complete deleted the server_name ${domain} of vhost."
+		#重载配置
+		echo "reloading the apache config file..."
+		if ${apache_location}/bin/apachectl -t;then
+			/etc/init.d/httpd restart
+			echo "reload success."
+		else
+		 	echo "reload failed.config file had an error,please fix it."
+		 	exit 1
+		fi
+	fi	
+}
+
+lnamp_vhost_add(){
+	set_apache_allow_syntax
+
+	#输入域名
+	while true; do
+		read -p "input server names(ie.www.centos.bz centos.bz): " server_names
+		for i in $server_names;do
+			if vhost_is_exist $i;then
+				echo "vhost $i is exist,please reinput server_names."
+				break
+			fi
+			break 2
+		done	
+	done
+
+	#设置默认网站目录
+	default_root="/home/${server_names%% *}"
+	#输入网站目录
+	read -p "input website root(default:$default_root): " website_root
+	website_root=${website_root:=$default_root}
+
+	#创建目录
+	mkdir -p ${website_root}/ /home/wwwlog/${server_names%% *}
+	chown -R www ${website_root}
+
+	#写入nginx配置
+	cat > ${nginx_location}/conf/vhost/${server_names%% *}.conf << EOF
+	server {
+		server_name ${server_names};
+		listen 80;
+		index index.php index.html index.htm;
+		root ${website_root};
+
+	    location / {
+	    	try_files $uri $uri/index.html @apache;
+	    }        
+
+	    location @apache {
+	        internal;
+	        proxy_pass http://127.0.0.1:88;
+	        include proxy.conf;
+	    }
+
+	    location ~ .*\.(php|php5)?$ {
+	            proxy_pass http://127.0.0.1:88;
+	            include proxy.conf;
+	    }	
+
+		location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
+				expires      30d;
+		}
+
+		location ~ .*\.(js|css)?$ {
+				expires      12h;
+		}
+
+		access_log  /home/wwwlog/${server_names%% *}/access_nginx.log access;
+		error_log  /home/wwwlog/${server_names%% *}/error_nginx.log error;
+	}
+EOF
+
+	#写入apache配置
+	cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
+	<VirtualHost 127.0.0.1:88>
+	ServerName ${server_names%% *}
+	ServerAlias ${server_names}
+	DocumentRoot ${website_root}
+	DirectoryIndex index.php index.html index.htm
+	<Directory ${website_root}>
+	Options +Includes -Indexes
+	AllowOverride All
+	Order Deny,Allow
+	${allow_from_all}
+	php_admin_value open_basedir ${website_root}:/tmp:/proc
+	</Directory>
+	ErrorLog  /home/wwwlog/${server_names%% *}/error_apache.log
+	TransferLog  /home/wwwlog/${server_names%% *}/access_apache.log
+	</VirtualHost>
+EOF
+
 	#重载配置
 	echo "reloading the apache config file..."
 	if ${apache_location}/bin/apachectl -t;then
@@ -134,121 +226,29 @@ else
 	 	echo "reload failed.config file had an error,please fix it."
 	 	exit 1
 	fi
-fi	
-}
 
-lnamp_vhost_add(){
-set_apache_allow_syntax
+	echo "reloading the nginx config file..."
+	if ${nginx_location}/sbin/nginx -t;then
+		${nginx_location}/sbin/nginx -s reload
+		echo "reload success."
+	else
+	 	echo "reload failed.config file had an error,please fix it."
+	 	exit 1
+	fi
 
-#输入域名
-while true; do
-	read -p "input server names(ie.www.centos.bz centos.bz): " server_names
-	for i in $server_names;do
-		if vhost_is_exist $i;then
-			echo "vhost $i is exist,please reinput server_names."
-			break
-		fi
-		break 2
-	done	
-done
-
-#设置默认网站目录
-default_root="/home/${server_names%% *}"
-#输入网站目录
-read -p "input website root(default:$default_root): " website_root
-website_root=${website_root:=$default_root}
-
-#创建目录
-mkdir -p ${website_root}/ /home/wwwlog/${server_names%% *}
-chown -R www ${website_root}
-
-#写入nginx配置
-cat > ${nginx_location}/conf/vhost/${server_names%% *}.conf << EOF
-server {
-	server_name ${server_names};
-	listen 80;
-	index index.php index.html index.htm;
-	root ${website_root};
-
-    location / {
-    	try_files $uri $uri/index.html @apache;
-    }        
-
-    location @apache {
-        internal;
-        proxy_pass http://127.0.0.1:88;
-        include proxy.conf;
-    }
-
-    location ~ .*\.(php|php5)?$ {
-            proxy_pass http://127.0.0.1:88;
-            include proxy.conf;
-    }	
-
-	location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
-			expires      30d;
-	}
-
-	location ~ .*\.(js|css)?$ {
-			expires      12h;
-	}
-
-	access_log  /home/wwwlog/${server_names%% *}/access_nginx.log access;
-	error_log  /home/wwwlog/${server_names%% *}/error_nginx.log error;
-}
-EOF
-
-#写入apache配置
-cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
-<VirtualHost 127.0.0.1:88>
-ServerName ${server_names%% *}
-ServerAlias ${server_names}
-DocumentRoot ${website_root}
-DirectoryIndex index.php index.html index.htm
-<Directory ${website_root}>
-Options +Includes -Indexes
-AllowOverride All
-Order Deny,Allow
-${allow_from_all}
-php_admin_value open_basedir ${website_root}:/tmp:/proc
-</Directory>
-ErrorLog  /home/wwwlog/${server_names%% *}/error_apache.log
-TransferLog  /home/wwwlog/${server_names%% *}/access_apache.log
-</VirtualHost>
-EOF
-
-#重载配置
-echo "reloading the apache config file..."
-if ${apache_location}/bin/apachectl -t;then
-	/etc/init.d/httpd restart
-	echo "reload success."
-else
- 	echo "reload failed.config file had an error,please fix it."
- 	exit 1
-fi
-
-echo "reloading the nginx config file..."
-if ${nginx_location}/sbin/nginx -t;then
-	${nginx_location}/sbin/nginx -s reload
-	echo "reload success."
-else
- 	echo "reload failed.config file had an error,please fix it."
- 	exit 1
-fi
-
-echo "congratulations.vhost ${server_names%% *} had created."
-echo "website root is ${website_root}/."
+	echo "congratulations.vhost ${server_names%% *} had created."
+	echo "website root is ${website_root}/."
 
 }
 
 nginx_vhost(){
-local action=$1
-case $action in
-	add ) nginx_vhost_add;;
-	list ) nginx_vhost_list;;
-	del ) nginx_vhost_del;;
-	*) echo "action $action not found";exit 1;;
-esac
+	local action=$1
+	case $action in
+		add ) nginx_vhost_add;;
+		list ) nginx_vhost_list;;
+		del ) nginx_vhost_del;;
+		*) echo "action $action not found";exit 1;;
+	esac
 }
 
 php_support_without_pathinfo(){
@@ -285,74 +285,55 @@ enable_php(){
 }
 
 nginx_vhost_add(){
-#输入域名
-while true; do
-	read -p "input server names(ie.www.centos.bz centos.bz): " server_names
-	for i in $server_names;do
-		if vhost_is_exist $i;then
-			echo "vhost $i is exist,please reinput server_names."
-			break
-		fi
-		break 2
-	done	
-done
-#设置默认网站目录
-default_root="/home/${server_names%% *}"
-#输入网站目录
-read -p "input website root(default:$default_root): " website_root
-website_root=${website_root:=$default_root}
-#是否添加重写规则
-yes_or_no "add nginx rewrite rule" "select_rewrite_rule" "rewrite_rule=''"
+	#输入域名
+	while true; do
+		read -p "input server names(ie.www.centos.bz centos.bz): " server_names
+		for i in $server_names;do
+			if vhost_is_exist $i;then
+				echo "vhost $i is exist,please reinput server_names."
+				break
+			fi
+			break 2
+		done	
+	done
+	#设置默认网站目录
+	default_root="/home/${server_names%% *}"
+	#输入网站目录
+	read -p "input website root(default:$default_root): " website_root
+	website_root=${website_root:=$default_root}
+	#是否添加重写规则
+	yes_or_no "add nginx rewrite rule" "select_rewrite_rule" "rewrite_rule=''"
 
-#是否支持php
-yes_or_no "enable php support" "enable_php" "php_support_code=''"
+	#是否支持php
+	yes_or_no "enable php support" "enable_php" "php_support_code=''"
 
-cat > ${nginx_location}/conf/vhost/${server_names%% *}.conf << EOF
-server {
-	server_name ${server_names};
-	listen 80;
-	index index.php index.html index.htm;
-	root ${website_root};
-	${rewrite_rule}
-	${php_support_code}
-	location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
-			expires      30d;
+	cat > ${nginx_location}/conf/vhost/${server_names%% *}.conf << EOF
+	server {
+		server_name ${server_names};
+		listen 80;
+		index index.php index.html index.htm;
+		root ${website_root};
+		${rewrite_rule}
+		${php_support_code}
+		location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ {
+				expires      30d;
+		}
+
+		location ~ .*\.(js|css)?$ {
+				expires      12h;
+		}
+
+		access_log  /home/wwwlog/${server_names%% *}/access.log access;
+		error_log  /home/wwwlog/${server_names%% *}/error.log error;
 	}
-
-	location ~ .*\.(js|css)?$ {
-			expires      12h;
-	}
-
-	access_log  /home/wwwlog/${server_names%% *}/access.log access;
-	error_log  /home/wwwlog/${server_names%% *}/error.log error;
-}
 EOF
 
-echo "congratulations.vhost ${server_names%% *} had created."
-echo "website root is ${website_root}/."
-#创建目录
-mkdir -p /home/wwwlog/${server_names%% *} ${website_root}
-chown -R www ${website_root}
-#重载配置
-echo "reloading the nginx config file..."
-if ${nginx_location}/sbin/nginx -t;then
-	${nginx_location}/sbin/nginx -s reload
-	echo "reload success."
-else
- 	echo "reload failed.config file had an error,please fix it."
- 	exit 1
-fi
-}
-
-nginx_vhost_list(){
-sed -n -r -e 's/server_name\s+(.*);/\1/p' -e 's/root\s+(.*);/\1/p'  ${nginx_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
-}
-
-nginx_vhost_del(){
-read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
-if vhost_is_exist "$domain";then
-	rm -f ${nginx_location}/conf/vhost/$domain.conf
-	echo "complete deleted the server_name ${domain} of vhost."
+	echo "congratulations.vhost ${server_names%% *} had created."
+	echo "website root is ${website_root}/."
+	#创建目录
+	mkdir -p /home/wwwlog/${server_names%% *} ${website_root}
+	chown -R www ${website_root}
+	#重载配置
 	echo "reloading the nginx config file..."
 	if ${nginx_location}/sbin/nginx -t;then
 		${nginx_location}/sbin/nginx -s reload
@@ -361,10 +342,29 @@ if vhost_is_exist "$domain";then
 	 	echo "reload failed.config file had an error,please fix it."
 	 	exit 1
 	fi
-else
-	echo "vhost $domain not found,failed to delete."
-	exit 1
-fi	
+}
+
+nginx_vhost_list(){
+	sed -n -r -e 's/server_name\s+(.*);/\1/p' -e 's/root\s+(.*);/\1/p'  ${nginx_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
+}
+
+nginx_vhost_del(){
+	read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
+	if vhost_is_exist "$domain";then
+		rm -f ${nginx_location}/conf/vhost/$domain.conf
+		echo "complete deleted the server_name ${domain} of vhost."
+		echo "reloading the nginx config file..."
+		if ${nginx_location}/sbin/nginx -t;then
+			${nginx_location}/sbin/nginx -s reload
+			echo "reload success."
+		else
+		 	echo "reload failed.config file had an error,please fix it."
+		 	exit 1
+		fi
+	else
+		echo "vhost $domain not found,failed to delete."
+		exit 1
+	fi	
 }
 
 apache_vhost(){
@@ -423,70 +423,47 @@ set_apache_allow_syntax(){
 }
 
 apache_vhost_add(){
-set_apache_allow_syntax
+	set_apache_allow_syntax
 
-#输入域名
-while true; do
-	read -p "input server names(ie.www.centos.bz centos.bz): " server_names
-	for i in $server_names;do
-		if apache_vhost_is_exist $i;then
-			echo "vhost $i is exist,please reinput server_names."
-			break
-		fi
-		break 2
-	done	
-done
-#设置默认网站目录
-default_root="/home/${server_names%% *}"
-#输入网站目录
-read -p "input website root(default:$default_root): " website_root
-website_root=${website_root:=$default_root}
-#开始写入配置文件
-cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
-<VirtualHost *:80>
-ServerName ${server_names%% *}
-ServerAlias ${server_names}
-DocumentRoot ${website_root}
-DirectoryIndex index.php index.html index.htm
-<Directory ${website_root}>
-Options +Includes -Indexes
-AllowOverride All
-Order Deny,Allow
-${allow_from_all}
-php_admin_value open_basedir ${website_root}:/tmp:/proc
-</Directory>
-ErrorLog  /home/wwwlog/${server_names%% *}/error.log
-TransferLog  /home/wwwlog/${server_names%% *}/access.log
-</VirtualHost>
+	#输入域名
+	while true; do
+		read -p "input server names(ie.www.centos.bz centos.bz): " server_names
+		for i in $server_names;do
+			if apache_vhost_is_exist $i;then
+				echo "vhost $i is exist,please reinput server_names."
+				break
+			fi
+			break 2
+		done	
+	done
+	#设置默认网站目录
+	default_root="/home/${server_names%% *}"
+	#输入网站目录
+	read -p "input website root(default:$default_root): " website_root
+	website_root=${website_root:=$default_root}
+	#开始写入配置文件
+	cat > ${apache_location}/conf/vhost/${server_names%% *}.conf << EOF
+	<VirtualHost *:80>
+	ServerName ${server_names%% *}
+	ServerAlias ${server_names}
+	DocumentRoot ${website_root}
+	DirectoryIndex index.php index.html index.htm
+	<Directory ${website_root}>
+	Options +Includes -Indexes
+	AllowOverride All
+	Order Deny,Allow
+	${allow_from_all}
+	php_admin_value open_basedir ${website_root}:/tmp:/proc
+	</Directory>
+	ErrorLog  /home/wwwlog/${server_names%% *}/error.log
+	TransferLog  /home/wwwlog/${server_names%% *}/access.log
+	</VirtualHost>
 EOF
-echo "congratulations.vhost ${server_names%% *} had created."
-echo "website root is ${website_root}/."
-#创建目录
-mkdir -p /home/wwwlog/${server_names%% *} ${website_root}
-chown -R www ${website_root}
-#重载配置
-echo "reloading the apache config file..."
-if ${apache_location}/bin/apachectl -t;then
-	/etc/init.d/httpd restart
-	echo "reload success."
-else
- 	echo "reload failed.config file had an error,please fix it."
- 	exit 1
-fi
-}
-
-apache_vhost_list(){
-sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  ${apache_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
-}
-
-apache_vhost_del(){
-read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
-if ! apache_vhost_is_exist "$domain";then
-	echo "vhost $domain not found"
-	exit 1
-else
-	rm -f ${apache_location}/conf/vhost/$domain.conf	
-	echo "complete deleted the server_name ${domain} of vhost."
+	echo "congratulations.vhost ${server_names%% *} had created."
+	echo "website root is ${website_root}/."
+	#创建目录
+	mkdir -p /home/wwwlog/${server_names%% *} ${website_root}
+	chown -R www ${website_root}
 	#重载配置
 	echo "reloading the apache config file..."
 	if ${apache_location}/bin/apachectl -t;then
@@ -496,7 +473,30 @@ else
 	 	echo "reload failed.config file had an error,please fix it."
 	 	exit 1
 	fi
-fi	
+}
+
+apache_vhost_list(){
+	sed -n -r -e 's/ServerAlias\s+(.*)/\1/p' -e 's/DocumentRoot\s+(.*)/\1/p'  ${apache_location}/conf/vhost/*.conf | awk 'BEGIN{printf ("%-50s %-50s\n%-50s %-50s\n","server_name","root","-----------","----")}{printf("%-50s",$0);getline;printf $0"\n" }'
+}
+
+apache_vhost_del(){
+	read -p "input server_name of vhost you'll delete(ie.www.centos.bz): " domain
+	if ! apache_vhost_is_exist "$domain";then
+		echo "vhost $domain not found"
+		exit 1
+	else
+		rm -f ${apache_location}/conf/vhost/$domain.conf	
+		echo "complete deleted the server_name ${domain} of vhost."
+		#重载配置
+		echo "reloading the apache config file..."
+		if ${apache_location}/bin/apachectl -t;then
+			/etc/init.d/httpd restart
+			echo "reload success."
+		else
+		 	echo "reload failed.config file had an error,please fix it."
+		 	exit 1
+		fi
+	fi	
 }
 
 #判断root密码是否正确
@@ -611,7 +611,20 @@ ftp_user_add(){
 	else
 		read -p "input ftp user name: " ftp_username
 		read -p "input ftp user $ftp_username Home Directory: " ftp_home
-		read -p "input system user name: " sys_username
+		while true;do
+			read -p "input system user name(ie. www): " sys_username
+			user_id=`id $sys_username | awk -F'=|\(' '{print $2}'`
+			if [[ "$user_id" == "" ]]; then
+				echo "user $sys_username not found,please input an exsit system user."
+				continue
+			fi
+
+			if [[ "$user_id" == "0" ]]; then
+				echo "the system user $sys_username has root privilege,please input a non root privilege user."
+				continue
+			fi
+			break
+		done
 		${pureftpd_location}/bin/pure-pw useradd $ftp_username -u $sys_username -d $ftp_home
 		${pureftpd_location}/bin/pure-pw mkdb
 		echo "successfully add ftp user $ftp_username."
@@ -619,90 +632,90 @@ ftp_user_add(){
 }
 
 ftp_user_list(){
-printf "FTPUser\t\tRoot Directory\n"
-${pureftpd_location}/bin/pure-pw list
+	printf "FTPUser\t\tRoot Directory\n"
+	${pureftpd_location}/bin/pure-pw list
 }
 
 ftp_user_del(){
-read -p "(Please input the ftpuser you'll delete):" ftpuser
-${pureftpd_location}/bin/pure-pw userdel $ftpuser
-${pureftpd_location}/bin/pure-pw mkdb
-echo "successfully delete ftpuser $ftpuser"
+	read -p "(Please input the ftpuser you'll delete):" ftpuser
+	${pureftpd_location}/bin/pure-pw userdel $ftpuser
+	${pureftpd_location}/bin/pure-pw mkdb
+	echo "successfully delete ftpuser $ftpuser"
 }
 
 ftp_user_mod(){	
-read -p "(Please input the ftpuser you'll modify): " ftpuser
-echo "1. modify ftpuser $ftpuser password"
-echo "2. modify ftpuser $ftpuser home directory"
-echo "3. modify ftpuser $ftpuser system user name"
-while true; do
-	read -p "please input a number: " ftp_mod
-	case $ftp_mod in
-		1 ) ${pureftpd_location}/bin/pure-pw passwd $ftpuser;echo "change ftp user $ftpuser password successfully.";break;;
-		2 )	read -p "please enter ftpuser $ftpuser new home directory: " ftp_home;${pureftpd_location}/bin/pure-pw usermod $ftpuser -d $ftp_home;break;;
-		3 )	read -p "please enter ftpuser $ftpuser system user name: " sys_username;${pureftpd_location}/bin/pure-pw usermod $ftpuser -u $sys_username;break;;
-		* ) echo "input error.";;
-	esac
-done
-${pureftpd_location}/bin/pure-pw mkdb
+	read -p "(Please input the ftpuser you'll modify): " ftpuser
+	echo "1. modify ftpuser $ftpuser password"
+	echo "2. modify ftpuser $ftpuser home directory"
+	echo "3. modify ftpuser $ftpuser system user name"
+	while true; do
+		read -p "please input a number: " ftp_mod
+		case $ftp_mod in
+			1 ) ${pureftpd_location}/bin/pure-pw passwd $ftpuser;echo "change ftp user $ftpuser password successfully.";break;;
+			2 )	read -p "please enter ftpuser $ftpuser new home directory: " ftp_home;${pureftpd_location}/bin/pure-pw usermod $ftpuser -d $ftp_home;break;;
+			3 )	read -p "please enter ftpuser $ftpuser system user name: " sys_username;${pureftpd_location}/bin/pure-pw usermod $ftpuser -u $sys_username;break;;
+			* ) echo "input error.";;
+		esac
+	done
+	${pureftpd_location}/bin/pure-pw mkdb
 }
 
 #检查vhost是否存在
 vhost_is_exist(){
-local domain=$1
-local conf_file="${nginx_location}/conf/vhost/$1.conf"
-if [ -f "$conf_file" ];then
-	return 0
-else
-	return 1
-fi	
+	local domain=$1
+	local conf_file="${nginx_location}/conf/vhost/$1.conf"
+	if [ -f "$conf_file" ];then
+		return 0
+	else
+		return 1
+	fi	
 }
 
 #检查apahcevhost是否存在
 apache_vhost_is_exist(){
-local domain=$1
-local conf_file="${apache_location}/conf/vhost/$1.conf"
-if [ -f "$conf_file" ];then
-	return 0
-else
-	return 1
-fi	
+	local domain=$1
+	local conf_file="${apache_location}/conf/vhost/$1.conf"
+	if [ -f "$conf_file" ];then
+		return 0
+	else
+		return 1
+	fi	
 }
 
 #大写转换成小写
 upcase_to_lowcase(){
-words=$1
-echo $words | tr '[A-Z]' '[a-z]'
+	words=$1
+	echo $words | tr '[A-Z]' '[a-z]'
 }
 
 #nginx重写规则选择
 select_rewrite_rule(){
-local rewrite_rules=( "include rewrite/wordpress.conf;" "include rewrite/DEDECMS.conf;" "include rewrite/Discuz_7.conf;" "include rewrite/Discuz_X.conf;" "include rewrite/ecshop.conf;" "include rewrite/phpcms.conf;"  "include rewrite/PHPWind.conf;"  "include rewrite/shopex.conf;"  "include rewrite/Typecho.conf;"    )
-echo "available nginx rewrite rules:"
-echo -e "1. Custom\n2. WordPress\n3. DEDECMS\n4. Discuz_7\n5. Discuz_X\n6. ECshop\n7. PHPCMS\n8. PHPWind\n9. Shopex\n10. Typecho"
-while true; do
-	read -p "please input a number: " rule
-	case "$rule" in
-		1|2|3|4|5|6|7|8|9|10) break;;
-		*) echo "input error.";;
-	esac
-done
-
-if [[ "$rule" == "1" ]];then
-	while true;do
-		read -p "please input your rewrite rule name: " rule_name
-		if [[ -f ${nginx_location}/conf/rewrite/${rule_name}.conf ]];then
-			echo "${rule_name}.conf file exists,please reinput"
-		else
-			touch ${nginx_location}/conf/rewrite/${rule_name}.conf
-			echo "file ${nginx_location}/conf/rewrite/${rule_name}.conf have created,please input your rewrite rule to this file."
-			rewrite_rule="include rewrite/${rule_name}.conf;"
-			break
-		fi	
+	local rewrite_rules=( "include rewrite/wordpress.conf;" "include rewrite/DEDECMS.conf;" "include rewrite/Discuz_7.conf;" "include rewrite/Discuz_X.conf;" "include rewrite/ecshop.conf;" "include rewrite/phpcms.conf;"  "include rewrite/PHPWind.conf;"  "include rewrite/shopex.conf;"  "include rewrite/Typecho.conf;"    )
+	echo "available nginx rewrite rules:"
+	echo -e "1. Custom\n2. WordPress\n3. DEDECMS\n4. Discuz_7\n5. Discuz_X\n6. ECshop\n7. PHPCMS\n8. PHPWind\n9. Shopex\n10. Typecho"
+	while true; do
+		read -p "please input a number: " rule
+		case "$rule" in
+			1|2|3|4|5|6|7|8|9|10) break;;
+			*) echo "input error.";;
+		esac
 	done
-else	
-	rewrite_rule=${rewrite_rules[$rule-2]}
-fi
+
+	if [[ "$rule" == "1" ]];then
+		while true;do
+			read -p "please input your rewrite rule name: " rule_name
+			if [[ -f ${nginx_location}/conf/rewrite/${rule_name}.conf ]];then
+				echo "${rule_name}.conf file exists,please reinput"
+			else
+				touch ${nginx_location}/conf/rewrite/${rule_name}.conf
+				echo "file ${nginx_location}/conf/rewrite/${rule_name}.conf have created,please input your rewrite rule to this file."
+				rewrite_rule="include rewrite/${rule_name}.conf;"
+				break
+			fi	
+		done
+	else	
+		rewrite_rule=${rewrite_rules[$rule-2]}
+	fi
 	
 }
 

@@ -613,7 +613,7 @@ ftp_user_add(){
 		read -p "input ftp user $ftp_username Home Directory: " ftp_home
 		while true;do
 			read -p "input system user name(ie. www): " sys_username
-			user_id=`id $sys_username | awk -F'=|\(' '{print $2}'`
+			user_id=`id $sys_username | sed -r 's/uid=([0-9]+).*/\1/'`
 			if [[ "$user_id" == "" ]]; then
 				echo "user $sys_username not found,please input an exsit system user."
 				continue

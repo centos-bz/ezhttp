@@ -593,6 +593,11 @@ mysql_reset(){
 }
 
 ftp_user(){
+	if [[ "$pureftpd_location" == "" ]]; then
+		echo "pureftpd not found,please install pureftpd first."
+		exit 1
+	fi
+	
 	local action=$1
 	case $action in
 		add ) ftp_user_add;;

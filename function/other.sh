@@ -351,6 +351,9 @@ last_confirm(){
 	#检测端口或socket是否被占用
 	echo "start to check if port is occupied..."
 	check_port_socket_exist
+
+	# 为防止安装失败,安装前同步下时间
+	sync_time
 }
 
 #检测端口或socket是否被占用

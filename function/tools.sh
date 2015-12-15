@@ -1027,13 +1027,25 @@ Set_timezone_and_sync_time(){
 	echo
 	yes_or_no "would you like to change the timezone[Y/n]: " "echo 'you select change the timezone.'" "echo 'you select do not change the timezone.'"
 	if [[ $yn == "y" ]]; then
-		timezone=`tzselect`
-		echo "start to change the timezone to $timezone..."
-		cp /usr/share/zoneinfo/$timezone /etc/localtime
+		set_timezone
 	fi
 
+	sync_time
+	echo "current timezone is $(date +%z)"
+	echo "current time is $(date +%Y-%m-%d" "%H:%M:%S)"	
+
+}
+
+set_timezone(){
+	timezone=`tzselect`
+	echo "start to change the timezone to $timezone..."
+	cp /usr/share/zoneinfo/$timezone /etc/localtime	
+}
+
+sync_time(){
 	echo "start to sync time and add sync command to cronjob..."
 	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
+		apt-get -y update
 		apt-get -y install ntpdate
 		check_command_exist ntpdate
 		/usr/sbin/ntpdate -u pool.ntp.org
@@ -1046,10 +1058,7 @@ Set_timezone_and_sync_time(){
 		! grep -q "/usr/sbin/ntpdate -u pool.ntp.org" /var/spool/cron/root > /dev/null 2>&1 && echo "*/10 * * * * /usr/sbin/ntpdate -u pool.ntp.org > /dev/null 2>&1;/sbin/hwclock -w" >> /var/spool/cron/root
 		service crond restart
 	fi
-	/sbin/hwclock -w
-	echo "current timezone is $(date +%z)"
-	echo "current time is $(date +%Y-%m-%d" "%H:%M:%S)"	
-
+	/sbin/hwclock -w	
 }
 
 #初始化mysql数据库

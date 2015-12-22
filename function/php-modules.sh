@@ -101,7 +101,7 @@ php_modules_preinstall_settings(){
 		[ "$apache" == "$apache2_4_filename" ] && if_in_array "${ZendGuardLoader_filename}" "$php_modules_install" && apache_configure_args="$apache_configure_args --with-mpm=prefork"
 		
 		#如果安装mssql,并且没有指定php安装,我们需要知道php源码位置
-		if [[ $php == "do_not_install" ]];then
+		if [[ "$php_source_location" == "" ]];then
 			if if_in_array "mssql" "$php_modules_install";then
 				while true;do
 					read -p "as you choose mssql,we need to know the php source location,please input: " php_source_location
@@ -116,7 +116,7 @@ php_modules_preinstall_settings(){
 		fi
 
 		#如果安装fileinfo,并且没有指定php安装,我们需要知道php源码位置
-		if [[ $php == "do_not_install" ]];then
+		if [[ "$php_source_location" == "" ]];then
 			if if_in_array "fileinfo" "$php_modules_install";then
 				while true;do
 					read -p "as you choose fileinfo,we need to know the php source location,please input: " php_source_location
@@ -125,6 +125,21 @@ php_modules_preinstall_settings(){
 						break
 					else
 						echo "can not find fileinfo dir in ${php_source_location},please reinput."
+					fi
+				done	
+			fi
+		fi
+
+		#如果安装gmp,并且没有指定php安装,我们需要知道php源码位置
+		if [[ "$php_source_location" == "" ]];then
+			if if_in_array "php-gmp" "$php_modules_install";then
+				while true;do
+					read -p "as you choose php-gmp,we need to know the php source location,please input: " php_source_location
+					local php_gmp_location=${php_source_location}/ext/gmp
+					if [[ -d "$php_gmp_location" ]];then
+						break
+					else
+						echo "can not find php-gmp dir in ${php_source_location},please reinput."
 					fi
 				done	
 			fi
@@ -152,6 +167,31 @@ install_php_modules(){
 	if_in_array "mssql" "$php_modules_install" && install_mssql "$phpConfig"
 	if_in_array "fileinfo" "$php_modules_install" && install_fileinfo "$phpConfig"
 	if_in_array "${swoole_filename}" "$php_modules_install" && install_swoole "$phpConfig"
+	if_in_array "php-gmp" "$php_modules_install" && install_php_gmp "$phpConfig"
+}
+
+#安装php gmp模块
+install_php_gmp(){
+	# 安装gmp
+	check_installed "install_gmp" "${depends_prefix}/${gmp_filename}"
+	local phpConfig=$1
+	cd ${php_source_location}/ext/gmp
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --with-php-config=${phpConfig} --with-gmp=${depends_prefix}/${gmp_filename}"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "extension=gmp.so" $(get_php_ini $phpConfig) && sed -i '$a\extension=gmp.so\n' $(get_php_ini $phpConfig) 	
+}
+
+#安装gmp
+install_gmp(){
+	download_file "${gmp_filename}.tar.bz2"
+	cd $cur_dir/soft/
+	tar xjvf ${gmp_filename}.tar.bz2
+	cd ${gmp_filename}
+	error_detect "./configure --prefix=${depends_prefix}/${gmp_filename}"
+	error_detect "make"
+	error_detect "make install"	
 }
 
 #安装mssql
@@ -160,8 +200,6 @@ install_mssql(){
 	check_installed "install_freetds" "${depends_prefix}/${freetds_filename}"
 	
 	local phpConfig=$1
-	[[ "$php" != "do_not_install" ]] && php_source_location=$cur_dir/soft/$php
-	
 	cd ${php_source_location}/ext/mssql
 	error_detect "$(dirname $phpConfig)/phpize"
 	error_detect "./configure --with-php-config=${phpConfig} --with-mssql=${depends_prefix}/${freetds_filename}"
@@ -187,8 +225,6 @@ install_swoole(){
 # 安装fileinfo
 install_fileinfo(){
 	local phpConfig=$1
-	[[ "$php" != "do_not_install" ]] && php_source_location=$cur_dir/soft/$php
-	
 	cd ${php_source_location}/ext/fileinfo
 	error_detect "$(dirname $phpConfig)/phpize"
 	error_detect "./configure --with-php-config=${phpConfig}"

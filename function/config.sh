@@ -188,6 +188,16 @@ https://www.lxconfig.com/files/ezhttp/eaccelerator-0.9.6.1.tar.bz2
 http://cloud.github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1.tar.bz2
 '
 
+#gmp设置
+gmp_filename="gmp-6.1.0"
+set_md5 $gmp_filename "86ee6e54ebfc4a90b643a65e402c4048"
+set_dl $gmp_filename '
+http://cdn.yyupload.com/down/499809/software/gmp-6.1.0.tar.bz2
+https://www.lxconfig.com/files/ezhttp/gmp-6.1.0.tar.bz2
+https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2
+'
+set_hint $gmp_filename "php-${gmp_filename}"
+
 #xcache设置
 xcache_filename="xcache-3.2.0"
 set_md5 $xcache_filename "8b0a6f27de630c4714ca261480f34cda"
@@ -205,7 +215,7 @@ http://cdn.yyupload.com/down/499809/software/memcache-3.0.8.tgz
 https://www.lxconfig.com/files/ezhttp/memcache-3.0.8.tgz
 http://pecl.php.net/get/memcache-3.0.8.tgz
 '
-set_hint $php_memcache_filename "php-memcache-3.0.8"
+set_hint $php_memcache_filename "php-${php_memcache_filename}"
 
 #ImageMagick设置
 ImageMagick_filename="ImageMagick-6.9.2-6"
@@ -224,7 +234,7 @@ http://cdn.yyupload.com/down/499809/software/redis-2.2.7.tgz
 https://www.lxconfig.com/files/ezhttp/redis-2.2.7.tgz
 http://pecl.php.net/get/redis-2.2.7.tgz
 '
-set_hint $php_redis_filename "php-redis-2.2.7"
+set_hint $php_redis_filename "php-${php_redis_filename}"
 
 #php mongo模块设置
 php_mongo_filename="mongo-php-driver-legacy-1.6.11"
@@ -814,7 +824,7 @@ php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_file
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=( ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
 				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_memcached_filename} ${php_redis_filename} 
-				 ${php_mongo_filename}  ${xdebug_filename} mssql fileinfo $swoole_filename do_not_install)
+				 ${php_mongo_filename}  ${xdebug_filename} mssql fileinfo php-gmp $swoole_filename do_not_install)
 other_soft_arr=( ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} 
 				${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename} ${jdk7_filename} 
 				${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename} do_not_install)

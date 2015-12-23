@@ -765,6 +765,7 @@ add_to_env(){
 	cd ${location} && [ ! -d lib ] && [ -d lib64 ] && ln -s lib64 lib
 	[ -d "${location}/lib" ] && export LD_LIBRARY_PATH=${location}/lib:$LD_LIBRARY_PATH
 	[ -d "${location}/bin" ] &&	export PATH=${location}/bin:$PATH
+	[ -d "${location}/include" ] &&	export CPPFLAGS="-I${location}/include $CPPFLAGS"
 }
 
 #测试元素是否在数组里

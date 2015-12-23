@@ -234,8 +234,7 @@ install_fileinfo(){
 }
 
 #安装freetds
-install_freetds()
-{
+install_freetds(){
 	download_file  "${freetds_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${freetds_filename}.tar.gz
@@ -247,214 +246,222 @@ install_freetds()
 }
 
 #安装ZendOptimizer
-install_ZendOptimizer()
-{
-local phpConfig=$1	
-#如果是64位系统
-if is_64bit ; then
-	download_file  "${ZendOptimizer64_filename}.tar.gz"
-	cd $cur_dir/soft/
-	tar xzvf ${ZendOptimizer64_filename}.tar.gz
-	mkdir -p ${depends_prefix}/ZendOptimizer
-	cp -a ${ZendOptimizer64_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
-else
-	download_file  "${ZendOptimizer32_filename}.tar.gz"
-	cd $cur_dir/soft/
-	tar xzvf ${ZendOptimizer32_filename}.tar.gz
-	mkdir -p ${depends_prefix}/ZendOptimizer
-	cp -a ${ZendOptimizer32_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
-fi
+install_ZendOptimizer(){
+	local phpConfig=$1	
+	#如果是64位系统
+	if is_64bit ; then
+		download_file  "${ZendOptimizer64_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${ZendOptimizer64_filename}.tar.gz
+		mkdir -p ${depends_prefix}/ZendOptimizer
+		cp -a ${ZendOptimizer64_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
+	else
+		download_file  "${ZendOptimizer32_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${ZendOptimizer32_filename}.tar.gz
+		mkdir -p ${depends_prefix}/ZendOptimizer
+		cp -a ${ZendOptimizer32_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
+	fi
 
-#配置php.ini
-! grep -q "\[zend_optimizer\]" $(get_php_ini $phpConfig)  && sed -i "\$a\[zend_optimizer]\nzend_optimizer.optimization_level=15\nzend_extension=${depends_prefix}/ZendOptimizer/ZendOptimizer.so\n" $(get_php_ini $phpConfig) 
+	#配置php.ini
+	! grep -q "\[zend_optimizer\]" $(get_php_ini $phpConfig)  && sed -i "\$a\[zend_optimizer]\nzend_optimizer.optimization_level=15\nzend_extension=${depends_prefix}/ZendOptimizer/ZendOptimizer.so\n" $(get_php_ini $phpConfig) 
 }
 
 
 #安装eaccelerator
 install_eaccelerator(){
-#安装依赖
-if check_sys packageManager apt;then
-	apt-get -y install m4 autoconf
-elif check_sys packageManager yum;then
-	yum -y install m4 autoconf
-else
-	check_installed "install_m4" "${depends_prefix}/${m4_filename}"
-	check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"	
-fi		
+	#安装依赖
+	if check_sys packageManager apt;then
+		apt-get -y install m4 autoconf
+	elif check_sys packageManager yum;then
+		yum -y install m4 autoconf
+	else
+		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
+		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"	
+	fi
 
-local phpConfig=$1
-download_file  "${eaccelerator_filename}.tar.bz2"
-cd $cur_dir/soft/
-rm -rf ${eaccelerator_filename}
-tar xjfv ${eaccelerator_filename}.tar.bz2
-cd ${eaccelerator_filename}
-make clean
-error_detect "$(dirname $phpConfig)/phpize"
-error_detect "./configure --enable-shared --with-php-config=$phpConfig"
-error_detect "make"
-error_detect "make install"
-EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
+	local phpConfig=$1
+	download_file  "${eaccelerator_filename}.tar.bz2"
+	cd $cur_dir/soft/
+	rm -rf ${eaccelerator_filename}
+	tar xjfv ${eaccelerator_filename}.tar.bz2
+	cd ${eaccelerator_filename}
+	make clean
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --enable-shared --with-php-config=$phpConfig"
+	error_detect "make"
+	error_detect "make install"
+	EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
 
-#配置php.ini
-! grep -q "\[eaccelerator\]" $(get_php_ini $phpConfig) && sed -i "/^\[zend_optimizer]\$/i\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"" $(get_php_ini $phpConfig)
+	#配置php.ini
+	! grep -q "\[eaccelerator\]" $(get_php_ini $phpConfig) && sed -i "/^\[zend_optimizer]\$/i\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"" $(get_php_ini $phpConfig)
 
-#判断是否已经加上，有可能会因为没有安装zend optimizer而配置失败
-! grep -q  "\[eaccelerator\]" $(get_php_ini $phpConfig) && sed -i "\$a\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"\n" $(get_php_ini $phpConfig)
+	#判断是否已经加上，有可能会因为没有安装zend optimizer而配置失败
+	! grep -q  "\[eaccelerator\]" $(get_php_ini $phpConfig) && sed -i "\$a\[eaccelerator]\nzend_extension=\"${EXTENSION_DIR}/eaccelerator.so\"\neaccelerator.cache_dir = \"/var/cache/eaccelerator\"\n" $(get_php_ini $phpConfig)
 
-#配置缓存目录
-mkdir -p /var/cache/eaccelerator
-chmod 0777 /var/cache/eaccelerator
+	#配置缓存目录
+	mkdir -p /var/cache/eaccelerator
+	chmod 0777 /var/cache/eaccelerator
 }
 
 #安装xcache
 install_xcache(){
-local phpConfig=$1
-download_file  "${xcache_filename}.tar.gz"
-cd $cur_dir/soft/
-rm -rf ${xcache_filename}
-tar xzvf ${xcache_filename}.tar.gz
-cd ${xcache_filename}
-error_detect "$(dirname $phpConfig)/phpize"
-error_detect "../${xcache_filename}/configure --enable-xcache --enable-xcache-constant --with-php-config=$phpConfig"
-error_detect "make"
-error_detect "make install"
-EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
-#配置php.ini
-! grep -q "\[xcache\]" $(get_php_ini $phpConfig) && sed -i '$a\[xcache]\nextension=xcache.so\nxcache.size = 60m\nxcache.count = 5\nxcache.ttl = 0\nxcache.gc_interval = 600\n' $(get_php_ini $phpConfig) 
+	local phpConfig=$1
+	download_file  "${xcache_filename}.tar.gz"
+	cd $cur_dir/soft/
+	rm -rf ${xcache_filename}
+	tar xzvf ${xcache_filename}.tar.gz
+	cd ${xcache_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "../${xcache_filename}/configure --enable-xcache --enable-xcache-constant --with-php-config=$phpConfig"
+	error_detect "make"
+	error_detect "make install"
+	EXTENSION_DIR=`get_php_extension_dir "$phpConfig"`
+	#配置php.ini
+	! grep -q "\[xcache\]" $(get_php_ini $phpConfig) && sed -i '$a\[xcache]\nextension=xcache.so\nxcache.size = 60m\nxcache.count = 5\nxcache.ttl = 0\nxcache.gc_interval = 600\n' $(get_php_ini $phpConfig) 
 }
 
 #安装php-memcache
 install_php_memcache(){
-#安装依赖
-if check_sys packageManager apt;then
-	apt-get -y install zlib1g-dev m4 autoconf
-elif check_sys packageManager yum;then
-	yum install -y zlib-devel m4 autoconf
-else
-	check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
-	check_installed "install_m4" "${depends_prefix}/${m4_filename}"
-	check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
-fi		
+	#安装依赖
+	if check_sys packageManager apt;then
+		apt-get -y install zlib1g-dev m4 autoconf
+	elif check_sys packageManager yum;then
+		yum install -y zlib-devel m4 autoconf
+	else
+		check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
+		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
+		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
+	fi		
 
-local phpConfig=$1
-download_file  "${php_memcache_filename}.tgz"
-cd $cur_dir/soft/
-rm -rf ${php_memcache_filename}
-tar xzvf ${php_memcache_filename}.tgz
-cd ${php_memcache_filename}
-error_detect "$(dirname $phpConfig)/phpize"
-if check_sys packageSupport;then
-	other_option=""
-else
-	other_option="--with-zlib-dir=${depends_prefix}/${zlib_filename}"
-fi
-error_detect "./configure --enable-memcache --with-php-config=$phpConfig $other_option"
-error_detect "make"
-error_detect "make install"
-! grep -q  "\[memcache\]" $(get_php_ini $phpConfig) && sed -i '$a\[memcache]\nextension=memcache.so\n' $(get_php_ini $phpConfig) 
+	local phpConfig=$1
+	download_file  "${php_memcache_filename}.tgz"
+	cd $cur_dir/soft/
+	rm -rf ${php_memcache_filename}
+	tar xzvf ${php_memcache_filename}.tgz
+	cd ${php_memcache_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	if check_sys packageSupport;then
+		other_option=""
+	else
+		other_option="--with-zlib-dir=${depends_prefix}/${zlib_filename}"
+	fi
+	error_detect "./configure --enable-memcache --with-php-config=$phpConfig $other_option"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "\[memcache\]" $(get_php_ini $phpConfig) && sed -i '$a\[memcache]\nextension=memcache.so\n' $(get_php_ini $phpConfig) 
 }
 
 #安装php redis模块
 install_php_redis(){
-local phpConfig=$1
-download_file  "${php_redis_filename}.tgz"
-cd $cur_dir/soft/
-rm -rf ${php_redis_filename}
-tar xzvf ${php_redis_filename}.tgz
-cd ${php_redis_filename}
-error_detect "$(dirname $phpConfig)/phpize"
-error_detect "./configure --enable-redis --with-php-config=$phpConfig"
-error_detect "make"
-error_detect "make install"
-! grep -q  "\[redis\]" $(get_php_ini $phpConfig) && sed -i '$a\[redis]\nextension=redis.so\n' $(get_php_ini $phpConfig) 
+	local phpConfig=$1
+	download_file  "${php_redis_filename}.tgz"
+	cd $cur_dir/soft/
+	rm -rf ${php_redis_filename}
+	tar xzvf ${php_redis_filename}.tgz
+	cd ${php_redis_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --enable-redis --with-php-config=$phpConfig"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "\[redis\]" $(get_php_ini $phpConfig) && sed -i '$a\[redis]\nextension=redis.so\n' $(get_php_ini $phpConfig) 
 }
 
 #安装php mongo模块
 install_php_mongo(){
-local phpConfig=$1
-download_file  "${php_mongo_filename}.tar.gz"
-cd $cur_dir/soft/
-rm -rf ${php_mongo_filename}
-tar xzvf ${php_mongo_filename}.tar.gz
-cd ${php_mongo_filename}
-error_detect "$(dirname $phpConfig)/phpize"
-error_detect "./configure --enable-mongo --with-php-config=$phpConfig"
-error_detect "make"
-error_detect "make install"
-! grep -q  "\[mongo\]" $(get_php_ini $phpConfig) && sed -i '$a\[mongo]\nextension=mongo.so\n' $(get_php_ini $phpConfig) 
+	#安装依赖
+	if check_sys packageManager apt;then
+		apt-get -y install libssl-dev
+	elif check_sys packageManager yum;then
+		yum -y install openssl-devel
+	else
+		check_installed "install_openssl" "${depends_prefix}/${openssl_filename}"
+	fi
+
+	local phpConfig=$1
+	download_file  "${php_mongo_filename}.tar.gz"
+	cd $cur_dir/soft/
+	rm -rf ${php_mongo_filename}
+	tar xzvf ${php_mongo_filename}.tar.gz
+	cd ${php_mongo_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --enable-mongo --with-php-config=$phpConfig"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "\[mongo\]" $(get_php_ini $phpConfig) && sed -i '$a\[mongo]\nextension=mongo.so\n' $(get_php_ini $phpConfig) 
 }
 
 #安装apc模块
 install_php_apc(){
-local phpConfig=$1
-download_file  "${apc_filename}.tgz"
-cd $cur_dir/soft/
-rm -rf ${apc_filename}
-tar xzvf ${apc_filename}.tgz
-cd ${apc_filename}
-error_detect "$(dirname $phpConfig)/phpize"
-error_detect "./configure --enable-apc --with-php-config=$phpConfig"
-error_detect "make"
-error_detect "make install"
-! grep -q  "\[apc\]" $(get_php_ini $phpConfig) && sed -i '$a\[apc]\nextension=apc.so\n' $(get_php_ini $phpConfig)
+	local phpConfig=$1
+	download_file  "${apc_filename}.tgz"
+	cd $cur_dir/soft/
+	rm -rf ${apc_filename}
+	tar xzvf ${apc_filename}.tgz
+	cd ${apc_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --enable-apc --with-php-config=$phpConfig"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "\[apc\]" $(get_php_ini $phpConfig) && sed -i '$a\[apc]\nextension=apc.so\n' $(get_php_ini $phpConfig)
 }
 
 #安装php ImageMagick
 install_php_imagesmagick(){
-#安装依赖
-check_installed "install_ImageMagick" "${depends_prefix}/${ImageMagick_filename}"
-if check_sys packageManager apt;then
-	apt-get -y install m4 autoconf pkg-config
-elif check_sys packageManager yum;then
-	yum -y install pkgconfig m4 autoconf
-else
-	check_installed "install_pkgconfig" "${depends_prefix}/${pkgconfig_filename}"
-	check_installed "install_m4" "${depends_prefix}/${m4_filename}"
-	check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
+	#安装依赖
+	check_installed "install_ImageMagick" "${depends_prefix}/${ImageMagick_filename}"
+	if check_sys packageManager apt;then
+		apt-get -y install m4 autoconf pkg-config
+	elif check_sys packageManager yum;then
+		yum -y install pkgconfig m4 autoconf
+	else
+		check_installed "install_pkgconfig" "${depends_prefix}/${pkgconfig_filename}"
+		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
+		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
 
-fi	
+	fi	
 
-export PKG_CONFIG_PATH=${depends_prefix}/${ImageMagick_filename}/lib/pkgconfig/
-local phpConfig=$1
-download_file  "${php_imagemagick_filename}.tgz"
-cd $cur_dir/soft/
-rm -rf ${php_imagemagick_filename}
-tar xzvf ${php_imagemagick_filename}.tgz
-cd ${php_imagemagick_filename}
-error_detect "$(dirname $phpConfig)/phpize"
-error_detect "./configure --with-php-config=$phpConfig --with-imagick=${depends_prefix}/${ImageMagick_filename}"
-error_detect "make"
-error_detect "make install"
-! grep -q  "\[imagick\]" $(get_php_ini $phpConfig) && sed -i '$a\[imagick]\nextension=imagick.so\n' $(get_php_ini $phpConfig) 
+	export PKG_CONFIG_PATH=${depends_prefix}/${ImageMagick_filename}/lib/pkgconfig/
+	local phpConfig=$1
+	download_file  "${php_imagemagick_filename}.tgz"
+	cd $cur_dir/soft/
+	rm -rf ${php_imagemagick_filename}
+	tar xzvf ${php_imagemagick_filename}.tgz
+	cd ${php_imagemagick_filename}
+	error_detect "$(dirname $phpConfig)/phpize"
+	error_detect "./configure --with-php-config=$phpConfig --with-imagick=${depends_prefix}/${ImageMagick_filename}"
+	error_detect "make"
+	error_detect "make install"
+	! grep -q  "\[imagick\]" $(get_php_ini $phpConfig) && sed -i '$a\[imagick]\nextension=imagick.so\n' $(get_php_ini $phpConfig) 
 }
 
 
 #安装ionCube
 install_ionCube(){
-local phpConfig=$1
-#判断php是否为线程安全
-if $(get_php_bin $phpConfig) -i | grep "Thread Safety" | grep "enabled";then
-	ts="_ts"
-elif $(get_php_bin $phpConfig) -i | grep "Thread Safety" | grep "disabled";then
-	ts=""
-fi
+	local phpConfig=$1
+	#判断php是否为线程安全
+	if $(get_php_bin $phpConfig) -i | grep "Thread Safety" | grep "enabled";then
+		ts="_ts"
+	elif $(get_php_bin $phpConfig) -i | grep "Thread Safety" | grep "disabled";then
+		ts=""
+	fi
 
-if is_64bit ; then
-	download_file  "${ionCube64_filename}.tar.gz"
-	cd $cur_dir/soft/
-	tar xzvf ${ionCube64_filename}.tar.gz
-	mkdir -p ${depends_prefix}/ioncube
-	php_version=`get_php_version "$phpConfig"`
-	cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
-else
-	download_file  "${ionCube32_filename}.tar.gz"
-	cd $cur_dir/soft/
-	tar xzvf ${ionCube32_filename}.tar.gz
-	mkdir -p ${depends_prefix}/ioncube
-	php_version=`get_php_version "$phpConfig"`
-	cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
-fi
-! grep -q  "\[ionCube Loader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" $(get_php_ini $phpConfig)
+	if is_64bit ; then
+		download_file  "${ionCube64_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${ionCube64_filename}.tar.gz
+		mkdir -p ${depends_prefix}/ioncube
+		php_version=`get_php_version "$phpConfig"`
+		cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
+	else
+		download_file  "${ionCube32_filename}.tar.gz"
+		cd $cur_dir/soft/
+		tar xzvf ${ionCube32_filename}.tar.gz
+		mkdir -p ${depends_prefix}/ioncube
+		php_version=`get_php_version "$phpConfig"`
+		cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
+	fi
+	! grep -q  "\[ionCube Loader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" $(get_php_ini $phpConfig)
 }
 
 

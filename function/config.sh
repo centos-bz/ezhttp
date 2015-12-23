@@ -609,13 +609,13 @@ https://www.lxconfig.com/files/ezhttp/freetype-2.5.0.tar.gz
 http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
 '
 
-#libpng设置
-libpng_filename="libpng-1.6.19"
-set_md5 $libpng_filename "3121bdc77c365a87e054b9f859f421fe"
+#libpng设置(不要更新,防止出现undefined reference to inflateReset2@ZLIB_1.2.3.4)
+libpng_filename="libpng-1.4.12"
+set_md5 $libpng_filename "72e4447061af5b781cd4057c4d449d80"
 set_dl $libpng_filename '
-http://cdn.yyupload.com/down/499809/software/libpng-1.6.19.tar.gz
-https://www.lxconfig.com/files/ezhttp/libpng-1.6.19.tar.gz
-http://jaist.dl.sourceforge.net/project/libpng/libpng16/1.6.19/libpng-1.6.19.tar.gz
+http://cdn.yyupload.com/down/499809/software/libpng-1.4.12.tar.gz
+https://www.lxconfig.com/files/ezhttp/libpng-1.4.12.tar.gz
+http://jaist.dl.sourceforge.net/project/libpng/libpng14/1.4.12/libpng-1.4.12.tar.gz
 '
 
 #mhash设置

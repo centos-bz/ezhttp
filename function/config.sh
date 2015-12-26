@@ -218,12 +218,12 @@ http://pecl.php.net/get/memcache-3.0.8.tgz
 set_hint $php_memcache_filename "php-${php_memcache_filename}"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.9.2-6"
-set_md5 $ImageMagick_filename "7c88eeb52892efa6c412f4ebc06afc9c"
+ImageMagick_filename="ImageMagick-6.9.2-10"
+set_md5 $ImageMagick_filename "e2aa762c5ad7aecd68a331da20b60376"
 set_dl $ImageMagick_filename '
-http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.2-6.tar.gz
-http://dl.centos.bz/ezhttp/ImageMagick-6.9.2-6.tar.gz
-http://www.imagemagick.org/download/ImageMagick-6.9.2-6.tar.gz
+http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.2-10.tar.gz
+http://dl.centos.bz/ezhttp/ImageMagick-6.9.2-10.tar.gz
+http://www.imagemagick.org/download/ImageMagick-6.9.2-10.tar.gz
 '
 
 #php redis模块设置
@@ -547,12 +547,12 @@ ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz
 '
 
 #openssl设置 
-openssl_filename="openssl-1.0.2d"
-set_md5 $openssl_filename "38dd619b2e77cbac69b99f52a053d25a"
+openssl_filename="openssl-1.0.2e"
+set_md5 $openssl_filename "5262bfa25b60ed9de9f28d5d52d77fc5"
 set_dl $openssl_filename '
-http://cdn.yyupload.com/down/499809/software/openssl-1.0.2d.tar.gz
-http://dl.centos.bz/ezhttp/openssl-1.0.2d.tar.gz
-http://www.openssl.org/source/openssl-1.0.2d.tar.gz
+http://cdn.yyupload.com/down/499809/software/openssl-1.0.2e.tar.gz
+http://dl.centos.bz/ezhttp/openssl-1.0.2e.tar.gz
+http://www.openssl.org/source/openssl-1.0.2e.tar.gz
 '
 
 #zlib设置
@@ -610,12 +610,12 @@ http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
 '
 
 #libpng设置(不要更新,防止出现undefined reference to inflateReset2@ZLIB_1.2.3.4)
-libpng_filename="libpng-1.4.12"
-set_md5 $libpng_filename "72e4447061af5b781cd4057c4d449d80"
+libpng_filename="libpng-1.4.19"
+set_md5 $libpng_filename "89bcbc4fc8b31f4a403906cf4f662330"
 set_dl $libpng_filename '
-http://cdn.yyupload.com/down/499809/software/libpng-1.4.12.tar.gz
-http://dl.centos.bz/ezhttp/libpng-1.4.12.tar.gz
-http://jaist.dl.sourceforge.net/project/libpng/libpng14/1.4.12/libpng-1.4.12.tar.gz
+http://cdn.yyupload.com/down/499809/software/libpng-1.4.19.tar.gz
+http://dl.centos.bz/ezhttp/libpng-1.4.19.tar.gz
+http://jaist.dl.sourceforge.net/project/libpng/libpng14/1.4.19/libpng-1.4.19.tar.gz
 '
 
 #mhash设置
@@ -724,21 +724,21 @@ else
 fi
 
 # tomcat7设置
-tomcat7_filename="apache-tomcat-7.0.65"
-set_md5 $tomcat7_filename "5e4cb4c1582e73ad10563f26729c39b6"
+tomcat7_filename="apache-tomcat-7.0.67"
+set_md5 $tomcat7_filename "55a5ef91b4bd9082ad5faf91d3372ae2"
 set_dl $tomcat7_filename '
-http://cdn.yyupload.com/down/499809/software/apache-tomcat-7.0.65.tar.gz
-http://dl.centos.bz/ezhttp/apache-tomcat-7.0.65.tar.gz
-http://mirror.symnds.com/software/Apache/tomcat/tomcat-7/v7.0.65/bin/apache-tomcat-7.0.65.tar.gz
+http://cdn.yyupload.com/down/499809/software/apache-tomcat-7.0.67.tar.gz
+http://dl.centos.bz/ezhttp/apache-tomcat-7.0.67.tar.gz
+http://mirror.symnds.com/software/Apache/tomcat/tomcat-7/v7.0.67/bin/apache-tomcat-7.0.67.tar.gz
 '
 
 # tomcat8设置
-tomcat8_filename="apache-tomcat-8.0.28"
-set_md5 $tomcat8_filename "4b7ba7a5af0a5c395c0740fc011b59d1"
+tomcat8_filename="apache-tomcat-8.0.30"
+set_md5 $tomcat8_filename "1d0d7cfb059c9fb7900fa6de8ab45e73"
 set_dl $tomcat8_filename '
-http://cdn.yyupload.com/down/499809/software/apache-tomcat-8.0.28.tar.gz
-http://dl.centos.bz/ezhttp/apache-tomcat-8.0.28.tar.gz
-http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.28/bin/apache-tomcat-8.0.28.tar.gz
+http://cdn.yyupload.com/down/499809/software/apache-tomcat-8.0.30.tar.gz
+http://dl.centos.bz/ezhttp/apache-tomcat-8.0.30.tar.gz
+http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.30/bin/apache-tomcat-8.0.30.tar.gz
 '
 # php-memcached设置
 php_memcached_filename="memcached-2.2.0"

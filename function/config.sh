@@ -734,7 +734,7 @@ http://mirror.symnds.com/software/Apache/tomcat/tomcat-7/v7.0.67/bin/apache-tomc
 
 # tomcat8设置
 tomcat8_filename="apache-tomcat-8.0.30"
-set_md5 $tomcat8_filename "1d0d7cfb059c9fb7900fa6de8ab45e73"
+set_md5 $tomcat8_filename "4fc750ab343f6bd8df92cdb02b7b39e3"
 set_dl $tomcat8_filename '
 http://cdn.yyupload.com/down/499809/software/apache-tomcat-8.0.30.tar.gz
 http://dl.centos.bz/ezhttp/apache-tomcat-8.0.30.tar.gz

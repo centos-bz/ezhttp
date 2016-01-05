@@ -274,7 +274,8 @@ create_lib64_dir(){
 #监控编译安装中是否有错误，有错误就停止安装,并把错误写入到文件/root/ezhttp.log
 error_detect(){
 	local command=$1
-	local cur_soft=`pwd | awk -F'/' '{print $NF}'`
+	local work_dir=`pwd`
+	local cur_soft=`echo ${work_dir#$cur_dir} | awk -F'/' '{print $3}'`
 	${command}
 	if [ $? != 0 ];then
 		distro=`cat /etc/issue`

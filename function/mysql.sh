@@ -200,8 +200,9 @@ install_mysqld(){
 		rm -rf ${mysql5_5_filename}
 		tar xzvf ${mysql5_5_filename}.tar.gz
 		cd ${mysql5_5_filename}
-		make clean	
-		error_detect "cmake ${mysql_configure_args}"
+		mkdir build
+		cd build
+		error_detect "cmake ${mysql_configure_args} .."
 		#为只编译client作处理
 		if [ "$mysql" == "libmysqlclient18" ];then
 			error_detect "make mysqlclient libmysql"
@@ -232,8 +233,9 @@ install_mysqld(){
 		rm -rf ${mysql5_6_filename}
 		tar xzvf  ${mysql5_6_filename}.tar.gz
 		cd ${mysql5_6_filename}
-		make clean
-		error_detect "cmake ${mysql_configure_args}"
+		mkdir build
+		cd build
+		error_detect "cmake ${mysql_configure_args} .."
 		error_detect "parallel_make"
 		error_detect "make install"
 		config_mysql 5.6
@@ -262,8 +264,9 @@ install_mysqld(){
 		rm -rf ${mysql5_7_filename}
 		tar xzvf  ${mysql5_7_filename}.tar.gz
 		cd ${mysql5_7_filename}
-		make clean
-		error_detect "cmake ${mysql_configure_args}"
+		mkdir build
+		cd build
+		error_detect "cmake ${mysql_configure_args} .."
 		error_detect "parallel_make"
 		error_detect "make install"
 		config_mysql 5.7	

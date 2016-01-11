@@ -768,5 +768,5 @@ install_tomcat8(){
 	tar xzvf ${tomcat8_filename}.tar.gz
 	mkdir -p ${tomcat8_location}
 	\cp -a ${tomcat8_filename}/* ${tomcat8_location}
-	echo "export JAVA_HOME=${EZ_JAVA_HOME}" > ${tomcat7_location}/bin/setenv.sh
+	echo "export JAVA_HOME=${EZ_JAVA_HOME}" > ${tomcat8_location}/bin/setenv.sh
 }

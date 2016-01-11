@@ -218,12 +218,12 @@ http://pecl.php.net/get/memcache-3.0.8.tgz
 set_hint $php_memcache_filename "php-${php_memcache_filename}"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.9.2-10"
-set_md5 $ImageMagick_filename "e2aa762c5ad7aecd68a331da20b60376"
+ImageMagick_filename="ImageMagick-6.9.3-0"
+set_md5 $ImageMagick_filename "21a8030c4bf589bf7c7a30c5863d34f4"
 set_dl $ImageMagick_filename '
-http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.2-10.tar.gz
-http://dl.centos.bz/ezhttp/ImageMagick-6.9.2-10.tar.gz
-http://www.imagemagick.org/download/ImageMagick-6.9.2-10.tar.gz
+http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.3-0.zip
+http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-0.zip
+http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-0.zip
 '
 
 #php redis模块设置

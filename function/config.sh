@@ -219,11 +219,11 @@ set_hint $php_memcache_filename "php-${php_memcache_filename}"
 
 #ImageMagick设置
 ImageMagick_filename="ImageMagick-6.9.3-0"
-set_md5 $ImageMagick_filename "21a8030c4bf589bf7c7a30c5863d34f4"
+set_md5 $ImageMagick_filename "87939f4f82d6f24a28d3106a58d523d8"
 set_dl $ImageMagick_filename '
-http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.3-0.zip
-http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-0.zip
-http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-0.zip
+http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.3-0.tar.xz
+http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-0.tar.xz
+http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-0.tar.xz
 '
 
 #php redis模块设置

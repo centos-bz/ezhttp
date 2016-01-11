@@ -313,9 +313,9 @@ install_ImageMagick(){
         export CPPFLAGS=-I${depends_prefix}/${libjpeg_filename}/include
         export LDFLAGS=-L${depends_prefix}/${libjpeg_filename}/lib
 	fi 	
-	download_file  "${ImageMagick_filename}.tar.gz"
+	download_file  "${ImageMagick_filename}.tar.xz"
 	cd $cur_dir/soft/
-	tar xzvf ${ImageMagick_filename}.tar.gz
+	tar xvf ${ImageMagick_filename}.tar.xz
 	cd ${ImageMagick_filename}
 	error_detect "./configure --prefix=${depends_prefix}/${ImageMagick_filename}"
 	error_detect "parallel_make"

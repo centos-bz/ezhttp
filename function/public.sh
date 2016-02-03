@@ -393,6 +393,8 @@ check_integrity(){
 		return `bzip2 -t ${cur_dir}/soft/$filename`
 	elif echo $filename | grep -q -E "\.zip$"; then
 		return `unzip -t -q ${cur_dir}/soft/$filename >/dev/null  2>&1`	
+	elif echo $filename | grep -q -E "tar\.xz$"; then
+		return `xz -t ${cur_dir}/soft/$filename >/dev/null  2>&1`		
 	fi
 }
 

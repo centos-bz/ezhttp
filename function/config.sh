@@ -40,12 +40,12 @@ http://dl.centos.bz/ezhttp/httpd-2.2.31.tar.gz
 http://www.webhostingjams.com/mirror/apache//httpd/httpd-2.2.31.tar.gz
 '
 
-apache2_4_filename="httpd-2.4.17"
-set_md5 $apache2_4_filename "5984049a2311de7173ba545643c450bb"
+apache2_4_filename="httpd-2.4.18"
+set_md5 $apache2_4_filename "2f90ce3426541817e0dfd01cae086b60"
 set_dl $apache2_4_filename '
-http://cdn.yyupload.com/down/499809/software/httpd-2.4.17.tar.gz
-http://dl.centos.bz/ezhttp/httpd-2.4.17.tar.gz
-http://www.webhostingreviewjam.com/mirror/apache//httpd/httpd-2.4.17.tar.gz
+http://cdn.yyupload.com/down/499809/software/httpd-2.4.18.tar.gz
+http://dl.centos.bz/ezhttp/httpd-2.4.18.tar.gz
+http://www.webhostingreviewjam.com/mirror/apache//httpd/httpd-2.4.18.tar.gz
 '
 
 #mysql_server设置
@@ -218,12 +218,12 @@ http://pecl.php.net/get/memcache-3.0.8.tgz
 set_hint $php_memcache_filename "php-${php_memcache_filename}"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.9.3-0"
-set_md5 $ImageMagick_filename "87939f4f82d6f24a28d3106a58d523d8"
+ImageMagick_filename="ImageMagick-6.9.3-2"
+set_md5 $ImageMagick_filename "2f3c3edbbf681ace8987ae84b6a9ba3b"
 set_dl $ImageMagick_filename '
-http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.3-0.tar.xz
-http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-0.tar.xz
-http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-0.tar.xz
+http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.3-2.tar.xz
+http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-2.tar.xz
+http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-2.tar.xz
 '
 
 #php redis模块设置
@@ -547,12 +547,12 @@ ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz
 '
 
 #openssl设置 
-openssl_filename="openssl-1.0.2e"
-set_md5 $openssl_filename "5262bfa25b60ed9de9f28d5d52d77fc5"
+openssl_filename="openssl-1.0.2f"
+set_md5 $openssl_filename "b3bf73f507172be9292ea2a8c28b659d"
 set_dl $openssl_filename '
-http://cdn.yyupload.com/down/499809/software/openssl-1.0.2e.tar.gz
-http://dl.centos.bz/ezhttp/openssl-1.0.2e.tar.gz
-http://www.openssl.org/source/openssl-1.0.2e.tar.gz
+http://cdn.yyupload.com/down/499809/software/openssl-1.0.2f.tar.gz
+http://dl.centos.bz/ezhttp/openssl-1.0.2f.tar.gz
+http://www.openssl.org/source/openssl-1.0.2f.tar.gz
 '
 
 #zlib设置
@@ -759,12 +759,12 @@ http://dl.centos.bz/ezhttp/libmemcached-1.0.18.tar.gz
 https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
 '
 # nginx lua module设置
-lua_nginx_module_filename="lua-nginx-module-0.9.19"
-set_md5 $lua_nginx_module_filename "987b6dd138f831d4b524c5e7c28a4f84"
+lua_nginx_module_filename="lua-nginx-module-0.10.0"
+set_md5 $lua_nginx_module_filename "37d06e0f21bb4b2eedf80736a6aca3a2"
 set_dl $lua_nginx_module_filename '
-http://cdn.yyupload.com/down/499809/software/lua-nginx-module-0.9.19.tar.gz
-http://dl.centos.bz/ezhttp/lua-nginx-module-0.9.19.tar.gz
-https://github.com/openresty/lua-nginx-module/archive/v0.9.19.tar.gz
+http://cdn.yyupload.com/down/499809/software/lua-nginx-module-0.10.0.tar.gz
+http://dl.centos.bz/ezhttp/lua-nginx-module-0.10.0.tar.gz
+https://github.com/openresty/lua-nginx-module/archive/v0.10.0.tar.gz
 '
 
 # luajit设置

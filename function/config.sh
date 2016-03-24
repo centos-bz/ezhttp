@@ -8,7 +8,7 @@ load_config(){
 nginx_filename="nginx-1.8.0"
 set_md5 $nginx_filename "3ca4a37931e9fa301964b8ce889da8cb"
 set_dl $nginx_filename '
-http://cdn.yyupload.com/down/499809/software/nginx-1.8.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/nginx-1.8.0.tar.gz
 http://dl.centos.bz/ezhttp/nginx-1.8.0.tar.gz
 http://nginx.org/download/nginx-1.8.0.tar.gz
 '
@@ -17,7 +17,7 @@ http://nginx.org/download/nginx-1.8.0.tar.gz
 tengine_filename="tengine-2.1.0"
 set_md5 $tengine_filename "fb60c57c2610c6a356153613c485e4af"
 set_dl $tengine_filename '
-http://cdn.yyupload.com/down/499809/software/tengine-2.1.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/tengine-2.1.0.tar.gz
 http://dl.centos.bz/ezhttp/tengine-2.1.0.tar.gz
 http://tengine.taobao.org/download/tengine-2.1.0.tar.gz
 '
@@ -26,7 +26,7 @@ http://tengine.taobao.org/download/tengine-2.1.0.tar.gz
 openresty_filename="ngx_openresty-1.7.10.2"
 set_md5 $openresty_filename "bca1744196acfb9e986f1fdbee92641e"
 set_dl $openresty_filename '
-http://cdn.yyupload.com/down/499809/software/ngx_openresty-1.7.10.2.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ngx_openresty-1.7.10.2.tar.gz
 http://dl.centos.bz/ezhttp/ngx_openresty-1.7.10.2.tar.gz
 http://openresty.org/download/ngx_openresty-1.7.10.2.tar.gz
 '
@@ -35,7 +35,7 @@ http://openresty.org/download/ngx_openresty-1.7.10.2.tar.gz
 apache2_2_filename="httpd-2.2.31"
 set_md5 $apache2_2_filename "bc81bdf42a6c10d0ee9e6908014cc0f5"
 set_dl $apache2_2_filename '
-http://cdn.yyupload.com/down/499809/software/httpd-2.2.31.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/httpd-2.2.31.tar.gz
 http://dl.centos.bz/ezhttp/httpd-2.2.31.tar.gz
 http://www.webhostingjams.com/mirror/apache//httpd/httpd-2.2.31.tar.gz
 '
@@ -43,7 +43,7 @@ http://www.webhostingjams.com/mirror/apache//httpd/httpd-2.2.31.tar.gz
 apache2_4_filename="httpd-2.4.18"
 set_md5 $apache2_4_filename "2f90ce3426541817e0dfd01cae086b60"
 set_dl $apache2_4_filename '
-http://cdn.yyupload.com/down/499809/software/httpd-2.4.18.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/httpd-2.4.18.tar.gz
 http://dl.centos.bz/ezhttp/httpd-2.4.18.tar.gz
 http://www.webhostingreviewjam.com/mirror/apache//httpd/httpd-2.4.18.tar.gz
 '
@@ -52,33 +52,33 @@ http://www.webhostingreviewjam.com/mirror/apache//httpd/httpd-2.4.18.tar.gz
 mysql5_1_filename="mysql-5.1.73"
 set_md5 $mysql5_1_filename "887f869bcc757957067b9198f707f32f"
 set_dl $mysql5_1_filename '
-http://cdn.yyupload.com/down/499809/software/mysql-5.1.73.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.1.73.tar.gz
 http://dl.centos.bz/ezhttp/mysql-5.1.73.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz
 '
 
-mysql5_5_filename="mysql-5.5.46"
-set_md5 $mysql5_5_filename "7f94c003b672d8edac1fb6adb391b090"
+mysql5_5_filename="mysql-5.5.48"
+set_md5 $mysql5_5_filename "53c9b1e5058183ac64c71455ae4dfc51"
 set_dl $mysql5_5_filename '
-http://cdn.yyupload.com/down/499809/software/mysql-5.5.46.tar.gz
-http://dl.centos.bz/ezhttp/mysql-5.5.46.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.46.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.5.48.tar.gz
+http://dl.centos.bz/ezhttp/mysql-5.5.48.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.48.tar.gz
 '
 
-mysql5_6_filename="mysql-5.6.27"
-set_md5 $mysql5_6_filename "7754df40bb5567b03b041ccb6b5ddffa"
+mysql5_6_filename="mysql-5.6.29"
+set_md5 $mysql5_6_filename "aaa21c6450adee3a1894fd1710f02bf5"
 set_dl $mysql5_6_filename '
-http://cdn.yyupload.com/down/499809/software/mysql-5.6.27.tar.gz
-http://dl.centos.bz/ezhttp/mysql-5.6.27.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.27.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.6.29.tar.gz
+http://dl.centos.bz/ezhttp/mysql-5.6.29.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.29.tar.gz
 '
 
-mysql5_7_filename="mysql-5.7.9"
-set_md5 $mysql5_7_filename "6d782dda9046acb81e694934fd513993"
+mysql5_7_filename="mysql-5.7.11"
+set_md5 $mysql5_7_filename "f84d945a40ed876d10f8d5a7f4ccba32"
 set_dl $mysql5_7_filename '
-http://cdn.yyupload.com/down/499809/software/mysql-5.7.9.tar.gz
-http://dl.centos.bz/ezhttp/mysql-5.7.9.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.9.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.7.11.tar.gz
+http://dl.centos.bz/ezhttp/mysql-5.7.11.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.11.tar.gz
 '
 set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when building,try mysql-5.6 if failed)"
 
@@ -87,7 +87,7 @@ set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when buildin
 boost_filename="boost_1_59_0"
 set_md5 $boost_filename "51528a0e3b33d9e10aaa311d9eb451e3"
 set_dl $boost_filename '
-http://cdn.yyupload.com/down/499809/software/boost_1_59_0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/boost_1_59_0.tar.gz
 http://dl.centos.bz/ezhttp/boost_1_59_0.tar.gz
 http://jaist.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
 '
@@ -96,7 +96,7 @@ http://jaist.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
 php5_2_filename="php-5.2.17"
 set_md5 $php5_2_filename "04d321d5aeb9d3a051233dbd24220ef1"
 set_dl $php5_2_filename '
-http://cdn.yyupload.com/down/499809/software/php-5.2.17.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/php-5.2.17.tar.gz
 http://dl.centos.bz/ezhttp/php-5.2.17.tar.gz
 http://museum.php.net/php5/php-5.2.17.tar.gz
 '
@@ -104,7 +104,7 @@ http://museum.php.net/php5/php-5.2.17.tar.gz
 php5_3_filename="php-5.3.29"
 set_md5 $php5_3_filename "ebfa96ea636b2a7ece71e78ad116a338"
 set_dl $php5_3_filename '
-http://cdn.yyupload.com/down/499809/software/php-5.3.29.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/php-5.3.29.tar.gz
 http://dl.centos.bz/ezhttp/php-5.3.29.tar.gz
 http://us1.php.net/distributions/php-5.3.29.tar.gz
 '
@@ -112,7 +112,7 @@ http://us1.php.net/distributions/php-5.3.29.tar.gz
 php5_4_filename="php-5.4.43"
 set_md5 $php5_4_filename "b09580551c32ba191e926bbbdea4e082"
 set_dl $php5_4_filename '
-http://cdn.yyupload.com/down/499809/software/php-5.4.43.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/php-5.4.43.tar.gz
 http://dl.centos.bz/ezhttp/php-5.4.43.tar.gz
 http://us1.php.net/distributions/php-5.4.43.tar.gz
 '
@@ -120,7 +120,7 @@ http://us1.php.net/distributions/php-5.4.43.tar.gz
 php5_5_filename="php-5.5.27"
 set_md5 $php5_5_filename "39cc2659f8d777e803816f7b437d9001"
 set_dl $php5_5_filename '
-http://cdn.yyupload.com/down/499809/software/php-5.5.27.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/php-5.5.27.tar.gz
 http://dl.centos.bz/ezhttp/php-5.5.27.tar.gz
 http://us1.php.net/distributions/php-5.5.27.tar.gz
 '
@@ -128,7 +128,7 @@ http://us1.php.net/distributions/php-5.5.27.tar.gz
 php5_6_filename="php-5.6.15"
 set_md5 $php5_6_filename "4ec2fe201e24c6f65bf7bd4bac1bc880"
 set_dl $php5_6_filename '
-http://cdn.yyupload.com/down/499809/software/php-5.6.15.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/php-5.6.15.tar.gz
 http://dl.centos.bz/ezhttp/php-5.6.15.tar.gz
 http://us1.php.net/distributions/php-5.6.15.tar.gz
 '
@@ -136,7 +136,7 @@ http://us1.php.net/distributions/php-5.6.15.tar.gz
 php7_0_filename="php-7.0.0"
 set_md5 $php7_0_filename "4ac36fc0c028c7f704b8485b9cd636e9"
 set_dl $php7_0_filename '
-http://cdn.yyupload.com/down/499809/software/php-7.0.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/php-7.0.0.tar.gz
 http://dl.centos.bz/ezhttp/php-7.0.0.tar.gz
 http://us1.php.net/distributions/php-7.0.0.tar.gz
 '
@@ -145,7 +145,7 @@ http://us1.php.net/distributions/php-7.0.0.tar.gz
 freetds_filename="freetds-0.95.21"
 set_md5 $freetds_filename "90690b8f2f270151092009b71fe9b590"
 set_dl $freetds_filename '
-http://cdn.yyupload.com/down/499809/software/freetds-0.95.21.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/freetds-0.95.21.tar.gz
 http://dl.centos.bz/ezhttp/freetds-0.95.21.tar.gz
 ftp://ftp.freetds.org/pub/freetds/stable/freetds-0.95.21.tar.gz
 '
@@ -154,7 +154,7 @@ ftp://ftp.freetds.org/pub/freetds/stable/freetds-0.95.21.tar.gz
 swoole_filename="swoole-src-swoole-1.7.20-stable"
 set_md5 $swoole_filename "c44284e20d415ac06db512f3fb1f9863"
 set_dl $swoole_filename '
-http://cdn.yyupload.com/down/499809/software/swoole-src-swoole-1.7.20-stable.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/swoole-src-swoole-1.7.20-stable.tar.gz
 http://dl.centos.bz/ezhttp/swoole-src-swoole-1.7.20-stable.tar.gz
 https://codeload.github.com/swoole/swoole-src/tar.gz/swoole-1.7.20-stable
 '
@@ -166,7 +166,7 @@ ZendOptimizer_filename="ZendOptimizer-3.3.9"
 ZendOptimizer32_filename="ZendOptimizer-3.3.9-linux-glibc23-i386"
 set_md5 $ZendOptimizer32_filename "150586c3af37fbdfa504cf142c447e57"
 set_dl $ZendOptimizer32_filename '
-http://cdn.yyupload.com/down/499809/software/ZendOptimizer-3.3.9-linux-glibc23-i386.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ZendOptimizer-3.3.9-linux-glibc23-i386.tar.gz
 http://dl.centos.bz/ezhttp/ZendOptimizer-3.3.9-linux-glibc23-i386.tar.gz
 http://downloads.zend.com/optimizer/3.3.9/ZendOptimizer-3.3.9-linux-glibc23-i386.tar.gz
 '
@@ -174,7 +174,7 @@ http://downloads.zend.com/optimizer/3.3.9/ZendOptimizer-3.3.9-linux-glibc23-i386
 ZendOptimizer64_filename="ZendOptimizer-3.3.9-linux-glibc23-x86_64"
 set_md5 $ZendOptimizer64_filename "dd4a95e66f0bda61d0006195b2f42efa"
 set_dl $ZendOptimizer64_filename '
-http://cdn.yyupload.com/down/499809/software/ZendOptimizer-3.3.9-linux-glibc23-x86_64.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ZendOptimizer-3.3.9-linux-glibc23-x86_64.tar.gz
 http://dl.centos.bz/ezhttp/ZendOptimizer-3.3.9-linux-glibc23-x86_64.tar.gz
 http://downloads.zend.com/optimizer/3.3.9/ZendOptimizer-3.3.9-linux-glibc23-x86_64.tar.gz
 '
@@ -183,7 +183,7 @@ http://downloads.zend.com/optimizer/3.3.9/ZendOptimizer-3.3.9-linux-glibc23-x86_
 eaccelerator_filename="eaccelerator-0.9.6.1"
 set_md5 $eaccelerator_filename "32ccd838e06ef5613c2610c1c65ed228"
 set_dl $eaccelerator_filename '
-http://cdn.yyupload.com/down/499809/software/eaccelerator-0.9.6.1.tar.bz2
+http://cdn.yyupload.com/down/10268950/ezhttp/eaccelerator-0.9.6.1.tar.bz2
 http://dl.centos.bz/ezhttp/eaccelerator-0.9.6.1.tar.bz2
 http://cloud.github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1.tar.bz2
 '
@@ -192,7 +192,7 @@ http://cloud.github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1
 gmp_filename="gmp-6.1.0"
 set_md5 $gmp_filename "86ee6e54ebfc4a90b643a65e402c4048"
 set_dl $gmp_filename '
-http://cdn.yyupload.com/down/499809/software/gmp-6.1.0.tar.bz2
+http://cdn.yyupload.com/down/10268950/ezhttp/gmp-6.1.0.tar.bz2
 http://dl.centos.bz/ezhttp/gmp-6.1.0.tar.bz2
 https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2
 '
@@ -202,7 +202,7 @@ set_hint $gmp_filename "php-${gmp_filename}"
 xcache_filename="xcache-3.2.0"
 set_md5 $xcache_filename "8b0a6f27de630c4714ca261480f34cda"
 set_dl $xcache_filename '
-http://cdn.yyupload.com/down/499809/software/xcache-3.2.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/xcache-3.2.0.tar.gz
 http://dl.centos.bz/ezhttp/xcache-3.2.0.tar.gz
 http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz
 '
@@ -211,26 +211,26 @@ http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz
 php_memcache_filename="memcache-3.0.8"
 set_md5 $php_memcache_filename "24505e9b263d2c77f8ae5e9b4725e7d1"
 set_dl $php_memcache_filename '
-http://cdn.yyupload.com/down/499809/software/memcache-3.0.8.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/memcache-3.0.8.tgz
 http://dl.centos.bz/ezhttp/memcache-3.0.8.tgz
 http://pecl.php.net/get/memcache-3.0.8.tgz
 '
 set_hint $php_memcache_filename "php-${php_memcache_filename}"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.9.3-2"
-set_md5 $ImageMagick_filename "2f3c3edbbf681ace8987ae84b6a9ba3b"
+ImageMagick_filename="ImageMagick-6.9.3-7"
+set_md5 $ImageMagick_filename "bb31f4ffd561f30068f84060d1d8c0c3"
 set_dl $ImageMagick_filename '
-http://cdn.yyupload.com/down/499809/software/ImageMagick-6.9.3-2.tar.xz
-http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-2.tar.xz
-http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-2.tar.xz
+http://cdn.yyupload.com/down/10268950/ezhttp/ImageMagick-6.9.3-7.tar.xz
+http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-7.tar.xz
+http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-7.tar.xz
 '
 
 #php redis模块设置
 php_redis_filename="redis-2.2.7"
 set_md5 $php_redis_filename "c55839465b2c435fd091ac50923f2d96"
 set_dl $php_redis_filename '
-http://cdn.yyupload.com/down/499809/software/redis-2.2.7.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/redis-2.2.7.tgz
 http://dl.centos.bz/ezhttp/redis-2.2.7.tgz
 http://pecl.php.net/get/redis-2.2.7.tgz
 '
@@ -240,7 +240,7 @@ set_hint $php_redis_filename "php-${php_redis_filename}"
 php_mongo_filename="mongo-php-driver-legacy-1.6.11"
 set_md5 $php_mongo_filename "674b8598202fff91c90341cfb0e2e25e"
 set_dl $php_mongo_filename '
-http://cdn.yyupload.com/down/499809/software/mongo-php-driver-legacy-1.6.11.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mongo-php-driver-legacy-1.6.11.tar.gz
 http://dl.centos.bz/ezhttp/mongo-php-driver-legacy-1.6.11.tar.gz
 https://codeload.github.com/mongodb/mongo-php-driver-legacy/tar.gz/1.6.11
 '
@@ -250,7 +250,7 @@ set_hint $php_mongo_filename "php-mongo-legacy-1.6.11"
 pkgconfig_filename="pkgconfig-0.18"
 set_md5 $pkgconfig_filename "b20a993728a4df9c366e0582315f7b65"
 set_dl $pkgconfig_filename '
-http://cdn.yyupload.com/down/499809/software/pkgconfig-0.18.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/pkgconfig-0.18.tar.gz
 http://dl.centos.bz/ezhttp/pkgconfig-0.18.tar.gz
 http://pkgconfig.freedesktop.org/releases/pkgconfig-0.18.tar.gz
 '
@@ -258,7 +258,7 @@ http://pkgconfig.freedesktop.org/releases/pkgconfig-0.18.tar.gz
 php_imagemagick_filename="imagick-3.1.2"
 set_md5 $php_imagemagick_filename "f2fd71b026debe056e0ec8d76c2ffe94"
 set_dl $php_imagemagick_filename '
-http://cdn.yyupload.com/down/499809/software/imagick-3.1.2.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/imagick-3.1.2.tgz
 http://dl.centos.bz/ezhttp/imagick-3.1.2.tgz
 http://pecl.php.net/get/imagick-3.1.2.tgz
 '
@@ -268,7 +268,7 @@ set_hint $php_imagemagick_filename "php-imagick-3.1.2"
 apc_filename="APC-3.1.13"
 set_md5 $apc_filename "c9e47002e3a67ebde3a6f81437c7b6e0"
 set_dl $apc_filename '
-http://cdn.yyupload.com/down/499809/software/APC-3.1.13.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/APC-3.1.13.tgz
 http://dl.centos.bz/ezhttp/APC-3.1.13.tgz
 http://pecl.php.net/get/APC-3.1.13.tgz
 '
@@ -279,7 +279,7 @@ ionCube_filename="ioncube_loaders"
 ionCube32_filename="ioncube_loaders_lin_x86"
 set_md5 $ionCube32_filename "272ab5181bd79d45041bb448b07845ab"
 set_dl $ionCube32_filename '
-http://cdn.yyupload.com/down/499809/software/ioncube_loaders_lin_x86.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ioncube_loaders_lin_x86.tar.gz
 http://dl.centos.bz/ezhttp/ioncube_loaders_lin_x86.tar.gz
 http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz
 '
@@ -287,7 +287,7 @@ http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz
 ionCube64_filename="ioncube_loaders_lin_x86-64"
 set_md5 $ionCube64_filename "a5115a5f24f2e9c4d793c5feb78261f2"
 set_dl $ionCube64_filename '
-http://cdn.yyupload.com/down/499809/software/ioncube_loaders_lin_x86-64.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ioncube_loaders_lin_x86-64.tar.gz
 http://dl.centos.bz/ezhttp/ioncube_loaders_lin_x86-64.tar.gz
 http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz
 '
@@ -298,7 +298,7 @@ ZendGuardLoader_filename="ZendGuardLoader"
 ZendGuardLoader53_32_filename="ZendGuardLoader-php-5.3-linux-glibc23-i386"
 set_md5 $ZendGuardLoader53_32_filename "f53e51ecb59e390be5551ff7cc8576b0"
 set_dl $ZendGuardLoader53_32_filename '
-http://cdn.yyupload.com/down/499809/software/ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz
 http://dl.centos.bz/ezhttp/ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz
 http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz
 '
@@ -306,7 +306,7 @@ http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-i386
 ZendGuardLoader54_32_filename="ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386"
 set_md5 $ZendGuardLoader54_32_filename "9a25ff3c2fa4cb37602ba6d6491e859e"
 set_dl $ZendGuardLoader54_32_filename '
-http://cdn.yyupload.com/down/499809/software/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386.tar.gz
 http://dl.centos.bz/ezhttp/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386.tar.gz
 http://downloads.zend.com/guard/6.0.0/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386.tar.gz
 '
@@ -314,7 +314,7 @@ http://downloads.zend.com/guard/6.0.0/ZendGuardLoader-70429-PHP-5.4-linux-glibc2
 ZendGuardLoader53_64_filename="ZendGuardLoader-php-5.3-linux-glibc23-x86_64"
 set_md5 $ZendGuardLoader53_64_filename "9408297e9e38d5ce2cca92c619b5ad50"
 set_dl $ZendGuardLoader53_64_filename '
-http://cdn.yyupload.com/down/499809/software/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
 http://dl.centos.bz/ezhttp/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
 http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
 '
@@ -322,7 +322,7 @@ http://downloads.zend.com/guard/5.5.0/ZendGuardLoader-php-5.3-linux-glibc23-x86_
 ZendGuardLoader54_64_filename="ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64"
 set_md5 $ZendGuardLoader54_64_filename "09d0da0046eb70c3d704db1e0074098e"
 set_dl $ZendGuardLoader54_64_filename '
-http://cdn.yyupload.com/down/499809/software/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz
 http://dl.centos.bz/ezhttp/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz
 http://downloads.zend.com/guard/6.0.0/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz
 '
@@ -331,7 +331,7 @@ http://downloads.zend.com/guard/6.0.0/ZendGuardLoader-70429-PHP-5.4-linux-glibc2
 xdebug_filename="xdebug-XDEBUG_2_2_2"
 set_md5 $xdebug_filename "93e68e45de087909092a979d3922c0cf"
 set_dl $xdebug_filename '
-http://cdn.yyupload.com/down/499809/software/xdebug-XDEBUG_2_2_2.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/xdebug-XDEBUG_2_2_2.tar.gz
 http://dl.centos.bz/ezhttp/xdebug-XDEBUG_2_2_2.tar.gz
 https://github.com/derickr/xdebug/archive/XDEBUG_2_2_2.tar.gz
 '
@@ -341,7 +341,7 @@ set_hint $xdebug_filename "xdebug-2.2.2"
 memcached_filename="memcached-1.4.24"
 set_md5 $memcached_filename "4d6e8c90e2068580526c7579dd7f37f6"
 set_dl $memcached_filename '
-http://cdn.yyupload.com/down/499809/software/memcached-1.4.24.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/memcached-1.4.24.tar.gz
 http://dl.centos.bz/ezhttp/memcached-1.4.24.tar.gz
 http://www.memcached.org/files/memcached-1.4.24.tar.gz
 '
@@ -350,7 +350,7 @@ http://www.memcached.org/files/memcached-1.4.24.tar.gz
 redis_filename="redis-3.0.3"
 set_md5 $redis_filename "76725490d6168cfb4b0ce014b89d4b54"
 set_dl $redis_filename '
-http://cdn.yyupload.com/down/499809/software/redis-3.0.3.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/redis-3.0.3.tar.gz
 http://dl.centos.bz/ezhttp/redis-3.0.3.tar.gz
 http://download.redis.io/releases/redis-3.0.3.tar.gz
 '
@@ -359,7 +359,7 @@ http://download.redis.io/releases/redis-3.0.3.tar.gz
 phpMyAdmin_filename="phpMyAdmin-4.4.12-all-languages"
 set_md5 $phpMyAdmin_filename "37b4fb4ff8681ef8191d03089f21d3fc"
 set_dl $phpMyAdmin_filename '
-http://cdn.yyupload.com/down/499809/software/phpMyAdmin-4.4.12-all-languages.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/phpMyAdmin-4.4.12-all-languages.tar.gz
 http://dl.centos.bz/ezhttp/phpMyAdmin-4.4.12-all-languages.tar.gz
 https://files.phpmyadmin.net/phpMyAdmin/4.4.12/phpMyAdmin-4.4.12-all-languages.tar.gz
 '
@@ -368,7 +368,7 @@ https://files.phpmyadmin.net/phpMyAdmin/4.4.12/phpMyAdmin-4.4.12-all-languages.t
 phpRedisAdmin_filename="phpRedisAdmin-1.1.0"
 set_md5 $phpRedisAdmin_filename "ec34a4c966eaa8fb461e50d76eec1e8d"
 set_dl $phpRedisAdmin_filename '
-http://cdn.yyupload.com/down/499809/software/phpRedisAdmin-1.1.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/phpRedisAdmin-1.1.0.tar.gz
 http://dl.centos.bz/ezhttp/phpRedisAdmin-1.1.0.tar.gz
 https://github.com/ErikDubbelboer/phpRedisAdmin/archive/v1.1.0.tar.gz
 '
@@ -377,7 +377,7 @@ https://github.com/ErikDubbelboer/phpRedisAdmin/archive/v1.1.0.tar.gz
 Predis_filename="predis-1.0.1"
 set_md5 $Predis_filename "91ea74ee8bb336417cdf139e708fcf43"
 set_dl $Predis_filename '
-http://cdn.yyupload.com/down/499809/software/predis-1.0.1.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/predis-1.0.1.tar.gz
 http://dl.centos.bz/ezhttp/predis-1.0.1.tar.gz
 https://github.com/nrk/predis/archive/v1.0.1.tar.gz
 '
@@ -386,7 +386,7 @@ https://github.com/nrk/predis/archive/v1.0.1.tar.gz
 memadmin_filename="memadmin-1.0.12"
 set_md5 $memadmin_filename "32ee5b051884cad350b450d30e537909"
 set_dl $memadmin_filename '
-http://cdn.yyupload.com/down/499809/software/memadmin-1.0.12.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/memadmin-1.0.12.tar.gz
 http://dl.centos.bz/ezhttp/memadmin-1.0.12.tar.gz
 https://github.com/junstor/memadmin/archive/v1.0.12.tar.gz
 '
@@ -395,7 +395,7 @@ https://github.com/junstor/memadmin/archive/v1.0.12.tar.gz
 rockmongo_filename="rockmongo-1.1.6-fix-auth"
 set_md5 $rockmongo_filename "80cbe1f3e022cb1290b67cb042c5a97f"
 set_dl $rockmongo_filename '
-http://cdn.yyupload.com/down/499809/software/rockmongo-fix-auth.zip
+http://cdn.yyupload.com/down/10268950/ezhttp/rockmongo-fix-auth.zip
 http://dl.centos.bz/ezhttp/rockmongo-fix-auth.zip
 https://github.com/centos-bz/rockmongo/archive/fix-auth.zip
 '
@@ -404,7 +404,7 @@ https://github.com/centos-bz/rockmongo/archive/fix-auth.zip
 PureFTPd_filename="pure-ftpd-1.0.41"
 set_md5 $PureFTPd_filename "28a0d0a9384f9e9be289febc7f4b8244"
 set_dl $PureFTPd_filename '
-http://cdn.yyupload.com/down/499809/software/pure-ftpd-1.0.41.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/pure-ftpd-1.0.41.tar.gz
 http://dl.centos.bz/ezhttp/pure-ftpd-1.0.41.tar.gz
 http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.41.tar.gz
 '
@@ -413,7 +413,7 @@ http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.41.tar.gz
 user_manager_pureftpd_filename="ftp_v2.1"
 set_md5 $user_manager_pureftpd_filename "37982c47185e009f7dc54b29ddd7d5fa"
 set_dl $user_manager_pureftpd_filename '
-http://cdn.yyupload.com/down/499809/software/ftp_v2.1.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ftp_v2.1.tar.gz
 http://dl.centos.bz/ezhttp/ftp_v2.1.tar.gz
 http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz
 '
@@ -422,7 +422,7 @@ http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz
 mongodb32_filename="mongodb-linux-i686-2.4.9"
 set_md5 $mongodb32_filename "33d4707a4dcb5c32b9c8a3be008d0580"
 set_dl $mongodb32_filename '
-http://cdn.yyupload.com/down/499809/software/mongodb-linux-i686-2.4.9.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/mongodb-linux-i686-2.4.9.tgz
 http://dl.centos.bz/ezhttp/mongodb-linux-i686-2.4.9.tgz
 http://fastdl.mongodb.org/linux/mongodb-linux-i686-2.4.9.tgz
 '
@@ -430,7 +430,7 @@ http://fastdl.mongodb.org/linux/mongodb-linux-i686-2.4.9.tgz
 mongodb64_filename="mongodb-linux-x86_64-2.4.9"
 set_md5 $mongodb64_filename "8a82a96d09242e859e225e226e7f47fc"
 set_dl $mongodb64_filename '
-http://cdn.yyupload.com/down/499809/software/mongodb-linux-x86_64-2.4.9.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/mongodb-linux-x86_64-2.4.9.tgz
 http://dl.centos.bz/ezhttp/mongodb-linux-x86_64-2.4.9.tgz
 http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.4.9.tgz
 '
@@ -438,7 +438,7 @@ http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.4.9.tgz
 mongodbLegacy64_filename="mongodb-linux-x86_64-legacy-2.4.8"
 set_md5 $mongodbLegacy64_filename "6d528120e4749d5508b066177f37de11"
 set_dl $mongodbLegacy64_filename '
-http://cdn.yyupload.com/down/499809/software/mongodb-linux-x86_64-legacy-2.4.8.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/mongodb-linux-x86_64-legacy-2.4.8.tgz
 http://dl.centos.bz/ezhttp/mongodb-linux-x86_64-legacy-2.4.8.tgz
 http://downloads.mongodb.org/linux/mongodb-linux-x86_64-legacy-2.4.8.tgz
 '
@@ -477,7 +477,7 @@ set_dl $mongodb_filename "$(get_dl $mongodb_filename)"
 cmake_filename="cmake-2.8.11.1"
 set_md5 $cmake_filename "df5324a3b203373a9e0a04b924281a43"
 set_dl $cmake_filename '
-http://cdn.yyupload.com/down/499809/software/cmake-2.8.11.1.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/cmake-2.8.11.1.tar.gz
 http://dl.centos.bz/ezhttp/cmake-2.8.11.1.tar.gz
 http://www.cmake.org/files/v2.8/cmake-2.8.11.1.tar.gz
 '
@@ -486,7 +486,7 @@ http://www.cmake.org/files/v2.8/cmake-2.8.11.1.tar.gz
 ncurses_filename="ncurses-5.8"
 set_md5 $ncurses_filename "20ed3fa7599937f0ca268d9088837a64"
 set_dl $ncurses_filename '
-http://cdn.yyupload.com/down/499809/software/ncurses-5.8.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ncurses-5.8.tar.gz
 http://dl.centos.bz/ezhttp/ncurses-5.8.tar.gz
 http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.8.tar.gz
 '
@@ -495,7 +495,7 @@ http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.8.tar.gz
 ncurses_filename2="ncurses-5.5"
 set_md5 $ncurses_filename2 "e73c1ac10b4bfc46db43b2ddfd6244ef"
 set_dl $ncurses_filename2 '
-http://cdn.yyupload.com/down/499809/software/ncurses-5.5.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ncurses-5.5.tar.gz
 http://dl.centos.bz/ezhttp/ncurses-5.5.tar.gz
 http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.5.tar.gz
 '
@@ -504,7 +504,7 @@ http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.5.tar.gz
 bison_filename="bison-2.7"
 set_md5 $bison_filename "ded660799e76fb1667d594de1f7a0da9"
 set_dl $bison_filename '
-http://cdn.yyupload.com/down/499809/software/bison-2.7.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/bison-2.7.tar.gz
 http://dl.centos.bz/ezhttp/bison-2.7.tar.gz
 http://ftp.gnu.org/gnu/bison/bison-2.7.tar.gz
 '
@@ -513,7 +513,7 @@ http://ftp.gnu.org/gnu/bison/bison-2.7.tar.gz
 patch_filename="patch-2.7"
 set_md5 $patch_filename "1cbaa223ff4991be9fae8ec1d11fb5ab"
 set_dl $patch_filename '
-http://cdn.yyupload.com/down/499809/software/patch-2.7.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/patch-2.7.tar.gz
 http://dl.centos.bz/ezhttp/patch-2.7.tar.gz
 http://ftp.gnu.org/gnu/patch/patch-2.7.tar.gz
 '
@@ -522,7 +522,7 @@ http://ftp.gnu.org/gnu/patch/patch-2.7.tar.gz
 libiconv_filename="libiconv-1.14"
 set_md5 $libiconv_filename "e34509b1623cec449dfeb73d7ce9c6c6"
 set_dl $libiconv_filename '
-http://cdn.yyupload.com/down/499809/software/libiconv-1.14.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/libiconv-1.14.tar.gz
 http://dl.centos.bz/ezhttp/libiconv-1.14.tar.gz
 http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 '
@@ -532,7 +532,7 @@ http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 autoconf_filename="autoconf-2.59"
 set_md5 $autoconf_filename "d4d45eaa1769d45e59dcb131a4af17a0"
 set_dl $autoconf_filename '
-http://cdn.yyupload.com/down/499809/software/autoconf-2.59.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/autoconf-2.59.tar.gz
 http://dl.centos.bz/ezhttp/autoconf-2.59.tar.gz
 http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.gz
 '
@@ -541,25 +541,25 @@ http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.gz
 libxml2_filename="libxml2-2.8.0"
 set_md5 $libxml2_filename "c62106f02ee00b6437f0fb9d370c1093"
 set_dl $libxml2_filename '
-http://cdn.yyupload.com/down/499809/software/libxml2-2.8.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/libxml2-2.8.0.tar.gz
 http://dl.centos.bz/ezhttp/libxml2-2.8.0.tar.gz
 ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz
 '
 
 #openssl设置 
-openssl_filename="openssl-1.0.2f"
-set_md5 $openssl_filename "b3bf73f507172be9292ea2a8c28b659d"
+openssl_filename="openssl-1.0.2g"
+set_md5 $openssl_filename "f3c710c045cdee5fd114feb69feba7aa"
 set_dl $openssl_filename '
-http://cdn.yyupload.com/down/499809/software/openssl-1.0.2f.tar.gz
-http://dl.centos.bz/ezhttp/openssl-1.0.2f.tar.gz
-http://www.openssl.org/source/openssl-1.0.2f.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/openssl-1.0.2g.tar.gz
+http://dl.centos.bz/ezhttp/openssl-1.0.2g.tar.gz
+http://www.openssl.org/source/openssl-1.0.2g.tar.gz
 '
 
 #zlib设置
 zlib_filename="zlib-1.2.8"
 set_md5 $zlib_filename "44d667c142d7cda120332623eab69f40"
 set_dl $zlib_filename '
-http://cdn.yyupload.com/down/499809/software/zlib-1.2.8.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/zlib-1.2.8.tar.gz
 http://dl.centos.bz/ezhttp/zlib-1.2.8.tar.gz
 http://zlib.net/zlib-1.2.8.tar.gz
 '
@@ -568,7 +568,7 @@ http://zlib.net/zlib-1.2.8.tar.gz
 libcurl_filename="curl-7.30.0"
 set_md5 $libcurl_filename "60bb6ff558415b73ba2f00163fd307c5"
 set_dl $libcurl_filename '
-http://cdn.yyupload.com/down/499809/software/curl-7.30.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/curl-7.30.0.tar.gz
 http://dl.centos.bz/ezhttp/curl-7.30.0.tar.gz
 http://curl.haxx.se/download/curl-7.30.0.tar.gz
 '
@@ -577,7 +577,7 @@ http://curl.haxx.se/download/curl-7.30.0.tar.gz
 pcre_filename="pcre-8.33"
 set_md5 $pcre_filename "94854c93dcc881edd37904bb6ef49ebc"
 set_dl $pcre_filename '
-http://cdn.yyupload.com/down/499809/software/pcre-8.33.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/pcre-8.33.tar.gz
 http://dl.centos.bz/ezhttp/pcre-8.33.tar.gz
 http://jaist.dl.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz
 '
@@ -586,7 +586,7 @@ http://jaist.dl.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz
 libtool_filename="libtool-2.4"
 set_md5 $libtool_filename "b32b04148ecdd7344abc6fe8bd1bb021"
 set_dl $libtool_filename '
-http://cdn.yyupload.com/down/499809/software/libtool-2.4.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/libtool-2.4.tar.gz
 http://dl.centos.bz/ezhttp/libtool-2.4.tar.gz
 http://mirrors.kernel.org/gnu/libtool/libtool-2.4.tar.gz
 '
@@ -595,7 +595,7 @@ http://mirrors.kernel.org/gnu/libtool/libtool-2.4.tar.gz
 libjpeg_filename="jpeg-6b"
 set_md5 $libjpeg_filename "dbd5f3b47ed13132f04c685d608a7547"
 set_dl $libjpeg_filename '
-http://cdn.yyupload.com/down/499809/software/jpegsrc.v6b.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/jpegsrc.v6b.tar.gz
 http://dl.centos.bz/ezhttp/jpegsrc.v6b.tar.gz
 http://jaist.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz
 '
@@ -604,7 +604,7 @@ http://jaist.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz
 freetype_filename="freetype-2.5.0"
 set_md5 $freetype_filename "167402d24803591bf88fade74a963a37"
 set_dl $freetype_filename '
-http://cdn.yyupload.com/down/499809/software/freetype-2.5.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/freetype-2.5.0.tar.gz
 http://dl.centos.bz/ezhttp/freetype-2.5.0.tar.gz
 http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
 '
@@ -613,7 +613,7 @@ http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
 libpng_filename="libpng-1.4.19"
 set_md5 $libpng_filename "89bcbc4fc8b31f4a403906cf4f662330"
 set_dl $libpng_filename '
-http://cdn.yyupload.com/down/499809/software/libpng-1.4.19.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/libpng-1.4.19.tar.gz
 http://dl.centos.bz/ezhttp/libpng-1.4.19.tar.gz
 http://jaist.dl.sourceforge.net/project/libpng/libpng14/1.4.19/libpng-1.4.19.tar.gz
 '
@@ -622,7 +622,7 @@ http://jaist.dl.sourceforge.net/project/libpng/libpng14/1.4.19/libpng-1.4.19.tar
 mhash_filename="mhash-0.9.9.9"
 set_md5 $mhash_filename "ee66b7d5947deb760aeff3f028e27d25"
 set_dl $mhash_filename '
-http://cdn.yyupload.com/down/499809/software/mhash-0.9.9.9.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mhash-0.9.9.9.tar.gz
 http://dl.centos.bz/ezhttp/mhash-0.9.9.9.tar.gz
 http://jaist.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 '
@@ -631,7 +631,7 @@ http://jaist.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 libmcrypt_filename="libmcrypt-2.5.8"
 set_md5 $libmcrypt_filename "0821830d930a86a5c69110837c55b7da"
 set_dl $libmcrypt_filename '
-http://cdn.yyupload.com/down/499809/software/libmcrypt-2.5.8.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/libmcrypt-2.5.8.tar.gz
 http://dl.centos.bz/ezhttp/libmcrypt-2.5.8.tar.gz
 http://jaist.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 '
@@ -640,7 +640,7 @@ http://jaist.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.t
 m4_filename="m4-1.4.16"
 set_md5 $m4_filename "a5dfb4f2b7370e9d34293d23fd09b280"
 set_dl $m4_filename '
-http://cdn.yyupload.com/down/499809/software/m4-1.4.16.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/m4-1.4.16.tar.gz
 http://dl.centos.bz/ezhttp/m4-1.4.16.tar.gz
 http://ftp.gnu.org/gnu/m4/m4-1.4.16.tar.gz
 '
@@ -649,7 +649,7 @@ http://ftp.gnu.org/gnu/m4/m4-1.4.16.tar.gz
 libevent_filename="libevent-2.0.21-stable"
 set_md5 $libevent_filename "b2405cc9ebf264aa47ff615d9de527a2"
 set_dl $libevent_filename '
-http://cdn.yyupload.com/down/499809/software/libevent-2.0.21-stable.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/libevent-2.0.21-stable.tar.gz
 http://dl.centos.bz/ezhttp/libevent-2.0.21-stable.tar.gz
 http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
 '
@@ -658,7 +658,7 @@ http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.g
 apr_filename="apr-1.5.2"
 set_md5 $apr_filename "98492e965963f852ab29f9e61b2ad700"
 set_dl $apr_filename '
-http://cdn.yyupload.com/down/499809/software/apr-1.5.2.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/apr-1.5.2.tar.gz
 http://dl.centos.bz/ezhttp/apr-1.5.2.tar.gz
 http://apache.cs.utah.edu/apr/apr-1.5.2.tar.gz
 '
@@ -667,7 +667,7 @@ http://apache.cs.utah.edu/apr/apr-1.5.2.tar.gz
 apr_util_filename="apr-util-1.5.4"
 set_md5 $apr_util_filename "866825c04da827c6e5f53daff5569f42"
 set_dl $apr_util_filename '
-http://cdn.yyupload.com/down/499809/software/apr-util-1.5.4.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/apr-util-1.5.4.tar.gz
 http://dl.centos.bz/ezhttp/apr-util-1.5.4.tar.gz
 http://apache.cs.utah.edu//apr/apr-util-1.5.4.tar.gz
 '
@@ -676,7 +676,7 @@ http://apache.cs.utah.edu//apr/apr-util-1.5.4.tar.gz
 jailkit_filename="jailkit-2.17"
 set_md5 $jailkit_filename "7b5a68abe89a65e0e29458cc1fd9ad0b"
 set_dl $jailkit_filename '
-http://cdn.yyupload.com/down/499809/software/jailkit-2.17.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/jailkit-2.17.tar.gz
 http://dl.centos.bz/ezhttp/jailkit-2.17.tar.gz
 http://olivier.sessink.nl/jailkit/jailkit-2.17.tar.gz
 '
@@ -686,7 +686,7 @@ if is_64bit;then
 	jdk7_64_filename="jdk1.7.0_79"
 	set_md5 $jdk7_64_filename "9222e097e624800fdd9bfb568169ccad"
 	set_dl $jdk7_64_filename '
-	http://cdn.yyupload.com/down/499809/software/jdk-7u79-linux-x64.tar.gz
+	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-7u79-linux-x64.tar.gz
 	http://dl.centos.bz/ezhttp/jdk-7u79-linux-x64.tar.gz
 	http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
 	'
@@ -695,7 +695,7 @@ else
 	jdk7_32_filename="jdk1.7.0_79"
 	set_md5 $jdk7_32_filename "b0ed59147c77a6d3e63a7b340e4e1d28"
 	set_dl $jdk7_32_filename '
-	http://cdn.yyupload.com/down/499809/software/jdk-7u79-linux-i586.tar.gz
+	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-7u79-linux-i586.tar.gz
 	http://dl.centos.bz/ezhttp/jdk-7u79-linux-i586.tar.gz
 	http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-i586.tar.gz
 	'
@@ -707,7 +707,7 @@ if is_64bit;then
 	jdk8_64_filename="jdk1.8.0_66"
 	set_md5 $jdk8_64_filename "88f31f3d642c3287134297b8c10e61bf"
 	set_dl $jdk8_64_filename '
-	http://cdn.yyupload.com/down/499809/software/jdk-8u66-linux-x64.tar.gz
+	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-8u66-linux-x64.tar.gz
 	http://dl.centos.bz/ezhttp/jdk-8u66-linux-x64.tar.gz
 	http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-x64.tar.gz
 	'
@@ -716,7 +716,7 @@ else
 	jdk8_32_filename="jdk1.8.0_66"
 	set_md5 $jdk8_32_filename "8a1f36b29152856a5dd2c3953a4c24a1"
 	set_dl $jdk8_32_filename '
-	http://cdn.yyupload.com/down/499809/software/jdk-8u66-linux-i586.tar.gz
+	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-8u66-linux-i586.tar.gz
 	http://dl.centos.bz/ezhttp/jdk-8u66-linux-i586.tar.gz
 	http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-i586.tar.gz
 	'
@@ -724,27 +724,27 @@ else
 fi
 
 # tomcat7设置
-tomcat7_filename="apache-tomcat-7.0.67"
-set_md5 $tomcat7_filename "55a5ef91b4bd9082ad5faf91d3372ae2"
+tomcat7_filename="apache-tomcat-7.0.68"
+set_md5 $tomcat7_filename "94688679d5f37499d1bd1a65eb9540e7"
 set_dl $tomcat7_filename '
-http://cdn.yyupload.com/down/499809/software/apache-tomcat-7.0.67.tar.gz
-http://dl.centos.bz/ezhttp/apache-tomcat-7.0.67.tar.gz
-http://mirror.symnds.com/software/Apache/tomcat/tomcat-7/v7.0.67/bin/apache-tomcat-7.0.67.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/apache-tomcat-7.0.68.tar.gz
+http://dl.centos.bz/ezhttp/apache-tomcat-7.0.68.tar.gz
+http://mirror.symnds.com/software/Apache/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz
 '
 
 # tomcat8设置
-tomcat8_filename="apache-tomcat-8.0.30"
-set_md5 $tomcat8_filename "4fc750ab343f6bd8df92cdb02b7b39e3"
+tomcat8_filename="apache-tomcat-8.0.32"
+set_md5 $tomcat8_filename "98e821d2755ae3f8e6d66536fcdaa1b0"
 set_dl $tomcat8_filename '
-http://cdn.yyupload.com/down/499809/software/apache-tomcat-8.0.30.tar.gz
-http://dl.centos.bz/ezhttp/apache-tomcat-8.0.30.tar.gz
-http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.30/bin/apache-tomcat-8.0.30.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/apache-tomcat-8.0.32.tar.gz
+http://dl.centos.bz/ezhttp/apache-tomcat-8.0.32.tar.gz
+http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.32/bin/apache-tomcat-8.0.32.tar.gz
 '
 # php-memcached设置
 php_memcached_filename="memcached-2.2.0"
 set_md5 $php_memcached_filename "28937c6144f734e000c6300242f44ce6"
 set_dl $php_memcached_filename '
-http://cdn.yyupload.com/down/499809/software/memcached-2.2.0.tgz
+http://cdn.yyupload.com/down/10268950/ezhttp/memcached-2.2.0.tgz
 http://dl.centos.bz/ezhttp/memcached-2.2.0.tgz
 https://pecl.php.net/get/memcached-2.2.0.tgz
 '
@@ -754,7 +754,7 @@ set_hint $php_memcached_filename "php-memcached-2.2.0 (Support Aliyun OCS)"
 libmemcached_filename="libmemcached-1.0.18"
 set_md5 $libmemcached_filename "b3958716b4e53ddc5992e6c49d97e819"
 set_dl $libmemcached_filename '
-http://cdn.yyupload.com/down/499809/software/libmemcached-1.0.18.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/libmemcached-1.0.18.tar.gz
 http://dl.centos.bz/ezhttp/libmemcached-1.0.18.tar.gz
 https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
 '
@@ -762,7 +762,7 @@ https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.
 lua_nginx_module_filename="lua-nginx-module-0.10.0"
 set_md5 $lua_nginx_module_filename "37d06e0f21bb4b2eedf80736a6aca3a2"
 set_dl $lua_nginx_module_filename '
-http://cdn.yyupload.com/down/499809/software/lua-nginx-module-0.10.0.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/lua-nginx-module-0.10.0.tar.gz
 http://dl.centos.bz/ezhttp/lua-nginx-module-0.10.0.tar.gz
 https://github.com/openresty/lua-nginx-module/archive/v0.10.0.tar.gz
 '
@@ -771,7 +771,7 @@ https://github.com/openresty/lua-nginx-module/archive/v0.10.0.tar.gz
 luajit_filename="LuaJIT-2.0.4"
 set_md5 $luajit_filename "dd9c38307f2223a504cbfb96e477eca0"
 set_dl $luajit_filename '
-http://cdn.yyupload.com/down/499809/software/LuaJIT-2.0.4.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/LuaJIT-2.0.4.tar.gz
 http://dl.centos.bz/ezhttp/LuaJIT-2.0.4.tar.gz
 http://luajit.org/download/LuaJIT-2.0.4.tar.gz
 '
@@ -780,7 +780,7 @@ http://luajit.org/download/LuaJIT-2.0.4.tar.gz
 ngx_devel_kit_filename="ngx_devel_kit-0.2.19"
 set_md5 $ngx_devel_kit_filename "09a18178adca7b5674129d8100ce4f68"
 set_dl $ngx_devel_kit_filename '
-http://cdn.yyupload.com/down/499809/software/ngx_devel_kit-0.2.19.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ngx_devel_kit-0.2.19.tar.gz
 http://dl.centos.bz/ezhttp/ngx_devel_kit-0.2.19.tar.gz
 https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
 '
@@ -789,7 +789,7 @@ https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
 nginx_concat_module_filename="nginx-http-concat-1.2.2"
 set_md5 $nginx_concat_module_filename "490d9705b7461e4c58cf28bd7fee3040"
 set_dl $nginx_concat_module_filename '
-http://cdn.yyupload.com/down/499809/software/nginx-http-concat-1.2.2.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/nginx-http-concat-1.2.2.tar.gz
 http://dl.centos.bz/ezhttp/nginx-http-concat-1.2.2.tar.gz
 https://github.com/alibaba/nginx-http-concat/archive/1.2.2.tar.gz
 '
@@ -798,7 +798,7 @@ https://github.com/alibaba/nginx-http-concat/archive/1.2.2.tar.gz
 nginx_upload_module_filename="nginx-upload-module-2.2"
 set_md5 $nginx_upload_module_filename "ad52deb7a5b2ca7a5351ebac92a531df"
 set_dl $nginx_upload_module_filename '
-http://cdn.yyupload.com/down/499809/software/nginx-upload-module-2.2.zip
+http://cdn.yyupload.com/down/10268950/ezhttp/nginx-upload-module-2.2.zip
 http://dl.centos.bz/ezhttp/nginx-upload-module-2.2.zip
 https://codeload.github.com/vkholodkov/nginx-upload-module/zip/2.2
 '
@@ -807,7 +807,7 @@ https://codeload.github.com/vkholodkov/nginx-upload-module/zip/2.2
 ngx_substitutions_filter_module_filename="ngx_http_substitutions_filter_module-0.6.4"
 set_md5 $ngx_substitutions_filter_module_filename "bc4482c8f9a10a59d14e46693b87e00c"
 set_dl $ngx_substitutions_filter_module_filename '
-http://cdn.yyupload.com/down/499809/software/ngx_http_substitutions_filter_module-0.6.4.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/ngx_http_substitutions_filter_module-0.6.4.tar.gz
 http://dl.centos.bz/ezhttp/ngx_http_substitutions_filter_module-0.6.4.tar.gz
 https://codeload.github.com/yaoweibin/ngx_http_substitutions_filter_module/tar.gz/v0.6.4
 '

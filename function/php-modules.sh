@@ -254,13 +254,13 @@ install_ZendOptimizer(){
 		cd $cur_dir/soft/
 		tar xzvf ${ZendOptimizer64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendOptimizer
-		cp -a ${ZendOptimizer64_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
+		\cp -a ${ZendOptimizer64_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
 	else
 		download_file  "${ZendOptimizer32_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendOptimizer32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendOptimizer
-		cp -a ${ZendOptimizer32_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
+		\cp -a ${ZendOptimizer32_filename}/data/5_2_x_comp/ZendOptimizer.so ${depends_prefix}/ZendOptimizer
 	fi
 
 	#配置php.ini
@@ -452,14 +452,14 @@ install_ionCube(){
 		tar xzvf ${ionCube64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ioncube
 		php_version=`get_php_version "$phpConfig"`
-		cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
+		\cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
 	else
 		download_file  "${ionCube32_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ionCube32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ioncube
 		php_version=`get_php_version "$phpConfig"`
-		cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
+		\cp ioncube/ioncube_loader_lin_${php_version}${ts}.so ${depends_prefix}/ioncube/ioncube.so
 	fi
 	! grep -q  "\[ionCube Loader\]" $(get_php_ini $phpConfig) && sed -i "/End/a\[ionCube Loader\]\nzend_extension=\"/opt/ezhttp/ioncube/ioncube.so\"\n" $(get_php_ini $phpConfig)
 }
@@ -475,13 +475,13 @@ if is_64bit ; then
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader53_64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
-		cp ${ZendGuardLoader53_64_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
+		\cp -f ${ZendGuardLoader53_64_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
 	elif [ "$php_version" == "5.4" ];then
 		download_file  "${ZendGuardLoader54_64_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader54_64_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
-		cp ${ZendGuardLoader54_64_filename}/php-5.4.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/		
+		\cp -f ${ZendGuardLoader54_64_filename}/php-5.4.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/		
 	fi
 else
 	if [ "$php_version" == "5.3" ];then
@@ -489,13 +489,13 @@ else
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader53_32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
-		cp ${ZendGuardLoader53_32_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
+		\cp -f ${ZendGuardLoader53_32_filename}/php-5.3.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/
 	elif [ "$php_version" == "5.4" ];then
 		download_file  "${ZendGuardLoader54_32_filename}.tar.gz"
 		cd $cur_dir/soft/
 		tar xzvf ${ZendGuardLoader54_32_filename}.tar.gz
 		mkdir -p ${depends_prefix}/ZendGuardLoader
-		cp ${ZendGuardLoader54_32_filename}/php-5.4.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/	
+		\cp -f ${ZendGuardLoader54_32_filename}/php-5.4.x/ZendGuardLoader.so ${depends_prefix}/ZendGuardLoader/	
 	fi
 fi
 

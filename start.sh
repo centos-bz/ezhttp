@@ -209,7 +209,7 @@ setup_by_cmdline(){
             fi
             
             if [[ $skip == false && -a "$nginx_location" ]]; then
-                echo "--nginx-prefix=$nginx_location exists,please input other path."
+                echo "--nginx-prefix=$nginx_location exists,please input other path or add --skip to disable path checking."
                 exit 1
             fi
         fi
@@ -299,7 +299,7 @@ setup_by_cmdline(){
             fi
             
             if [[ $skip == false && -a "$apache_location" ]]; then
-                echo "--apache-prefix=$apache_location exists,please input other path."
+                echo "--apache-prefix=$apache_location exists,please input other path or add --skip to disable path checking."
                 exit 1
             fi   
         fi              
@@ -339,7 +339,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$mysql_location" ]]; then
-            echo "--mysql-prefix=$mysql_location exists,please input other path."
+            echo "--mysql-prefix=$mysql_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi   
 
@@ -351,7 +351,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$mysql_data_location" ]]; then
-            echo "--mysql-data=$mysql_data_location exists,please input other path."
+            echo "--mysql-data=$mysql_data_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi
 
@@ -414,7 +414,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$php_location" ]]; then
-            echo "--php-prefix=$php_location exists,please input other path."
+            echo "--php-prefix=$php_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi
 
@@ -592,7 +592,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$tomcat7_location" ]]; then
-            echo "--tomcat-prefix=$tomcat7_location exists,please input other path."
+            echo "--tomcat-prefix=$tomcat7_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi        
     fi
@@ -606,7 +606,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$tomcat8_location" ]]; then
-            echo "--tomcat-prefix=$tomcat8_location exists,please input other path."
+            echo "--tomcat-prefix=$tomcat8_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi         
     fi
@@ -620,7 +620,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$jdk7_location" ]]; then
-            echo "--jdk-prefix=$jdk7_location exists,please input other path."
+            echo "--jdk-prefix=$jdk7_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi
 
@@ -636,7 +636,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$jdk8_location" ]]; then
-            echo "--jdk-prefix=$jdk8_location exists,please input other path."
+            echo "--jdk-prefix=$jdk8_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi
 
@@ -652,7 +652,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$memcached_location" ]]; then
-            echo "--memcached-prefix=$memcached_location exists,please input other path."
+            echo "--memcached-prefix=$memcached_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi        
     fi
@@ -668,7 +668,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$mongodb_location" ]]; then
-            echo "--mongodb-prefix=$mongodb_location exists,please input other path."
+            echo "--mongodb-prefix=$mongodb_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi
 
@@ -680,7 +680,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$mongodb_data_location" ]]; then
-            echo "--mongodb-data=$mongodb_data_location exists,please input other path."
+            echo "--mongodb-data=$mongodb_data_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi
 
@@ -697,7 +697,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$redis_location" ]]; then
-            echo "--redis-prefix=$redis_location exists,please input other path."
+            echo "--redis-prefix=$redis_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi
 
@@ -722,7 +722,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$pureftpd_location" ]]; then
-            echo "--pureftpd-prefix=$pureftpd_location exists,please input other path."
+            echo "--pureftpd-prefix=$pureftpd_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi        
     fi
@@ -736,7 +736,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$phpmyadmin_location" ]]; then
-            echo "--phpmyadmin-prefix=$phpmyadmin_location exists,please input other path."
+            echo "--phpmyadmin-prefix=$phpmyadmin_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi        
     fi
@@ -750,7 +750,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$phpredisadmin_location" ]]; then
-            echo "--phpredisadmin-prefix=$phpredisadmin_location exists,please input other path."
+            echo "--phpredisadmin-prefix=$phpredisadmin_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi        
     fi
@@ -764,7 +764,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$memadmin_location" ]]; then
-            echo "--memadmin-prefix=$memadmin_location exists,please input other path."
+            echo "--memadmin-prefix=$memadmin_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi        
     fi
@@ -778,7 +778,7 @@ setup_by_cmdline(){
         fi
         
         if [[ $skip == false && -a "$rockmongo_location" ]]; then
-            echo "--rockmongo-prefix=$rockmongo_location exists,please input other path."
+            echo "--rockmongo-prefix=$rockmongo_location exists,please input other path or add --skip to disable path checking."
             exit 1
         fi        
     fi

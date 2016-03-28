@@ -370,7 +370,7 @@ boot_stop(){
 	fi
 }
 
-#判断路径输入是否合法
+#判断路径输入是否合法,不合法就要求重新输入
 filter_location(){
 	local location=$1
 	if ! echo $location | grep -q "^/";then
@@ -382,6 +382,16 @@ filter_location(){
 	else
 		echo $location
 	fi
+}
+
+#判断路径是否合法,返回布尔
+path_valid(){
+	local location=$1
+	if echo $location | grep -q "^/";then
+		return 1
+	fi
+
+	return 0
 }
 
 #检查压缩包完善性
@@ -699,42 +709,42 @@ check_sys(){
 			packageSupport=false
 		fi
 
-		yes_or_no "ezhttp have detected your system as $release,is that correct?[Y/n]" "sys_correct=true;echo 'confirm correct.'" "sys_correct=false" y
-		if ! $sys_correct;then
-			while true;do
-				echo
-				echo -e "1) CentOS/Redhat\n2) Ubuntu\n3) Debian\n4) Others\n"
-				read -p "please choose the system release you'll install ezhttp.(input a number,ie. 1): " sys_release
-				if [[ "$sys_release" == "1" ]];then
-					release="centos"
-					systemPackage="yum"
-					packageSupport=true
-					break
+		# yes_or_no "ezhttp have detected your system as $release,is that correct?[Y/n]" "sys_correct=true;echo 'confirm correct.'" "sys_correct=false" y
+		# if ! $sys_correct;then
+		# 	while true;do
+		# 		echo
+		# 		echo -e "1) CentOS/Redhat\n2) Ubuntu\n3) Debian\n4) Others\n"
+		# 		read -p "please choose the system release you'll install ezhttp.(input a number,ie. 1): " sys_release
+		# 		if [[ "$sys_release" == "1" ]];then
+		# 			release="centos"
+		# 			systemPackage="yum"
+		# 			packageSupport=true
+		# 			break
 
-				elif [[ "$sys_release" == "2" ]]; then
-					release="ubuntu"
-					systemPackage="apt"
-					packageSupport=true
-					break
+		# 		elif [[ "$sys_release" == "2" ]]; then
+		# 			release="ubuntu"
+		# 			systemPackage="apt"
+		# 			packageSupport=true
+		# 			break
 
-				elif [[ "$sys_release" == "3" ]]; then
-					release="debian"
-					systemPackage="apt"
-					packageSupport=true
-					break
+		# 		elif [[ "$sys_release" == "3" ]]; then
+		# 			release="debian"
+		# 			systemPackage="apt"
+		# 			packageSupport=true
+		# 			break
 
-				elif [[ "$sys_release" == "4" ]]; then
-					release="other"
-					systemPackage="other"
-					packageSupport=false
-					break
+		# 		elif [[ "$sys_release" == "4" ]]; then
+		# 			release="other"
+		# 			systemPackage="other"
+		# 			packageSupport=false
+		# 			break
 
-				else
-					echo "your input is incorrect,please reinput a number."
-				fi	
+		# 		else
+		# 			echo "your input is incorrect,please reinput a number."
+		# 		fi	
 
-			done
-		fi
+		# 	done
+		# fi
 	fi
 
 	echo -e "release=$release\nsystemPackage=$systemPackage\npackageSupport=$packageSupport\n" > /tmp/ezhttp_sys_check_result

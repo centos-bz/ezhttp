@@ -45,8 +45,17 @@ wget  https://github.com/centos-bz/ezhttp/archive/master.zip?time=$(date +%s) -O
 unzip ezhttp.zip
 cd ezhttp-master
 chmod +x start.sh
+```
+Interactive installation
+```bash
 ./start.sh
 ```
+
+Non-interactive installation
+```bash
+./start.sh -h #  option h to print help info
+```
+
 Default Location
 =============================
 | Nginx Location             |                                  |

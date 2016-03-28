@@ -55,7 +55,7 @@ preinstall_lnmp(){
 
 #安装lnmp
 install_lnmp(){	
-	last_confirm
+	[[ "$PARMS" == "" ]] && last_confirm
 	#记录设置
 	$pre_settings_modify && record_setting
 	#开始安装
@@ -85,7 +85,7 @@ preinstall_lamp(){
 
 #安装lamp
 install_lamp(){	
-	last_confirm
+	[[ "$PARMS" == "" ]] && last_confirm
 	#记录设置
 	$pre_settings_modify && record_setting	
 	#开始安装
@@ -117,7 +117,7 @@ preinstall_lnamp(){
 
 #安装lnamp
 install_lnamp(){	
-	last_confirm
+	[[ "$PARMS" == "" ]] && last_confirm
 	#记录设置
 	$pre_settings_modify && record_setting	
 	#开始安装

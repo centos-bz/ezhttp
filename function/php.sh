@@ -126,7 +126,7 @@ php_preinstall_settings(){
 				fi
 
 				#php编译参数
-				php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite=shared  --with-pdo_sqlite=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv=shared  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
+				php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite=shared  --with-pdo_sqlite=shared  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
 
 			elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_0_filename}" ]];then
 
@@ -153,7 +153,7 @@ php_preinstall_settings(){
 				if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_0_filename}" ]]; then
 					other_option="${other_option} --enable-opcache"
 				fi
-				php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite=shared  --with-gettext=shared  --with-iconv=shared  --enable-ftp=shared  --with-sqlite=shared  --with-sqlite3=shared  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
+				php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite=shared  --with-gettext=shared  --with-iconv --enable-ftp=shared  --with-sqlite=shared  --with-sqlite3=shared  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
 			fi	
 
 

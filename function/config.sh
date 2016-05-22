@@ -23,12 +23,12 @@ http://tengine.taobao.org/download/tengine-2.1.0.tar.gz
 '
 
 #openresty设置
-openresty_filename="ngx_openresty-1.7.10.2"
-set_md5 $openresty_filename "bca1744196acfb9e986f1fdbee92641e"
+openresty_filename="openresty-1.9.7.3"
+set_md5 $openresty_filename "33579b96a8c22bedee97eadfc99d9564"
 set_dl $openresty_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/ngx_openresty-1.7.10.2.tar.gz
-http://dl.centos.bz/ezhttp/ngx_openresty-1.7.10.2.tar.gz
-http://openresty.org/download/ngx_openresty-1.7.10.2.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/openresty-1.9.7.3.tar.gz
+http://dl.centos.bz/ezhttp/openresty-1.9.7.3.tar.gz
+https://openresty.org/download/openresty-1.9.7.3.tar.gz
 '
 
 #apache设置
@@ -547,12 +547,12 @@ ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz
 '
 
 #openssl设置 
-openssl_filename="openssl-1.0.2g"
-set_md5 $openssl_filename "f3c710c045cdee5fd114feb69feba7aa"
+openssl_filename="openssl-1.0.2h"
+set_md5 $openssl_filename "9392e65072ce4b614c1392eefc1f23d0"
 set_dl $openssl_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/openssl-1.0.2g.tar.gz
-http://dl.centos.bz/ezhttp/openssl-1.0.2g.tar.gz
-http://www.openssl.org/source/openssl-1.0.2g.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/openssl-1.0.2h.tar.gz
+http://dl.centos.bz/ezhttp/openssl-1.0.2h.tar.gz
+http://www.openssl.org/source/openssl-1.0.2h.tar.gz
 '
 
 #zlib设置

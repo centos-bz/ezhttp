@@ -547,12 +547,12 @@ ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz
 '
 
 #openssl设置 
-openssl_filename="openssl-1.0.2h"
-set_md5 $openssl_filename "9392e65072ce4b614c1392eefc1f23d0"
+openssl_filename="openssl-1.1.0-pre5"
+set_md5 $openssl_filename "b8bc336df2bb0cea4bf2f5099481f702"
 set_dl $openssl_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/openssl-1.0.2h.tar.gz
-http://dl.centos.bz/ezhttp/openssl-1.0.2h.tar.gz
-http://www.openssl.org/source/openssl-1.0.2h.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/openssl-1.1.0-pre5.tar.gz
+http://dl.centos.bz/ezhttp/openssl-1.1.0-pre5.tar.gz
+http://www.openssl.org/source/openssl-1.1.0-pre5.tar.gz
 '
 
 #zlib设置

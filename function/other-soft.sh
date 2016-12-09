@@ -419,13 +419,24 @@ install_phpmyadmin(){
 
 #安装PureFTPd
 install_PureFTPd(){
+    local tls_support="--with-tls"
+    if check_sys packageManager apt;then
+        apt-get -y install libssl-dev
+
+    elif check_sys packageManager yum;then
+        yum -y install openssl-devel 
+    else
+        check_installed "install_openssl" "${depends_prefix}/${openssl_filename}"
+        tls_support="$tls_support LDFLAGS='${depends_prefix}/${openssl_filename}/lib'"
+    fi
+
 	download_file  "${PureFTPd_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${PureFTPd_filename}.tar.gz
 	cd ${PureFTPd_filename}
 	make clean
 	[[ $user_manager_pureftpd == true ]] && other_option="--with-mysql=${mysql_location}" || other_option="--with-puredb"
-	error_detect "./configure --prefix=$pureftpd_location --with-altlog --with-cookie --with-throttling --with-ratios --with-quotas --with-language=simplified-chinese $other_option"
+	error_detect "./configure --prefix=$pureftpd_location $tls_support --with-altlog --with-cookie --with-throttling --with-ratios --with-quotas --with-language=simplified-chinese $other_option"
 	error_detect "parallel_make"
 	error_detect "make install"
 	mkdir -p $pureftpd_location/etc
@@ -492,7 +503,13 @@ EOF
 
 		#记录安装信息
 		echo "user_manager_pureftpd=false" >> /etc/ezhttp_info_do_not_del
-	fi	
+	fi
+
+	# 开启tls
+	openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout $pureftpd_location/etc/pure-ftpd.pem -out $pureftpd_location/etc/pure-ftpd.pem -subj "/C=NL/ST=Zuid Holland/L=Rotterdam/O=Sparkling Network/OU=IT Department/CN=www.centos.bz"
+	sed -i -r 's/# TLS/TLS/' $pureftpd_location/etc/pure-ftpd.conf
+	sed -i -r "s#\# CertFile.*#CertFile $pureftpd_location/etc/pure-ftpd.pem#" $pureftpd_location/etc/pure-ftpd.conf
+
 }
 
 #安装redis

@@ -6,7 +6,7 @@ generate_password(){
 # 转换为有效的变量名
 get_valid_valname(){
 	local val=$1
-	local new_val=$(eval echo $val | sed 's/[-.]/_/g')
+	local new_val=$(echo $val | sed 's/[-.]/_/g')
 	echo $new_val
 }
 

@@ -2333,6 +2333,32 @@ Count_process_file_access(){
 	rm -f $uniqueLinesFile $outputFile $finalResults
 
 }
+
+# 安装dotnet和supervisor
+Install_dotnet_core(){
+	while true;do
+		#设置默认路径
+		dotnet_default=/usr/local/dotnet
+		#nginx安装路径
+		read -p "dotnet install location(default:$dotnet_default,leave blank for default): " dotnet_location
+		dotnet_location=${dotnet_location:=$dotnet_default}
+		dotnet_location=`filter_location "$dotnet_location"`
+
+		if [[ -e $dotnet_location ]]; then
+			echo "the location $dotnet_location found,please reinput"
+			continue
+		else
+			break
+		fi
+	done
+
+	yum -y install libunwind libicu supervisor
+	wget "https://go.microsoft.com/fwlink/?LinkID=835019"  -O dotnet.tar.gz
+	mkdir -p ${dotnet_location} && tar zxf dotnet.tar.gz -C ${dotnet_location}
+	ln -s ${dotnet_location}/dotnet /usr/local/bin
+
+}
+
 #工具设置
 tools_setting(){
 	clear

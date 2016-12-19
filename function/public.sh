@@ -457,7 +457,7 @@ check_file_integrity_md5(){
 # 下载文件
 download_file(){
 	local filename=$1
-	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2|zip)$//')
+	local filename_without_suffix=$(echo $filename | sed -r 's/\.(tar\.gz|tgz|tar\.bz2|zip|tar\.xz)$//')
     local filename_val=$(get_valid_valname $filename_without_suffix)
     local dl_arr=($(get_dl $filename_val))
     local speed_tmp=/tmp/speed.txt

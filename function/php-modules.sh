@@ -24,8 +24,8 @@ php_modules_preinstall_settings(){
 						php=${php5_5_filename}
 					elif [[ `get_php_version $phpConfig` == "5.6" ]]; then
 						php=${php5_6_filename}
-					elif [[ `get_php_version $phpConfig` == "7.0" ]]; then
-						php=${php7_0_filename}												
+					elif [[ `get_php_version $phpConfig` == "7.1" ]]; then
+						php=${php7_1_filename}												
 					else
 						echo "sorry,unsupported php version."
 						exit 1
@@ -77,7 +77,7 @@ php_modules_preinstall_settings(){
 			php_modules_arr=(${php_modules_arr[@]#${xcache_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${ionCube_filename}})
-		elif [ "$php" == "${php7_0_filename}" ];then
+		elif [ "$php" == "${php7_1_filename}" ];then
 			#从数组中删除ZendOptimizer、eaccelerator、xcache ionCube_filename
 			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})

@@ -42,12 +42,12 @@ php_preinstall_settings(){
                 set_dl $version "$link"
                 custom_info="$custom_info\nphp5_6_filename=$version\n$(get_dl_valname $version)=$link)\n"
                 break
-            elif echo "$version" | grep -q -E '^php-7\.0\.[0-9]+$';then
-                php7_0_filename=$version
+            elif echo "$version" | grep -q -E '^php-7\.1\.[0-9]+$';then
+                php7_1_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp5_6_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp7_1_filename=$version\n$(get_dl_valname $version)=$link)\n"
                 break                       
             else
                 echo "version invalid,please reinput."
@@ -128,7 +128,7 @@ php_preinstall_settings(){
                 #php编译参数
                 php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite  --with-pdo_sqlite  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
 
-            elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_0_filename}" ]];then
+            elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" ]];then
 
                 #判断php运行模式
                 if [ "$php_mode" == "with_apache" ];then
@@ -150,7 +150,7 @@ php_preinstall_settings(){
                 fi
 
                 # 5.5 5.6开启opcache
-                if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_0_filename}" ]]; then
+                if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" ]]; then
                     other_option="${other_option} --enable-opcache"
                 fi
                 php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite  --with-gettext=shared  --with-iconv --enable-ftp=shared  --with-sqlite  --with-sqlite3  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
@@ -316,11 +316,11 @@ install_php(){
         \cp  php.ini-production $php_location/etc/php.ini
         [ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf 
 
-    elif [ "$php" == "${php7_0_filename}" ];then
-        download_file  "${php7_0_filename}.tar.gz"
+    elif [ "$php" == "${php7_1_filename}" ];then
+        download_file  "${php7_1_filename}.tar.gz"
         cd $cur_dir/soft/
-        tar xzvf ${php7_0_filename}.tar.gz
-        cd ${php7_0_filename}
+        tar xzvf ${php7_1_filename}.tar.gz
+        cd ${php7_1_filename}
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -384,7 +384,7 @@ if [ "$php_mode" == "with_fastcgi" ];then
         sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' ${php_location}/etc/php-fpm.conf
         sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' ${php_location}/etc/php-fpm.conf
 
-    elif [[ "$php" == "${php7_0_filename}" ]]; then
+    elif [[ "$php" == "${php7_1_filename}" ]]; then
         \cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
         chmod +x /etc/init.d/php-fpm
         \cp $php_location/etc/php-fpm.d/www.conf.default $php_location/etc/php-fpm.d/www.conf
@@ -406,7 +406,7 @@ if [ "$php_mode" == "with_fastcgi" ];then
     fi
 
     # 启用opcache
-    if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_0_filename}" ]];then
+    if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" ]];then
         cat >> $php_location/etc/php.ini <<EOF
 [opcache]
 zend_extension=opcache.so

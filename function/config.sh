@@ -133,12 +133,12 @@ http://dl.centos.bz/ezhttp/php-5.6.15.tar.gz
 http://us1.php.net/distributions/php-5.6.15.tar.gz
 '
 
-php7_0_filename="php-7.0.0"
-set_md5 $php7_0_filename "4ac36fc0c028c7f704b8485b9cd636e9"
-set_dl $php7_0_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/php-7.0.0.tar.gz
-http://dl.centos.bz/ezhttp/php-7.0.0.tar.gz
-http://us1.php.net/distributions/php-7.0.0.tar.gz
+php7_1_filename="php-7.1.0"
+set_md5 $php7_1_filename "ec2218f97b4edbc35a2d7919ff37a662"
+set_dl $php7_1_filename '
+http://cdn.yyupload.com/down/10268950/ezhttp/php-7.1.0.tar.gz
+http://dl.centos.bz/ezhttp/php-7.1.0.tar.gz
+http://us1.php.net/distributions/php-7.1.0.tar.gz
 '
 
 #freetds设置
@@ -448,25 +448,25 @@ local v1=`ldd --version | awk 'NR==1{print $NF}' | awk -F'.' '{print $1}'`
 local v2=`ldd --version | awk 'NR==1{print $NF}' | awk -F'.' '{print $2}'`
 
 if [[ $v1 -eq 2 ]]; then
-	if [[ $v2 -ge 5 ]];then
-		if is_64bit;then
-			mongodb_filename="$mongodb64_filename"
-		else
-			mongodb_filename="$mongodb32_filename"		
-		fi			
-	else
-		if is_64bit;then
-			mongodb_filename="$mongodbLegacy64_filename"
-		fi
-	fi
+    if [[ $v2 -ge 5 ]];then
+        if is_64bit;then
+            mongodb_filename="$mongodb64_filename"
+        else
+            mongodb_filename="$mongodb32_filename"      
+        fi          
+    else
+        if is_64bit;then
+            mongodb_filename="$mongodbLegacy64_filename"
+        fi
+    fi
 
 elif [[ $v1 -gt 2 ]]; then
-	if is_64bit;then
-		mongodb_filename="$mongodb64_filename"
-	else
-		mongodb_filename="$mongodb32_filename"		
-	fi	
-fi		
+    if is_64bit;then
+        mongodb_filename="$mongodb64_filename"
+    else
+        mongodb_filename="$mongodb32_filename"      
+    fi  
+fi      
 
 set_md5 $mongodb_filename $(get_md5 $mongodb_filename)
 set_dl $mongodb_filename "$(get_dl $mongodb_filename)"
@@ -683,44 +683,44 @@ http://olivier.sessink.nl/jailkit/jailkit-2.17.tar.gz
 
 # jdk7设置
 if is_64bit;then
-	jdk7_64_filename="jdk1.7.0_79"
-	set_md5 $jdk7_64_filename "9222e097e624800fdd9bfb568169ccad"
-	set_dl $jdk7_64_filename '
-	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-7u79-linux-x64.tar.gz
-	http://dl.centos.bz/ezhttp/jdk-7u79-linux-x64.tar.gz
-	http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
-	'
-	jdk7_filename=$jdk7_64_filename
+    jdk7_64_filename="jdk1.7.0_79"
+    set_md5 $jdk7_64_filename "9222e097e624800fdd9bfb568169ccad"
+    set_dl $jdk7_64_filename '
+    http://cdn.yyupload.com/down/10268950/ezhttp/jdk-7u79-linux-x64.tar.gz
+    http://dl.centos.bz/ezhttp/jdk-7u79-linux-x64.tar.gz
+    http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
+    '
+    jdk7_filename=$jdk7_64_filename
 else
-	jdk7_32_filename="jdk1.7.0_79"
-	set_md5 $jdk7_32_filename "b0ed59147c77a6d3e63a7b340e4e1d28"
-	set_dl $jdk7_32_filename '
-	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-7u79-linux-i586.tar.gz
-	http://dl.centos.bz/ezhttp/jdk-7u79-linux-i586.tar.gz
-	http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-i586.tar.gz
-	'
-	jdk7_filename=$jdk7_32_filename
+    jdk7_32_filename="jdk1.7.0_79"
+    set_md5 $jdk7_32_filename "b0ed59147c77a6d3e63a7b340e4e1d28"
+    set_dl $jdk7_32_filename '
+    http://cdn.yyupload.com/down/10268950/ezhttp/jdk-7u79-linux-i586.tar.gz
+    http://dl.centos.bz/ezhttp/jdk-7u79-linux-i586.tar.gz
+    http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-i586.tar.gz
+    '
+    jdk7_filename=$jdk7_32_filename
 fi
 
 # jdk8设置
 if is_64bit;then
-	jdk8_64_filename="jdk1.8.0_66"
-	set_md5 $jdk8_64_filename "88f31f3d642c3287134297b8c10e61bf"
-	set_dl $jdk8_64_filename '
-	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-8u66-linux-x64.tar.gz
-	http://dl.centos.bz/ezhttp/jdk-8u66-linux-x64.tar.gz
-	http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-x64.tar.gz
-	'
-	jdk8_filename=$jdk8_64_filename
+    jdk8_64_filename="jdk1.8.0_66"
+    set_md5 $jdk8_64_filename "88f31f3d642c3287134297b8c10e61bf"
+    set_dl $jdk8_64_filename '
+    http://cdn.yyupload.com/down/10268950/ezhttp/jdk-8u66-linux-x64.tar.gz
+    http://dl.centos.bz/ezhttp/jdk-8u66-linux-x64.tar.gz
+    http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-x64.tar.gz
+    '
+    jdk8_filename=$jdk8_64_filename
 else
-	jdk8_32_filename="jdk1.8.0_66"
-	set_md5 $jdk8_32_filename "8a1f36b29152856a5dd2c3953a4c24a1"
-	set_dl $jdk8_32_filename '
-	http://cdn.yyupload.com/down/10268950/ezhttp/jdk-8u66-linux-i586.tar.gz
-	http://dl.centos.bz/ezhttp/jdk-8u66-linux-i586.tar.gz
-	http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-i586.tar.gz
-	'
-	jdk8_filename=$jdk8_32_filename
+    jdk8_32_filename="jdk1.8.0_66"
+    set_md5 $jdk8_32_filename "8a1f36b29152856a5dd2c3953a4c24a1"
+    set_dl $jdk8_32_filename '
+    http://cdn.yyupload.com/down/10268950/ezhttp/jdk-8u66-linux-i586.tar.gz
+    http://dl.centos.bz/ezhttp/jdk-8u66-linux-i586.tar.gz
+    http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jdk-8u66-linux-i586.tar.gz
+    '
+    jdk8_filename=$jdk8_32_filename
 fi
 
 # tomcat7设置
@@ -817,22 +817,22 @@ https://codeload.github.com/yaoweibin/ngx_http_substitutions_filter_module/tar.g
 #nginx apache mysql php等软件菜单设置
 nginx_arr=( ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version do_not_install)
 nginx_modules_arr=(${lua_nginx_module_filename} ${nginx_concat_module_filename} ${nginx_upload_module_filename} 
-			${ngx_substitutions_filter_module_filename} do_not_install)
+            ${ngx_substitutions_filter_module_filename} do_not_install)
 apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
 mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} libmysqlclient18 custom_version do_not_install)
-php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename} ${php5_6_filename} ${php7_0_filename} custom_version do_not_install)
+php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename} ${php5_6_filename} ${php7_1_filename} custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=( ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}
-				 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_memcached_filename} ${php_redis_filename} 
-				 ${php_mongo_filename}  ${xdebug_filename} mssql fileinfo php-gmp $swoole_filename do_not_install)
+                 ${php_imagemagick_filename} ${ionCube_filename} ${php_memcache_filename} ${php_memcached_filename} ${php_redis_filename} 
+                 ${php_mongo_filename}  ${xdebug_filename} mssql fileinfo php-gmp $swoole_filename do_not_install)
 other_soft_arr=( ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filename} ${redis_filename} 
-				${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename} ${jdk7_filename} 
-				${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename} do_not_install)
+                ${mongodb_filename} ${phpRedisAdmin_filename} ${memadmin_filename} ${rockmongo_filename} ${jdk7_filename} 
+                ${jdk8_filename} ${tomcat7_filename} ${tomcat8_filename} do_not_install)
 
 #工具菜单设置
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port 
-			Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user 
-			Network_analysis Configure_apt_yum_repository Install_rsync_server Backup_setup Count_process_file_access Back_to_main_menu)
+            Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user 
+            Network_analysis Configure_apt_yum_repository Install_rsync_server Backup_setup Count_process_file_access Back_to_main_menu)
 
 #升级软件菜单
 upgrade_arr=(Upgrade_nginx_tengine_openresty Back_to_main_menu)

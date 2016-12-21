@@ -589,11 +589,20 @@ verify_port(){
 
 #判断命令是否存在
 check_command_exist(){
-	local command=$1
-	if ! which $command > /dev/null;then
-		echo "$command not found,please install it."
-		exit 1
-	fi
+    local command=$1
+    IFS_SAVE="$IFS"
+    IFS=":"
+    for path in $PATH;do
+        binPath="$path/$command"
+        if [[ -f $binPath ]];then
+    		IFS="$IFS_SAVE"
+            exit 0
+        fi
+    done
+    IFS="$IFS_SAVE"
+    echo "$command not found,please install it."
+    exit 1
+
 }
 
 #yes or no询问

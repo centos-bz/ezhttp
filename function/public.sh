@@ -592,11 +592,12 @@ check_command_exist(){
     local command=$1
     IFS_SAVE="$IFS"
     IFS=":"
+    local code
     for path in $PATH;do
         binPath="$path/$command"
         if [[ -f $binPath ]];then
     		IFS="$IFS_SAVE"
-            exit 0
+            return 0
         fi
     done
     IFS="$IFS_SAVE"

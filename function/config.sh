@@ -45,7 +45,7 @@ set_md5 $apache2_4_filename "84cfbe06786dbc8db9b4210743a2cab1"
 set_dl $apache2_4_filename '
 http://cdn.yyupload.com/down/10268950/ezhttp/httpd-2.4.25.tar.gz
 http://dl.centos.bz/ezhttp/httpd-2.4.25.tar.gz
-http://mirrors.cnnic.cn/apache//httpd/httpd-2.4.25.tar.gz
+http://mirror.reverse.net/pub/apache//httpd/httpd-2.4.25.tar.gz
 '
 
 #mysql_server设置

@@ -37,15 +37,15 @@ set_md5 $apache2_2_filename "bc81bdf42a6c10d0ee9e6908014cc0f5"
 set_dl $apache2_2_filename '
 http://cdn.yyupload.com/down/10268950/ezhttp/httpd-2.2.31.tar.gz
 http://dl.centos.bz/ezhttp/httpd-2.2.31.tar.gz
-http://www.webhostingjams.com/mirror/apache//httpd/httpd-2.2.31.tar.gz
+http://mirror.reverse.net/pub/apache//httpd/httpd-2.2.31.tar.gz
 '
 
-apache2_4_filename="httpd-2.4.18"
-set_md5 $apache2_4_filename "2f90ce3426541817e0dfd01cae086b60"
+apache2_4_filename="httpd-2.4.25"
+set_md5 $apache2_4_filename "84cfbe06786dbc8db9b4210743a2cab1"
 set_dl $apache2_4_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/httpd-2.4.18.tar.gz
-http://dl.centos.bz/ezhttp/httpd-2.4.18.tar.gz
-http://www.webhostingreviewjam.com/mirror/apache//httpd/httpd-2.4.18.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/httpd-2.4.25.tar.gz
+http://dl.centos.bz/ezhttp/httpd-2.4.25.tar.gz
+http://mirrors.cnnic.cn/apache//httpd/httpd-2.4.25.tar.gz
 '
 
 #mysql_server设置
@@ -57,28 +57,28 @@ http://dl.centos.bz/ezhttp/mysql-5.1.73.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz
 '
 
-mysql5_5_filename="mysql-5.5.48"
-set_md5 $mysql5_5_filename "53c9b1e5058183ac64c71455ae4dfc51"
+mysql5_5_filename="mysql-5.5.54"
+set_md5 $mysql5_5_filename "358b596e62699397aeee3dfb469f5823"
 set_dl $mysql5_5_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.5.48.tar.gz
-http://dl.centos.bz/ezhttp/mysql-5.5.48.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.48.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.5.54.tar.gz
+http://dl.centos.bz/ezhttp/mysql-5.5.54.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.54.tar.gz
 '
 
-mysql5_6_filename="mysql-5.6.29"
-set_md5 $mysql5_6_filename "aaa21c6450adee3a1894fd1710f02bf5"
+mysql5_6_filename="mysql-5.6.35"
+set_md5 $mysql5_6_filename "e4f170f6f73aa94c0d8da90019545908"
 set_dl $mysql5_6_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.6.29.tar.gz
-http://dl.centos.bz/ezhttp/mysql-5.6.29.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.29.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.6.35.tar.gz
+http://dl.centos.bz/ezhttp/mysql-5.6.35.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.35.tar.gz
 '
 
-mysql5_7_filename="mysql-5.7.11"
-set_md5 $mysql5_7_filename "f84d945a40ed876d10f8d5a7f4ccba32"
+mysql5_7_filename="mysql-5.7.17"
+set_md5 $mysql5_7_filename "db2a87ede6132b226f8d43d3ac349284"
 set_dl $mysql5_7_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.7.11.tar.gz
-http://dl.centos.bz/ezhttp/mysql-5.7.11.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.11.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/mysql-5.7.17.tar.gz
+http://dl.centos.bz/ezhttp/mysql-5.7.17.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.17.tar.gz
 '
 set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when building,try mysql-5.6 if failed)"
 
@@ -218,12 +218,12 @@ http://pecl.php.net/get/memcache-3.0.8.tgz
 set_hint $php_memcache_filename "php-${php_memcache_filename}"
 
 #ImageMagick设置
-ImageMagick_filename="ImageMagick-6.9.3-7"
-set_md5 $ImageMagick_filename "bb31f4ffd561f30068f84060d1d8c0c3"
+ImageMagick_filename="ImageMagick-7.0.4-0"
+set_md5 $ImageMagick_filename "b96e1d23d838ca132c2d99d55f5c2f77"
 set_dl $ImageMagick_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/ImageMagick-6.9.3-7.tar.xz
-http://dl.centos.bz/ezhttp/ImageMagick-6.9.3-7.tar.xz
-http://www.imagemagick.org/download/releases/ImageMagick-6.9.3-7.tar.xz
+http://cdn.yyupload.com/down/10268950/ezhttp/ImageMagick-7.0.4-0.tar.xz
+http://dl.centos.bz/ezhttp/ImageMagick-7.0.4-0.tar.xz
+http://www.imagemagick.org/download/releases/ImageMagick-7.0.4-0.tar.xz
 '
 
 #php redis模块设置
@@ -733,12 +733,12 @@ http://mirror.symnds.com/software/Apache/tomcat/tomcat-7/v7.0.68/bin/apache-tomc
 '
 
 # tomcat8设置
-tomcat8_filename="apache-tomcat-8.0.32"
-set_md5 $tomcat8_filename "98e821d2755ae3f8e6d66536fcdaa1b0"
+tomcat8_filename="apache-tomcat-8.0.39"
+set_md5 $tomcat8_filename "529c26b1987e2bd5e04785ef7c814271"
 set_dl $tomcat8_filename '
-http://cdn.yyupload.com/down/10268950/ezhttp/apache-tomcat-8.0.32.tar.gz
-http://dl.centos.bz/ezhttp/apache-tomcat-8.0.32.tar.gz
-http://www.carfab.com/apachesoftware/tomcat/tomcat-8/v8.0.32/bin/apache-tomcat-8.0.32.tar.gz
+http://cdn.yyupload.com/down/10268950/ezhttp/apache-tomcat-8.0.39.tar.gz
+http://dl.centos.bz/ezhttp/apache-tomcat-8.0.39.tar.gz
+http://ftp.wayne.edu/apache/tomcat/tomcat-8/v8.0.39/bin/apache-tomcat-8.0.39.tar.gz
 '
 # php-memcached设置
 php_memcached_filename="memcached-2.2.0"

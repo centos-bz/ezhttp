@@ -277,7 +277,7 @@ http://pecl.php.net/get/APC-3.1.13.tgz
 ionCube_filename="ioncube_loaders"
 
 ionCube32_filename="ioncube_loaders_lin_x86"
-set_md5 $ionCube32_filename "272ab5181bd79d45041bb448b07845ab"
+set_md5 $ionCube32_filename "bd1b53ea61df2641b2632261646fd81b"
 set_dl $ionCube32_filename '
 http://cdn.yyupload.com/down/10268950/ezhttp/ioncube_loaders_lin_x86.tar.gz
 http://dl.centos.bz/ezhttp/ioncube_loaders_lin_x86.tar.gz
@@ -285,7 +285,7 @@ http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz
 '
 
 ionCube64_filename="ioncube_loaders_lin_x86-64"
-set_md5 $ionCube64_filename "a5115a5f24f2e9c4d793c5feb78261f2"
+set_md5 $ionCube64_filename "49851554b1e448142b8576e399ae3b19"
 set_dl $ionCube64_filename '
 http://cdn.yyupload.com/down/10268950/ezhttp/ioncube_loaders_lin_x86-64.tar.gz
 http://dl.centos.bz/ezhttp/ioncube_loaders_lin_x86-64.tar.gz

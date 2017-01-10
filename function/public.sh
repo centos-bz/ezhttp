@@ -35,7 +35,13 @@ set_dl(){
     local val=$1
     local dl="$2"
     local new_val=$(get_valid_valname $val)
-    eval dl_${new_val}="\$dl"
+    # 下载链接防盗链
+    current_time=$(date +%s)
+    ((expire_time=$current_time + $allow_seconds))
+    security_key=$(echo -n $safe_key$expire_time | md5sum | cut -d' ' -f 1)
+    url_suffix="?ct_t=$expire_time\&ct_k=$security_key"
+    dl_new=$(echo "$dl" | sed -r "s#(.)\$#\1$url_suffix#g")
+    eval dl_${new_val}="\$dl_new"
 }
 
 get_dl(){

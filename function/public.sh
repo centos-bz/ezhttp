@@ -593,7 +593,7 @@ verify_port(){
 }
 
 
-#判断命令是否存在
+#判断命令是否存在,不存在就退出
 check_command_exist(){
     local command=$1
     IFS_SAVE="$IFS"
@@ -610,6 +610,23 @@ check_command_exist(){
     echo "$command not found,please install it."
     exit 1
 
+}
+
+# 检测命令是否存在
+command_is_exist(){
+    local command=$1
+    IFS_SAVE="$IFS"
+    IFS=":"
+    local code
+    for path in $PATH;do
+        binPath="$path/$command"
+        if [[ -f $binPath ]];then
+    		IFS="$IFS_SAVE"
+            return 0
+        fi
+    done
+    IFS="$IFS_SAVE"
+    return 1	
 }
 
 #yes or no询问

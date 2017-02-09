@@ -837,7 +837,8 @@ other_soft_arr=( ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filenam
 #工具菜单设置
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port 
             Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user 
-            Network_analysis Configure_apt_yum_repository Install_rsync_server Backup_setup Count_process_file_access Install_dotnet_core Back_to_main_menu)
+            Network_analysis Configure_apt_yum_repository Install_rsync_server Backup_setup Count_process_file_access Install_dotnet_core 
+            Install_docker Install_docker_compose Back_to_main_menu)
 
 #升级软件菜单
 upgrade_arr=(Upgrade_nginx_tengine_openresty Back_to_main_menu)

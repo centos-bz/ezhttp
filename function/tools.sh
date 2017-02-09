@@ -2359,6 +2359,168 @@ Install_dotnet_core(){
 
 }
 
+# 安装docker
+Install_docker(){
+	# 检测是否已经安装
+	if command_is_exist docker;then
+		echo "docker was installed."
+		return
+	fi
+
+	# docker版本
+	local docker_version=$1
+	if [[ "$docker_version" == "latest" ]]; then
+		docker_version="docker-engine"
+
+	elif [[ "$docker_version" == "" ]];then
+		# 输入docker版本
+		echo "ubuntu and debian system list versions command: apt-cache madison docker-engine "
+		echo "centos system list versions command: yum list docker-engine.x86_64  --showduplicates "
+		read -p "please input docker version(ie.docker-engine=1.13.1-0~ubuntu-trusty or docker-engine-1.13.1, default latest): " docker_version
+		if [[ "$docker_version" == "" ]]; then
+			docker_version=${docker_version:-docker-engine}
+		fi
+	fi
+
+	# 测试yum.dockerproject.org和mirrors.ustc.edu.cn ping值
+	local docker_official_mirror_speed
+	local ustc_mirror_speed
+	local yum_repository
+	local apt_repository
+
+	echo "start ping yum.dockerproject.org and mirrors.ustc.edu.cn to find the faster mirror..."
+	docker_official_mirror_speed=$(ping -c4 -nq yum.dockerproject.org | awk -F"/" '/rtt/{print int($5)}')
+	docker_official_mirror_speed=${docker_official_mirror_speed:-99999}
+	ustc_mirror_speed=$(ping -c4 -nq mirrors.ustc.edu.cn | awk -F"/" '/rtt/{print int($5)}')
+	ustc_mirror_speed=${ustc_mirror_speed:-99999}
+	echo "docker official mirror ping speed $docker_official_mirror_speed"
+	echo "ustc mirror ping speed $ustc_mirror_speed"
+
+	if [[ $ustc_mirror_speed -lt $docker_official_mirror_speed ]]; then
+		echo "choose ustc mirror."
+		yum_repository='[docker-main]
+name=Docker Repository
+baseurl=https://mirrors.ustc.edu.cn/docker-yum/repo/centos7/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.ustc.edu.cn/docker-yum/gpg'
+
+		apt_repository="https://mirrors.ustc.edu.cn/docker-apt/repo/"
+	else
+		echo "choose docker official mirror."
+		yum_repository='[docker-main]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg'
+
+		apt_repository="https://apt.dockerproject.org/repo/"		
+	fi
+
+	# 只支持64位系统
+	if ! is_64bit;then
+		echo "64 bit system is needed."
+		exit 1
+	fi
+
+	if check_sys sysRelease centos;then
+		# 只支持centos 7
+		local version="`VersionGet`"
+		local main_ver=${version%%.*}
+		if [ $main_ver != "7" ];then
+			echo "Error!Must be CentOS 7 OS."
+			exit 1
+		fi
+
+		# 删除系统自带旧的docker
+		yum -y remove docker docker-selinux 
+
+		echo "$yum_repository" > /etc/yum.repos.d/docker.repo
+		yum -y install $docker_version
+		if [[ $ustc_mirror_speed -lt $docker_official_mirror_speed ]]; then
+			sed -i 's|ExecStart=/usr/bin/dockerd|ExecStart=/usr/bin/dockerd --registry-mirror=https://hub-mirror.c.163.com|g' /lib/systemd/system/docker.service
+		fi
+		systemctl daemon-reload
+		systemctl enable docker
+		systemctl start docker
+
+	elif check_sys sysRelease ubuntu; then
+		apt-get update
+		apt-get -y install curl linux-image-extra-$(uname -r) linux-image-extra-virtual
+		apt-get -y install apt-transport-https software-properties-common ca-certificates
+		curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add -
+		echo "deb $apt_repository ubuntu-$(lsb_release -cs) main" > /etc/apt/sources.list.d/docker.list
+		apt-get update
+		apt-get -y install $docker_version
+
+		if [[ $ustc_mirror_speed -lt $docker_official_mirror_speed ]]; then
+			echo "DOCKER_OPTS=\"--registry-mirror=https://hub-mirror.c.163.com\"" | tee -a /etc/default/docker
+		fi
+		update-rc.d -f docker defaults
+		service docker restart
+
+	elif check_sys sysRelease debian; then
+		apt-get update
+		apt-get install curl
+		local release=$(lsb_release -cs)
+		if [[ $release == "jessie" ]] || [[ $release == "stretch" ]]; then
+			apt-get -y install apt-transport-https ca-certificates software-properties-common
+		elif [[ $release == "wheezy" ]]; then
+			apt-get -y install apt-transport-https ca-certificates python-software-properties
+		fi
+
+		curl -fsSL https://yum.dockerproject.org/gpg | apt-key add -
+
+		echo "deb $apt_repository debian-$release main" > /etc/apt/sources.list.d/docker.list
+		apt-get update
+		apt-get -y install $docker_version
+
+		if [[ $ustc_mirror_speed -lt $docker_official_mirror_speed ]]; then
+			echo "DOCKER_OPTS=\"--registry-mirror=https://hub-mirror.c.163.com\"" | tee -a /etc/default/docker
+		fi		
+		update-rc.d -f docker defaults
+		service docker restart
+
+	else
+		echo "only support centos,ubuntu,debian."
+		exit 1
+	fi	
+}
+
+# 安装docker compose
+Install_docker_compose(){
+	local docker_version=$1
+	local compose_version=$2
+	if [[ "$docker_version" == "" ]];then
+		echo "ubuntu and debian system list versions command: apt-cache madison docker-engine "
+		echo "centos system list versions command: yum list docker-engine.x86_64  --showduplicates "
+		# 输入docker版本
+		read -p "please input docker version(ie.docker-engine=1.13.1-0~ubuntu-trusty or docker-engine-1.13.1, default latest): " docker_version
+		docker_version=${docker_version:-latest}
+	fi
+
+	if [[ "$compose_version" == "" ]];then
+		# 输入docker compose版本
+		echo "available compose version: https://github.com/docker/compose/releases"
+		read -p "please input docker compose version(ie.1.10.1 default 1.10.1): " compose_version
+		compose_version=${compose_version:-1.10.1}
+	fi
+
+	# 检测docker是否已经安装
+	Install_docker $docker_version
+	local proxy
+	# 使用代理
+	echo "testing the network..."
+	if [[ $(ping -c4 -nq www.google.com | awk -F"/" '/rtt/{print int($5)}') == "" ]]; then
+		echo "There is a networking issue,use the proxy..."
+		proxy="-x us.centos.bz:31281"
+	fi	
+	curl -L $proxy "https://github.com/docker/compose/releases/download/$compose_version/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+	chmod +x /usr/local/bin/docker-compose
+	docker-compose --version
+}
+
 #工具设置
 tools_setting(){
 	clear

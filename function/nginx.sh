@@ -305,5 +305,7 @@ EOF
 
 	#开放80端口
 	iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+	load_iptables_onboot
+	save_iptables
 
 }

@@ -793,7 +793,6 @@ setup_by_cmdline(){
     fi
 }
 
-#### program start ####
 
 AVAILABLE_PACKAGES="nginx tengine openresty apache2.2 apache2.4 tomcat7 tomcat8 mysql5.1 
                     mysql5.5 mysql5.6 mysql5.7 php5.2 php5.3 php5.4 php5.5 php5.6 php7.0 
@@ -807,16 +806,18 @@ init
 PARMS="$@"
 
 # 解析命令行参数
-TEMP=`getopt -o h --long help,skip,stack:,package:,nginx-prefix:,nginx-module:,apache-prefix:,tomcat-prefix:,mysql-prefix:,mysql-data:,mysql-root-pwd:,mysql-port:,php-prefix:,php-module:,jdk-prefix:,memcached-prefix:,mongodb-prefix:,mongodb-data:,redis-prefix:,redis-maxmem:,pureftpd-prefix:,phpmyadmin-prefix:,phpredisadmin-prefix:,memadmin-prefix:,rockmongo-prefix:,list-php-modules: -- "$@"`
+TEMP=`getopt -o h --long help,skip,noscreen,stack:,package:,nginx-prefix:,nginx-module:,apache-prefix:,tomcat-prefix:,mysql-prefix:,mysql-data:,mysql-root-pwd:,mysql-port:,php-prefix:,php-module:,jdk-prefix:,memcached-prefix:,mongodb-prefix:,mongodb-data:,redis-prefix:,redis-maxmem:,pureftpd-prefix:,phpmyadmin-prefix:,phpredisadmin-prefix:,memadmin-prefix:,rockmongo-prefix:,list-php-modules: -- "$@"`
 if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
 eval set -- "$TEMP"
 
 skip=false
+noscreen=false
 while true ; do
     case "$1" in
         -h|--help) help ; exit 1 ;;
         --list-php-modules) list_php_modules $2 ; exit 1 ;;
         --skip) skip=true;shift 1 ;;
+        --noscreen) noscreen=true;shift 1 ;;
         --stack) stack=$2 ; shift 2 ;;
         --package) package=$2 ; shift 2 ;;
         --nginx-prefix) nginx_location=$2 ; shift 2 ;;
@@ -845,8 +846,35 @@ while true ; do
     esac
 done
 
+# 尝试使用screen安装,避免与终端断开后停止安装
+if ! $noscreen;then
+    # 如果不在screen中
+    if [[ "$TERM" != "screen" ]];then
+        # 检测screen命令是否存在
+        if command_is_exist screen;then
+            screen -S ezhttp ./start.sh $PARMS
+        else
+            if check_sys packageManager apt;then
+                apt-get update && apt-get -y install screen
+            elif check_sys packageManager yum;then
+                yum -y install screen
+            else
+                ./start.sh --noscreen $PARMS
+            fi    
+
+            if command_is_exist screen;then
+                screen -S ezhttp ./start.sh $PARMS
+            else
+                echo "failed to install screen,starting without screen..."
+                ./start.sh --noscreen $PARMS
+            fi            
+        fi
+        exit   
+    fi
+fi
+
 rm -f /root/ezhttp.log
-if [[ "$PARMS" == "" ]]; then
+if [[ "$stack" == "" ]]; then
     setup_by_menu 2>&1 | tee -a /root/ezhttp.log
 else
     setup_by_cmdline 2>&1 | tee -a /root/ezhttp.log

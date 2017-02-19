@@ -12,7 +12,7 @@ cur_dir=`pwd`
 
 # 载入函数
 load_functions(){
-	local function=$1./start.sh --stack=lnmp --package=nginx,php5.6,mysql5.6,memcached,redis --nginx-module=nginx-http-concat --mysql-root-pwd=mysqlpwd --redis-maxmem=2g
+	local function=$1
 
 	if [[ -s $cur_dir/function/${function}.sh ]];then
 		. $cur_dir/function/${function}.sh

@@ -12,7 +12,8 @@ cur_dir=`pwd`
 
 # 载入函数
 load_functions(){
-	local function=$1
+	local function=$1./start.sh --stack=lnmp --package=nginx,php5.6,mysql5.6,memcached,redis --nginx-module=nginx-http-concat --mysql-root-pwd=mysqlpwd --redis-maxmem=2g
+
 	if [[ -s $cur_dir/function/${function}.sh ]];then
 		. $cur_dir/function/${function}.sh
 	else
@@ -705,9 +706,18 @@ setup_by_cmdline(){
         if [[ "$redisMaxMemory" == "" ]]; then
             redisMaxMemory=$(awk -F':| +' '/MemTotal/{print $3*1024/2}' /proc/meminfo)
         else
-            if [[ ! "$redisMaxMemory" =~ ^[0-9]+$ ]];then
-                echo "--redis-maxmem $redisMaxMemory is invalid number."
+            if ! echo "$redisMaxMemory" | grep -q -E "^[0-9]+[mMgG]$";then
+                echo "--redis-maxmem $redisMaxMemory is invalid value, valid value ie.128M,512m,2G,4g"
                 exit 1
+            fi
+
+            #转换成Byte
+            if echo "$redisMaxMemory" | grep -q "[mM]$";then
+                redisMaxMemory=`echo $redisMaxMemory | grep -o -E "[0-9]+"`
+                ((redisMaxMemory=$redisMaxMemory*1024*1024))
+            elif echo "$redisMaxMemory" | grep -q "[gG]$"; then
+                redisMaxMemory=`echo $redisMaxMemory | grep -q -o -E "[0-9]+"`
+                ((redisMaxMemory=$redisMaxMemory*1024*1024*1024))
             fi            
         fi    
     fi

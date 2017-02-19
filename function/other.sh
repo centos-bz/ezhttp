@@ -193,10 +193,10 @@ pre_setting(){
 #主菜单
 while true
 do
-	echo -e "1) LAMP LNMP LANMP Installation.\n2) Some Useful Tools.\n3) Upgrade Software\n4) Exit.\n"
+	echo -e "1) Installation of stack.\n2) Some Useful Tools.\n3) Upgrade Software\n4) Exit.\n"
 	read -p "please select: " select
 	case $select in
-	1) echo "you select LAMP LNMP LANMP Installation." ; if_use_previous_setting ; break;;
+	1) echo "you select Installation of stack." ; if_use_previous_setting ; break;;
 	2) echo "you select Some Useful Tools." ; tools_setting ; break;;
 	3) echo "you select Upgrade Software." ; upgrade_software ; break;;
 	4) echo "you select exit." ; exit 1;;

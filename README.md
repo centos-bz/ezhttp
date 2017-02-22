@@ -102,6 +102,12 @@ ez command description
 | ez vhost del | remove a virtual host |
 | ez mysql reset  | reset mysql password  |
 | ez mysql add  | create a mysql user   |
+| ez mysql mod  | modify a mysql user   |
+| ez mysql del  | delete a mysql user   |
+| ez ftp add  | add a ftp user   |
+| ez ftp list  | list ftp user   |
+| ez ftp del  | delete a ftp user   |
+| ez ftp mod  | modify a ftp user   |
 
 Bugs & Issues
 =============

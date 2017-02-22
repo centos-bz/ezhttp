@@ -9,8 +9,10 @@ Supported System
 * CentOS-7.x
 * Ubuntu-12.04
 * Ubuntu-14.04
-* Debian-6.x
-* Debian-7.x
+* Ubuntu-16.04
+* Debian-6
+* Debian-7
+* Debian-8
 * Other Linux Distribution
 
 Supported Software
@@ -19,7 +21,7 @@ Supported Software
 * Nginx Module: lua_nginx_module nginx_concat_module nginx_upload_module ngx_substitutions_filter_module
 * Apache-2.2 Apache-2.4
 * MySQL-5.1 MySQL-5.5 MySQL-5.6 MySQL-5.7
-* PHP-5.2 PHP-5.3 PHP-5.4 PHP-5.5 PHP-5.6
+* PHP-5.2 PHP-5.3 PHP-5.4 PHP-5.5 PHP-5.6 PHP-7.1
 * PHP Module: ZendOptimizer ZendGuardLoader Xcache Eaccelerator Imagemagick IonCube Memcache Memcached Redis Mongo Xdebug Mssql
 * Other Software: Memcached PureFtpd PhpMyAdmin Redis Mongodb PhpRedisAdmin MemAdmin RockMongo Jdk7 Jdk8 Tomcat7 Tomcat8
 

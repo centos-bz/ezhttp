@@ -16,6 +16,7 @@ install_php_depends(){
 		create_lib_link "libmcrypt.so"
 		create_lib_link "libiconv.so"
 		create_lib_link "libiconv.so.2"
+		create_lib_link "libssl.so"
 	elif check_sys packageManager yum;then
 		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel
 		create_lib_link "libjpeg.so"
@@ -24,6 +25,7 @@ install_php_depends(){
 		create_lib_link "libmcrypt.so"
 		create_lib_link "libiconv.so"
 		create_lib_link "libiconv.so.2"
+		create_lib_link "libssl.so"
 		#解决centos 6 libmcrypt和libmhash不在在的问题
 		if CentOSVerCheck 6;then
 			if is_64bit; then

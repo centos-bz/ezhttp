@@ -1715,7 +1715,7 @@ file_local_backup_setup(){
 		$valid && break
 	done
 
-	read -p "please input the exclude regex for the file backup dir $fileBackupDir(default:none,multiply regex separated by a space.): " excludeRegex
+	read -p "please input the exclude pattern(support wildcards) for the file backup dir $fileBackupDir(default:none,multiply pattern separated by a space.): " excludeRegex
 	
 	read -p "please input the directory you'll backup the files to: " storageFileDir
 	storageFileDir=`filter_location "$storageFileDir"`

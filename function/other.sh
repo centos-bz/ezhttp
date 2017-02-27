@@ -289,6 +289,7 @@ chmod +x /usr/bin/ez
 [ "$apache" == "${apache2_4_filename}" ] && sed -i 's/Allow from All/Require all granted/' /usr/bin/ez
 #记录安装了哪个包
 echo "stack=$stack" >> /etc/ezhttp_info_do_not_del
+echo "Installation is finished! if it do not return to the terminal,please press ctrl+c."
 exit
 }
 

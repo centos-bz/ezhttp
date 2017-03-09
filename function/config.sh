@@ -10,12 +10,12 @@ allow_seconds=3600
 ###################主要安装包设置###################
 
 #nginx设置
-nginx_filename="nginx-1.8.0"
-set_md5 $nginx_filename "3ca4a37931e9fa301964b8ce889da8cb"
+nginx_filename="nginx-1.10.3"
+set_md5 $nginx_filename "204a20cb4f0b0c9db746c630d89ff4ea"
 set_dl $nginx_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/nginx-1.8.0.tar.gz
-http://dl-us.centos.bz/ezhttp/nginx-1.8.0.tar.gz
-http://nginx.org/download/nginx-1.8.0.tar.gz
+http://dl-cn.centos.bz/protect/10268950/ezhttp/nginx-1.10.3.tar.gz
+http://dl-us.centos.bz/ezhttp/nginx-1.10.3.tar.gz
+http://nginx.org/download/nginx-1.10.3.tar.gz
 '
 
 #tengine设置
@@ -764,12 +764,12 @@ http://dl-us.centos.bz/ezhttp/libmemcached-1.0.18.tar.gz
 https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz
 '
 # nginx lua module设置
-lua_nginx_module_filename="lua-nginx-module-0.10.0"
-set_md5 $lua_nginx_module_filename "37d06e0f21bb4b2eedf80736a6aca3a2"
+lua_nginx_module_filename="lua-nginx-module-0.10.7"
+set_md5 $lua_nginx_module_filename "6eb0161f495bb996af6bbb58f3cef764"
 set_dl $lua_nginx_module_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/lua-nginx-module-0.10.0.tar.gz
-http://dl-us.centos.bz/ezhttp/lua-nginx-module-0.10.0.tar.gz
-https://github.com/openresty/lua-nginx-module/archive/v0.10.0.tar.gz
+http://dl-cn.centos.bz/protect/10268950/ezhttp/lua-nginx-module-0.10.7.tar.gz
+http://dl-us.centos.bz/ezhttp/lua-nginx-module-0.10.7.tar.gz
+https://github.com/openresty/lua-nginx-module/archive/v0.10.7.tar.gz
 '
 
 # luajit设置
@@ -838,7 +838,7 @@ other_soft_arr=( ${memcached_filename} ${PureFTPd_filename} ${phpMyAdmin_filenam
 tools_arr=(System_swap_settings Generate_mysql_my_cnf Create_rpm_package Percona_xtrabackup_install Change_sshd_port 
             Iptables_settings Enable_disable_php_extension Set_timezone_and_sync_time Initialize_mysql_server Add_chroot_shell_user 
             Network_analysis Configure_apt_yum_repository Install_rsync_server Backup_setup Count_process_file_access Install_dotnet_core 
-            Install_docker Install_docker_compose Back_to_main_menu)
+            Install_docker Install_docker_compose Deploy_shadowsocks Back_to_main_menu)
 
 #升级软件菜单
 upgrade_arr=(Upgrade_nginx_tengine_openresty Back_to_main_menu)

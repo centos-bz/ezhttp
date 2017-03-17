@@ -32,8 +32,11 @@ acqNginxPid(){
   local pid
   if [ -f $PIDFILE ] ; then
   	 pid=`cat $PIDFILE`
-  	 echo ${pid}
-  fi 	 
+  fi
+
+  if [[ -d /proc/${pid} ]]; then 
+    echo ${pid}
+  fi  
 }
 
 do_start() {

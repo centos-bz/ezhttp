@@ -930,20 +930,19 @@ Iptables_settings(){
 
 	local select=''
 	while true; do
-		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) backup rules and stop iptables.\n5) rescore iptables\n6) list iptables rules\n" 
+		echo -e "1) clear all record,setting from nothing.\n2) add a iptables rule.\n3) delete any rule.\n4) backup rules and stop iptables.\n5) rescore iptables\n6) list iptables rules\n7) exit the script\n" 
 		read -p "please input your select(ie 1): " select
 		case  $select in
-			1) iptables_init;break;;
-			2) add_iptables_rule;break;;
-			3) delete_iptables_rule;break;;
-			4) stop_iptables;break;;
-			5) rescore_iptables;break;;
-			6) list_iptables;break;;
+			1) iptables_init;;
+			2) add_iptables_rule;;
+			3) delete_iptables_rule;;
+			4) stop_iptables;;
+			5) rescore_iptables;;
+			6) list_iptables;;
+            7) exit;;
 			*) echo "input error,please input a number.";;
 		esac
 	done
-
-	yes_or_no "do you want to continue setting iptables[Y/n]: " "Iptables_settings" "echo 'setting iptables done,exit.';exit"
 }
 
 #开启或关闭共享扩展
@@ -1103,12 +1102,13 @@ Initialize_mysql_server(){
 #添加chroot shell用户
 Add_chroot_shell_user(){
 	while true; do
-		echo -e "1) install jailkit.\n2) jail exist user.\n3) add a new user and jail it.\n"
+		echo -e "1) install jailkit.\n2) jail exist user.\n3) add a new user and jail it.\n4) exit the script\n"
 		read -p "please input your select(ie 1): " select
 		case  $select in
-			1) install_jailkit;break;;
-			2) jail_exist_user;break;;
-			3) jail_new_user;break;;
+			1) install_jailkit;;
+			2) jail_exist_user;;
+			3) jail_new_user;;
+            4) exit;;
 			*) echo "input error,please input a number.";;
 		esac
 	done
@@ -1194,13 +1194,14 @@ Network_analysis(){
 	LANG=c
 	export LANG	
 	while true; do
-		echo -e "1) real time traffic.\n2) tcp traffic and connection overview.\n3) udp traffic overview\n4) http request count\n"
+		echo -e "1) real time traffic.\n2) tcp traffic and connection overview.\n3) udp traffic overview\n4) http request count\n5) exit the script\n"
 		read -p "please input your select(ie 1): " select
 		case  $select in
-			1) realTimeTraffic;break;;
-			2) tcpTrafficOverview;break;;
-			3) udpTrafficOverview;break;;
-			4) httpRequestCount;break;;
+			1) realTimeTraffic;;
+			2) tcpTrafficOverview;;
+			3) udpTrafficOverview;;
+			4) httpRequestCount;;
+            5) exit;;
 			*) echo "input error,please input a number.";;
 		esac
 	done	
@@ -2519,6 +2520,117 @@ Install_docker_compose(){
 	curl -L $proxy "https://github.com/docker/compose/releases/download/$compose_version/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
 	docker-compose --version
+}
+
+# 安装shadowsocks
+install_shadowsocks(){
+    if command_is_exist ssserver; then
+        echo "shadowsocks had been installed in your server."
+        return
+    fi
+
+    if ! command_is_exist pip; then
+        if check_sys packageManager apt;then
+            apt-get update
+            apt-get -y install python-pip
+        elif check_sys packageManager yum;then
+            yum -y install python-pip
+        fi      
+    fi
+
+    pip install shadowsocks
+
+    if command_is_exist ssserver; then
+        echo "installing shadowsocks done."
+    else
+        echo "failed to install shadowsocks."
+    fi
+}
+
+# 列出目前运行着的shadowsocks
+list_current_running_shadowsocks(){
+    ps aux | grep [s]sserver | awk 'BEGIN{printf "%-8s %-8s %s\n------------------------\n","PID","PORT","PASSWORD"}{printf "%-8s %-8s %s\n",$2,$14,$16}'
+}
+
+# 启动一个新的shadowsocks进程
+start_a_new_shadowsocks_process(){
+    local server_port
+    local password
+
+    while true; do
+        read -p "please input a server port number:(ie.8585) " server_port
+        if ! verify_port $server_port;then
+            echo "$server_port is invalid."
+            continue
+        fi
+
+        if [[ $(ss -ltn | awk '{print $4}' | grep -o -E [0-9]+ | sort -u | grep $server_port) != "" ]];then
+            echo "there is another process listenning on the $server_port port,please choose another."
+            continue
+        fi
+        break
+    done
+
+    while true; do
+        read -p "please input a password: " password
+        if [[ $password == "" ]];then
+            echo "password can not be empty."
+            continue
+        fi  
+        break
+    done
+
+    echo "start a new shadowsocks process..."
+    local start_cmd="ssserver -p $server_port -k $password --pid-file /var/run/shadowsocks-$server_port.pid -d start"
+    if $start_cmd;then
+        echo "start shadowsocks process successfully."
+    else
+        echo "failed to start shadowsocks."
+    fi
+
+    if ! grep -q -- "$start_cmd" /etc/rc.local;then
+        sed -i "\$i$start_cmd" /etc/rc.local
+    fi
+}
+
+# 卸载shadowsocks
+uninstall_a_shadowsocks_process(){
+    local pid
+    echo "current running shadowsocks:"
+    list_current_running_shadowsocks
+    while true; do
+        read -p "please input shadowsocks's pid to uninstall: " pid
+        if [[ $(ps aux | grep [ss]server | awk '{print $2}' | grep $pid) == "" ]];then
+            echo "shadowsocks pid $pid not found."
+            continue
+        fi
+        break
+    done
+
+    local server_port=$(ps aux | grep [s]sserver | awk -v pid=$pid '$2 == pid {print $14}')
+    kill $pid
+    sleep 2
+    if [[ $(ps aux | grep [ss]server | awk '{print $2}' | grep $pid) == "" ]];then
+        echo "kill shadowsocks successfully."
+    fi
+    
+    sed -i "/ssserver -p $server_port/d" /etc/rc.local
+}
+
+# 部署shadowsocks
+Deploy_shadowsocks(){
+    while true; do
+        echo -e "1) install shadowsocks.\n2) list current running shadowsocks.\n3) start a new shadowsocks process.\n4) uninstall a shadowsocks.\n5) exit the script.\n" 
+        read -p "please input your select(ie 1): " select
+        case  $select in
+            1) install_shadowsocks;;
+            2) list_current_running_shadowsocks;;
+            3) start_a_new_shadowsocks_process;;
+            4) uninstall_a_shadowsocks_process;;
+            5) exit;;
+            *) echo "input error,please input a number.";;
+        esac
+    done
 }
 
 #工具设置

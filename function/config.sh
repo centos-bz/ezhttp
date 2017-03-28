@@ -28,12 +28,12 @@ http://tengine.taobao.org/download/tengine-2.1.0.tar.gz
 '
 
 #openresty设置
-openresty_filename="openresty-1.9.7.3"
-set_md5 $openresty_filename "33579b96a8c22bedee97eadfc99d9564"
+openresty_filename="openresty-1.11.2.2"
+set_md5 $openresty_filename "f4b9aa960e57ca692c4d3da731b7e38b"
 set_dl $openresty_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/openresty-1.9.7.3.tar.gz
-http://dl-us.centos.bz/ezhttp/openresty-1.9.7.3.tar.gz
-https://openresty.org/download/openresty-1.9.7.3.tar.gz
+http://dl-cn.centos.bz/protect/10268950/ezhttp/openresty-1.11.2.2.tar.gz
+http://dl-us.centos.bz/ezhttp/openresty-1.11.2.2.tar.gz
+https://openresty.org/download/openresty-1.11.2.2.tar.gz
 '
 
 #apache设置

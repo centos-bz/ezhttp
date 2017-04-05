@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash 
 # chkconfig: 2345 55 25
 # Description: Startup script for nginx webserver on Debian. Place in /etc/init.d and
 # run 'update-rc.d -f nginx defaults', or use the appropriate command on your
@@ -31,7 +31,7 @@ set -e
 acqNginxPid(){
   local pid
   if [ -f $PIDFILE ] ; then
-  	 pid=`cat $PIDFILE`
+         pid=`cat $PIDFILE`
   fi
 
   if [[ -d /proc/${pid} ]]; then 
@@ -52,6 +52,16 @@ do_stop() {
  local pid=`acqNginxPid`
  if [ ".${pid}" != "." ] ; then
     kill -INT ${pid}
+    for i in {1..10};do
+        echo "waiting nginx stop..."
+        sleep 1
+        if [[ ! -d /proc/${pid} ]]; then
+            echo "nginx stopped done."
+            return 0
+        fi
+    done
+    echo "nginx stopped failed."
+    exit 1
  else
     echo -n "nginx not running"
  fi

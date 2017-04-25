@@ -215,7 +215,7 @@ echo "start programs..."
 #启动mysql
 if 	[ "$mysql" != "do_not_install" ] &&  [ "$mysql" != "libmysqlclient18" ];then
 	#配置mysql
-	/etc/init.d/mysqld start
+	service mysqld start
 	${mysql_location}/bin/mysqladmin -u root password "$mysql_root_pass"
 	#add to path
 	! grep -q "${mysql_location}/bin" /etc/profile && echo "PATH=${mysql_location}/bin:$PATH" >> /etc/profile

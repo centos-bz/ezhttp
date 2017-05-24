@@ -575,7 +575,7 @@ Percona_xtrabackup_install(){
 
 #更改ssh server端口
 Change_sshd_port(){
-	local listenPort=`netstat -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
+	local listenPort=`ss -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
 	local configPort=`grep -v "^#" /etc/ssh/sshd_config | sed -n -r 's/^Port\s+([0-9]+).*/\1/p'`
 	configPort=${configPort:=22}
 
@@ -620,7 +620,7 @@ Change_sshd_port(){
 	sleep 1
 
 	#验证是否成功
-	local nowPort=`netstat -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
+	local nowPort=`ss -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
 	if [[ "$nowPort" == "$newPort" ]]; then
 		echo "change ssh server port to $newPort successfully."
 	else
@@ -651,7 +651,7 @@ iptables_init(){
 	#列出监听端口
 	echo "the server is listenning below address:"
 	echo 
-	netstat -nlpt | awk -F'[/ ]+' 'BEGIN{printf("%-20s %-20s\n%-20s %-20s\n","Program name","Listen Address","------------","--------------")} $1 ~ /tcp/{printf("%-20s %-20s\n",$8,$4)}'
+	ss -nlpt | awk 'BEGIN{printf("%-20s %-20s\n%-20s %-20s\n","Program name","Listen Address","------------","--------------")} /LISTEN/{sub("users:\(\(\"","",$6);sub("\".*","",$6);printf("%-20s %-20s\n",$6,$4)}' 
 	echo
 	#端口选择
 	local ports=''
@@ -673,7 +673,7 @@ iptables_init(){
 	done
 
 	#检查端口是否包含ssh端口,否则自动加入,防止无法连接ssh
-	local sshPort=`netstat -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
+	local sshPort=`ss -nlpt | awk '/sshd/{print $4}' | grep -o -E "[0-9]+$" | awk 'NR==1{print}'`
 	local sshNotInput=true
 	for p in ${ports_arr[@]};do
 		if [[ $p == "$sshPort" ]];then
@@ -1210,7 +1210,7 @@ Network_analysis(){
 #实时流量
 realTimeTraffic(){
 	local eth=""
-	local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
+	local nic_arr=(`ip addr | awk  -F'[: @]' '/^[0-9]/{if($3 != "lo"){print $3}}'`)
 	local nicLen=${#nic_arr[@]}
 	if [[ $nicLen -eq 0 ]]; then
 		echo "sorry,I can not detect any network device,please report this issue to author."
@@ -1267,7 +1267,7 @@ tcpTrafficOverview(){
  
     local reg=""
     local eth=""
-    local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
+    local nic_arr=(`ip addr | awk  -F'[: @]' '/^[0-9]/{if($3 != "lo"){print $3}}'`)
     local nicLen=${#nic_arr[@]}
     if [[ $nicLen -eq 0 ]]; then
         echo "sorry,I can not detect any network device,please report this issue to author."
@@ -1297,7 +1297,7 @@ tcpTrafficOverview(){
     echo "$eth Transmit: $(bit_to_human_readable $eth_out)/s"
     echo
 
-    local ipReg=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/^(/' -e 's/$/)/')
+    local ipReg=$(ip add show $eth | awk -F'[ +/]' '/inet /{printf $6"|"}' | sed -e 's/|$//' -e 's/^/^(/' -e 's/$/)/')
   
 
     #统计每个端口在10s内的平均流量
@@ -1331,7 +1331,7 @@ tcpTrafficOverview(){
 
     echo
     #统计连接状态
-    local regSS=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//')
+    local regSS=$(ip add show $eth | awk -F'[ +/]' '/inet /{printf $6"|"}' | sed -e 's/|$//')
     ss -an | grep -v -E "LISTEN|UNCONN" | grep -E "$regSS" > /tmp/ss
     echo -e "\033[32mconnection state count: \033[0m"
     awk 'NR>1{sum[$(NF-4)]+=1}END{for (state in sum){print state,sum[state]}}' /tmp/ss | sort -k 2 -nr
@@ -1366,7 +1366,7 @@ udpTrafficOverview(){
  
     local reg=""
     local eth=""
-    local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
+    local nic_arr=(`ip addr | awk  -F'[: @]' '/^[0-9]/{if($3 != "lo"){print $3}}'`)
     local nicLen=${#nic_arr[@]}
     if [[ $nicLen -eq 0 ]]; then
         echo "sorry,I can not detect any network device,please report this issue to author."
@@ -1396,7 +1396,7 @@ udpTrafficOverview(){
     echo "$eth Transmit: $(bit_to_human_readable $eth_out)/s"
     echo
 	
-    local ipReg=$(ifconfig | grep -A 1 $eth | awk -F'[: ]+' '$0~/inet addr:/{printf $4"|"}' | sed -e 's/|$//' -e 's/^/^(/' -e 's/$/)/')
+    local ipReg=$(ip add show $eth | awk -F'[ +/]' '/inet /{printf $6"|"}' | sed -e 's/|$//' -e 's/^/^(/' -e 's/$/)/')
  
     #统计每个端口在10s内的平均流量
     echo -e "\033[32maverage traffic in 10s base on server port: \033[0m"
@@ -1440,7 +1440,7 @@ httpRequestCount(){
     fi
 
     local eth=""
-    local nic_arr=(`ifconfig | grep -E -o "^[a-z0-9]+" | grep -v "lo" | uniq`)
+    local nic_arr=(`ip addr | awk  -F'[: @]' '/^[0-9]/{if($3 != "lo"){print $3}}'`)
     local nicLen=${#nic_arr[@]}
     if [[ $nicLen -eq 0 ]]; then
         echo "sorry,I can not detect any network device,please report this issue to author."

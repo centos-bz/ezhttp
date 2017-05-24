@@ -282,7 +282,7 @@ if [ "$php" == "do_not_install" ] && [ "$php_modules_install" != "do_not_install
 fi
 
 sleep 5
-netstat -nxtlp
+ss -nlpxt
 echo "depends_prefix=$depends_prefix" >> /etc/ezhttp_info_do_not_del
 \cp $cur_dir/ez /usr/bin/ez
 chmod +x /usr/bin/ez

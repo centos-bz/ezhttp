@@ -135,6 +135,22 @@ nginx_preinstall_settings(){
 				nginx_configure_args="${nginx_configure_args} --add-module=$cur_dir/soft/${ngx_substitutions_filter_module_filename}"
 			fi
 
+			if if_in_array "ngx_stream_core_module" "$nginx_modules_install";then
+				nginx_configure_args="${nginx_configure_args} --with-stream"
+			fi
+
+			if if_in_array "${nginx_upstream_check_module_filename}" "$nginx_modules_install";then
+				nginx_configure_args="${nginx_configure_args} --add-module=$cur_dir/soft/${nginx_upstream_check_module_filename}"
+			fi
+		
+			if if_in_array "${nginx_stream_upsync_module_filename}" "$nginx_modules_install";then
+				if if_in_array "ngx_stream_core_module" "$nginx_modules_install";then
+					nginx_configure_args="${nginx_configure_args} --add-module=$cur_dir/soft/${nginx_stream_upsync_module_filename}"
+				else				
+					nginx_configure_args="${nginx_configure_args}  --with-stream --add-module=$cur_dir/soft/${nginx_stream_upsync_module_filename}"
+				fi	
+			fi			
+
 		fi
 	fi
 
@@ -174,6 +190,7 @@ install_module(){
 	if if_in_array "${nginx_concat_module_filename}" "$nginx_modules_install";then
 		download_file "${nginx_concat_module_filename}.tar.gz"
 		cd $cur_dir/soft/
+		rm -rf ${nginx_concat_module_filename}
 		tar xzvf ${nginx_concat_module_filename}.tar.gz
 	fi
 
@@ -187,9 +204,24 @@ install_module(){
 	if if_in_array "${ngx_substitutions_filter_module_filename}" "$nginx_modules_install";then
 		download_file "${ngx_substitutions_filter_module_filename}.tar.gz"
 		cd $cur_dir/soft/
+		rm -rf ${ngx_substitutions_filter_module_filename}
 		tar xzvf ${ngx_substitutions_filter_module_filename}.tar.gz
 	fi
-		
+
+	if if_in_array "${nginx_upstream_check_module_filename}" "$nginx_modules_install";then
+		download_file "${nginx_upstream_check_module_filename}.zip"
+		cd $cur_dir/soft/
+		rm -rf ${nginx_upstream_check_module_filename}
+		unzip ${nginx_upstream_check_module_filename}.zip
+	fi	
+
+	if if_in_array "${nginx_stream_upsync_module_filename}" "$nginx_modules_install";then
+		download_file "${nginx_stream_upsync_module_filename}.zip"
+		cd $cur_dir/soft/
+		rm -rf ${nginx_stream_upsync_module_filename}
+		unzip ${nginx_stream_upsync_module_filename}.zip
+	fi
+
 }
 
 #安装nginx
@@ -215,6 +247,11 @@ install_nginx(){
 		tar xvzf ${nginx_filename}.tar.gz
 		cd ${nginx_filename}
 		make clean
+
+		if if_in_array "${nginx_upstream_check_module_filename}" "$nginx_modules_install";then
+			patch -p0 < $cur_dir/soft/${nginx_upstream_check_module_filename}/check_1.9.2+.patch
+		fi
+		
 		error_detect "./configure ${nginx_configure_args}"
 		error_detect "make"
 		error_detect "make install"

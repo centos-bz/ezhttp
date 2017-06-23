@@ -817,12 +817,30 @@ http://dl-us.centos.bz/ezhttp/ngx_http_substitutions_filter_module-0.6.4.tar.gz
 https://codeload.github.com/yaoweibin/ngx_http_substitutions_filter_module/tar.gz/v0.6.4
 '
 
+# nginx_upstream_check_module设置
+nginx_upstream_check_module_filename="nginx_upstream_check_module-master"
+set_md5 $nginx_upstream_check_module_filename "ee9f11257dd54b9f239f29b5189fe450"
+set_dl $nginx_upstream_check_module_filename '
+http://dl-cn.centos.bz/protect/10268950/ezhttp/nginx_upstream_check_module-master.zip
+http://dl-us.centos.bz/ezhttp/nginx_upstream_check_module-master.zip
+https://codeload.github.com/yaoweibin/nginx_upstream_check_module/zip/master
+'
+
+# nginx-stream-upsync-module设置
+nginx_stream_upsync_module_filename="nginx-stream-upsync-module-master"
+set_md5 $nginx_stream_upsync_module_filename "e9350a7d2a468b353c321adaf9aa5fec"
+set_dl $nginx_stream_upsync_module_filename '
+http://dl-cn.centos.bz/protect/10268950/ezhttp/nginx-stream-upsync-module-master.zip
+http://dl-us.centos.bz/ezhttp/nginx-stream-upsync-module-master.zip
+https://codeload.github.com/xiaokai-wang/nginx-stream-upsync-module/zip/master
+'
+
 ########################其它设置########################
 
 #nginx apache mysql php等软件菜单设置
 nginx_arr=( ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_version do_not_install)
 nginx_modules_arr=(${lua_nginx_module_filename} ${nginx_concat_module_filename} ${nginx_upload_module_filename} 
-            ${ngx_substitutions_filter_module_filename} do_not_install)
+            ${ngx_substitutions_filter_module_filename} ngx_stream_core_module ${nginx_upstream_check_module_filename} ${nginx_stream_upsync_module_filename} do_not_install)
 apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
 mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} libmysqlclient18 custom_version do_not_install)
 php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename} ${php5_6_filename} ${php7_1_filename} custom_version do_not_install)

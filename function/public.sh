@@ -659,9 +659,9 @@ ask_not_null_var(){
 install_tool(){ 
 	if check_sys packageManager apt;then
 		apt-get -y update
-		apt-get -y install gcc g++ make wget perl curl bzip2
+		apt-get -y install gcc g++ make wget perl curl bzip2 patch
 	elif check_sys packageManager yum; then
-		yum -y install gcc gcc-c++ make wget perl  curl bzip2 which
+		yum -y install gcc gcc-c++ make wget perl  curl bzip2 which patch
 	fi
 
 	check_command_exist "gcc"

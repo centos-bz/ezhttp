@@ -885,8 +885,8 @@ fi
 
 rm -f /root/ezhttp.log
 if [[ "$stack" == "" ]]; then
-    setup_by_menu 2>&1 | tee -a /root/ezhttp.log
+    setup_by_menu
 else
-    setup_by_cmdline 2>&1 | tee -a /root/ezhttp.log
+    setup_by_cmdline
 fi
 

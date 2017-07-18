@@ -2633,6 +2633,54 @@ Deploy_shadowsocks(){
     done
 }
 
+# 安装Jexus
+Install_jexus(){
+	local jexus_version
+	while true; do
+		read -p "please input jexus version(default 5.8.2): " jexus_version
+		if [[ "$jexus_version" == "" ]];then
+			jexus_version="5.8.2"
+		fi
+		
+		if [[ ! "$jexus_version" =~ [0-9]\.[0-9]\.[0-9] ]]; then
+			echo "wrong version,valid version is x.x.x"
+			continue
+		fi
+		echo "input version $jexus_version"
+		break
+
+	done
+	if CentOSVerCheck 6;then
+		yum -y install yum-utils
+		rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+		yum-config-manager --add-repo ftp://150.36x.cn/mono/repo-centos6/repo/centos6/
+		yum -y install mono-devel mono-complete
+
+	elif CentOSVerCheck 7; then
+		yum -y install yum-utils
+		rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+		yum-config-manager --add-repo ftp://150.36x.cn/mono/repo-centos7/repo/centos7/
+		yum -y install mono-devel mono-complete
+
+	else
+		echo "your system is not supported yet."
+		exit
+	fi
+
+	cd /tmp
+	rm -rf jexus*
+	wget ftp://150.36x.cn/mono/jexus/jexus-$jexus_version.tar.gz
+	if [[ ! -f $jexus_version.tar.gz ]]; then
+		wget http://www.linuxdot.net/down/jexus-$jexus_version.tar.gz
+	fi
+	tar -zxvf jexus-$jexus_version.tar.gz 
+	cd jexus-$jexus_version 
+	sudo ./install
+	/usr/jexus/jws start
+	echo "install complete."
+
+}
+
 #工具设置
 tools_setting(){
 	clear

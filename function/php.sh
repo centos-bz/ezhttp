@@ -404,7 +404,8 @@ if [ "$php_mode" == "with_fastcgi" ];then
         sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' $php_location/etc/php-fpm.d/www.conf       
 
     fi
-
+    # 设置php_errors目录权限
+    chown www ${php_location}/var/log/
     # 启用opcache
     if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" ]];then
         cat >> $php_location/etc/php.ini <<EOF

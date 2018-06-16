@@ -5,7 +5,7 @@ display_menu mysql last
 if [ "$mysql" == "custom_version" ];then
 	while true
 	do
-		read -p "input version.(ie.mysql-5.1.71 mysql-5.5.32 mysql-5.6.12 mysql-5.7.9): " version
+		read -p "input version.(ie.mysql-5.1.71 mysql-5.5.32 mysql-5.6.12 mysql-5.7.9 mysql-8.0.11): " version
 		#判断版本号是否有效
 		if echo "$version" | grep -q -E '^mysql-5\.1\.[0-9]+$';then
 			mysql5_1_filename=$version
@@ -30,7 +30,13 @@ if [ "$mysql" == "custom_version" ];then
 			mysql=$version
 			set_dl $version "http://cdn.mysql.com/Downloads/MySQL-5.7/${mysql}.tar.gz"
 			custom_info="$custom_info\nmysql5_7_filename=$version\n$(get_dl_valname $version)=$(get_dl $version)\n"
-			break							
+			break		
+		elif echo "$version" | grep -q -E '^mysql-8\.0\.[0-9]+$';then
+			mysql8_0_filename=$version
+			mysql=$version
+			set_dl $version "http://cdn.mysql.com/Downloads/MySQL-8.0/${mysql}.tar.gz"
+			custom_info="$custom_info\nmysql8_0_filename=$version\n$(get_dl_valname $version)=$(get_dl $version)\n"
+			break									
 		else
 			echo "version invalid,please reinput."
 		fi
@@ -111,6 +117,14 @@ if [ "$mysql" != "do_not_install" ];then
 					other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 				fi
 				mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+			elif [ "$mysql" == "${mysql8_0_filename}" ];then
+				if check_sys packageSupport;then
+					other_option=""
+				else
+					other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
+				fi
+				mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+
 			fi
 
 			#提示是否更改编译参数
@@ -151,9 +165,9 @@ if [ "$mysql" != "do_not_install" ];then
 			if check_sys packageSupport;then
 				other_option=""
 			else
-				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
+				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/ -DWITH_SSL=${depends_prefix}/${openssl_filename}"
 			fi
-			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"		
+			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1  $other_option"		
 		fi
 	fi	
 fi	
@@ -243,14 +257,15 @@ install_mysqld(){
 	elif [ "$mysql" == "${mysql5_7_filename}" ];then
 		#安装依赖
 		if check_sys packageManager apt;then
-			apt-get -y install libncurses5-dev cmake m4 bison
+			apt-get -y install libncurses5-dev cmake m4 bison libssl-dev
 		elif check_sys packageManager yum;then
-			yum -y install ncurses-devel cmake m4 bison
+			yum -y install ncurses-devel cmake m4 bison openssl-devel
 		else
 			check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"
 			check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 			check_installed "install_bison" "${depends_prefix}/${bison_filename}"
+			check_installed "install_openssl" "${depends_prefix}/${openssl_filename}"
 		fi
 
 		# 下载boost
@@ -270,6 +285,37 @@ install_mysqld(){
 		error_detect "parallel_make"
 		error_detect "make install"
 		config_mysql 5.7	
+
+	elif [ "$mysql" == "${mysql8_0_filename}" ];then
+		#安装依赖
+		if check_sys packageManager apt;then
+			apt-get -y install libncurses5-dev cmake m4 bison
+		elif check_sys packageManager yum;then
+			yum -y install ncurses-devel cmake m4 bison
+		else
+			check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
+			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"
+			check_installed "install_m4" "${depends_prefix}/${m4_filename}"
+			check_installed "install_bison" "${depends_prefix}/${bison_filename}"
+		fi
+
+		# 下载boost
+		download_file "${boost_filename}.tar.gz"
+		cd $cur_dir/soft/
+		rm -rf ${boost_filename}
+		tar xzvf ${boost_filename}.tar.gz
+
+		download_file  "${mysql8_0_filename}.tar.gz"	
+		cd $cur_dir/soft/
+		rm -rf ${mysql8_0_filename}
+		tar xzvf  ${mysql8_0_filename}.tar.gz
+		cd ${mysql8_0_filename}
+		mkdir build
+		cd build
+		error_detect "cmake ${mysql_configure_args} .."
+		error_detect "parallel_make"
+		error_detect "make install"
+		config_mysql 8.0			
 	fi
 	#记录mysql安装位置
 	echo "mysql_location=$mysql_location" >> /etc/ezhttp_info_do_not_del
@@ -342,7 +388,13 @@ config_mysql(){
 		\cp  -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
 		chmod +x /etc/init.d/mysqld
 		${mysql_location}/bin/mysqld  --initialize-insecure --basedir=${mysql_location} --datadir=${mysql_data_location} --user=mysql
+	elif [ $version == "8.0" ];then
+		\cp  -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
+		chmod +x /etc/init.d/mysqld
+		${mysql_location}/bin/mysqld  --initialize-insecure --basedir=${mysql_location} --datadir=${mysql_data_location} --user=mysql
 
+		# 删除query-cache
+		sed -i '/query-cache/d' ${mysql_location}/etc/my.cnf
 	fi
 
 	\cp -f /etc/init.d/mysqld /etc/init.d/mysqld${mysql_port_number}

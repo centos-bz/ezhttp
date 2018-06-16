@@ -216,7 +216,11 @@ echo "start programs..."
 if 	[ "$mysql" != "do_not_install" ] &&  [ "$mysql" != "libmysqlclient18" ];then
 	#配置mysql
 	service mysqld start
-	${mysql_location}/bin/mysqladmin -u root password "$mysql_root_pass"
+	if [ "$mysql" == "${mysql8_0_filename}" ];then
+		${mysql_location}/bin/mysqladmin flush-privileges password 'root'
+	else	
+		${mysql_location}/bin/mysqladmin -u root password "$mysql_root_pass"
+	fi	
 	#add to path
 	! grep -q "${mysql_location}/bin" /etc/profile && echo "PATH=${mysql_location}/bin:$PATH" >> /etc/profile
 	. /etc/profile

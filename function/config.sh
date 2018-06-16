@@ -87,14 +87,23 @@ http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.17.tar.gz
 '
 set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when building,try mysql-5.6 if failed)"
 
+mysql8_0_filename="mysql-8.0.11"
+set_md5 $mysql8_0_filename "38d5a5c1a1eeed1129fec3a999aa5efd"
+set_dl $mysql8_0_filename '
+http://dl-cn.centos.bz/protect/10268950/ezhttp/mysql-8.0.11.tar.gz
+http://dl-us.centos.bz/ezhttp/mysql-8.0.11.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.11.tar.gz
+'
+
+
 # boost设置(mysql5.6依赖)
 
-boost_filename="boost_1_59_0"
-set_md5 $boost_filename "51528a0e3b33d9e10aaa311d9eb451e3"
+boost_filename="boost_1_66_0"
+set_md5 $boost_filename "d275cd85b00022313c171f602db59fc5"
 set_dl $boost_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/boost_1_59_0.tar.gz
-http://dl-us.centos.bz/ezhttp/boost_1_59_0.tar.gz
-http://jaist.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
+http://dl-cn.centos.bz/protect/10268950/ezhttp/boost_1_66_0.tar.gz
+http://dl-us.centos.bz/ezhttp/boost_1_66_0.tar.gz
+http://jaist.dl.sourceforge.net/project/boost/boost/1.66.0/boost_1_66_0.tar.gz
 '
 
 #php设置
@@ -842,7 +851,7 @@ nginx_arr=( ${nginx_filename} ${tengine_filename} ${openresty_filename} custom_v
 nginx_modules_arr=(${lua_nginx_module_filename} ${nginx_concat_module_filename} ${nginx_upload_module_filename} 
             ${ngx_substitutions_filter_module_filename} ngx_stream_core_module ${nginx_upstream_check_module_filename} ${nginx_stream_upsync_module_filename} do_not_install)
 apache_arr=( ${apache2_2_filename} ${apache2_4_filename} custom_version do_not_install)
-mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} libmysqlclient18 custom_version do_not_install)
+mysql_arr=( ${mysql5_1_filename} ${mysql5_5_filename} ${mysql5_6_filename} ${mysql5_7_filename} ${mysql8_0_filename} libmysqlclient18 custom_version do_not_install)
 php_arr=( ${php5_2_filename} ${php5_3_filename} ${php5_4_filename} ${php5_5_filename} ${php5_6_filename} ${php7_1_filename} custom_version do_not_install)
 php_mode_arr=(with_apache  with_fastcgi)
 php_modules_arr=( ${ZendOptimizer_filename} ${ZendGuardLoader_filename} ${xcache_filename} ${eaccelerator_filename}

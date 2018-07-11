@@ -209,7 +209,7 @@ backup_mysql(){
 		for db in $databasesBackup;do
 			mysqlDbsFileName="$mysqlDbsFileName mysql-${DATE_NAME}-${db}.sql.gz"
 			log "INFO" "start to backup database $db..."
-			${mysqlBinDir}/mysqldump -e --single-transaction --default-character-set=utf8 --skip-add-locks -R -f --max_allowed_packet=16777216 --net_buffer_length=16384 -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} $db > ${storageMysqlDir}/mysql-${DATE_NAME}-${db}.sql 
+			${mysqlBinDir}/mysqldump --master-data=2 -e --single-transaction --default-character-set=utf8 --skip-add-locks -R -f --max_allowed_packet=16777216 --net_buffer_length=16384 -h${mysqlAddress} -P${mysqlPort} -u${mysqlUser} -p${mysqlPass} $db > ${storageMysqlDir}/mysql-${DATE_NAME}-${db}.sql 
 			gzip ${storageMysqlDir}/mysql-${DATE_NAME}-${db}.sql >> ${LOG_PATH} 2>&1
 		done
 

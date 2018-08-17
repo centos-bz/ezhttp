@@ -111,6 +111,7 @@ default-storage-engine         = ${storage}
 socket                         = ${mysqlDataLocation}/mysql.sock
 pid-file                       = ${mysqlDataLocation}/mysql.pid
 skip-name-resolve
+lower_case_table_names		   = 1
 
 # MyISAM #
 key-buffer-size                = ${key_buffer_size}

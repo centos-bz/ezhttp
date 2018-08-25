@@ -391,10 +391,10 @@ config_mysql(){
 	elif [ $version == "8.0" ];then
 		\cp  -f ${mysql_location}/support-files/mysql.server /etc/init.d/mysqld
 		chmod +x /etc/init.d/mysqld
+		# 删除query-cache
+		sed -i '/query-cache/d' ${mysql_location}/etc/my.cnf		
 		${mysql_location}/bin/mysqld  --initialize-insecure --basedir=${mysql_location} --datadir=${mysql_data_location} --user=mysql
 
-		# 删除query-cache
-		sed -i '/query-cache/d' ${mysql_location}/etc/my.cnf
 	fi
 
 	\cp -f /etc/init.d/mysqld /etc/init.d/mysqld${mysql_port_number}

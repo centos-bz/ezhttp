@@ -655,13 +655,13 @@ ask_not_null_var(){
 
 }
 
-#安装编译工具
+#安装编译工具 （同时安装bzip2开发包，提供PHP开启bz2函数的依赖）
 install_tool(){ 
 	if check_sys packageManager apt;then
 		apt-get -y update
-		apt-get -y install gcc g++ make wget perl curl bzip2 patch
+		apt-get -y install gcc g++ make wget perl curl bzip2 libbz2-dev patch
 	elif check_sys packageManager yum; then
-		yum -y install gcc gcc-c++ make wget perl  curl bzip2 which patch
+		yum -y install gcc gcc-c++ make wget perl  curl bzip2 bzip2-devel which patch
 	fi
 
 	check_command_exist "gcc"

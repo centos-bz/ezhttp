@@ -398,7 +398,7 @@ setup_by_cmdline(){
                 other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
             fi
             mysql=${mysql5_7_filename}
-            mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+            mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_1_59_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
         fi        
 
     else

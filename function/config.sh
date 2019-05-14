@@ -98,9 +98,16 @@ http://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.11.tar.gz
 
 # boost设置(mysql5.6依赖)
 
-boost_filename="boost_1_66_0"
-set_md5 $boost_filename "d275cd85b00022313c171f602db59fc5"
-set_dl $boost_filename '
+boost_1_59_filename="boost_1_59_0"
+set_md5 $boost_1_59_filename "51528a0e3b33d9e10aaa311d9eb451e3"
+set_dl $boost_1_59_filename '
+https://nchc.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
+https://jaist.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
+'
+
+boost_1_66_filename="boost_1_66_0"
+set_md5 $boost_1_66_filename "d275cd85b00022313c171f602db59fc5"
+set_dl $boost_1_66_filename '
 http://dl-cn.centos.bz/protect/10268950/ezhttp/boost_1_66_0.tar.gz
 http://dl-us.centos.bz/ezhttp/boost_1_66_0.tar.gz
 http://jaist.dl.sourceforge.net/project/boost/boost/1.66.0/boost_1_66_0.tar.gz

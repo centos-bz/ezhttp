@@ -10,12 +10,10 @@ allow_seconds=3600
 ###################主要安装包设置###################
 
 #nginx设置
-nginx_filename="nginx-1.10.3"
-set_md5 $nginx_filename "204a20cb4f0b0c9db746c630d89ff4ea"
+nginx_filename="nginx-1.14.2"
+set_md5 $nginx_filename "239b829a13cea1d244c1044e830bd9c2"
 set_dl $nginx_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/nginx-1.10.3.tar.gz
-http://dl-us.centos.bz/ezhttp/nginx-1.10.3.tar.gz
-http://nginx.org/download/nginx-1.10.3.tar.gz
+http://nginx.org/download/nginx-1.14.2.tar.gz
 '
 
 #tengine设置
@@ -78,12 +76,10 @@ http://dl-us.centos.bz/ezhttp/mysql-5.6.35.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.35.tar.gz
 '
 
-mysql5_7_filename="mysql-5.7.17"
-set_md5 $mysql5_7_filename "db2a87ede6132b226f8d43d3ac349284"
+mysql5_7_filename="mysql-5.7.26"
+set_md5 $mysql5_7_filename "5756a63d37d343a39e8e2cf8b13378ba"
 set_dl $mysql5_7_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/mysql-5.7.17.tar.gz
-http://dl-us.centos.bz/ezhttp/mysql-5.7.17.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.17.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.26.tar.gz
 '
 set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when building,try mysql-5.6 if failed)"
 

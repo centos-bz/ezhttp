@@ -14,6 +14,7 @@ nginx_filename="nginx-1.14.2"
 set_md5 $nginx_filename "239b829a13cea1d244c1044e830bd9c2"
 set_dl $nginx_filename '
 http://nginx.org/download/nginx-1.14.2.tar.gz
+https://github.com/nginx/nginx/archive/release-1.14.2.tar.gz
 '
 
 #tengine设置
@@ -55,40 +56,44 @@ http://mirror.reverse.net/pub/apache//httpd/httpd-2.4.25.tar.gz
 mysql5_1_filename="mysql-5.1.73"
 set_md5 $mysql5_1_filename "887f869bcc757957067b9198f707f32f"
 set_dl $mysql5_1_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/mysql-5.1.73.tar.gz
 http://dl-us.centos.bz/ezhttp/mysql-5.1.73.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz
+http://mirrors.cn99.com/mysql/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz
+http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.1/mysql-5.1.73.tar.gz
 '
 
 mysql5_5_filename="mysql-5.5.54"
 set_md5 $mysql5_5_filename "358b596e62699397aeee3dfb469f5823"
 set_dl $mysql5_5_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/mysql-5.5.54.tar.gz
 http://dl-us.centos.bz/ezhttp/mysql-5.5.54.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.54.tar.gz
+http://mirrors.cn99.com/mysql/Downloads/MySQL-5.5/mysql-5.5.54.tar.gz
+http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5/mysql-5.5.54.tar.gz
 '
 
-mysql5_6_filename="mysql-5.6.35"
-set_md5 $mysql5_6_filename "e4f170f6f73aa94c0d8da90019545908"
+mysql5_6_filename="mysql-5.6.44"
+set_md5 $mysql5_6_filename "caa971e1d346bdb54e1b7470e88c6a9a"
 set_dl $mysql5_6_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/mysql-5.6.35.tar.gz
-http://dl-us.centos.bz/ezhttp/mysql-5.6.35.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.35.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.44.tar.gz
+http://mirrors.cn99.com/mysql/Downloads/MySQL-5.6/mysql-5.6.44.tar.gz
+http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6/mysql-5.6.44.tar.gz
 '
 
 mysql5_7_filename="mysql-5.7.26"
 set_md5 $mysql5_7_filename "5756a63d37d343a39e8e2cf8b13378ba"
 set_dl $mysql5_7_filename '
 http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.26.tar.gz
+http://mirrors.cn99.com/mysql/Downloads/MySQL-5.7/mysql-5.7.26.tar.gz
+http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7/mysql-5.7.26.tar.gz
 '
 set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when building,try mysql-5.6 if failed)"
 
-mysql8_0_filename="mysql-8.0.11"
+mysql8_0_filename="mysql-8.0.16"
 set_md5 $mysql8_0_filename "38d5a5c1a1eeed1129fec3a999aa5efd"
 set_dl $mysql8_0_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/mysql-8.0.11.tar.gz
-http://dl-us.centos.bz/ezhttp/mysql-8.0.11.tar.gz
-http://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.11.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.16.tar.gz
+http://mirrors.cn99.com/mysql/Downloads/MySQL-8.0/mysql-8.0.16.tar.gz
+http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-8.0/mysql-8.0.16.tar.gz
 '
 
 
@@ -518,6 +523,8 @@ set_dl $ncurses_filename '
 http://dl-cn.centos.bz/protect/10268950/ezhttp/ncurses-5.8.tar.gz
 http://dl-us.centos.bz/ezhttp/ncurses-5.8.tar.gz
 http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.8.tar.gz
+http://mirrors.ustc.edu.cn/gnu/ncurses/ncurses-5.8.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/ncurses/ncurses-5.8.tar.gz
 '
 
 #ncurses设置(保持5.5版本,用于mysql5.1的安装)
@@ -527,6 +534,8 @@ set_dl $ncurses_filename2 '
 http://dl-cn.centos.bz/protect/10268950/ezhttp/ncurses-5.5.tar.gz
 http://dl-us.centos.bz/ezhttp/ncurses-5.5.tar.gz
 http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.5.tar.gz
+http://mirrors.ustc.edu.cn/gnu/ncurses/ncurses/ncurses-5.5.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/bison/ncurses/ncurses-5.5.tar.gz
 '
 
 #bison设置
@@ -536,6 +545,9 @@ set_dl $bison_filename '
 http://dl-cn.centos.bz/protect/10268950/ezhttp/bison-2.7.tar.gz
 http://dl-us.centos.bz/ezhttp/bison-2.7.tar.gz
 http://ftp.gnu.org/gnu/bison/bison-2.7.tar.gz
+http://mirrors.ustc.edu.cn/gnu/bison/bison-2.7.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/bison/bison-2.7.tar.gz
+
 '
 
 #patch设置
@@ -545,15 +557,32 @@ set_dl $patch_filename '
 http://dl-cn.centos.bz/protect/10268950/ezhttp/patch-2.7.tar.gz
 http://dl-us.centos.bz/ezhttp/patch-2.7.tar.gz
 http://ftp.gnu.org/gnu/patch/patch-2.7.tar.gz
+http://mirrors.ustc.edu.cn/gnu/patch/patch-2.7.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/patch/patch-2.7.tar.gz
+'
+
+#pkg-config设置
+pkg_config_filename="pkg-config-0.29.1"
+set_md5 $pkg_config_filename "f739a28cae4e0ca291f82d1d41ef107d"
+set_dl $pkg_config_filename '
+https://pkg-config.freedesktop.org/releases/pkg-config-0.29.1.tar.gz
+'
+
+#libzip设置
+libzip_filename="libzip-1.5.2"
+set_md5 $libzip_filename "8db7145801889ecf7ab481b23d6487cd"
+set_dl $libzip_filename '
+https://libzip.org/download/libzip-1.5.2.tar.gz
 '
 
 #libiconv设置
 libiconv_filename="libiconv-1.14"
 set_md5 $libiconv_filename "e34509b1623cec449dfeb73d7ce9c6c6"
 set_dl $libiconv_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/libiconv-1.14.tar.gz
 http://dl-us.centos.bz/ezhttp/libiconv-1.14.tar.gz
 http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
+http://mirrors.ustc.edu.cn/gnu/libiconv/libiconv-1.14.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/libiconv/libiconv-1.14.tar.gz
 '
 
 
@@ -564,6 +593,8 @@ set_dl $autoconf_filename '
 http://dl-cn.centos.bz/protect/10268950/ezhttp/autoconf-2.59.tar.gz
 http://dl-us.centos.bz/ezhttp/autoconf-2.59.tar.gz
 http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.gz
+http://mirrors.ustc.edu.cn/gnu/autoconf/autoconf-2.59.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/autoconf/autoconf-2.59.tar.gz
 '
 
 #libxml2设置(保持2-2.8.0版本)

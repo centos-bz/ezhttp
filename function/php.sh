@@ -441,7 +441,47 @@ if [ "$php_mode" == "with_fastcgi" ];then
         set_php_variable request_order  "CGP"
         set_php_variable cgi.fix_pathinfo 0
         set_php_variable short_open_tag on
-        set_php_variable date.timezone Asia/Chongqing
+        set_php_variable date.timezone Asia/Shanghai
+
+        #开启slow log
+        sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' $php_location/etc/php-fpm.d/www.conf       
+
+    fi
+    elif [[ "$php" == "${php7_2_filename}" ]]; then
+        \cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+        chmod +x /etc/init.d/php-fpm
+        \cp $php_location/etc/php-fpm.d/www.conf.default $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^user =.*/user = www/' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^group =.*/group = www/' $php_location/etc/php-fpm.d/www.conf
+
+        set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
+        set_php_variable expose_php Off
+        set_php_variable error_log  ${php_location}/var/log/php_errors.log
+        set_php_variable request_order  "CGP"
+        set_php_variable cgi.fix_pathinfo 0
+        set_php_variable short_open_tag on
+        set_php_variable date.timezone Asia/Shanghai
+
+        #开启slow log
+        sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' $php_location/etc/php-fpm.d/www.conf       
+
+    fi
+    elif [[ "$php" == "${php7_3_filename}" ]]; then
+        \cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+        chmod +x /etc/init.d/php-fpm
+        \cp $php_location/etc/php-fpm.d/www.conf.default $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^user =.*/user = www/' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^group =.*/group = www/' $php_location/etc/php-fpm.d/www.conf
+
+        set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
+        set_php_variable expose_php Off
+        set_php_variable error_log  ${php_location}/var/log/php_errors.log
+        set_php_variable request_order  "CGP"
+        set_php_variable cgi.fix_pathinfo 0
+        set_php_variable short_open_tag on
+        set_php_variable date.timezone Asia/Shanghai
 
         #开启slow log
         sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf

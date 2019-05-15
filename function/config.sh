@@ -561,20 +561,6 @@ http://mirrors.ustc.edu.cn/gnu/patch/patch-2.7.tar.gz
 https://mirrors.tuna.tsinghua.edu.cn/gnu/patch/patch-2.7.tar.gz
 '
 
-#pkg-config设置
-pkg_config_filename="pkg-config-0.29.1"
-set_md5 $pkg_config_filename "f739a28cae4e0ca291f82d1d41ef107d"
-set_dl $pkg_config_filename '
-https://pkg-config.freedesktop.org/releases/pkg-config-0.29.1.tar.gz
-'
-
-#libzip设置
-libzip_filename="libzip-1.5.2"
-set_md5 $libzip_filename "8db7145801889ecf7ab481b23d6487cd"
-set_dl $libzip_filename '
-https://libzip.org/download/libzip-1.5.2.tar.gz
-'
-
 #libiconv设置
 libiconv_filename="libiconv-1.14"
 set_md5 $libiconv_filename "e34509b1623cec449dfeb73d7ce9c6c6"

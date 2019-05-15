@@ -14,7 +14,6 @@ nginx_filename="nginx-1.14.2"
 set_md5 $nginx_filename "239b829a13cea1d244c1044e830bd9c2"
 set_dl $nginx_filename '
 http://nginx.org/download/nginx-1.14.2.tar.gz
-https://github.com/nginx/nginx/archive/release-1.14.2.tar.gz
 '
 
 #tengine设置

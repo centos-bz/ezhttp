@@ -447,7 +447,6 @@ if [ "$php_mode" == "with_fastcgi" ];then
         sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf
         sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' $php_location/etc/php-fpm.d/www.conf       
 
-    fi
     elif [[ "$php" == "${php7_2_filename}" ]]; then
         \cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
         chmod +x /etc/init.d/php-fpm
@@ -467,7 +466,6 @@ if [ "$php_mode" == "with_fastcgi" ];then
         sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf
         sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' $php_location/etc/php-fpm.d/www.conf       
 
-    fi
     elif [[ "$php" == "${php7_3_filename}" ]]; then
         \cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
         chmod +x /etc/init.d/php-fpm

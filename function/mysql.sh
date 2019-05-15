@@ -257,9 +257,9 @@ install_mysqld(){
 	elif [ "$mysql" == "${mysql5_7_filename}" ];then
 		#安装依赖
 		if check_sys packageManager apt;then
-			apt-get -y install libncurses5-dev cmake m4 bison libssl-dev
+			apt-get -y install libncurses5-dev cmake m4 bison libssl-dev pkg-config
 		elif check_sys packageManager yum;then
-			yum -y install ncurses-devel cmake m4 bison openssl-devel
+			yum -y install ncurses-devel cmake m4 bison openssl-devel pkg-config
 		else
 			check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"

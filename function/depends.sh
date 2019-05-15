@@ -43,7 +43,7 @@ install_php_depends(){
 			check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
 			check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 		fi
-		
+		check_installed "install_libzip" "${depends_prefix}/${libzip_filename}"
 	else
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"

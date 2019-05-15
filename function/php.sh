@@ -167,13 +167,13 @@ php_preinstall_settings(){
                 if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]]; then
                     other_option="${other_option} --enable-opcache"
                 fi
+
                 #  >= PHP 5.6 在CentOS 6/7中重新编译libzip
 
                 if [[ "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]]; then
 
                     if check_sys packageManager yum; then
                         yum remove libzip
-                        check_installed "install_libzip" "${depends_prefix}/${libzip_filename}"
                         other_option="${other_option} --with-libzip=${depends_prefix}/${libzip_filename}"
                     fi
                 fi

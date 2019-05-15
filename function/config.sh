@@ -13,6 +13,7 @@ allow_seconds=3600
 nginx_filename="nginx-1.14.2"
 set_md5 $nginx_filename "239b829a13cea1d244c1044e830bd9c2"
 set_dl $nginx_filename '
+https://opensource-1251020419.file.myqcloud.com/nginx/nginx-1.14.2.tar.gz
 http://nginx.org/download/nginx-1.14.2.tar.gz
 '
 
@@ -101,6 +102,7 @@ http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-8.0/mysql-8.0.16.tar.gz
 boost_1_59_filename="boost_1_59_0"
 set_md5 $boost_1_59_filename "51528a0e3b33d9e10aaa311d9eb451e3"
 set_dl $boost_1_59_filename '
+https://opensource-1251020419.file.myqcloud.com/boost/boost_1_59_0.tar.gz
 https://nchc.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
 https://jaist.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
 http://sourceforge.mirrorservice.org/b/bo/boost/boost/1.59.0/boost_1_59_0.tar.gz
@@ -109,7 +111,7 @@ http://sourceforge.mirrorservice.org/b/bo/boost/boost/1.59.0/boost_1_59_0.tar.gz
 boost_1_66_filename="boost_1_66_0"
 set_md5 $boost_1_66_filename "d275cd85b00022313c171f602db59fc5"
 set_dl $boost_1_66_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/boost_1_66_0.tar.gz
+https://opensource-1251020419.file.myqcloud.com/boost/boost_1_66_0.tar.gz
 https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
 http://dl-us.centos.bz/ezhttp/boost_1_66_0.tar.gz
 http://jaist.dl.sourceforge.net/project/boost/boost/1.66.0/boost_1_66_0.tar.gz
@@ -157,24 +159,34 @@ http://dl-us.centos.bz/ezhttp/php-5.6.15.tar.gz
 http://us1.php.net/distributions/php-5.6.15.tar.gz
 '
 
-php7_1_filename="php-7.1.0"
-set_md5 $php7_1_filename "ec2218f97b4edbc35a2d7919ff37a662"
+php7_1_filename="php-7.1.29"
+set_md5 $php7_1_filename "71a43101a0f44d409851d7f62f10a030"
 set_dl $php7_1_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/php-7.1.0.tar.gz
-http://dl-us.centos.bz/ezhttp/php-7.1.0.tar.gz
-http://us1.php.net/distributions/php-7.1.0.tar.gz
+https://opensource-1251020419.file.myqcloud.com/php/php-7.1.29.tar.gz
+http://dl-us.centos.bz/ezhttp/php-7.1.29.tar.gz
+https://www.php.net/distributions/php-7.1.29.tar.gz
 '
 
 php7_2_filename="php-7.2.18"
 set_md5 $php7_2_filename "30333c28bbbbcc296cb80c0a9b059356"
 set_dl $php7_2_filename '
+https://opensource-1251020419.file.myqcloud.com/php/php-7.2.18.tar.gz
 https://www.php.net/distributions/php-7.2.18.tar.gz
 '
 
 php7_3_filename="php-7.3.5"
 set_md5 $php7_3_filename "8cca50c78c38ff2c92f9aa65a9c3894b"
 set_dl $php7_3_filename '
+https://opensource-1251020419.file.myqcloud.com/php/php-7.3.5.tar.gz
 https://www.php.net/distributions/php-7.3.5.tar.gz
+'
+
+#libzip设置
+libzip_filename="libzip-1.5.2"
+set_md5 $libzip_filename "8db7145801889ecf7ab481b23d6487cd"
+set_dl $libzip_filename '
+https://opensource-1251020419.file.myqcloud.com/libzip/libzip-1.5.2.tar.gz
+https://libzip.org/download/libzip-1.5.2.tar.gz
 '
 
 #freetds设置

@@ -167,6 +167,17 @@ php_preinstall_settings(){
                 if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]]; then
                     other_option="${other_option} --enable-opcache"
                 fi
+                #  >= PHP 5.6 在CentOS 6/7中重新编译libzip
+
+                if [[ "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]]; then
+
+                    if check_sys packageManager yum; then
+                        yum remove libzip
+                        check_installed "install_libzip" "${depends_prefix}/${libzip_filename}"
+                        other_option="${other_option} --with-libzip=${depends_prefix}/${libzip_filename}"
+                    fi
+                fi
+
                 php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite  --with-gettext=shared  --with-iconv --enable-ftp=shared  --with-sqlite  --with-sqlite3  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo --enable-bcmath --enable-intl --with-bz2"
             fi  
 

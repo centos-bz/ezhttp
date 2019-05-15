@@ -18,7 +18,7 @@ install_php_depends(){
 		create_lib_link "libiconv.so.2"
 		create_lib_link "libssl.so"
 	elif check_sys packageManager yum;then
-		yum -y install m4 autoconf libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libzip-devel
+		yum -y install m4 autoconf libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libicu-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -86,6 +86,15 @@ install_patch(){
 	error_detect "parallel_make"
 	error_detect "make install"
 	add_to_env "${depends_prefix}/${patch_filename}"
+}
+
+install_libzip(){
+	download_file  "${libzip_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${libzip_filename}.tar.gz
+	cd ${libzip_filename}
+	./configure --prefix=${depends_prefix}/${libzip_filename}
+	make && make install
 }
 
 #安装libiconv

@@ -5,7 +5,7 @@ install_php_depends(){
 	
 	#安装依赖
 	if check_sys packageManager apt;then
-		local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip)
+		local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev)
 		for p in ${packages[@]}
 		do
 			apt-get -y install $p
@@ -18,7 +18,7 @@ install_php_depends(){
 		create_lib_link "libiconv.so.2"
 		create_lib_link "libssl.so"
 	elif check_sys packageManager yum;then
-		yum -y install m4 autoconf libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libzip
+		yum -y install m4 autoconf libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libzip-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"

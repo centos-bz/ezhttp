@@ -116,14 +116,14 @@ if [ "$mysql" != "do_not_install" ];then
 				else
 					other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 				fi
-				mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+				mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_1_59_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 			elif [ "$mysql" == "${mysql8_0_filename}" ];then
 				if check_sys packageSupport;then
 					other_option=""
 				else
 					other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/"
 				fi
-				mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
+				mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_1_66_filename}  -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=${mysql_data_location}/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 $other_option"
 
 			fi
 
@@ -167,7 +167,7 @@ if [ "$mysql" != "do_not_install" ];then
 			else
 				other_option="-DCURSES_LIBRARY=${depends_prefix}/${ncurses_filename}/lib/libncurses.a  -DCURSES_INCLUDE_PATH=${depends_prefix}/${ncurses_filename}/include/ -DWITH_SSL=${depends_prefix}/${openssl_filename}"
 			fi
-			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_filename} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1  $other_option"		
+			mysql_configure_args="-DCMAKE_INSTALL_PREFIX=${mysql_location} -DWITH_BOOST=$cur_dir/soft/${boost_1_59_filename} -DSYSCONFDIR=${mysql_location}/etc -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS=complex -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1  $other_option"		
 		fi
 	fi	
 fi	
@@ -257,9 +257,9 @@ install_mysqld(){
 	elif [ "$mysql" == "${mysql5_7_filename}" ];then
 		#安装依赖
 		if check_sys packageManager apt;then
-			apt-get -y install libncurses5-dev cmake m4 bison libssl-dev
+			apt-get -y install libncurses5-dev cmake m4 bison libssl-dev pkg-config
 		elif check_sys packageManager yum;then
-			yum -y install ncurses-devel cmake m4 bison openssl-devel
+			yum -y install ncurses-devel cmake m4 bison openssl-devel pkg-config
 		else
 			check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"
@@ -269,10 +269,10 @@ install_mysqld(){
 		fi
 
 		# 下载boost
-		download_file "${boost_filename}.tar.gz"
+		download_file "${boost_1_59_filename}.tar.gz"
 		cd $cur_dir/soft/
-		rm -rf ${boost_filename}
-		tar xzvf ${boost_filename}.tar.gz
+		rm -rf ${boost_1_59_filename}
+		tar xzvf ${boost_1_59_filename}.tar.gz
 
 		download_file  "${mysql5_7_filename}.tar.gz"	
 		cd $cur_dir/soft/
@@ -300,10 +300,10 @@ install_mysqld(){
 		fi
 
 		# 下载boost
-		download_file "${boost_filename}.tar.gz"
+		download_file "${boost_1_66_filename}.tar.gz"
 		cd $cur_dir/soft/
-		rm -rf ${boost_filename}
-		tar xzvf ${boost_filename}.tar.gz
+		rm -rf ${boost_1_66_filename}
+		tar xzvf ${boost_1_66_filename}.tar.gz
 
 		download_file  "${mysql8_0_filename}.tar.gz"	
 		cd $cur_dir/soft/

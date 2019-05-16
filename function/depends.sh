@@ -5,7 +5,7 @@ install_php_depends(){
 	
 	#安装依赖
 	if check_sys packageManager apt;then
-		local packages=(m4 autoconf libcurl4-gnutls-dev  autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev)
+		local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev)
 		for p in ${packages[@]}
 		do
 			apt-get -y install $p
@@ -18,7 +18,7 @@ install_php_depends(){
 		create_lib_link "libiconv.so.2"
 		create_lib_link "libssl.so"
 	elif check_sys packageManager yum;then
-		yum -y install m4 autoconf libxml2-devel openssl openssl-devel  zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel
+		yum -y install m4 autoconf libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libicu-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -43,7 +43,7 @@ install_php_depends(){
 			check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
 			check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 		fi
-		
+		check_installed "install_libzip" "${depends_prefix}/${libzip_filename}"
 	else
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
@@ -86,6 +86,15 @@ install_patch(){
 	error_detect "parallel_make"
 	error_detect "make install"
 	add_to_env "${depends_prefix}/${patch_filename}"
+}
+
+install_libzip(){
+	download_file  "${libzip_filename}.tar.gz"
+	cd $cur_dir/soft/
+	tar xzvf ${libzip_filename}.tar.gz
+	cd ${libzip_filename}
+	./configure --prefix=${depends_prefix}/${libzip_filename}
+	make && make install
 }
 
 #安装libiconv

@@ -44,7 +44,7 @@ Upgrade_nginx_tengine_openresty(){
 		elif echo "$nginx_new_version" | grep -q -E '^ngx_openresty-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$';then
 			set_official_link_val $nginx_new_version "http://openresty.org/download/${nginx_new_version}.tar.gz"
 			nginx_location=$(echo $nginx_location | sed -r 's#nginx/?$##')
-			nginx_configure_args="--prefix=${nginx_location} --with-luajit --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename} --with-http_realip_module  --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module"
+			nginx_configure_args="--prefix=${nginx_location} --with-luajit --with-http_ssl_module --with-openssl=$cur_dir/soft/${openssl_filename} --with-http_realip_module  --with-http_stub_status_module --with-pcre --with-pcre=$cur_dir/soft/${pcre_filename} --with-zlib=$cur_dir/soft/${zlib_filename} --with-http_secure_link_module --with-http_v2_module"
 			break
 		else
 			echo "$nginx_new_version invalid,please reinput."

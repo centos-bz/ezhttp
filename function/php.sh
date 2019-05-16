@@ -48,7 +48,21 @@ php_preinstall_settings(){
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
                 custom_info="$custom_info\nphp7_1_filename=$version\n$(get_dl_valname $version)=$link)\n"
-                break                       
+                break
+            elif echo "$version" | grep -q -E '^php-7\.2\.[0-9]+$';then
+                php7_2_filename=$version
+                php=$version
+                read -p "please input $php download url(must be tar.gz file format): " link
+                set_dl $version "$link"
+                custom_info="$custom_info\nphp7_2_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                break
+            elif echo "$version" | grep -q -E '^php-7\.3\.[0-9]+$';then
+                php7_3_filename=$version
+                php=$version
+                read -p "please input $php download url(must be tar.gz file format): " link
+                set_dl $version "$link"
+                custom_info="$custom_info\nphp7_3_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                break
             else
                 echo "version invalid,please reinput."
             fi
@@ -128,7 +142,7 @@ php_preinstall_settings(){
                 #php编译参数
                 php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --with-gettext=shared  --with-sqlite  --with-pdo_sqlite  --enable-bcmath=shared  --enable-ftp=shared  --enable-mbstring=shared  --with-iconv  --enable-sockets=shared  --enable-zip  --enable-soap=shared  $other_option  ${with_mysql}  --without-pear  $lib64"
 
-            elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" ]];then
+            elif [[ "$php" == "${php5_3_filename}" || "$php" == "${php5_4_filename}" || "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]];then
 
                 #判断php运行模式
                 if [ "$php_mode" == "with_apache" ];then
@@ -150,10 +164,21 @@ php_preinstall_settings(){
                 fi
 
                 # 5.5 5.6开启opcache
-                if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" ]]; then
+                if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]]; then
                     other_option="${other_option} --enable-opcache"
                 fi
-                php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite  --with-gettext=shared  --with-iconv --enable-ftp=shared  --with-sqlite  --with-sqlite3  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo"
+
+                #  >= PHP 5.6 在CentOS 6/7中重新编译libzip
+
+                if [[ "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]]; then
+
+                    if check_sys packageManager yum; then
+                        yum remove libzip
+                        other_option="${other_option} --with-libzip=${depends_prefix}/${libzip_filename}"
+                    fi
+                fi
+
+                php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite  --with-gettext=shared  --with-iconv --enable-ftp=shared  --with-sqlite  --with-sqlite3  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo --enable-bcmath --enable-intl --with-bz2"
             fi  
 
 
@@ -330,6 +355,36 @@ install_php(){
         mkdir -p ${php_location}/etc
         \cp  php.ini-production $php_location/etc/php.ini
         [ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf 
+    
+    elif [ "$php" == "${php7_2_filename}" ];then
+        download_file  "${php7_2_filename}.tar.gz"
+        cd $cur_dir/soft/
+        tar xzvf ${php7_2_filename}.tar.gz
+        cd ${php7_2_filename}
+        make clean
+        error_detect "./configure ${php_configure_args}"
+        error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+        error_detect "make install" 
+        
+        #配置php
+        mkdir -p ${php_location}/etc
+        \cp  php.ini-production $php_location/etc/php.ini
+        [ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
+    
+    elif [ "$php" == "${php7_3_filename}" ];then
+        download_file  "${php7_3_filename}.tar.gz"
+        cd $cur_dir/soft/
+        tar xzvf ${php7_3_filename}.tar.gz
+        cd ${php7_3_filename}
+        make clean
+        error_detect "./configure ${php_configure_args}"
+        error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
+        error_detect "make install" 
+        
+        #配置php
+        mkdir -p ${php_location}/etc
+        \cp  php.ini-production $php_location/etc/php.ini
+        [ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
     fi
 
     #记录php安装位置
@@ -397,7 +452,45 @@ if [ "$php_mode" == "with_fastcgi" ];then
         set_php_variable request_order  "CGP"
         set_php_variable cgi.fix_pathinfo 0
         set_php_variable short_open_tag on
-        set_php_variable date.timezone Asia/Chongqing
+        set_php_variable date.timezone Asia/Shanghai
+
+        #开启slow log
+        sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' $php_location/etc/php-fpm.d/www.conf       
+
+    elif [[ "$php" == "${php7_2_filename}" ]]; then
+        \cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+        chmod +x /etc/init.d/php-fpm
+        \cp $php_location/etc/php-fpm.d/www.conf.default $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^user =.*/user = www/' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^group =.*/group = www/' $php_location/etc/php-fpm.d/www.conf
+
+        set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
+        set_php_variable expose_php Off
+        set_php_variable error_log  ${php_location}/var/log/php_errors.log
+        set_php_variable request_order  "CGP"
+        set_php_variable cgi.fix_pathinfo 0
+        set_php_variable short_open_tag on
+        set_php_variable date.timezone Asia/Shanghai
+
+        #开启slow log
+        sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/;request_slowlog_timeout = 0/request_slowlog_timeout = 5/' $php_location/etc/php-fpm.d/www.conf       
+
+    elif [[ "$php" == "${php7_3_filename}" ]]; then
+        \cp $cur_dir/soft/${php}/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+        chmod +x /etc/init.d/php-fpm
+        \cp $php_location/etc/php-fpm.d/www.conf.default $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^user =.*/user = www/' $php_location/etc/php-fpm.d/www.conf
+        sed -i 's/^group =.*/group = www/' $php_location/etc/php-fpm.d/www.conf
+
+        set_php_variable disable_functions "dl,eval,assert,exec,popen,system,passthru,shell_exec,escapeshellarg,escapeshellcmd,proc_close,proc_open"
+        set_php_variable expose_php Off
+        set_php_variable error_log  ${php_location}/var/log/php_errors.log
+        set_php_variable request_order  "CGP"
+        set_php_variable cgi.fix_pathinfo 0
+        set_php_variable short_open_tag on
+        set_php_variable date.timezone Asia/Shanghai
 
         #开启slow log
         sed -i 's#;slowlog = log/$pool.log.slow#slowlog = var/log/$pool.log.slow#' $php_location/etc/php-fpm.d/www.conf
@@ -407,7 +500,7 @@ if [ "$php_mode" == "with_fastcgi" ];then
     # 设置php_errors目录权限
     chown www ${php_location}/var/log/
     # 启用opcache
-    if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" ]];then
+    if [[ "$php" == "${php5_5_filename}" || "$php" == "${php5_6_filename}" || "$php" == "${php7_1_filename}" || "$php" == "${php7_2_filename}" || "$php" == "${php7_3_filename}" ]];then
         cat >> $php_location/etc/php.ini <<EOF
 [opcache]
 zend_extension=opcache.so

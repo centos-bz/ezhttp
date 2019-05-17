@@ -183,7 +183,7 @@ https://www.php.net/distributions/php-7.3.5.tar.gz
 
 #libzip设置
 libzip_filename="libzip-1.2.0"
-set_md5 $libzip_filename "8db7145801889ecf7ab481b23d6487cd"
+set_md5 $libzip_filename "5c3372ab3a7897295bfefb27f745cf69"
 set_dl $libzip_filename '
 https://opensource-1251020419.file.myqcloud.com/libzip/libzip-1.2.0.tar.gz
 https://libzip.org/download/libzip-1.2.0.tar.gz

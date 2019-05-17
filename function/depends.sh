@@ -88,13 +88,18 @@ install_patch(){
 	add_to_env "${depends_prefix}/${patch_filename}"
 }
 
+#安装libzip
 install_libzip(){
 	download_file  "${libzip_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${libzip_filename}.tar.gz
 	cd ${libzip_filename}
-	./configure --prefix=${depends_prefix}/${libzip_filename}
-	make && make install
+	error_detect "make clean"
+	error_detect "./configure --prefix=${depends_prefix}/${libzip_filename}"
+	error_detect "parallel_make"
+	error_detect "make install"
+	add_to_env "${depends_prefix}/${libzip_filename}"
+	create_lib64_dir "${depends_prefix}/${libzip_filename}"
 }
 
 #安装libiconv

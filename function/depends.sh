@@ -94,9 +94,9 @@ install_libzip(){
 	cd $cur_dir/soft/
 	tar xzvf ${libzip_filename}.tar.gz
 	cd ${libzip_filename}
-	error_detect "make clean"
-	error_detect "./configure --prefix=${depends_prefix}/${libzip_filename}"
-	error_detect "parallel_make"
+	mkdir build
+	error_detect "cmake .. -DCMAKE_INSTALL_PREFIX=${depends_prefix}/${libzip_filename}"
+	error_detect "make"
 	error_detect "make install"
 	add_to_env "${depends_prefix}/${libzip_filename}"
 	create_lib64_dir "${depends_prefix}/${libzip_filename}"
@@ -356,6 +356,16 @@ install_pkgconfig(){
 
 #安装cmake
 install_cmake(){
+	#解决CentOS 6 GCC 版本太低的问题
+	if check_sys packageManager yum;then
+			if CentOSVerCheck 6;then
+				yum -y install centos-release-scl
+				yum -y install devtoolset-6-gcc devtoolset-6-gcc-c++ devtoolset-6-binutils
+				scl enable devtoolset-6 bash
+			fi
+		else
+	fi
+
 	download_file  "${cmake_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${cmake_filename}.tar.gz

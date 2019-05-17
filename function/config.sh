@@ -182,11 +182,11 @@ https://www.php.net/distributions/php-7.3.5.tar.gz
 '
 
 #libzip设置
-libzip_filename="libzip-1.2.0"
-set_md5 $libzip_filename "5c3372ab3a7897295bfefb27f745cf69"
+libzip_filename="libzip-1.5.2"
+set_md5 $libzip_filename "8db7145801889ecf7ab481b23d6487cd"
 set_dl $libzip_filename '
-https://opensource-1251020419.file.myqcloud.com/libzip/libzip-1.2.0.tar.gz
-https://libzip.org/download/libzip-1.2.0.tar.gz
+https://opensource-1251020419.file.myqcloud.com/libzip/libzip-1.5.2.tar.gz
+https://libzip.org/download/libzip-1.5.2.tar.gz
 '
 
 #freetds设置
@@ -522,12 +522,11 @@ set_dl $mongodb_filename "$(get_dl $mongodb_filename)"
 ######################依赖包设置######################
 
 #cmake设置
-cmake_filename="cmake-2.8.11.1"
-set_md5 $cmake_filename "df5324a3b203373a9e0a04b924281a43"
+cmake_filename="cmake-3.12.2"
+set_md5 $cmake_filename "6e7c550cfa1c2e216b35903dc70d80af"
 set_dl $cmake_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/cmake-2.8.11.1.tar.gz
-http://dl-us.centos.bz/ezhttp/cmake-2.8.11.1.tar.gz
-http://www.cmake.org/files/v2.8/cmake-2.8.11.1.tar.gz
+https://github.com/Kitware/CMake/releases/download/v3.12.2/cmake-3.12.2.tar.gz
+https://cmake.org/files/v3.12/cmake-3.12.2.tar.gz
 '
 
 #ncurses设置(保持5.8版本)

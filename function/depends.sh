@@ -363,7 +363,6 @@ install_cmake(){
 				yum -y install devtoolset-6-gcc devtoolset-6-gcc-c++ devtoolset-6-binutils
 				scl enable devtoolset-6 bash
 			fi
-		else
 	fi
 
 	download_file  "${cmake_filename}.tar.gz"

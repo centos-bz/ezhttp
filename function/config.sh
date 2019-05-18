@@ -585,15 +585,13 @@ https://mirrors.tuna.tsinghua.edu.cn/gnu/libiconv/libiconv-1.14.tar.gz
 '
 
 
-#autoconf设置(保持2.59版本)
-autoconf_filename="autoconf-2.59"
-set_md5 $autoconf_filename "d4d45eaa1769d45e59dcb131a4af17a0"
+#autoconf设置(保持2.69版本)
+autoconf_filename="autoconf-2.69"
+set_md5 $autoconf_filename "82d05e03b93e45f5a39b828dc9c6c29b"
 set_dl $autoconf_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/autoconf-2.59.tar.gz
-http://dl-us.centos.bz/ezhttp/autoconf-2.59.tar.gz
-http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.gz
-http://mirrors.ustc.edu.cn/gnu/autoconf/autoconf-2.59.tar.gz
-https://mirrors.tuna.tsinghua.edu.cn/gnu/autoconf/autoconf-2.59.tar.gz
+http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
+http://mirrors.ustc.edu.cn/gnu/autoconf/autoconf-2.69.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/autoconf/autoconf-2.69.tar.gz
 '
 
 #libxml2设置(保持2-2.8.0版本)

@@ -18,7 +18,7 @@ install_php_depends(){
 		create_lib_link "libiconv.so.2"
 		create_lib_link "libssl.so"
 	elif check_sys packageManager yum;then
-		yum -y install m4 autoconf libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libicu-devel
+		yum -y install m4 libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libicu-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -39,7 +39,9 @@ install_php_depends(){
 				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.i686.rpm
 				rpm -i $cur_dir/conf/mhash-devel-0.9.9.9-3.el6.i686.rpm
 			fi
+			check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
 		elif CentOSVerCheck 7;then
+			yum -y install autoconf
 			check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
 			check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 		fi
@@ -95,6 +97,7 @@ install_libzip(){
 	tar xzvf ${libzip_filename}.tar.gz
 	cd ${libzip_filename}
 	mkdir build
+	cd build
 	error_detect "cmake .. -DCMAKE_INSTALL_PREFIX=${depends_prefix}/${libzip_filename}"
 	error_detect "make"
 	error_detect "make install"
@@ -356,21 +359,12 @@ install_pkgconfig(){
 
 #安装cmake
 install_cmake(){
-	#解决CentOS 6 GCC 版本太低的问题
-	if check_sys packageManager yum;then
-			if CentOSVerCheck 6;then
-				yum -y install centos-release-scl
-				yum -y install devtoolset-6-gcc devtoolset-6-gcc-c++ devtoolset-6-binutils
-				scl enable devtoolset-6 bash
-			fi
-	fi
-
 	download_file  "${cmake_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${cmake_filename}.tar.gz
 	cd ${cmake_filename}
 	make clean
-	error_detect "./configure --prefix=${depends_prefix}/${cmake_filename}"
+	error_detect "./bootstrap --prefix=${depends_prefix}/${cmake_filename}"
 	error_detect "parallel_make"
 	error_detect "make install"
 	add_to_env "${depends_prefix}/${cmake_filename}"

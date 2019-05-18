@@ -235,7 +235,15 @@ install_mysqld(){
 		if check_sys packageManager apt;then
 			apt-get -y install libncurses5-dev cmake m4 bison
 		elif check_sys packageManager yum;then
-			yum -y install ncurses-devel cmake m4 bison
+			#解决CentOS 6 GCC 版本太低的问题
+			if check_sys packageManager yum;then
+				yum -y install centos-release-scl
+				yum -y install devtoolset-6-gcc devtoolset-6-gcc-c++ devtoolset-6-binutils
+				echo "source /opt/rh/devtoolset-6/enable" >>/etc/profile
+				source /opt/rh/devtoolset-6/enable
+			fi
+			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"
+			yum -y install ncurses-devel m4 bison
 		else
 			check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"
@@ -259,7 +267,15 @@ install_mysqld(){
 		if check_sys packageManager apt;then
 			apt-get -y install libncurses5-dev cmake m4 bison libssl-dev pkg-config
 		elif check_sys packageManager yum;then
-			yum -y install ncurses-devel cmake m4 bison openssl-devel pkg-config
+			yum -y install ncurses-devel m4 bison openssl-devel pkg-config
+			#解决CentOS 6 GCC 版本太低的问题
+			if CentOSVerCheck 6;then
+				yum -y install centos-release-scl
+				yum -y install devtoolset-6-gcc devtoolset-6-gcc-c++ devtoolset-6-binutils
+				echo "source /opt/rh/devtoolset-6/enable" >>/etc/profile
+				source /opt/rh/devtoolset-6/enable
+			fi
+			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"
 		else
 			check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"
@@ -291,7 +307,12 @@ install_mysqld(){
 		if check_sys packageManager apt;then
 			apt-get -y install libncurses5-dev cmake m4 bison
 		elif check_sys packageManager yum;then
-			yum -y install ncurses-devel cmake m4 bison
+			yum -y install ncurses-devel m4 bison
+			#MySQL 8.0 为 C++14 标准 ，gcc 版本必须在5.3以上
+			yum -y install centos-release-scl
+			yum -y install devtoolset-6-gcc devtoolset-6-gcc-c++ devtoolset-6-binutils
+			echo "source /opt/rh/devtoolset-6/enable" >>/etc/profile
+			source /opt/rh/devtoolset-6/enable
 		else
 			check_installed "install_ncurses" "${depends_prefix}/${ncurses_filename}"
 			check_installed "install_cmake" "${depends_prefix}/${cmake_filename}"

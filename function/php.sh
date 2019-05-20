@@ -156,7 +156,7 @@ php_preinstall_settings(){
                     if CentOSVerCheck 7;then
                         other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared,${depends_prefix}/${libmcrypt_filename}  --with-mhash=shared,${depends_prefix}/${mhash_filename}"           
                     else
-                        other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-freetype-dir  --with-mcrypt=shared  --with-mhash=shared"
+                        other_option="--with-openssl  --with-zlib  --with-curl=shared  --with-gd=shared  --with-jpeg-dir  --with-png-dir  --with-mcrypt=shared  --with-mhash=shared"
                     fi
                     
                 else
@@ -176,6 +176,14 @@ php_preinstall_settings(){
                         yum remove libzip
                         other_option="${other_option} --with-libzip=${depends_prefix}/${libzip_filename}"
                     fi
+                fi
+
+                # Ubuntu 19.04 freetype 问题
+
+                if UbuntuVerCheck disco; then
+                    other_option="${other_option} --with-freetype-dir=${depends_prefix}/${freetype_filename}"
+                else
+                    other_option="${other_option} --with-freetype-dir"
                 fi
 
                 php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite  --with-gettext=shared  --with-iconv --enable-ftp=shared  --with-sqlite  --with-sqlite3  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo --enable-bcmath --enable-intl --with-bz2"
@@ -226,7 +234,7 @@ php_preinstall_settings(){
 install_php(){
     #安装php依赖
     install_php_depends
-
+    
     #解决freetype.h找不到的问题
     [ ! -f /usr/include/freetype2/freetype ] && [ ! -d /usr/include/freetype2/freetype ] &&  ln -sf /usr/include/freetype2 /usr/include/freetype2/freetype
 

@@ -658,12 +658,12 @@ http://jaist.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz
 '
 
 #freetype设置
-freetype_filename="freetype-2.5.0"
-set_md5 $freetype_filename "167402d24803591bf88fade74a963a37"
+freetype_filename="freetype-2.8.1"
+set_md5 $freetype_filename "c947b6b1c513e814cc9d7617a44bc6cf"
 set_dl $freetype_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/freetype-2.5.0.tar.gz
-http://dl-us.centos.bz/ezhttp/freetype-2.5.0.tar.gz
-http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
+https://jaist.dl.sourceforge.net/project/freetype/freetype2/2.8.1/freetype-2.8.1.tar.gz
+https://nchc.dl.sourceforge.net/project/freetype/freetype2/2.8.1/freetype-2.8.1.tar.gz
+http://download.savannah.gnu.org/releases/freetype/freetype-2.8.1.tar.gz
 '
 
 #libpng设置(不要更新,防止出现undefined reference to inflateReset2@ZLIB_1.2.3.4)

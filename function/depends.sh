@@ -7,14 +7,14 @@ install_php_depends(){
 	if check_sys packageManager apt;then
 		#Ubuntu 19.04 libfreetype6 版本过高的问题
 		if UbuntuVerCheck disco; then
-			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev)
+			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
 			for p in ${packages[@]}
 			do
 				apt-get -y install $p
 			done
 			check_installed "install_freetype" "${depends_prefix}/${freetype_filename}"
 		else
-			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev)
+			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
 			for p in ${packages[@]}
 			do
 				apt-get -y install $p

@@ -6,7 +6,7 @@ install_php_depends(){
 	#安装依赖
 	if check_sys packageManager apt;then
 		#Ubuntu 19.04 libfreetype6 版本过高的问题
-		if UbuntuVerCheck disco; then
+		if OSVerCheck disco; then
 			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
 			for p in ${packages[@]}
 			do

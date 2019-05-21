@@ -5,11 +5,21 @@ install_php_depends(){
 	
 	#安装依赖
 	if check_sys packageManager apt;then
-		local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev)
-		for p in ${packages[@]}
-		do
-			apt-get -y install $p
-		done
+		#Ubuntu 19.04 libfreetype6 版本过高的问题
+		if UbuntuVerCheck disco; then
+			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
+			for p in ${packages[@]}
+			do
+				apt-get -y install $p
+			done
+			check_installed "install_freetype" "${depends_prefix}/${freetype_filename}"
+		else
+			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
+			for p in ${packages[@]}
+			do
+				apt-get -y install $p
+			done
+		fi
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -18,7 +28,7 @@ install_php_depends(){
 		create_lib_link "libiconv.so.2"
 		create_lib_link "libssl.so"
 	elif check_sys packageManager yum;then
-		yum -y install m4 autoconf libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libicu-devel
+		yum -y install m4 libxml2-devel openssl openssl-devel zlib-devel curl-devel pcre-devel libtool-libs libtool-ltdl-devel libjpeg-devel libpng-devel freetype-devel mhash-devel libmcrypt-devel pkg-config libicu-devel
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -39,7 +49,9 @@ install_php_depends(){
 				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.i686.rpm
 				rpm -i $cur_dir/conf/mhash-devel-0.9.9.9-3.el6.i686.rpm
 			fi
+			check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
 		elif CentOSVerCheck 7;then
+			yum -y install autoconf
 			check_installed "install_mhash " "${depends_prefix}/${mhash_filename}"
 			check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 		fi
@@ -88,13 +100,19 @@ install_patch(){
 	add_to_env "${depends_prefix}/${patch_filename}"
 }
 
+#安装libzip
 install_libzip(){
 	download_file  "${libzip_filename}.tar.gz"
 	cd $cur_dir/soft/
 	tar xzvf ${libzip_filename}.tar.gz
 	cd ${libzip_filename}
-	./configure --prefix=${depends_prefix}/${libzip_filename}
-	make && make install
+	mkdir build
+	cd build
+	error_detect "cmake .. -DCMAKE_INSTALL_PREFIX=${depends_prefix}/${libzip_filename}"
+	error_detect "make"
+	error_detect "make install"
+	add_to_env "${depends_prefix}/${libzip_filename}"
+	create_lib64_dir "${depends_prefix}/${libzip_filename}"
 }
 
 #安装libiconv
@@ -279,6 +297,11 @@ install_freetype(){
 	error_detect "./configure --prefix=${depends_prefix}/${freetype_filename}"
 	error_detect "parallel_make"
 	error_detect "make install"
+
+	#解决 ft2build.h 找不到的问题
+	ln -s ${depends_prefix}/${freetype_filename}/include/freetype2/freetype  ${depends_prefix}/${freetype_filename}/include/freetype
+	ln -s ${depends_prefix}/${freetype_filename}/include/freetype2/ft2build.h ${depends_prefix}/${freetype_filename}/include/ft2build.h
+
 	add_to_env "${depends_prefix}/${freetype_filename}"
 	create_lib64_dir "${depends_prefix}/${freetype_filename}"
 }
@@ -356,7 +379,7 @@ install_cmake(){
 	tar xzvf ${cmake_filename}.tar.gz
 	cd ${cmake_filename}
 	make clean
-	error_detect "./configure --prefix=${depends_prefix}/${cmake_filename}"
+	error_detect "./bootstrap --prefix=${depends_prefix}/${cmake_filename}"
 	error_detect "parallel_make"
 	error_detect "make install"
 	add_to_env "${depends_prefix}/${cmake_filename}"

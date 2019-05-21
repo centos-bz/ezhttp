@@ -182,11 +182,11 @@ https://www.php.net/distributions/php-7.3.5.tar.gz
 '
 
 #libzip设置
-libzip_filename="libzip-1.2.0"
+libzip_filename="libzip-1.5.2"
 set_md5 $libzip_filename "8db7145801889ecf7ab481b23d6487cd"
 set_dl $libzip_filename '
-https://opensource-1251020419.file.myqcloud.com/libzip/libzip-1.2.0.tar.gz
-https://libzip.org/download/libzip-1.2.0.tar.gz
+https://opensource-1251020419.file.myqcloud.com/libzip/libzip-1.5.2.tar.gz
+https://libzip.org/download/libzip-1.5.2.tar.gz
 '
 
 #freetds设置
@@ -522,12 +522,11 @@ set_dl $mongodb_filename "$(get_dl $mongodb_filename)"
 ######################依赖包设置######################
 
 #cmake设置
-cmake_filename="cmake-2.8.11.1"
-set_md5 $cmake_filename "df5324a3b203373a9e0a04b924281a43"
+cmake_filename="cmake-3.12.2"
+set_md5 $cmake_filename "6e7c550cfa1c2e216b35903dc70d80af"
 set_dl $cmake_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/cmake-2.8.11.1.tar.gz
-http://dl-us.centos.bz/ezhttp/cmake-2.8.11.1.tar.gz
-http://www.cmake.org/files/v2.8/cmake-2.8.11.1.tar.gz
+https://github.com/Kitware/CMake/releases/download/v3.12.2/cmake-3.12.2.tar.gz
+https://cmake.org/files/v3.12/cmake-3.12.2.tar.gz
 '
 
 #ncurses设置(保持5.8版本)
@@ -586,15 +585,13 @@ https://mirrors.tuna.tsinghua.edu.cn/gnu/libiconv/libiconv-1.14.tar.gz
 '
 
 
-#autoconf设置(保持2.59版本)
-autoconf_filename="autoconf-2.59"
-set_md5 $autoconf_filename "d4d45eaa1769d45e59dcb131a4af17a0"
+#autoconf设置(保持2.69版本)
+autoconf_filename="autoconf-2.69"
+set_md5 $autoconf_filename "82d05e03b93e45f5a39b828dc9c6c29b"
 set_dl $autoconf_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/autoconf-2.59.tar.gz
-http://dl-us.centos.bz/ezhttp/autoconf-2.59.tar.gz
-http://ftp.gnu.org/gnu/autoconf/autoconf-2.59.tar.gz
-http://mirrors.ustc.edu.cn/gnu/autoconf/autoconf-2.59.tar.gz
-https://mirrors.tuna.tsinghua.edu.cn/gnu/autoconf/autoconf-2.59.tar.gz
+http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
+http://mirrors.ustc.edu.cn/gnu/autoconf/autoconf-2.69.tar.gz
+https://mirrors.tuna.tsinghua.edu.cn/gnu/autoconf/autoconf-2.69.tar.gz
 '
 
 #libxml2设置(保持2-2.8.0版本)
@@ -661,12 +658,12 @@ http://jaist.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz
 '
 
 #freetype设置
-freetype_filename="freetype-2.5.0"
-set_md5 $freetype_filename "167402d24803591bf88fade74a963a37"
+freetype_filename="freetype-2.8.1"
+set_md5 $freetype_filename "c947b6b1c513e814cc9d7617a44bc6cf"
 set_dl $freetype_filename '
-http://dl-cn.centos.bz/protect/10268950/ezhttp/freetype-2.5.0.tar.gz
-http://dl-us.centos.bz/ezhttp/freetype-2.5.0.tar.gz
-http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.tar.gz
+https://jaist.dl.sourceforge.net/project/freetype/freetype2/2.8.1/freetype-2.8.1.tar.gz
+https://nchc.dl.sourceforge.net/project/freetype/freetype2/2.8.1/freetype-2.8.1.tar.gz
+http://download.savannah.gnu.org/releases/freetype/freetype-2.8.1.tar.gz
 '
 
 #libpng设置(不要更新,防止出现undefined reference to inflateReset2@ZLIB_1.2.3.4)

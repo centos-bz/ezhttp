@@ -847,6 +847,19 @@ CentOSVerCheck(){
 	fi
 }
 
+#判断 Ubuntu/Debian 版本 (请使用 codename)
+OSVerCheck(){
+	if check_sys sysRelease ubuntu || check_sys sysRelease debian;then
+		local ver_code=$1
+		local ver=`lsb_release -sc`
+		if [ $ver == $ver_code ];then
+			return 0
+		else
+			return 1
+		fi
+	fi
+}
+
 #重启php
 restart_php(){
 	eval `grep "stack=" /etc/ezhttp_info_do_not_del | tail -1`

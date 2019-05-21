@@ -306,7 +306,13 @@ install_eaccelerator(){
 	if check_sys packageManager apt;then
 		apt-get -y install m4 autoconf
 	elif check_sys packageManager yum;then
-		yum -y install m4 autoconf
+		#解决CentOS 6 autoconf 版本过低的问题
+		if CentOSVerCheck 6;then
+			yum -y install m4
+			check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
+		else
+			yum -y install m4 autoconf
+		fi
 	else
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
 		check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"	
@@ -359,7 +365,13 @@ install_php_memcache(){
 	if check_sys packageManager apt;then
 		apt-get -y install zlib1g-dev m4 autoconf
 	elif check_sys packageManager yum;then
-		yum install -y zlib-devel m4 autoconf
+		#解决CentOS 6 autoconf 版本过低的问题
+		if CentOSVerCheck 6;then
+			yum install -y zlib-devel m4
+			check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
+		else
+			yum install -y zlib-devel m4 autoconf
+		fi
 	else
 		check_installed "install_zlib " "${depends_prefix}/${zlib_filename}"
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"
@@ -445,7 +457,13 @@ install_php_imagesmagick(){
 	if check_sys packageManager apt;then
 		apt-get -y install m4 autoconf pkg-config
 	elif check_sys packageManager yum;then
-		yum -y install pkgconfig m4 autoconf
+		#解决CentOS 6 autoconf 版本过低的问题
+		if CentOSVerCheck 6;then
+			yum -y install pkgconfig m4
+			check_installed "install_autoconf" "${depends_prefix}/${autoconf_filename}"
+		else
+			yum -y install pkgconfig m4 autoconf
+		fi
 	else
 		check_installed "install_pkgconfig" "${depends_prefix}/${pkgconfig_filename}"
 		check_installed "install_m4" "${depends_prefix}/${m4_filename}"

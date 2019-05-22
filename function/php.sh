@@ -180,7 +180,7 @@ php_preinstall_settings(){
 
                 # Ubuntu 19.04 freetype 问题
 
-                if UbuntuVerCheck disco; then
+                if OSVerCheck disco; then
                     other_option="${other_option} --with-freetype-dir=${depends_prefix}/${freetype_filename}"
                 else
                     other_option="${other_option} --with-freetype-dir"
@@ -234,7 +234,7 @@ php_preinstall_settings(){
 install_php(){
     #安装php依赖
     install_php_depends
-    
+
     #解决freetype.h找不到的问题
     [ ! -f /usr/include/freetype2/freetype ] && [ ! -d /usr/include/freetype2/freetype ] &&  ln -sf /usr/include/freetype2 /usr/include/freetype2/freetype
 

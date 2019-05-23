@@ -5,21 +5,11 @@ install_php_depends(){
 	
 	#安装依赖
 	if check_sys packageManager apt;then
-		#Ubuntu 19.04 libfreetype6 版本过高的问题
-		if OSVerCheck disco; then
-			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
-			for p in ${packages[@]}
-			do
-				apt-get -y install $p
-			done
-			check_installed "install_freetype" "${depends_prefix}/${freetype_filename}"
-		else
-			local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
-			for p in ${packages[@]}
-			do
-				apt-get -y install $p
-			done
-		fi
+		local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
+		for p in ${packages[@]}
+		do
+			apt-get -y install $p
+		done
 		create_lib_link "libjpeg.so"
 		create_lib_link "libpng.so"
 		create_lib_link "libltdl.so"
@@ -440,4 +430,11 @@ install_libmemcached(){
 	error_detect "./configure --prefix=${depends_prefix}/${libmemcached_filename} --enable-sasl"
 	error_detect "parallel_make"
 	error_detect "make install"
+}
+
+# 解决 freetype-config not found 的问题
+fix_pkg_config() {
+  local dir=$1
+  sed -i "s/freetype-config/pkg-config/g" $dir/configure
+  sed -i "s/freetype-config/pkg-config/g" $dir/ext/gd/config.m4
 }

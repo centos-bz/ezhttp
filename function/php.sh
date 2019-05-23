@@ -178,14 +178,6 @@ php_preinstall_settings(){
                     fi
                 fi
 
-                # Ubuntu 19.04 freetype 问题
-
-                if OSVerCheck disco; then
-                    other_option="${other_option} --with-freetype-dir=${depends_prefix}/${freetype_filename}"
-                else
-                    other_option="${other_option} --with-freetype-dir"
-                fi
-
                 php_configure_args="--prefix=$php_location  --with-config-file-path=${php_location}/etc  ${php_run_php_mode}  --enable-bcmath=shared  --with-pdo_sqlite  --with-gettext=shared  --with-iconv --enable-ftp=shared  --with-sqlite  --with-sqlite3  --enable-mbstring=shared  --enable-sockets=shared  --enable-zip   --enable-soap=shared  $other_option   ${with_mysqlnd}  --without-pear  $lib64  --disable-fileinfo --enable-bcmath --enable-intl --with-bz2"
             fi  
 
@@ -230,6 +222,19 @@ php_preinstall_settings(){
     fi
 }
 
+# 解决 freetype-config not found 的问题
+fix_pkg_config() {
+if check_sys packageManager apt; then
+    local dir=$1
+    local FreeTypeVer=`dpkg -s libfreetype6 | grep "Version:" `
+    if [[ "$FreeTypeVer" =~ "2.9.1" ]];then
+        echo "OK!"
+        sed -i "s/freetype-config/pkg-config/g" $dir/configure
+        sed -i "s/freetype-config/pkg-config/g" $dir/ext/gd/config.m4
+    fi
+fi
+}
+
 #安装PHP
 install_php(){
     #安装php依赖
@@ -256,6 +261,7 @@ install_php(){
         #php-fpm补丁
         gzip -cd $cur_dir/conf/${php5_2_filename}-fpm-0.5.14.diff.gz | patch -d ${php5_2_filename} -p1
         cd ${php5_2_filename}
+        fix_pkg_config ${php5_2_filename}
         #hash漏洞补丁
         \cp  $cur_dir/conf/${php5_2_filename}-max-input-vars.patch ./
         patch -p1 < ${php5_2_filename}-max-input-vars.patch
@@ -290,6 +296,7 @@ install_php(){
         cd $cur_dir/soft/
         tar xzvf ${php5_3_filename}.tar.gz
         cd ${php5_3_filename}
+        fix_pkg_config ${php5_3_filename}
         # (PHP Multipart/form-data remote dos Vulnerability
         \cp $cur_dir/conf/php-5.3-multipart-form-data-remote-dos.patch ./
         patch -p1 < php-5.3-multipart-form-data-remote-dos.patch
@@ -309,6 +316,7 @@ install_php(){
         cd $cur_dir/soft/
         tar xzvf ${php5_4_filename}.tar.gz
         cd ${php5_4_filename}
+        fix_pkg_config ${php5_4_filename}
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -324,6 +332,7 @@ install_php(){
         cd $cur_dir/soft/
         tar xzvf ${php5_5_filename}.tar.gz
         cd ${php5_5_filename}
+        fix_pkg_config ${php5_5_filename}
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -339,6 +348,7 @@ install_php(){
         cd $cur_dir/soft/
         tar xzvf ${php5_6_filename}.tar.gz
         cd ${php5_6_filename}
+        fix_pkg_config ${php5_6_filename}
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -354,6 +364,7 @@ install_php(){
         cd $cur_dir/soft/
         tar xzvf ${php7_1_filename}.tar.gz
         cd ${php7_1_filename}
+        fix_pkg_config ${php7_1_filename}
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -369,6 +380,7 @@ install_php(){
         cd $cur_dir/soft/
         tar xzvf ${php7_2_filename}.tar.gz
         cd ${php7_2_filename}
+        fix_pkg_config ${php7_2_filename}
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"
@@ -384,6 +396,7 @@ install_php(){
         cd $cur_dir/soft/
         tar xzvf ${php7_3_filename}.tar.gz
         cd ${php7_3_filename}
+        fix_pkg_config ${php7_3_filename}
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"

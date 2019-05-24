@@ -5,7 +5,7 @@ install_php_depends(){
 	
 	#安装依赖
 	if check_sys packageManager apt;then
-		local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng12-dev libfreetype6-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
+		local packages=(m4 autoconf libcurl4-gnutls-dev autoconf2.13 libxml2-dev openssl zlib1g-dev libpcre3-dev libtool libjpeg-dev libpng-dev libfreetype6-dev libxmp-dev libmhash-dev libmcrypt-dev libssl-dev pkg-config libzip-dev libicu-dev)
 		for p in ${packages[@]}
 		do
 			apt-get -y install $p
@@ -287,11 +287,6 @@ install_freetype(){
 	error_detect "./configure --prefix=${depends_prefix}/${freetype_filename}"
 	error_detect "parallel_make"
 	error_detect "make install"
-
-	#解决 ft2build.h 找不到的问题
-	ln -s ${depends_prefix}/${freetype_filename}/include/freetype2/freetype  ${depends_prefix}/${freetype_filename}/include/freetype
-	ln -s ${depends_prefix}/${freetype_filename}/include/freetype2/ft2build.h ${depends_prefix}/${freetype_filename}/include/ft2build.h
-
 	add_to_env "${depends_prefix}/${freetype_filename}"
 	create_lib64_dir "${depends_prefix}/${freetype_filename}"
 }
@@ -430,11 +425,4 @@ install_libmemcached(){
 	error_detect "./configure --prefix=${depends_prefix}/${libmemcached_filename} --enable-sasl"
 	error_detect "parallel_make"
 	error_detect "make install"
-}
-
-# 解决 freetype-config not found 的问题
-fix_pkg_config() {
-  local dir=$1
-  sed -i "s/freetype-config/pkg-config/g" $dir/configure
-  sed -i "s/freetype-config/pkg-config/g" $dir/ext/gd/config.m4
 }

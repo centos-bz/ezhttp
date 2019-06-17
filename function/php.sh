@@ -229,13 +229,10 @@ if check_sys packageManager apt; then
     # local ICUVer=`dpkg -s libicu-dev | grep "Version:" `
     # if [[ "$FreeTypeVer" =~ "2.9.1-3" && "$ICUVer" =~ "63.1-6" ]];then
     if [[ "$FreeTypeVer" =~ "2.9.1-3" ]];then
-        echo "OK!"
         sed -i "s/freetype-config/pkg-config/g" ./configure
         sed -i "s/freetype-config/pkg-config/g" ./ext/gd/config.m4
-
-        # sed -i "s/icu-config/pkg-config/g" ./configure
-        # sed -i "s/icu-config/pkg-config/g" ./aclocal.m4
-        # sed -i "s/icu-config/pkg-config/g" ./acinclude.m4
+        sed -i "s/FREETYPE2_CONFIG --cflags/FREETYPE2_CONFIG freetype2 --cflags/g" ./configure
+        sed -i "s/FREETYPE2_CONFIG --libs/FREETYPE2_CONFIG freetype2 --cflags/g" ./configure
     fi
 fi
 }

@@ -12,63 +12,63 @@ php_preinstall_settings(){
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): "  link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp5_2_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp5_2_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-5\.3\.[0-9]+$';then
                 php5_3_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp5_3_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp5_3_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-5\.4\.[0-9]+$';then
                 php5_4_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp5_4_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp5_4_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-5\.5\.[0-9]+$';then
                 php5_5_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp5_5_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp5_5_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-5\.6\.[0-9]+$';then
                 php5_6_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp5_6_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp5_6_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-7\.1\.[0-9]+$';then
                 php7_1_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp7_1_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp7_1_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-7\.2\.[0-9]+$';then
                 php7_2_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp7_2_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp7_2_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-7\.3\.[0-9]+$';then
                 php7_3_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp7_3_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp7_3_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             elif echo "$version" | grep -q -E '^php-7\.4\.[0-9]+$';then
                 php7_4_filename=$version
                 php=$version
                 read -p "please input $php download url(must be tar.gz file format): " link
                 set_dl $version "$link"
-                custom_info="$custom_info\nphp7_4_filename=$version\n$(get_dl_valname $version)=$link)\n"
+                custom_info="$custom_info\nphp7_4_filename=$version\n$(get_dl_valname $version)=$link\n"
                 break
             else
                 echo "version invalid,please reinput."
@@ -244,6 +244,7 @@ if check_sys packageManager apt; then
 fi
 }
 
+
 #安装PHP
 install_php(){
     #安装php依赖
@@ -415,12 +416,14 @@ install_php(){
         mkdir -p ${php_location}/etc
         \cp  php.ini-production $php_location/etc/php.ini
         [ "$php_mode" == "with_fastcgi" ] && \cp  $php_location/etc/php-fpm.conf.default $php_location/etc/php-fpm.conf
+    
     elif [ "$php" == "${php7_4_filename}" ];then
         download_file  "${php7_4_filename}.tar.gz"
         cd $cur_dir/soft/
         tar xzvf ${php7_4_filename}.tar.gz
         cd ${php7_4_filename}
         fix_pkg_config
+        install_php_7_4_depends
         make clean
         error_detect "./configure ${php_configure_args}"
         error_detect "parallel_make ZEND_EXTRA_LIBS='-liconv'"

@@ -26,14 +26,16 @@ install_php_depends(){
 		create_lib_link "libiconv.so"
 		create_lib_link "libiconv.so.2"
 		create_lib_link "libssl.so"
-		#解决centos 6 libmcrypt和libmhash不在在的问题
+		
 		if CentOSVerCheck 6;then
 			if is_64bit; then
+				#解决centos 6 libmcrypt和libmhash不在在的问题
 				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.x86_64.rpm
 				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.x86_64.rpm
 				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.x86_64.rpm
 				rpm -i $cur_dir/conf/mhash-devel-0.9.9.9-3.el6.x86_64.rpm
 			else
+				#解决centos 6 libmcrypt和libmhash不在在的问题
 				rpm -i $cur_dir/conf/libmcrypt-2.5.7-1.2.el6.rf.i686.rpm
 				rpm -i $cur_dir/conf/libmcrypt-devel-2.5.7-1.2.el6.rf.i686.rpm
 				rpm -i $cur_dir/conf/mhash-0.9.9.9-3.el6.i686.rpm
@@ -62,6 +64,24 @@ install_php_depends(){
 		check_installed "install_libmcrypt" "${depends_prefix}/${libmcrypt_filename}"
 	fi
 
+}
+
+#安装 PHP-7.4 相关依赖
+install_php_7_4_depends(){
+	export SQLITE_CFLAGS="/usr/local/sqlite"
+	export SQLITE_LIBS="/usr/local/sqlite"
+	export ICU_CFLAGS="/usr/local/icu4c"
+	export ICU_LIBS="/usr/local/icu4c"
+	export ONIG_CFLAGS="/usr/lib64"
+	export ONIG_LIBS="/usr/lib64"
+	export LIBZIP_CFLAGS="/opt/ezhttp/libzip-1.5.2"
+	export LIBZIP_LIBS="/opt/ezhttp/libzip-1.5.2"
+	export WEBP_CFLAGS="/opt/ezhttp/libwebp"
+	export WEBP_LIBS="/opt/ezhttp/libwebp"
+	export JPEG_CFLAGS="/opt/ezhttp/libjpeg"
+	export JPEG_LIBS="/opt/ezhttp/libjpeg"
+	export XPM_CFLAGS="/usr/lib64"
+	export XPM_LIBS="/usr/lib64"
 }
 
 #安装libevent

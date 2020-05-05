@@ -99,8 +99,7 @@ boost_1_59_filename="boost_1_59_0"
 set_md5 $boost_1_59_filename "51528a0e3b33d9e10aaa311d9eb451e3"
 set_dl $boost_1_59_filename '
 https://opensource-1251020419.file.myqcloud.com/boost/boost_1_59_0.tar.gz
-https://nchc.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
-https://jaist.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
+https://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.tar.gz
 http://sourceforge.mirrorservice.org/b/bo/boost/boost/1.59.0/boost_1_59_0.tar.gz
 '
 
@@ -110,7 +109,7 @@ set_dl $boost_1_66_filename '
 https://opensource-1251020419.file.myqcloud.com/boost/boost_1_66_0.tar.gz
 https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
 http://dl-us.centos.bz/ezhttp/boost_1_66_0.tar.gz
-http://jaist.dl.sourceforge.net/project/boost/boost/1.66.0/boost_1_66_0.tar.gz
+http://sourceforge.net/projects/boost/files/boost/1.66.0/boost_1_66_0.tar.gz
 http://sourceforge.mirrorservice.org/b/bo/boost/boost/1.66.0/boost_1_66_0.tar.gz
 '
 
@@ -564,11 +563,10 @@ ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz
 '
 
 #openssl设置 
-openssl_filename="openssl-1.0.2h"
-set_md5 $openssl_filename "9392e65072ce4b614c1392eefc1f23d0"
+openssl_filename="openssl-1.1.1f"
+set_md5 $openssl_filename "3f486f2f4435ef14b81814dbbc7b48bb"
 set_dl $openssl_filename '
-http://dl-us.centos.bz/ezhttp/openssl-1.0.2h.tar.gz
-http://www.openssl.org/source/openssl-1.0.2h.tar.gz
+https://www.openssl.org/source/openssl-1.1.1f.tar.gz
 '
 
 #zlib设置
@@ -592,7 +590,7 @@ pcre_filename="pcre-8.33"
 set_md5 $pcre_filename "94854c93dcc881edd37904bb6ef49ebc"
 set_dl $pcre_filename '
 http://dl-us.centos.bz/ezhttp/pcre-8.33.tar.gz
-http://jaist.dl.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz
+https://sourceforge.net/projects/pcre/files/pcre/8.33/pcre-8.33.tar.gz
 '
 
 #libtool设置
@@ -608,15 +606,14 @@ libjpeg_filename="jpeg-6b"
 set_md5 $libjpeg_filename "dbd5f3b47ed13132f04c685d608a7547"
 set_dl $libjpeg_filename '
 http://dl-us.centos.bz/ezhttp/jpegsrc.v6b.tar.gz
-http://jaist.dl.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsrc.v6b.tar.gz
+https://sourceforge.net/projects/libjpeg/files/libjpeg/6b/jpegsrc.v6b.tar.gz
 '
 
 #freetype设置
 freetype_filename="freetype-2.8.1"
 set_md5 $freetype_filename "c947b6b1c513e814cc9d7617a44bc6cf"
 set_dl $freetype_filename '
-https://jaist.dl.sourceforge.net/project/freetype/freetype2/2.8.1/freetype-2.8.1.tar.gz
-https://nchc.dl.sourceforge.net/project/freetype/freetype2/2.8.1/freetype-2.8.1.tar.gz
+https://sourceforge.net/projects/freetype/files/freetype2/2.8.1/freetype-2.8.1.tar.gz
 http://download.savannah.gnu.org/releases/freetype/freetype-2.8.1.tar.gz
 '
 
@@ -625,7 +622,7 @@ libpng_filename="libpng-1.4.19"
 set_md5 $libpng_filename "89bcbc4fc8b31f4a403906cf4f662330"
 set_dl $libpng_filename '
 http://dl-us.centos.bz/ezhttp/libpng-1.4.19.tar.gz
-http://jaist.dl.sourceforge.net/project/libpng/libpng14/1.4.19/libpng-1.4.19.tar.gz
+https://sourceforge.net/projects/libpng/files/libpng14/older-releases/1.4.19/libpng-1.4.19.tar.gz
 '
 
 #mhash设置
@@ -633,7 +630,7 @@ mhash_filename="mhash-0.9.9.9"
 set_md5 $mhash_filename "ee66b7d5947deb760aeff3f028e27d25"
 set_dl $mhash_filename '
 http://dl-us.centos.bz/ezhttp/mhash-0.9.9.9.tar.gz
-http://jaist.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
+https://sourceforge.net/projects/mhash/files/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 '
 
 #libmcrypt设置
@@ -641,7 +638,7 @@ libmcrypt_filename="libmcrypt-2.5.8"
 set_md5 $libmcrypt_filename "0821830d930a86a5c69110837c55b7da"
 set_dl $libmcrypt_filename '
 http://dl-us.centos.bz/ezhttp/libmcrypt-2.5.8.tar.gz
-http://jaist.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
+https://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 '
 
 #m4设置

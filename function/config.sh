@@ -85,11 +85,10 @@ http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7/mysql-5.7.26.tar.gz
 set_hint $mysql5_7_filename "$mysql5_7_filename (need about 2GB RAM when building,try mysql-5.6 if failed)"
 
 mysql8_0_filename="mysql-8.0.16"
-set_md5 $mysql8_0_filename "38d5a5c1a1eeed1129fec3a999aa5efd"
+set_md5 $mysql8_0_filename "06f16ed2dc84abeaa77c697c2d6f07e5"
 set_dl $mysql8_0_filename '
 http://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.16.tar.gz
 http://mirrors.cn99.com/mysql/Downloads/MySQL-8.0/mysql-8.0.16.tar.gz
-http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-8.0/mysql-8.0.16.tar.gz
 '
 
 
@@ -110,6 +109,15 @@ https://opensource-1251020419.file.myqcloud.com/boost/boost_1_66_0.tar.gz
 https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
 http://dl-us.centos.bz/ezhttp/boost_1_66_0.tar.gz
 http://sourceforge.net/projects/boost/files/boost/1.66.0/boost_1_66_0.tar.gz
+http://sourceforge.mirrorservice.org/b/bo/boost/boost/1.66.0/boost_1_66_0.tar.gz
+'
+
+boost_1_72_filename="boost_1_72_0"
+set_md5 $boost_1_72_filename "e2b0b1eac302880461bcbef097171758"
+set_dl $boost_1_72_filename '
+https://opensource-1251020419.file.myqcloud.com/boost/boost_1_72_0.tar.gz
+https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
+http://sourceforge.net/projects/boost/files/boost/1.72.0/boost_1_72_0.tar.gz
 http://sourceforge.mirrorservice.org/b/bo/boost/boost/1.66.0/boost_1_66_0.tar.gz
 '
 

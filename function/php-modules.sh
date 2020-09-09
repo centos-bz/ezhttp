@@ -30,6 +30,8 @@ php_modules_preinstall_settings(){
 						php=${php7_2_filename}
 					elif [[ `get_php_version $phpConfig` == "7.3" ]]; then
 						php=${php7_3_filename}
+					elif [[ `get_php_version $phpConfig` == "7.4" ]]; then
+						php=${php7_4_filename}
 					else
 						echo "sorry,unsupported php version."
 						exit 1
@@ -110,6 +112,20 @@ php_modules_preinstall_settings(){
 			php_modules_arr=(${php_modules_arr[@]#${xdebug_filename}})
 			php_modules_arr=(${php_modules_arr[@]#mssql})
 		elif [ "$php" == "${php7_3_filename}" ];then
+			#从数组中删除ZendOptimizer、eaccelerator、xcache ionCube_filename
+			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${xcache_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${ZendGuardLoader_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${ionCube_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${php_imagemagick_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${php_memcache_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${php_memcached_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${php_redis_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${php_mongo_filename}})
+			php_modules_arr=(${php_modules_arr[@]#${xdebug_filename}})
+			php_modules_arr=(${php_modules_arr[@]#mssql})
+		elif [ "$php" == "${php7_4_filename}" ];then
 			#从数组中删除ZendOptimizer、eaccelerator、xcache ionCube_filename
 			php_modules_arr=(${php_modules_arr[@]#${ZendOptimizer_filename}})
 			php_modules_arr=(${php_modules_arr[@]#${eaccelerator_filename}})
